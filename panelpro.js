@@ -935,3 +935,183 @@ pintarListaClientes = (function(orig){
   return function(){ orig(); colorearTarjetasClientes(); };
 })(pintarListaClientes);
 actualizarPanel();
+
+/* =========================================================
+   v0.52 · Pestaña «Chats» del profesional
+   Cada profesional ve como pendientes los mensajes del cliente que ÉL no ha contestado.
+   Hora de los mensajes: clientesData[k].chatT = { cli: [iso…], pro: { domingo: iso, … }, ult: { t, quien, txt } }
+   (los chats anteriores a este cambio no tienen hora: no cuentan como pendientes)
+   ========================================================= */
+const ESPERA_ROJA_H = 48;
+topScreens.push('view-coach-chats');
+PANTALLAS_CON_TABS.push('view-coach-chats');
+(function(){
+  const nav = document.getElementById('coachTabs');
+  const segs = document.getElementById('ctab-segs');
+  const b = document.createElement('button');
+  b.className = 'tbi'; b.id = 'ctab-chats';
+  b.setAttribute('onclick', "abrirTabPro('chats')");
+  b.innerHTML = '<span class="tbi-emo" aria-hidden="true">💬</span>CHATS<span class="tab-badge" id="ctabChatsN" hidden>0</span>';
+  nav.insertBefore(b, segs);
+})();
+function chatT(k){ const d = clientesData[k]; if (!d) return null; d.chatT = d.chatT || { cli: [], pro: {}, ult: null }; return d.chatT; }
+function registrarMensaje(k, deCliente, txt){
+  const c = chatT(k); if (!c) return;
+  const ahora = new Date().toISOString();
+  if (deCliente) { c.cli.push(ahora); if (c.cli.length > 40) c.cli = c.cli.slice(-40); }
+  else if (coachActivo) c.pro[norm(coachActivo.u)] = ahora;
+  c.ult = { t: ahora, quien: deCliente ? 'cliente' : (coachActivo ? coachActivo.u : ''), txt: recortar(txt, 90) };
+  programarGuardado();
+  pintarBadgeChats();
+}
+/* desde cuándo espera respuesta de este profesional (null si no espera) */
+function esperaDesde(k){
+  const d = clientesData[k];
+  if (!coachActivo || !d || !d.chatT) return null;
+  const mio = d.chatT.pro[norm(coachActivo.u)] || '';
+  const pend = d.chatT.cli.filter(function(t){ return t > mio; });
+  return pend.length ? pend[0] : null;
+}
+function horasDesde(iso){ return (Date.now() - new Date(iso).getTime()) / 3600000; }
+function textoEspera(h){
+  if (h < 1) return 'hace ' + Math.max(1, Math.round(h * 60)) + ' min';
+  if (h < 24) return 'hace ' + Math.round(h) + ' h';
+  const d = Math.floor(h / 24);
+  return 'hace ' + d + (d === 1 ? ' día' : ' días');
+}
+function ultimoTextoChat(k){
+  const c = clientesData[k] && clientesData[k].chatT;
+  if (c && c.ult) return c.ult;
+  const html = PLANES[k] && PLANES[k].chat;                      // chats antiguos: último mensaje sin hora
+  if (!html) return null;
+  const tmp = document.createElement('div'); tmp.innerHTML = html;
+  const bs = tmp.querySelectorAll('.bubble'); const b = bs[bs.length - 1];
+  if (!b) return null;
+  const s = b.querySelector('.sender'); if (s) s.remove();
+  const txt = b.querySelector('audio') ? '🎤 Nota de voz' : (b.querySelector('img') && !b.textContent.trim() ? '📷 Foto' : b.textContent.trim());
+  return { t: null, quien: '', txt: recortar(txt, 90) };
+}
+function datosChats(){
+  return Object.keys(clientesData).map(function(k){
+    const esp = esperaDesde(k), ult = ultimoTextoChat(k);
+    return { k: k, d: clientesData[k], esp: esp, h: esp ? horasDesde(esp) : 0, ult: ult, sinLeer: msgsSinLeer(k) };
+  }).sort(function(a, b){
+    if (!!a.esp !== !!b.esp) return a.esp ? -1 : 1;
+    if (a.esp) return a.esp < b.esp ? -1 : 1;                       // el que más tiempo lleva esperando, arriba
+    const ta = a.ult && a.ult.t || '', tb = b.ult && b.ult.t || '';
+    if (ta !== tb) return ta < tb ? 1 : -1;
+    return (a.d.nombre || '').localeCompare(b.d.nombre || '');
+  });
+}
+function pintarChatsPro(){
+  const cont = document.getElementById('chatsPro');
+  if (!cont) return;
+  setTxt('chatsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  const lista = datosChats();
+  if (!lista.length) { cont.innerHTML = '<div class="vacio"><b>Todavía no hay clientes</b><span>Cuando des de alta a alguien, su chat aparecerá aquí.</span></div>'; return; }
+  const esperan = lista.filter(function(x){ return x.esp; });
+  const rojos = esperan.filter(function(x){ return x.h >= ESPERA_ROJA_H; }).length;
+  let h = '<div class="panel-stats chats-stats">'
+    + '<div class="panel-stat"><div class="val' + (esperan.length ? ' warn' : '') + '">' + esperan.length + '</div><div class="lbl">Sin contestar</div></div>'
+    + '<div class="panel-stat"><div class="val' + (rojos ? ' warn' : '') + '">' + rojos + '</div><div class="lbl">Más de 48 h</div></div>'
+    + '<div class="panel-stat"><div class="val">' + lista.length + '</div><div class="lbl">Chats</div></div></div>';
+  const fila = function(x){
+    const rojo = x.esp && x.h >= ESPERA_ROJA_H;
+    const cuando = x.esp ? textoEspera(x.h) : (x.ult && x.ult.t ? textoEspera(horasDesde(x.ult.t)) : '');
+    const quien = x.ult && x.ult.quien && x.ult.quien !== 'cliente' ? esc(x.ult.quien) + ': ' : '';
+    return '<div class="chat-fila' + (rojo ? ' rojo' : (x.esp ? ' espera' : '')) + '" onclick="abrirChatPro(\'' + x.k + '\')">'
+      + '<span class="avatar chat-fila-av" data-k="' + x.k + '"></span>'
+      + '<div class="chat-fila-txt"><div class="chat-fila-top"><b>' + esc(x.d.nombre) + '</b><span class="chat-fila-t">' + cuando + '</span></div>'
+      + '<div class="chat-fila-ult">' + (x.ult ? quien + esc(x.ult.txt) : '<i>Sin mensajes todavía</i>') + '</div>'
+      + (x.esp ? '<div class="chat-fila-est">' + (rojo ? '⚠️ Sin contestar · ' + textoEspera(x.h).replace('hace ', '') : 'Esperando tu respuesta') + '</div>' : '')
+      + '</div>'
+      + (x.sinLeer ? '<span class="chat-fila-n">' + x.sinLeer + '</span>' : '')
+      + '</div>';
+  };
+  if (esperan.length) h += '<div class="alta-label">Esperan tu respuesta</div><div class="chat-filas">' + esperan.map(fila).join('') + '</div>';
+  const resto = lista.filter(function(x){ return !x.esp; });
+  if (resto.length) h += '<div class="alta-label">' + (esperan.length ? 'Al día' : 'Todos los chats') + '</div><div class="chat-filas">' + resto.map(fila).join('') + '</div>';
+  cont.innerHTML = h;
+  Array.prototype.forEach.call(cont.querySelectorAll('.chat-fila-av'), function(av){
+    const k = av.getAttribute('data-k'), url = fotoDe('cliente:' + k);
+    if (url) pintarFoto(av, url); else av.textContent = (clientesData[k].nombre || '?').trim().charAt(0).toUpperCase();
+  });
+}
+function pintarBadgeChats(){
+  const b = document.getElementById('ctabChatsN');
+  if (!b) return;
+  const lista = coachActivo ? Object.keys(clientesData).map(esperaDesde).filter(Boolean) : [];
+  b.hidden = !lista.length;
+  b.textContent = lista.length;
+  b.classList.toggle('rojo', lista.some(function(t){ return horasDesde(t) >= ESPERA_ROJA_H; }));
+}
+function abrirChatPro(k){
+  goToCliente(k);
+  verConversacion();
+}
+abrirTabPro = (function(orig){
+  return function(t){
+    if (t !== 'chats') { orig(t); pintarBadgeChats(); return; }
+    tabProActual = 'chats';
+    navDir = 'tab';
+    try { pintarChatsPro(); showScreen('view-coach-chats'); } finally { navDir = null; }
+    pintarTabsPro();
+    const bd = document.querySelector('#view-coach-chats .alta-body'); if (bd) bd.scrollTop = 0;
+  };
+})(abrirTabPro);
+pintarTabsPro = (function(orig){
+  return function(){
+    orig();
+    const b = document.getElementById('ctab-chats');
+    if (b) b.classList.toggle('active', tabProActual === 'chats');
+    pintarBadgeChats();
+  };
+})(pintarTabsPro);
+/* registrar la hora de cada mensaje (texto, fotos y notas de voz) */
+sendMsg = (function(orig){
+  return function(){
+    const t = (document.getElementById('chatInput').value || '').trim();
+    const k = clienteActual, coach = isCoachView();
+    orig();
+    if (t && k) registrarMensaje(k, !coach, t);
+  };
+})(sendMsg);
+meterEnChat = (function(orig){
+  return function(b){
+    orig(b);
+    if (!clienteActual) return;
+    const txt = b && b.querySelector && b.querySelector('.audio-b') ? '🎤 Nota de voz' : '📷 Foto';
+    registrarMensaje(clienteActual, !isCoachView(), txt);
+  };
+})(meterEnChat);
+/* ficha del cliente: botón de chat bien visible arriba */
+(function(){
+  const top = document.querySelector('#view-coach-cliente .alta-top');
+  if (!top) return;
+  const b = document.createElement('button');
+  b.className = 'ficha-chat-btn'; b.id = 'fichaChatBtn';
+  b.setAttribute('aria-label', 'Abrir el chat con el cliente');
+  b.innerHTML = '<span aria-hidden="true">💬</span>Chat<span class="tab-badge" id="fichaChatBtnN" hidden>0</span>';
+  b.onclick = function(){ verConversacion(); };
+  top.appendChild(b);
+})();
+function pintarBotonChatFicha(){
+  const n = clienteActual ? msgsSinLeer(clienteActual) : 0;
+  const esp = clienteActual ? esperaDesde(clienteActual) : null;
+  const el = document.getElementById('fichaChatBtnN');
+  if (el) { el.hidden = !n; el.textContent = n; }
+  const b = document.getElementById('fichaChatBtn');
+  if (b) b.classList.toggle('rojo', !!esp && horasDesde(esp) >= ESPERA_ROJA_H);
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){
+    sh(id);
+    if (id === 'view-coach-cliente') pintarBotonChatFicha();
+    if (id === 'view-coach-chats') pintarChatsPro();
+    pintarBadgeChats();
+  };
+})();
+window.addEventListener('storage', function(){ pintarBadgeChats(); if (pantallaVisible() === 'view-coach-chats') pintarChatsPro(); });
+setInterval(function(){ if (coachActivo) { pintarBadgeChats(); if (pantallaVisible() === 'view-coach-chats') pintarChatsPro(); } }, 60000);
+pintarBadgeChats();
