@@ -711,3 +711,45 @@ enterApp = (function(orig){
     if (window.fsdSesionCliente && clienteActual) guardarTodo();
   };
 })(enterApp);
+
+/* =========================================================
+   v0.47 · Código de acceso del cliente visible para los profesionales
+   ========================================================= */
+function codigoFicha(){ const d = clienteActual ? clientesData[clienteActual] : null; return d && d.codigo ? d.codigo : ''; }
+function ocultarCodigoCoach(){
+  const el = document.getElementById('fichaCodigo');
+  const b = document.getElementById('fichaCodBtn');
+  if (el) { el.textContent = '••••-••••'; el.setAttribute('data-visible', '0'); }
+  if (b) b.textContent = 'Mostrar';
+  const s = document.getElementById('fichaCodShare');
+  if (s) s.hidden = !navigator.share;
+}
+function mostrarCodigoCoach(){
+  const el = document.getElementById('fichaCodigo');
+  const b = document.getElementById('fichaCodBtn');
+  if (!el) return;
+  const visible = el.getAttribute('data-visible') === '1';
+  el.textContent = visible ? '••••-••••' : (codigoFicha() || '—');
+  el.setAttribute('data-visible', visible ? '0' : '1');
+  if (b) b.textContent = visible ? 'Mostrar' : 'Ocultar';
+}
+function copiarCodigoCoach(){
+  const c = codigoFicha();
+  if (c) copiarTexto(c); else toast('Este cliente no tiene código');
+}
+function enviarCodigoCoach(){
+  const c = codigoFicha();
+  const d = clienteActual ? clientesData[clienteActual] : null;
+  if (!c || !d) return;
+  const nombre = (d.nombre || '').split(' ')[0];
+  const texto = 'Hola' + (nombre ? ' ' + nombre : '') + ', tu código de acceso a Fitness sin Dramas es ' + c +
+    '. Entra en ' + location.origin + location.pathname.replace(/index\.html$/, '') + ' y escríbelo en «Código de acceso».';
+  if (navigator.share) {
+    navigator.share({ title: 'Tu código de acceso', text: texto }).catch(function(err){
+      if (!err || err.name !== 'AbortError') copiarTexto(texto);
+    });
+  } else copiarTexto(texto);
+}
+goToCliente = (function(orig){
+  return function(key){ orig(key); ocultarCodigoCoach(); };
+})(goToCliente);

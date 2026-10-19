@@ -129,7 +129,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.46</div>
+      <div class="app-version">Versión 0.47</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -313,13 +313,13 @@ if ('serviceWorker' in navigator) {
 
         <div class="alta-label">Gestión del cliente</div>
         <div class="list-group">
+          <div class="list-row" style="cursor:default"><span>Código de acceso</span><span class="ajx-acts"><span class="ajx-val mono" id="fichaCodigo" data-visible="0">••••-••••</span><button class="mini-btn" id="fichaCodBtn" onclick="mostrarCodigoCoach()">Mostrar</button><button class="mini-btn" onclick="copiarCodigoCoach()">Copiar</button><button class="mini-btn" id="fichaCodShare" onclick="enviarCodigoCoach()">Enviar</button></span></div>
           <div class="list-row" onclick="goToSeguimientos()"><span>Seguimientos realizados</span><span class="ajx-acts"><span class="pill" id="fichaSegN">0</span><span class="chev">›</span></span></div>
           <div class="list-row" onclick="goToEntrenoCoach()"><span>Entrenamiento</span><span class="chev">›</span></div>
           <div class="list-row" onclick="goToPlanCoach()"><span>Plan nutricional</span><span class="chev">›</span></div>
           <div class="list-row" onclick="verConversacion()"><span>Conversación</span><span class="ajx-acts"><span class="pill" id="fichaChatN">0</span><span class="chev">›</span></span></div>
           <div class="list-row danger" onclick="eliminarCliente()"><span>Eliminar cliente</span></div>
         </div>
-        <p class="alta-hint">En esta versión de prueba, el entrenamiento, el plan y la conversación son el mismo ejemplo para los 4 clientes. En producción cada uno tendría los suyos.</p>
       </div>
     </div>
 
