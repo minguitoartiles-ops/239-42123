@@ -1,6 +1,6 @@
 // Service worker: deja la app disponible sin conexión.
 // Al cambiar archivos, sube CACHE_VERSION para que los móviles reciban la nueva versión.
-const CACHE_VERSION = 'fsd-v3';
+const CACHE_VERSION = 'fsd-v4';
 const CACHE_NAME = CACHE_VERSION;
 const SHELL = [
   './',
@@ -10,9 +10,9 @@ const SHELL = [
   './manifest.webmanifest',
   './assets/logo_oscuro.png',
   './assets/logo_claro.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/icon-192-v2.png',
+  './icons/icon-512-v2.png',
+  './icons/apple-touch-icon-v2.png'
 ];
 
 self.addEventListener('install', function (event) {
