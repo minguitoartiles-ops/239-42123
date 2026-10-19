@@ -4,11 +4,12 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.50.1 (actual)
-Cambios acumulados hacia la 0.51: **2 de 10** (0.50.1 tras el 2.º)
+Cambios acumulados hacia la 0.51: **3 de 10** (0.50.1 tras el 2.º)
 
 ### Hacia la 0.51
 1. 19/10/2026 23:50 · Tarjetas de Clientes: puntuación global (evolución 30 · entreno 20 · nutrición 20 · constancia 20 · motivación 5 · estrés 5) con tendencia, adherencias y mensajes pendientes
 2. 19/10/2026 23:52 · Cliente en «Hoy»: el atrás del móvil pregunta «¿Salir a la pantalla de acceso?» en vez de salir de la app
+3. 19/10/2026 23:58 · Pestaña Seguimientos con el formato y colores del detalle; pendientes y peor puntuación arriba
 
 ## Versión 0.49 → 0.49.4
 
