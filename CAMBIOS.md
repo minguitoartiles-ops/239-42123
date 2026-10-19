@@ -3,8 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.52 (actual)
-Cambios acumulados hacia la 0.53: **0 de 10**
+## Versión 0.52.1 (actual)
+Cambios acumulados hacia la 0.53: **2 de 10** (0.52.1 tras el 2.º)
+
+### Hacia la 0.53
+1. 20/10/2026 01:00 · Pasos medios semanales: deslizador en el seguimiento, puntuación 1–10 (menos de 2.000 = 1 · 10.000 o más = 10) que cuenta en la global (5 puntos; entreno pasa de 20 a 15), flechas por semana y gráfico con tendencia en la ficha
+2. 20/10/2026 01:00 · Atrás del móvil por niveles: subpantalla → su pestaña principal (paso a paso) → inicio → «¿Salir de la app?» → **0.52.1**
 
 ## Versión 0.51 → 0.51.4
 

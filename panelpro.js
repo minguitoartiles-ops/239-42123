@@ -1115,3 +1115,187 @@ function pintarBotonChatFicha(){
 window.addEventListener('storage', function(){ pintarBadgeChats(); if (pantallaVisible() === 'view-coach-chats') pintarChatsPro(); });
 setInterval(function(){ if (coachActivo) { pintarBadgeChats(); if (pantallaVisible() === 'view-coach-chats') pintarChatsPro(); } }, 60000);
 pintarBadgeChats();
+
+/* =========================================================
+   v0.52 · Pasos medios semanales (actividad física)
+   Puntuación 1–10: menos de 2.000 pasos = 1 · 10.000 o más = 10 · proporcional entre medias.
+   Cuenta en la puntuación global (5 de 100, que salen de «entreno», que pasa de 20 a 15).
+   ========================================================= */
+PESOS_PUNTUACION.ent = 15;
+PESOS_PUNTUACION.pasos = 5;
+function puntosPasos(p){
+  if (p == null) return null;
+  if (p < 2000) return 1;
+  if (p >= 10000) return 10;
+  return Math.round(1 + 9 * (p - 2000) / 8000);
+}
+function fmtPasos(p){ return String(Math.round(p)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function setPasos(el){
+  const box = document.getElementById('sgPasos');
+  box.classList.remove('sin-tocar');
+  const v = +el.value, pts = puntosPasos(v);
+  setTxt('rPasos', fmtPasos(v));
+  const d = document.getElementById('pasosDesc');
+  if (d) d.innerHTML = (v >= 20000 ? 'Más de ' : '') + '<b>' + fmtPasos(v) + ' pasos al día</b> · actividad <b class="v' + nivel(pts / 10) + '">' + pts + '/10</b>';
+}
+function vaciarPasos(){
+  const box = document.getElementById('sgPasos'); if (!box) return;
+  box.classList.add('sin-tocar');
+  const r = sgAnterior();
+  box.querySelector('input').value = r && r.pasos != null ? r.pasos : 6000;
+  setTxt('rPasos', '—');
+  const d = document.getElementById('pasosDesc');
+  if (d) d.textContent = 'Desliza para indicar tus pasos medios. Si no lo sabes, déjalo sin tocar.';
+  let a = box.querySelector('.sg-antes');
+  if (r && r.pasos != null) { if (!a) { a = document.createElement('span'); a.className = 'sg-antes'; box.appendChild(a); } a.textContent = 'antes ' + fmtPasos(r.pasos); }
+  else if (a) a.remove();
+}
+guardarSeguimiento = (function(orig){
+  return function(){
+    const box = document.getElementById('sgPasos');
+    const pasos = box && !box.classList.contains('sin-tocar') ? +box.querySelector('input').value : null;
+    const k = clienteActual;
+    const antes = k ? (SEGUIMIENTOS[k] || []).length : 0;
+    orig();
+    const lista = k ? (SEGUIMIENTOS[k] || []) : [];
+    if (lista.length > antes && lista[0]) {
+      lista[0].pasos = pasos;
+      guardarTodo();
+      vaciarPasos();
+      pintarHistorialCliente();
+    }
+  };
+})(guardarSeguimiento);
+goTo = (function(orig){
+  return function(n, s){ orig(n, s); if (n === 'seguimiento' && document.getElementById('sgPasos').classList.contains('sin-tocar')) vaciarPasos(); };
+})(goTo);
+/* la puntuación global incluye la actividad */
+puntuacionCliente = (function(orig){
+  return function(k, i){
+    const res = orig(k, i);
+    if (!res) return res;
+    const r = (SEGUIMIENTOS[k] || [])[i || 0];
+    const pts = r ? puntosPasos(r.pasos) : null;
+    res.partes.pasos = pts == null ? null : pts / 10;
+    let suma = 0, pesos = 0;
+    Object.keys(PESOS_PUNTUACION).forEach(function(c){
+      if (res.partes[c] == null) return;
+      suma += res.partes[c] * PESOS_PUNTUACION[c]; pesos += PESOS_PUNTUACION[c];
+    });
+    res.total = Math.round(suma / pesos * 100);
+    return res;
+  };
+})(puntuacionCliente);
+/* tarjeta de cada seguimiento: actividad con su nota y la flecha frente a la semana anterior */
+tarjetaSeguimiento = (function(orig){
+  return function(r, i, lista){
+    const html = orig(r, i, lista);
+    if (!r || r.pasos == null) return html;
+    const tmp = document.createElement('div'); tmp.innerHTML = html;
+    const stats = tmp.querySelector('.segui-stats');
+    if (!stats) return html;
+    const pts = puntosPasos(r.pasos);
+    const prev = lista ? lista[i + 1] : null;
+    let fl = '';
+    if (prev && prev.pasos != null) {
+      const d = r.pasos - prev.pasos;
+      fl = Math.abs(d) < 250 ? ' <span class="flecha eq">=</span>'
+        : ' <span class="flecha ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '↑ ' : '↓ ') + fmtPasos(Math.abs(d)) + '</span>';
+    }
+    const cel = document.createElement('div');
+    cel.innerHTML = '<span class="segui-lbl">Actividad</span><span class="segui-val">' + pts + '/10</span>';
+    stats.appendChild(cel);
+    const linea = document.createElement('div');
+    linea.className = 'segui-pasos';
+    linea.innerHTML = '👟 <b>' + fmtPasos(r.pasos) + '</b> pasos al día' + fl;
+    stats.parentNode.insertBefore(linea, stats.nextSibling);
+    return tmp.innerHTML;
+  };
+})(tarjetaSeguimiento);
+/* ficha: gráfico de actividad de las últimas semanas y tendencia */
+function tendenciaPasos(vals){            // vals: del más antiguo al más reciente
+  if (vals.length < 2) return null;
+  const n = vals.length, xm = (n - 1) / 2, ym = vals.reduce(function(a, b){ return a + b; }, 0) / n;
+  let num = 0, den = 0;
+  vals.forEach(function(y, x){ num += (x - xm) * (y - ym); den += (x - xm) * (x - xm); });
+  const pend = den ? num / den : 0;       // pasos por semana
+  return pend > 300 ? 'sube' : (pend < -300 ? 'baja' : 'estable');
+}
+function pintarActividadFicha(){
+  const k = clienteActual, v = document.getElementById('view-coach-cliente');
+  if (!k || !v) return;
+  let box = document.getElementById('fichaPasos');
+  if (!box) {
+    box = document.createElement('div'); box.id = 'fichaPasos';
+    const ref = document.getElementById('fichaSens') || Array.prototype.filter.call(v.querySelectorAll('.alta-label'), function(x){ return /Gestión/.test(x.textContent); })[0];
+    ref.parentNode.insertBefore(box, ref);
+  }
+  const segs = (SEGUIMIENTOS[k] || []).filter(function(r){ return r.pasos != null; }).slice(0, 12).reverse();
+  if (!segs.length) {
+    box.innerHTML = '<div class="alta-label">Actividad física</div><div class="picker-empty">Aún no ha indicado sus pasos en ningún seguimiento.</div>';
+    return;
+  }
+  const vals = segs.map(function(r){ return r.pasos; });
+  const max = Math.max(12000, Math.max.apply(null, vals));
+  const media = vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+  const t = tendenciaPasos(vals.slice(-6));
+  const tTxt = t === 'sube' ? '<span class="tend up">↑ Subiendo</span>' : (t === 'baja' ? '<span class="tend down">↓ Bajando</span>' : (t ? '<span class="tend eq">= Estable</span>' : ''));
+  const barras = segs.map(function(r){
+    const pts = puntosPasos(r.pasos);
+    const s = String(r.s || '').split('·')[0].trim().replace('Semana ', 'S');
+    return '<div class="pb"><span class="pb-v">' + (r.pasos >= 1000 ? (Math.round(r.pasos / 100) / 10).toString().replace('.', ',') + 'k' : r.pasos) + '</span>'
+      + '<span class="pb-b b' + nivel(pts / 10) + '" style="height:' + Math.max(4, Math.round(r.pasos / max * 100)) + '%" title="' + fmtPasos(r.pasos) + ' pasos · ' + pts + '/10"></span>'
+      + '<span class="pb-s">' + esc(s) + '</span></div>';
+  }).join('');
+  const ult = segs[segs.length - 1];
+  box.innerHTML = '<div class="alta-label">Actividad física</div>'
+    + '<div class="pasos-card"><div class="pasos-top"><div><b>' + fmtPasos(ult.pasos) + '</b> pasos/día <small>última semana · ' + puntosPasos(ult.pasos) + '/10</small></div>' + tTxt + '</div>'
+    + '<div class="pasos-graf" role="img" aria-label="Pasos medios por semana">' + barras + '</div>'
+    + '<div class="pasos-pie">Media de ' + vals.length + (vals.length === 1 ? ' semana' : ' semanas') + ': <b>' + fmtPasos(media) + '</b> pasos/día</div></div>';
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarActividadFicha(); };
+})();
+
+/* =========================================================
+   v0.52 · Atrás del móvil por niveles
+   subpantalla → su pestaña principal (paso a paso) → inicio → «¿Salir de la app?»
+   Cliente: inicio «Hoy»; pestañas Nutrición, Entrenamiento, Progreso, Chat y Ajustes.
+   Profesional: inicio «Clientes»; pestañas Chats, Seguimientos y Ajustes.
+   ========================================================= */
+const TABS_CLIENTE = ['hoy', 'plan', 'entreno', 'progreso', 'chat', 'ajustes'];
+let chatDesdeTabChats = false;
+goToCliente = (function(orig){ return function(k){ chatDesdeTabChats = false; orig(k); }; })(goToCliente);
+abrirChatPro = function(k){ goToCliente(k); chatDesdeTabChats = true; verConversacion(); };
+function atrasPorNiveles(){
+  const vis = pantallaVisible();
+  const coachBar = document.getElementById('coachBar').classList.contains('show');
+  if (coachActivo) {
+    if (vis === 'view-coach-panel') { avisoSalirApp(); return; }
+    if (vis === 'app' && coachBar) {                     // chat, plan o entreno del cliente
+      const desdeChats = chatDesdeTabChats;
+      backToCliente();                                    // guarda lo que se estuviera editando
+      if (desdeChats) { chatDesdeTabChats = false; abrirTabPro('chats'); }
+      return;
+    }
+    if (vis === 'view-coach-seguimientos') { showScreen('view-coach-cliente'); return; }
+    if (vis === 'view-coach-cliente') { abrirTabPro(tabProActual && tabProActual !== 'ajustes' ? tabProActual : 'clientes'); return; }
+    abrirTabPro('clientes');                              // Chats, Seguimientos, Ajustes, alta…
+    return;
+  }
+  // cliente
+  if (vistaActual === 'hoy') { avisoSalirApp(); return; }
+  if (TABS_CLIENTE.indexOf(vistaActual) > -1) { navHist.length = 0; navDir = 'pop'; goTo('hoy', true); navDir = null; return; }
+  volverAtras();                                          // subpantalla: un paso atrás (p. ej. seguimiento → perfil → hoy)
+}
+atrasDentroApp = (function(orig){
+  return function(){
+    if (hayCapaAbierta()) return orig();
+    const vis = pantallaVisible();
+    if (!vis || vis === 'view-splash') return orig();
+    if (!coachActivo && vis !== 'app') return orig();
+    atrasPorNiveles();
+    return true;
+  };
+})(atrasDentroApp);
