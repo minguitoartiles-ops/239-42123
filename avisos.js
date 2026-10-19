@@ -383,3 +383,56 @@ function avisoDelSistema(dest, tipo, titulo, texto){
 window.addEventListener('storage', function(e){ if (e.key === AVISOS_KEY) { avisosMem = null; pintarListas(); } });
 pintarCampanas();
 revisarRecordatorioCliente();
+
+/* =========================================================
+   «Mensajes sin leer» de cada profesional (panel y tarjetas)
+   ========================================================= */
+function sinLeerDe(pro){ const a = leerAvisos(); a.sinLeer = a.sinLeer || {}; return a.sinLeer[pro] = a.sinLeer[pro] || {}; }
+function sumarSinLeer(k){
+  COACHES.forEach(function(c){ const s = sinLeerDe(clavePro(c.u)); s[k] = (s[k] || 0) + 1; });
+  guardarAvisos();
+}
+sendMsg = (function(orig){
+  return function(){
+    const t = (document.getElementById('chatInput').value || '').trim();
+    const k = clienteActual, coach = isCoachView();
+    orig();
+    if (t && k && !coach) sumarSinLeer(k);
+  };
+})(sendMsg);
+meterEnChat = (function(orig){
+  return function(b){ orig(b); if (clienteActual && !isCoachView()) sumarSinLeer(clienteActual); };
+})(meterEnChat);
+verConversacion = (function(orig){
+  return function(){
+    orig();
+    if (!coachActivo || !clienteActual) return;
+    const pro = clavePro(coachActivo.u);
+    sinLeerDe(pro)[clienteActual] = 0;
+    ((leerAvisos().lista[pro]) || []).forEach(function(x){
+      if (x.tipo === 'mensajes' && x.ir && x.ir.cliente === clienteActual) x.leida = true;
+    });
+    guardarAvisos();
+    pintarCampanas();
+  };
+})(verConversacion);
+function totalSinLeer(){
+  if (!coachActivo) return 0;
+  const s = sinLeerDe(clavePro(coachActivo.u));
+  return Object.keys(s).filter(function(k){ return clientesData[k]; }).reduce(function(t, k){ return t + (s[k] || 0); }, 0);
+}
+actualizarPanel = (function(orig){
+  return function(){
+    orig();
+    setTxt('statMsg', totalSinLeer());
+    if (!coachActivo) return;
+    const s = sinLeerDe(clavePro(coachActivo.u));
+    const claves = Object.keys(clientesData);
+    Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
+      const n = s[claves[i]] || 0;
+      const pie = card.querySelector('.kc-pie span:last-child');
+      if (pie && n) pie.innerHTML = '💬 ' + esc(pie.textContent.replace('💬', '').trim()) + ' · <b class="kc-nuevos">' + n + ' sin leer</b>';
+    });
+  };
+})(actualizarPanel);
+actualizarPanel();
