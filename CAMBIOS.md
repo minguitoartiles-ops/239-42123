@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.49.2 (actual)
-Cambios acumulados hacia la 0.50: **5 de 10** (0.49.1 tras el 2.º, 0.49.2 tras el 4.º)
+## Versión 0.49.4 (actual)
+Cambios acumulados hacia la 0.50: **9 de 10** (0.49.1 tras el 2.º, 0.49.2 tras el 4.º, 0.49.3 tras el 6.º, 0.49.4 tras el 8.º)
 
 ### Hacia la 0.50
 1. 19/10/2026 23:35 · Capa de la campana y selectores sin las esquinas del antiguo marco
@@ -12,6 +12,10 @@ Cambios acumulados hacia la 0.50: **5 de 10** (0.49.1 tras el 2.º, 0.49.2 tras 
 3. 19/10/2026 23:35 · Logo pequeño visible en iPhone SE y pantallas bajas
 4. 19/10/2026 23:35 · Iconos siempre dentro de los botones de acceso de profesionales
 5. 19/10/2026 23:35 · Gramos de todas las opciones de comida y resumen rápido de cantidades en Nutrición
+6. 19/10/2026 23:45 · Aviso «¿Salir a la pantalla de acceso?» también para el cliente
+7. 19/10/2026 23:45 · Espacio del profesional con barra inferior: Clientes · Seguimientos · Ajustes
+8. 19/10/2026 23:45 · Pestaña Seguimientos: resumen por cliente (pendientes primero, datos con flechas, obstáculos)
+9. 19/10/2026 23:45 · Pestaña Ajustes del profesional; fuera el botón y la fila duplicados del panel
 
 ## Versión 0.48 → 0.48.4
 
