@@ -1106,3 +1106,8 @@
   /* v0.51 · Consentimiento de uso de imagen */
   .ci-nota{font:400 12px/1.5 Archivo;font-family:var(--f-body);color:var(--dim-55);margin:4px 0 14px;}
   #dlgTexto{white-space:pre-line;}
+
+  /* v0.51 · Logo nuevo en la pantalla de inicio */
+  .logo-mark img.logo-fsd{display:block;width:104px;height:auto;border-radius:50%;box-shadow:0 6px 22px rgba(0,0,0,.14);}
+  @media (max-height: 820px){ .logo-mark img.logo-fsd{width:72px;} }
+  @media (max-height: 600px){ .logo-mark img.logo-fsd{width:44px;box-shadow:none;} }
