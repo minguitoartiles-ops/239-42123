@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.51.3 (actual)
-Cambios acumulados hacia la 0.52: **7 de 10** (0.51.1 tras el 2.º · 0.51.2 tras el 4.º · 0.51.3 tras el 6.º)
+## Versión 0.51.4 (actual)
+Cambios acumulados hacia la 0.52: **8 de 10** (0.51.1 tras el 2.º · 0.51.2 tras el 4.º · 0.51.3 tras el 6.º · 0.51.4 tras el 8.º)
 
 ### Hacia la 0.52
 1. 20/10/2026 00:20 · Botón atrás del móvil: al entrar desde las notificaciones (o al pulsar atrás varias veces seguidas) ya no saca de la app; las marcas de historial se ponen siempre con un toque
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.52: **7 de 10** (0.51.1 tras el 2.º · 0.51.2 tra
 5. 20/10/2026 00:35 · Botón atrás del móvil: siempre a la pantalla principal (cliente «Hoy», profesional panel de Clientes); en la principal muestra «¿Salir de la app?» y el siguiente atrás sale (la sesión sigue abierta)
 6. 20/10/2026 00:35 · Logo nuevo (pesa rusa con pizza y «FSD») en la pantalla de inicio → **0.51.3**
 7. 20/10/2026 00:35 · Corregido: la ficha mostraba «—» en las adherencias aunque hubiera seguimiento
+8. 20/10/2026 00:40 · Alergias e intolerancias: lista para marcar (14 alérgenos UE, otras frecuentes en España, intolerancias) con diagnosticada o sospecha y nota libre; Fátima recibe aviso, lo ve en la ficha y fijo arriba del plan nutricional → **0.51.4**
 
 ## Versión 0.50 → 0.50.4
 
