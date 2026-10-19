@@ -411,3 +411,35 @@ function eliminarCliente(){
 }
 
 actualizarPanel();
+
+/* =========================================================
+   v0.42 · Espacios de trabajo separados por profesional
+   Entrenador (Domingo): entrenamiento · Dietista (Fátima): nutrición
+   ========================================================= */
+function entrarComo(usuario){
+  const c = COACHES.filter(function(x){ return norm(x.u) === norm(usuario); })[0];
+  if (!c) return;
+  coachActivo = c; coachPend = null;
+  entrarAlPanel();
+}
+function aplicarEspacio(){
+  const root = document.getElementById('screenRoot');
+  const rol = coachActivo ? coachActivo.rol : null;
+  root.classList.toggle('esp-entreno', rol === 'entrenador');
+  root.classList.toggle('esp-nutri', rol === 'dietista');
+  const t = document.querySelector('#view-coach-panel .alta-top .h-title');
+  if (t) t.textContent = rol === 'dietista' ? 'Nutrición' : (rol === 'entrenador' ? 'Entrenamiento' : 'Panel de coach');
+}
+entrarAlPanel = (function(orig){
+  return function(){ orig(); aplicarEspacio(); };
+})(entrarAlPanel);
+coachLogout = (function(orig){
+  return function(){ orig.apply(this, arguments); aplicarEspacio(); };
+})(coachLogout);
+/* si alguien intenta abrir el área del otro profesional, se queda en la suya */
+goToEntrenoCoach = (function(orig){
+  return function(){ if (coachActivo && coachActivo.rol === 'dietista') return; orig(); };
+})(goToEntrenoCoach);
+goToPlanCoach = (function(orig){
+  return function(){ if (coachActivo && coachActivo.rol === 'entrenador') return; orig(); };
+})(goToPlanCoach);
