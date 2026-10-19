@@ -1312,3 +1312,21 @@ function pintarResumenGramos(){
 pick = (function(orig){
   return function(el){ orig(el); if (el && el.closest && el.closest('#comidasCont')) pintarResumenGramos(); };
 })(pick);
+
+/* Alta de cliente: el formulario se vacía siempre al abrir «Nuevo cliente» */
+const ALTA_CHIPS_INICIO = Array.prototype.map.call(document.querySelectorAll('#view-alta .chip'), function(c){ return c.classList.contains('selected'); });
+const ALTA_PISTA_INICIO = (document.getElementById('altaPista') || {}).textContent || '';
+function vaciarFormularioAlta(){
+  const v = document.getElementById('view-alta');
+  if (!v) return;
+  Array.prototype.forEach.call(v.querySelectorAll('input, textarea'), function(x){ x.value = ''; x.removeAttribute('value'); });
+  Array.prototype.forEach.call(v.querySelectorAll('.chip'), function(c, i){ c.classList.toggle('selected', !!ALTA_CHIPS_INICIO[i]); });
+  const ok = document.getElementById('altaOk'); if (ok) ok.classList.remove('show');
+  setTxt('altaError', '');
+  const b = document.getElementById('confirmBtn'); if (b) b.disabled = false;
+  setTxt('altaPista', ALTA_PISTA_INICIO);
+  const body = v.querySelector('.alta-body'); if (body) body.scrollTop = 0;
+}
+goToAlta = (function(orig){
+  return function(){ vaciarFormularioAlta(); orig(); };
+})(goToAlta);
