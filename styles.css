@@ -1172,3 +1172,26 @@
   .ficha-chat-btn .tab-badge{top:-6px;left:auto;right:-6px;background:var(--danger);color:#fff;border:2px solid var(--bg);}
   #view-coach-chats{flex:1 1 auto;flex-direction:column;min-height:0;}
   .chat-fila-av{color:#fff;}
+
+  /* v0.52 · Pasos medios semanales */
+  .sg-pasos output{min-width:58px;}
+  .sg-pasos.sin-tocar input{opacity:.45;}
+  .sg-pasos.sin-tocar output{color:var(--dim-40);}
+  .segui-pasos{margin-top:8px;font:500 12.5px Archivo;font-family:var(--f-body);color:var(--ink);}
+  .segui-pasos .flecha{margin-left:4px;}
+  .pasos-card{border-radius:18px;background:var(--card);border:1px solid var(--line);padding:14px 14px 12px;margin-bottom:18px;}
+  .pasos-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font:500 12px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .pasos-top b{font:800 20px Archivo;font-family:var(--f-body);color:var(--ink);}
+  .pasos-top small{display:block;font:600 10.5px var(--f-mono);color:var(--dim-55);margin-top:2px;}
+  .tend{font:700 10px var(--f-mono);text-transform:uppercase;letter-spacing:.04em;padding:4px 9px;border-radius:999px;white-space:nowrap;}
+  .tend.up{background:rgba(67,179,123,.16);color:#2E8A5B;} .tend.down{background:rgba(224,92,75,.14);color:#C0473A;} .tend.eq{background:var(--wash-med);color:var(--dim-6);}
+  .pasos-graf{position:relative;display:flex;align-items:flex-end;gap:5px;height:130px;margin:14px 0 6px;padding-top:16px;}
+  .pb{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;}
+  .pb-b{width:100%;max-width:26px;border-radius:6px 6px 2px 2px;}
+  .pb-b.b1{background:#E05C4B;} .pb-b.b2{background:#E8894A;} .pb-b.b3{background:#D9B23F;} .pb-b.b4{background:#8FBF5A;} .pb-b.b5{background:#43B37B;}
+  .pb-v{font:600 9px var(--f-mono);color:var(--dim-55);}
+  .pb-s{font:600 9px var(--f-mono);color:var(--dim-45);}
+  .pasos-graf .pb{position:relative;}
+  .pasos-meta{position:absolute;left:0;right:0;border-top:1px dashed var(--dim-40);pointer-events:none;margin-bottom:17px;}
+  .pasos-meta span{position:absolute;right:0;top:-14px;font:600 8.5px var(--f-mono);color:var(--dim-45);font-style:normal;}
+  .pasos-pie{font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);}
