@@ -159,3 +159,112 @@ function confirmarSalidaCliente(){
 }
 
 pintarTabsPro();
+
+/* =========================================================
+   Puntuación global del cliente (0-100) y tarjetas de Clientes
+   Pesos: evolución según objetivo 30 · entreno 20 · nutrición 20 ·
+          constancia 20 · motivación 5 · estrés 5
+   (los datos que falten no cuentan y el resto se reparte en proporción)
+   ========================================================= */
+const PESOS_PUNTUACION = { evol: 30, ent: 20, nut: 20, cons: 20, mot: 5, est: 5 };
+function limitar(v){ return Math.max(0, Math.min(1, v)); }
+function numDe(v){ const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(n) ? null : n; }
+function constancia(dias){
+  if (dias == null) return null;
+  if (dias <= 7) return 1;
+  if (dias <= 14) return 1 - (dias - 7) / 7 * 0.7;          // de 1 a 0,3
+  return limitar(0.3 - (dias - 14) / 7 * 0.3);              // de 0,3 a 0
+}
+/* evolución entre dos seguimientos según el objetivo (0 a 1) */
+function evolucion(objetivo, r, prev){
+  if (!r || !prev || !r.med || !prev.med) return null;
+  const dP = (r.med.peso != null && prev.med.peso != null) ? r.med.peso - prev.med.peso : null;
+  const dC = (r.med.cintura != null && prev.med.cintura != null) ? r.med.cintura - prev.med.cintura : null;
+  if (dP == null && dC == null) return null;
+  const o = norm(objetivo || '');
+  const mezcla = function(c, pc, p, pp){
+    if (c == null) return p; if (p == null) return c;
+    return c * pc + p * pp;
+  };
+  const cintBaja = dC == null ? null : limitar(0.5 - dC * 0.5);            // −1 cm → 1 · 0 → 0,5 · +1 cm → 0
+  const cintEstable = dC == null ? null : (dC <= 0.5 ? 1 : limitar(1 - (dC - 0.5)));   // hasta +0,5 cm, perfecto
+  const pesoEstable = dP == null ? null : limitar(1 - Math.abs(dP) / 1.5);
+  if (o.indexOf('perder') === 0) {                         // manda la cintura
+    const pesoBaja = dP == null ? null : limitar(0.5 - dP / 1.6);
+    return mezcla(cintBaja, 0.7, pesoBaja, 0.3);
+  }
+  if (o.indexOf('ganar') === 0) {                          // volumen: sube el peso y la cintura se mantiene
+    const pesoSube = dP == null ? null : limitar((dP + 0.5) / 0.8);         // −0,5 kg → 0 · +0,3 kg o más → 1
+    if (pesoSube == null) return cintEstable;
+    if (cintEstable == null) return pesoSube;
+    return pesoSube * (0.5 + 0.5 * cintEstable);
+  }
+  if (o.indexOf('recomp') === 0) return mezcla(cintBaja, 0.7, pesoEstable, 0.3);
+  return mezcla(cintEstable, 0.5, pesoEstable, 0.5);       // mantenimiento u otro
+}
+/* puntuación en un seguimiento concreto (i = 0 el último) */
+function puntuacionCliente(k, i){
+  i = i || 0;
+  const d = clientesData[k];
+  const segs = SEGUIMIENTOS[k] || [];
+  const r = segs[i];
+  if (!d || !r) return null;
+  const dias = i === 0 ? diasDesde(r.fecha)
+                       : Math.floor((new Date(segs[i - 1].fecha).getTime() - new Date(r.fecha).getTime()) / DIA_MS);
+  const e = numDe(r.e), n = numDe(r.n), m = numDe(r.m), x = numDe(r.x);
+  const partes = {
+    evol: evolucion(d.objetivo, r, segs[i + 1]),
+    ent: e == null ? null : limitar(e / 10),
+    nut: n == null ? null : limitar(n / 10),
+    cons: constancia(dias),
+    mot: m == null ? null : limitar(m / 5),
+    est: x == null ? null : limitar(1 - x / 10)
+  };
+  let suma = 0, pesos = 0;
+  Object.keys(PESOS_PUNTUACION).forEach(function(c){
+    if (partes[c] == null) return;
+    suma += partes[c] * PESOS_PUNTUACION[c]; pesos += PESOS_PUNTUACION[c];
+  });
+  if (!pesos) return null;
+  return { total: Math.round(suma / pesos * 100), partes: partes };
+}
+function nivelPuntuacion(p){ return p < 35 ? 1 : (p < 55 ? 2 : (p < 70 ? 3 : (p < 85 ? 4 : 5))); }
+
+/* tarjetas de la pestaña Clientes con los datos que importan */
+pintarListaClientes = (function(orig){
+  return function(){
+    orig();
+    const cont = document.getElementById('listaClientes');
+    if (!cont) return;
+    const rol = coachActivo ? coachActivo.rol : null;
+    const pend = coachActivo ? sinLeerDe(clavePro(coachActivo.u)) : {};
+    const claves = Object.keys(clientesData);
+    Array.prototype.forEach.call(cont.querySelectorAll('.cliente-card'), function(card, idx){
+      const k = claves[idx];
+      if (!k) return;
+      const segs = SEGUIMIENTOS[k] || [];
+      const r = segs[0];
+      const p = puntuacionCliente(k, 0);
+      const pAnt = puntuacionCliente(k, 1);
+      let flecha = '';
+      if (p && pAnt) { const df = p.total - pAnt.total; flecha = df >= 3 ? '↑' : (df <= -3 ? '↓' : '='); }
+      const msgs = pend[k] || 0;
+      const celda = function(cls, lbl, val, extra){ return '<div class="kc ' + cls + '"><span class="kc-l">' + lbl + '</span><span class="kc-v">' + val + (extra || '') + '</span></div>'; };
+      const ent = r && numDe(r.e) != null ? esc(r.e) + '<small>/10</small>' : '—';
+      const nut = r && numDe(r.n) != null ? esc(r.n) + '<small>/10</small>' : '—';
+      const punt = p
+        ? '<div class="kc kc-punt v-n' + nivelPuntuacion(p.total) + '"><span class="kc-l">Global</span><span class="kc-v"><b class="v' + nivelPuntuacion(p.total) + '">' + p.total + '</b><small>/100</small>' + (flecha ? ' <i title="Frente al seguimiento anterior">' + flecha + '</i>' : '') + '</span></div>'
+        : '<div class="kc kc-punt"><span class="kc-l">Global</span><span class="kc-v">—</span></div>';
+      const grid = punt
+        + celda('kc-ent' + (rol === 'entrenador' ? ' dest' : ''), 'Entreno', ent)
+        + celda('kc-nut' + (rol === 'dietista' ? ' dest' : ''), 'Nutrición', nut)
+        + celda('kc-msgs' + (msgs ? ' hay' : ''), 'Mensajes', msgs ? '<b>' + msgs + '</b><small> sin leer</small>' : '0');
+      const g = card.querySelector('.kc-grid');
+      if (g) g.innerHTML = grid;
+      const pie = card.querySelector('.kc-pie');
+      if (pie) pie.innerHTML = '<span>📋 Último seguimiento: ' + (r ? haceTxt(diasDesde(r.fecha)) : 'ninguno') + '</span>'
+        + (p && p.partes.evol != null ? '<span class="kc-evo">Evolución ' + Math.round(p.partes.evol * 100) + '/100</span>' : '');
+    });
+  };
+})(pintarListaClientes);
+actualizarPanel();
