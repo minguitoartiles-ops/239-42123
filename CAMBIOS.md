@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.49.4 (actual)
-Cambios acumulados hacia la 0.50: **9 de 10** (0.49.1 tras el 2.º, 0.49.2 tras el 4.º, 0.49.3 tras el 6.º, 0.49.4 tras el 8.º)
+## Versión 0.50 (actual)
+Cambios acumulados hacia la 0.51: **0 de 10**
+
+## Versión 0.49 → 0.49.4
 
 ### Hacia la 0.50
 1. 19/10/2026 23:35 · Capa de la campana y selectores sin las esquinas del antiguo marco
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.50: **9 de 10** (0.49.1 tras el 2.º, 0.49.2 tras 
 7. 19/10/2026 23:45 · Espacio del profesional con barra inferior: Clientes · Seguimientos · Ajustes
 8. 19/10/2026 23:45 · Pestaña Seguimientos: resumen por cliente (pendientes primero, datos con flechas, obstáculos)
 9. 19/10/2026 23:45 · Pestaña Ajustes del profesional; fuera el botón y la fila duplicados del panel
+10. 19/10/2026 23:40 · Corregido: el formulario de alta conservaba los datos del cliente anterior → **sube a la 0.50**
 
 ## Versión 0.48 → 0.48.4
 
