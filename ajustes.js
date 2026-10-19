@@ -223,7 +223,8 @@ function descargarCopiaCompleta(){
   guardarTodo();
   entregarArchivo('fitness-sin-dramas-copia-' + hoyISO() + '.json', {
     app: 'fitness-sin-dramas', tipo: 'completa', version: APP_VERSION, creada: new Date().toISOString(),
-    datos: { v: 1, clientes: clientesData, seg: SEGUIMIENTOS, planes: PLANES, notis: notisCoach, sesion: null }
+    datos: { v: 1, clientes: clientesData, seg: SEGUIMIENTOS, planes: PLANES, notis: notisCoach, sesion: null,
+             fotos: (typeof leerFotosCoach === 'function' ? leerFotosCoach() : {}) }
   });
 }
 function descargarMisDatos(){
@@ -261,6 +262,8 @@ function restaurarCopia(inp){
         fsdBloqueoGuardado = true;
         try {
           o.datos.sesion = null;
+          if (o.datos.fotos) localStorage.setItem('fsd_fotos', JSON.stringify(o.datos.fotos));
+          delete o.datos.fotos;
           localStorage.setItem(DB_KEY, JSON.stringify(o.datos));
         } catch(e){
           fsdBloqueoGuardado = false;
@@ -379,6 +382,7 @@ function htmlAjustes(rol){
 
   /* --- Cuenta --- */
   h += '<div class="section-lbl">Cuenta</div><div class="list-group">';
+  if (typeof filaFoto === 'function') h += filaFoto(rol);
   if (cliente) {
     h += fila('Nombre', val(d && d.nombre));
     h += fila('Correo', val(d && d.email));
@@ -399,13 +403,6 @@ function htmlAjustes(rol){
     h += fila('Usuario', val(c && c.u));
     h += fila('Rol', val(c && (c.rol === 'dietista' ? 'Dietista' : 'Entrenador')));
     h += fila('Correo', val(c && c.mail ? maskMail(c.mail) : '—'));
-    if (c && esConfiable(c.u)) {
-      const dias = Math.max(1, Math.ceil((trustRead()[norm(c.u)] - Date.now()) / 86400000));
-      h += '<div class="list-row" style="cursor:default"><span>Dispositivo de confianza</span><span class="ajx-acts">'
-        + pill(dias + ' días', true) + '<button class="mini-btn" onclick="desvincularDesdeAjustes()">Desvincular</button></span></div>';
-    } else {
-      h += fila('Dispositivo de confianza', pill('No'));
-    }
     h += fila('Cambiar contraseña', chev(), 'infoContrasena()');
   }
   h += '</div>';
@@ -505,7 +502,7 @@ const LEGAL_PRIVACIDAD =
 + '<h4>1. Quién trata tus datos</h4>'
 + '<p>Responsable: Fitness sin Dramas, ' + PH('nombre y apellidos o razón social') + ', NIF ' + PH('NIF') + ', con domicilio en ' + PH('dirección postal') + '. Contacto: ' + PH('correo de contacto') + '.</p>'
 + '<h4>2. Qué datos tratamos</h4>'
-+ '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono y código de acceso.</li>'
++ '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono, código de acceso y, si la añades, tu foto de perfil.</li>'
 + '<li><b>Datos de salud y físicos:</b> peso, altura, medidas, fotos de progreso, alimentación, alergias e intolerancias, entrenamiento, descanso, estrés, sensaciones y adherencia.</li>'
 + '<li><b>Mensajes</b> que intercambias con tu equipo en el chat.</li>'
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
@@ -546,6 +543,7 @@ const LEGAL_COOKIES =
 + '<div class="legal-tabla"><table><thead><tr><th>Nombre</th><th>Tipo</th><th>Para qué</th><th>Duración</th></tr></thead><tbody>'
 + '<tr><td>fsd_datos_v1</td><td>Técnica</td><td>Guardar tus planes, seguimientos y mensajes en el dispositivo</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_dispositivos_confianza</td><td>Técnica</td><td>Recordar los dispositivos de confianza de los profesionales (verificación en dos pasos)</td><td>30 días</td></tr>'
++ '<tr><td>fsd_fotos</td><td>Técnica</td><td>Guardar la foto de perfil de los profesionales en el dispositivo</td><td>Hasta que la quites</td></tr>'
 + '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
 + '<tr><td>fsd_tema</td><td>Preferencias</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
