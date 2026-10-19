@@ -721,3 +721,193 @@ atrasDentroApp = (function(orig){
     return true;
   };
 })(atrasDentroApp);
+
+/* =========================================================
+   v0.51 · Alergias e intolerancias alimentarias
+   Lista: 14 alérgenos de declaración obligatoria (Reglamento UE 1169/2011, anexo II),
+   otras alergias frecuentes en España (SEAIC) e intolerancias habituales.
+   Se guarda en clientesData[k].alergias = { items: { id: 'diag'|'sosp'|'' }, ninguna, otras, fecha }
+   ========================================================= */
+TIPOS_PRO.push({ id: 'alergias', ico: '⚠️', nombre: 'Alergias e intolerancias', desc: 'Cuando un cliente rellena o cambia sus alergias' });
+const ALERGIAS = [
+  { grupo: 'Alérgenos de declaración obligatoria (UE)', items: [
+    ['gluten', 'Cereales con gluten', 'trigo, centeno, cebada, avena, espelta, kamut'],
+    ['crustaceos', 'Crustáceos', 'gamba, langostino, cangrejo, bogavante…'],
+    ['huevo', 'Huevo', ''],
+    ['pescado', 'Pescado', ''],
+    ['cacahuete', 'Cacahuete', ''],
+    ['soja', 'Soja', ''],
+    ['leche', 'Leche (proteína de leche)', 'alergia a la leche; la lactosa va en intolerancias'],
+    ['frutoscascara', 'Frutos de cáscara', 'almendra, avellana, nuez, anacardo, pistacho, nuez de Brasil, pacana, macadamia'],
+    ['apio', 'Apio', ''],
+    ['mostaza', 'Mostaza', ''],
+    ['sesamo', 'Sésamo', ''],
+    ['sulfitos', 'Sulfitos', 'vino, frutos secos desecados, algunos embutidos y conservas'],
+    ['altramuz', 'Altramuz', ''],
+    ['moluscos', 'Moluscos', 'mejillón, almeja, calamar, pulpo, caracol…']
+  ]},
+  { grupo: 'Otras alergias frecuentes en España', items: [
+    ['rosaceas', 'Frutas rosáceas / proteína LTP', 'melocotón, manzana, pera, cereza, ciruela, albaricoque…'],
+    ['kiwi', 'Kiwi', ''],
+    ['legumbres', 'Legumbres', 'lenteja, garbanzo, guisante, judía'],
+    ['anisakis', 'Anisakis', 'parásito del pescado'],
+    ['latexfrutas', 'Síndrome látex-frutas', 'plátano, aguacate, castaña, kiwi'],
+    ['semillas', 'Otras semillas', 'pipas de girasol, lino, chía, amapola…']
+  ]},
+  { grupo: 'Intolerancias y otras', items: [
+    ['celiaquia', 'Celiaquía (enfermedad celíaca)', ''],
+    ['sgnc', 'Sensibilidad al gluten no celíaca', ''],
+    ['lactosa', 'Intolerancia a la lactosa', ''],
+    ['fructosa', 'Malabsorción de fructosa o sorbitol', ''],
+    ['histamina', 'Intolerancia a la histamina', '']
+  ]}
+];
+function nombreAlergia(id){ for (const g of ALERGIAS) for (const it of g.items) if (it[0] === id) return it[1]; return id; }
+function alergiasDe(k){ const d = clientesData[k]; return (d && d.alergias) || null; }
+function resumenAlergias(a){
+  if (!a || !a.fecha) return { txt: 'Sin rellenar', ok: false, n: 0 };
+  const n = Object.keys(a.items || {}).length;
+  if (a.ninguna && !n && !a.otras) return { txt: 'Ninguna', ok: true, n: 0 };
+  if (!n) return { txt: 'Ver nota', ok: false, n: 1 };
+  return { txt: n + (n === 1 ? ' marcada' : ' marcadas'), ok: false, n: n };
+}
+let alergBorrador = null;
+function hojaAlergias(){
+  let o = document.getElementById('alergiasSheet');
+  if (!o) {
+    o = document.createElement('div');
+    o.className = 'fsd-overlay'; o.id = 'alergiasSheet';
+    o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-labelledby', 'algTit');
+    const ref = document.getElementById('consentSalud');            // junto a las demás ventanas (mismos colores y tema)
+    ref.parentNode.insertBefore(o, ref.nextSibling);
+  }
+  return o;
+}
+function abrirAlergias(){
+  const k = clienteActual;
+  if (!k || !clientesData[k]) return;
+  const a = alergiasDe(k) || {};
+  alergBorrador = { items: Object.assign({}, a.items || {}), ninguna: !!a.ninguna, otras: a.otras || '' };
+  pintarHojaAlergias();
+  hojaAlergias().classList.add('show');
+}
+function cerrarAlergias(){ hojaAlergias().classList.remove('show'); alergBorrador = null; }
+function pintarHojaAlergias(){
+  const b = alergBorrador, o = hojaAlergias();
+  let h = '<div class="fsd-sheet full alg-sheet"><div class="sheet-head"><h3 id="algTit">Alergias e intolerancias</h3><button class="x-btn" onclick="cerrarAlergias()" aria-label="Cerrar">×</button></div>'
+    + '<p class="alg-intro">Marca lo que te afecte. Fátima lo tendrá delante al preparar tu dieta. Si no estás seguro, márcalo como «sospecha».</p>'
+    + '<label class="chk-row alg-ninguna"><input type="checkbox"' + (b.ninguna ? ' checked' : '') + ' onchange="algNinguna(this.checked)"><span><b>No tengo ninguna alergia ni intolerancia alimentaria</b></span></label>';
+  ALERGIAS.forEach(function(g){
+    h += '<div class="section-lbl">' + esc(g.grupo) + '</div><div class="alg-grupo">';
+    g.items.forEach(function(it){
+      const on = it[0] in b.items, est = b.items[it[0]] || '';
+      h += '<div class="alg-item' + (on ? ' on' : '') + '">'
+        + '<label class="chk-row"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="algMarcar(\'' + it[0] + '\', this.checked)"><span>' + esc(it[1]) + (it[2] ? '<i class="opc">' + esc(it[2]) + '</i>' : '') + '</span></label>'
+        + (on ? '<div class="alg-est" role="radiogroup" aria-label="¿Está diagnosticada?">'
+          + '<button type="button" role="radio" aria-checked="' + (est === 'diag') + '" class="' + (est === 'diag' ? 'on' : '') + '" onclick="algEstado(\'' + it[0] + '\',\'diag\')">Diagnosticada por un médico</button>'
+          + '<button type="button" role="radio" aria-checked="' + (est === 'sosp') + '" class="' + (est === 'sosp' ? 'on' : '') + '" onclick="algEstado(\'' + it[0] + '\',\'sosp\')">Solo sospecha</button></div>' : '')
+        + '</div>';
+    });
+    h += '</div>';
+  });
+  h += '<div class="section-lbl">Otras o detalles</div>'
+    + '<textarea class="sg-text" id="algOtras" rows="3" placeholder="Por ejemplo: solo me pasa con el melocotón con piel; reacciono a la merluza pero no al atún…" oninput="alergBorrador.otras=this.value">' + esc(b.otras) + '</textarea>'
+    + '<p class="alg-nota">Esto no sustituye un diagnóstico médico. Si tienes síntomas, consulta con un alergólogo.</p>'
+    + '<button class="btn-primary" onclick="guardarAlergias()">Guardar</button></div>';
+  const y = o.querySelector('.fsd-sheet') ? o.querySelector('.fsd-sheet').scrollTop : 0;
+  o.innerHTML = h;
+  o.querySelector('.fsd-sheet').scrollTop = y;
+}
+function algMarcar(id, on){
+  if (on) { alergBorrador.items[id] = ''; alergBorrador.ninguna = false; }
+  else delete alergBorrador.items[id];
+  pintarHojaAlergias();
+}
+function algEstado(id, est){ alergBorrador.items[id] = est; pintarHojaAlergias(); }
+function algNinguna(on){
+  alergBorrador.ninguna = on;
+  if (on) alergBorrador.items = {};
+  pintarHojaAlergias();
+}
+function guardarAlergias(){
+  const k = clienteActual, d = clientesData[k], b = alergBorrador;
+  if (!d || !b) return;
+  b.otras = (document.getElementById('algOtras').value || '').trim().slice(0, 800);
+  const n = Object.keys(b.items).length;
+  if (!n && !b.ninguna && !b.otras) { toast('Marca al menos una opción o «No tengo ninguna».'); return; }
+  const antes = d.alergias;
+  d.alergias = { items: b.items, ninguna: b.ninguna && !n && !b.otras, otras: b.otras, fecha: new Date().toISOString() };
+  guardarTodo();
+  cerrarAlergias();
+  pintarPerfilAlergias();
+  toast('Guardado. Fátima lo verá al preparar tu dieta.');
+  const fat = COACHES.filter(function(c){ return c.rol === 'dietista'; })[0];
+  if (fat) {
+    const lista = Object.keys(d.alergias.items).map(nombreAlergia);
+    const txt = d.alergias.ninguna ? 'Sin alergias ni intolerancias' : (lista.join(', ') + (d.alergias.otras ? (lista.length ? ' · ' : '') + d.alergias.otras : ''));
+    crearAviso(clavePro(fat.u), 'alergias', d.nombre + (antes && antes.fecha ? ' ha cambiado sus alergias' : ' ha indicado sus alergias'), recortar(txt, 120), { cliente: k, vista: 'ficha' });
+  }
+}
+function pintarPerfilAlergias(){
+  const el = document.getElementById('perfAlergias');
+  if (!el || !clienteActual) return;
+  const r = resumenAlergias(alergiasDe(clienteActual));
+  el.textContent = r.txt;
+  el.className = 'pill' + (r.ok ? ' ok' : '') + (r.n ? ' alg-hay' : '');
+}
+/* texto para el profesional: diagnosticadas primero */
+function htmlAlergiasPro(k, compacto){
+  const a = alergiasDe(k);
+  if (!a || !a.fecha) return '<span class="alg-vacio">El cliente aún no ha rellenado sus alergias e intolerancias.</span>';
+  if (a.ninguna) return '<span class="alg-vacio">Sin alergias ni intolerancias (indicado el ' + fechaCorta(a.fecha) + ').</span>';
+  const orden = { diag: 0, '': 1, sosp: 2 };
+  const ids = Object.keys(a.items).sort(function(x, y){ return orden[a.items[x]] - orden[a.items[y]]; });
+  const chips = ids.map(function(id){
+    const e = a.items[id];
+    return '<span class="alg-chip ' + (e || 'sin') + '">' + esc(nombreAlergia(id)) + '<small>' + (e === 'diag' ? 'diagnosticada' : (e === 'sosp' ? 'sospecha' : 'sin indicar')) + '</small></span>';
+  }).join('');
+  return '<div class="alg-chips">' + chips + '</div>' + (a.otras ? '<div class="alg-otras">«' + esc(a.otras) + '»</div>' : '')
+    + (compacto ? '' : '<div class="alg-fecha">Actualizado el ' + fechaCorta(a.fecha) + '</div>');
+}
+/* ficha del cliente */
+function pintarAlergiasFicha(){
+  const k = clienteActual, d = clientesData[k];
+  const v = document.getElementById('view-coach-cliente');
+  if (!d || !v) return;
+  let row = document.getElementById('fichaAlergias');
+  if (!row) {
+    const ref = document.getElementById('fichaImagen') || (document.getElementById('fichaCodigo') || {}).closest && document.getElementById('fichaCodigo').closest('.list-row');
+    if (!ref) return;
+    row = document.createElement('div');
+    row.id = 'fichaAlergias'; row.className = 'list-row';
+    row.onclick = function(){ abrirDialogo({ titulo: 'Alergias de ' + clientesData[clienteActual].nombre, texto: '', ok: 'Entendido', soloOk: true }); document.getElementById('dlgTexto').innerHTML = htmlAlergiasPro(clienteActual); };
+    ref.parentNode.insertBefore(row, ref.nextSibling);
+  }
+  const r = resumenAlergias(alergiasDe(k));
+  const hayDiag = d.alergias && d.alergias.items && Object.keys(d.alergias.items).some(function(x){ return d.alergias.items[x] === 'diag'; });
+  row.innerHTML = '<span>Alergias e intolerancias</span><span class="ajx-acts"><span class="pill' + (r.ok ? ' ok' : '') + (hayDiag ? ' alg-diag' : (r.n ? ' alg-hay' : '')) + '">' + esc(r.txt) + '</span><span class="chev">›</span></span>';
+}
+/* plan nutricional visto o editado por el profesional: aviso fijo arriba */
+function pintarAlergiasPlan(){
+  const v = document.getElementById('view-plan');
+  if (!v) return;
+  let box = document.getElementById('planAlergias');
+  if (!isCoachView() || !clienteActual) { if (box) box.hidden = true; return; }
+  if (!box) {
+    box = document.createElement('div'); box.id = 'planAlergias'; box.className = 'alg-banner';
+    const top = v.querySelector('.view-top');
+    top.parentNode.insertBefore(box, top.nextSibling);
+  }
+  box.hidden = false;
+  box.innerHTML = '<div class="alg-banner-t">⚠️ Alergias e intolerancias</div>' + htmlAlergiasPro(clienteActual, true);
+}
+goTo = (function(orig){
+  return function(n, s){ orig(n, s); if (n === 'perfil') pintarPerfilAlergias(); if (n === 'plan') pintarAlergiasPlan(); };
+})(goTo);
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarAlergiasFicha(); if (id === 'app') { pintarAlergiasPlan(); pintarPerfilAlergias(); } };
+})();
+atrasDentroApp = (function(orig){
+  return function(){ if (capaVisible('alergiasSheet')) { cerrarAlergias(); return true; } return orig(); };
+})(atrasDentroApp);
