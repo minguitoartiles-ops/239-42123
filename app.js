@@ -1493,7 +1493,7 @@ function syncChatPerspective(){
   const coach=isCoachView();
   const name=document.getElementById('coachBarName').textContent.trim();
   document.getElementById('chatTitle').textContent=coach?name:'Tu equipo';
-  document.getElementById('chatSub').textContent=coach?'Conversación conjunta con Fátima e Domingo':'Fátima y Domingo, en la misma conversación';
+  document.getElementById('chatSub').textContent=coach?'Conversación conjunta con Fátima y Domingo':'Fátima y Domingo, en la misma conversación';
   document.getElementById('chatInput').placeholder=coach?('Escribe a '+name.split(' ')[0]+'…'):'Escribe a tu equipo…';
 }
 function coachBarVisible(){ return document.getElementById('coachBar').classList.contains('show'); }
