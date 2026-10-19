@@ -692,3 +692,22 @@ pintarListaClientes = function(){
   }).join('');
 };
 actualizarPanel();
+
+/* =========================================================
+   v0.46 · Atrás blindado: nunca mostrar una copia antigua de la app
+   ========================================================= */
+/* Si el móvil restaura una copia congelada de la app (caché de atrás/adelante),
+   se recarga para arrancar con el estado real; así nunca reaparece el perfil
+   de un cliente que se estaba viendo en una versión anterior de la página. */
+window.addEventListener('pageshow', function(e){
+  if (e.persisted) location.reload();
+});
+/* Protección del atrás activa desde el arranque, no solo tras el primer toque */
+armarAtras();
+/* La sesión del cliente se guarda en cuanto entra con su código */
+enterApp = (function(orig){
+  return function(){
+    orig();
+    if (window.fsdSesionCliente && clienteActual) guardarTodo();
+  };
+})(enterApp);
