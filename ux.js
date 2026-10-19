@@ -48,7 +48,7 @@ guardarSeguimiento = (function(orig){
         x: document.getElementById('rEstres').textContent,
         agujetas: leerEscala(sec, 0) || '—',
         prog: txt[0] ? txt[0].value.trim() : '',
-        obs: txt[3] ? txt[3].value.trim() : '',
+        obs: txt[2] ? txt[2].value.trim() : '',
         med: med
       });
       programarGuardado();
@@ -1334,7 +1334,6 @@ goToAlta = (function(orig){
 /* =========================================================
    v0.50.2 · Seguimiento: lo del seguimiento anterior, difuminado de fondo
    ========================================================= */
-const SG_ESCALAS = ['agujetas', 'motiv'];
 const SG_RANGOS = [['rEntreno', 'e', 8], ['rNutri', 'n', 8], ['rEstres', 'x', 3]];
 function sgAnterior(){
   const lista = (clienteActual && SEGUIMIENTOS[clienteActual]) || [];
@@ -1400,10 +1399,12 @@ function vaciarSeguimiento(){
   if (!sec) return;
   Array.prototype.forEach.call(sec.querySelectorAll('.sg-text, .row2col input'), function(el){ el.value = ''; });
   const filas = sec.querySelectorAll('.esc-row');
-  SG_ESCALAS.forEach(function(g, i){
-    const b = filas[i] && filas[i].querySelector('.esc-btn');
-    if (b) setEscala(b, g, 1);
-  });
+  // agujetas vuelve a 1; la motivación queda sin elegir (que la marque el cliente)
+  const b0 = filas[0] && filas[0].querySelector('.esc-btn');
+  if (b0) setEscala(b0, 'agujetas', 1);
+  if (filas[1]) Array.prototype.forEach.call(filas[1].querySelectorAll('.esc-btn'), function(b){ b.classList.remove('on'); });
+  const md = document.getElementById('motivDesc');
+  if (md) { md.textContent = 'Toca un número para elegir tu grado de motivación.'; md.classList.add('sin-elegir'); }
   SG_RANGOS.forEach(function(g){
     const out = document.getElementById(g[0]);
     const inp = out && out.parentElement.querySelector('input[type=range]');
@@ -1580,3 +1581,198 @@ recUI = (function(orig){
 goTo = (function(orig){
   return function(n, s){ if (n !== 'chat' && vozG.estado !== 'libre') terminarGrabacion(false); orig(n, s); };
 })(goTo);
+
+/* =========================================================
+   v0.50.4 · Seguimiento: la motivación hay que elegirla (antes venía marcada en 1)
+   ========================================================= */
+setEscala = (function(orig){
+  return function(btn, grupo, n){ orig(btn, grupo, n); const d = document.getElementById(grupo + 'Desc'); if (d) d.classList.remove('sin-elegir'); };
+})(setEscala);
+guardarSeguimiento = (function(orig){
+  return function(){
+    const sec = document.getElementById('view-seguimiento');
+    const filas = sec.querySelectorAll('.esc-row');
+    if (filas[1] && !filas[1].querySelector('.esc-btn.on')) {
+      toast('Elige tu grado de motivación antes de enviar.');
+      filas[1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      filas[1].classList.remove('falta'); void filas[1].offsetWidth; filas[1].classList.add('falta');
+      return;
+    }
+    orig();
+  };
+})(guardarSeguimiento);
+
+/* =========================================================
+   v0.50.5 · Notas de voz: formato según el móvil, ondas que siguen el audio,
+   tocar para saltar y velocidad x1 · x1,2 · x1,5 · x2
+   ========================================================= */
+/* iPhone graba y reproduce mp4; Android (Chrome) se lleva mejor con webm/opus */
+formatoAudio = function(){
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  const opciones = esIOS
+    ? ['audio/mp4', 'audio/aac', 'audio/webm;codecs=opus', 'audio/webm']
+    : ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+  for (let i = 0; i < opciones.length; i++) if (MediaRecorder.isTypeSupported(opciones[i])) return opciones[i];
+  return '';
+};
+const VELOCIDADES = [1, 1.2, 1.5, 2];
+let velAudio = 1;
+try { const v = parseFloat(localStorage.getItem('fsd_audio_vel')); if (VELOCIDADES.indexOf(v) > -1) velAudio = v; } catch(e){}
+function txtVel(v){ return 'x' + String(v).replace('.', ','); }
+function segsDeTexto(t){ const p = String(t || '').split(':'); return p.length === 2 ? (+p[0]) * 60 + (+p[1]) : 0; }
+function audioDe(w){ return w.querySelector('audio'); }
+function duracionAudio(w){
+  const a = audioDe(w);
+  if (a && isFinite(a.duration) && a.duration > 0) return a.duration;
+  return parseFloat(w.dataset.dur) || 0;   // webm de Android a veces no trae la duración
+}
+/* añade el botón de velocidad y el punto de avance a cada nota de voz (no se guardan) */
+function prepararAudios(){
+  const list = document.getElementById('chatList');
+  if (!list) return;
+  Array.prototype.forEach.call(list.querySelectorAll('.audio-b'), function(w){
+    const d = w.querySelector('.audio-dur');
+    if (!w.dataset.dur && d) w.dataset.dur = segsDeTexto(d.textContent);
+    const wave = w.querySelector('.wave');
+    if (wave && !wave.querySelector('.wave-dot')) {
+      const dot = document.createElement('b'); dot.className = 'wave-dot'; wave.appendChild(dot);
+      wave.setAttribute('role', 'slider'); wave.setAttribute('aria-label', 'Avance de la nota de voz');
+    }
+    if (!w.querySelector('.audio-vel')) {
+      const v = document.createElement('button');
+      v.type = 'button'; v.className = 'audio-vel'; v.setAttribute('aria-label', 'Velocidad de reproducción');
+      v.textContent = txtVel(velAudio);
+      w.appendChild(v);
+    }
+    if (!audioDe(w)) w.classList.add('sin-audio');
+  });
+}
+function pintarAvance(w, t){
+  const tot = duracionAudio(w);
+  const f = tot ? Math.max(0, Math.min(1, t / tot)) : 0;
+  const barras = w.querySelectorAll('.wave i');
+  const n = Math.round(f * barras.length);
+  Array.prototype.forEach.call(barras, function(b, i){ b.classList.toggle('on', i < n); });
+  const dot = w.querySelector('.wave-dot');
+  if (dot) dot.style.left = (f * 100) + '%';
+  const d = w.querySelector('.audio-dur');
+  if (d) d.textContent = (t > 0 || w.classList.contains('sonando')) ? fmtDur(Math.floor(t)) : fmtDur(Math.round(tot));
+  const wave = w.querySelector('.wave');
+  if (wave) wave.setAttribute('aria-valuenow', Math.round(f * 100));
+}
+let audioActual = null, audioRaf = null;
+function seguirAudio(){
+  if (!audioActual) return;
+  const a = audioDe(audioActual);
+  if (a) pintarAvance(audioActual, a.currentTime);
+  audioRaf = requestAnimationFrame(seguirAudio);
+}
+function pararOtros(w){
+  Array.prototype.forEach.call(document.querySelectorAll('#chatList .audio-b.sonando'), function(o){
+    if (o === w) return;
+    const a = audioDe(o); if (a) a.pause();
+  });
+}
+function errorAudio(a){
+  const e = a && a.error;
+  if (e && e.code === 4) toast('Este móvil no puede reproducir esta nota de voz (formato no compatible).');
+  else toast('No se ha podido reproducir la nota de voz. Revisa el volumen multimedia y vuelve a intentarlo.');
+}
+function enlazarAudio(w){
+  const a = audioDe(w);
+  if (!a || a.dataset.enlazado) return a;
+  a.dataset.enlazado = '1';
+  const btn = w.querySelector('.audio-play');
+  a.addEventListener('play', function(){
+    w.classList.add('sonando'); if (btn) btn.textContent = '❚❚';
+    audioActual = w; cancelAnimationFrame(audioRaf); seguirAudio();
+  });
+  a.addEventListener('pause', function(){
+    w.classList.remove('sonando'); if (btn) btn.textContent = '▶';
+    if (audioActual === w) { cancelAnimationFrame(audioRaf); audioActual = null; }
+    pintarAvance(w, a.currentTime);
+  });
+  a.addEventListener('ended', function(){
+    a.currentTime = 0; w.classList.remove('sonando'); if (btn) btn.textContent = '▶'; pintarAvance(w, 0);
+  });
+  a.addEventListener('error', function(){ errorAudio(a); });
+  a.addEventListener('loadedmetadata', function(){ if (!a.currentTime) pintarAvance(w, 0); });
+  return a;
+}
+reproducirAudio = function(btn){
+  const w = btn.closest('.audio-b');
+  const a = w && enlazarAudio(w);
+  if (!a) { toast('Esta nota de voz no se guardó (se grabó en una versión de prueba).'); return; }
+  if (!a.paused) { a.pause(); return; }
+  pararOtros(w);
+  a.playbackRate = velAudio;
+  const p = a.play();
+  if (p && p.catch) p.catch(function(err){ if (err && err.name !== 'AbortError') errorAudio(a); });
+};
+(function(){
+  const list = document.getElementById('chatList');
+  if (!list) return;
+  // tocar o arrastrar sobre las ondas: salta a ese momento
+  let arrastre = null;
+  const saltar = function(e){
+    const w = arrastre; if (!w) return;
+    const wave = w.querySelector('.wave'), a = enlazarAudio(w);
+    if (!wave || !a) return;
+    const r = wave.getBoundingClientRect();
+    const f = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const t = f * duracionAudio(w);
+    try { a.currentTime = t; } catch(err){}
+    pintarAvance(w, t);
+    w.classList.add('buscando');
+  };
+  list.addEventListener('pointerdown', function(e){
+    const wave = e.target.closest('.audio-b .wave');
+    if (!wave) return;
+    e.preventDefault();
+    arrastre = wave.closest('.audio-b');
+    try { wave.setPointerCapture(e.pointerId); } catch(err){}
+    saltar(e);
+  });
+  list.addEventListener('pointermove', function(e){ if (arrastre) saltar(e); });
+  const fin = function(){
+    if (!arrastre) return;
+    const w = arrastre; arrastre = null;
+    setTimeout(function(){ w.classList.remove('buscando'); }, 900);
+  };
+  list.addEventListener('pointerup', fin);
+  list.addEventListener('pointercancel', fin);
+  // botón de velocidad: x1 → x1,2 → x1,5 → x2 → x1 (se recuerda en este móvil)
+  list.addEventListener('click', function(e){
+    const b = e.target.closest('.audio-vel');
+    if (!b) return;
+    velAudio = VELOCIDADES[(VELOCIDADES.indexOf(velAudio) + 1) % VELOCIDADES.length];
+    try { localStorage.setItem('fsd_audio_vel', String(velAudio)); } catch(err){}
+    Array.prototype.forEach.call(document.querySelectorAll('#chatList .audio-vel'), function(x){ x.textContent = txtVel(velAudio); });
+    Array.prototype.forEach.call(document.querySelectorAll('#chatList audio'), function(a){ a.playbackRate = velAudio; });
+  });
+})();
+decorarChat = (function(orig){
+  return function(){ orig(); prepararAudios(); };
+})(decorarChat);
+guardarChat = (function(orig){
+  return function(){
+    const l = document.getElementById('chatList');
+    if (!l || !clienteActual) return orig();
+    // se guarda la nota tal cual se grabó: sin botón de velocidad, sin avance y con su duración
+    orig();
+    const tmp = document.createElement('div');
+    tmp.innerHTML = PLANES[clienteActual].chat || '';
+    Array.prototype.forEach.call(tmp.querySelectorAll('.audio-vel, .wave-dot'), function(x){ x.remove(); });
+    Array.prototype.forEach.call(tmp.querySelectorAll('.audio-b'), function(w){
+      w.classList.remove('sonando', 'buscando', 'sin-audio');
+      Array.prototype.forEach.call(w.querySelectorAll('.wave i.on'), function(i){ i.classList.remove('on'); });
+      const wave = w.querySelector('.wave');
+      if (wave) { wave.removeAttribute('role'); wave.removeAttribute('aria-label'); wave.removeAttribute('aria-valuenow'); }
+      const btn = w.querySelector('.audio-play'); if (btn) btn.textContent = '▶';
+      const d = w.querySelector('.audio-dur'); if (d && w.dataset.dur) d.textContent = fmtDur(Math.round(+w.dataset.dur));
+      const a = w.querySelector('audio'); if (a) a.removeAttribute('data-enlazado');
+    });
+    PLANES[clienteActual].chat = tmp.innerHTML;
+  };
+})(guardarChat);
+prepararAudios();
