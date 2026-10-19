@@ -114,7 +114,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.41</div>
+      <div class="app-version">Versión 0.42</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -123,7 +123,13 @@ if ('serviceWorker' in navigator) {
         <p class="login-hint">Tu coach te ha dado de alta y te ha enviado un código de acceso personal. Introdúcelo aquí para entrar a tu plan.</p>
       </div>
       <div class="coach-link" onclick="goToCoachLogin()">¿Eres coach? Entrar al panel</div>
-      <div class="coach-link" onclick="entrarProfesionalPrueba()">Entrar como profesional (prueba)</div>
+      <div class="pro-quick">
+        <div class="pro-quick-lbl">Acceso directo de profesionales</div>
+        <div class="pro-quick-row">
+          <button class="pro-btn ent" onclick="entrarComo('Domingo')"><b>Domingo</b><span>Entrenamiento</span></button>
+          <button class="pro-btn nut" onclick="entrarComo('Fátima')"><b>Fátima</b><span>Nutrición</span></button>
+        </div>
+      </div>
     </div>
 
     <!-- ALTA DE CLIENTE (vista coach) -->
@@ -317,7 +323,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
 
       <div class="coach-bar" id="coachBar">
-        <span class="coach-bar-left"><span class="coach-bar-back" onclick="backToCliente()">‹</span> <span id="coachBarLabel">Editando:</span> <b id="coachBarName">Marta</b></span>
+        <span class="coach-bar-left"><button class="back-btn coach-bar-volver" onclick="backToCliente()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button> <span id="coachBarLabel">Editando:</span> <b id="coachBarName">Marta</b></span>
         <button onclick="editarPlan()" id="editarBtn">Editar</button>
       </div>
 
