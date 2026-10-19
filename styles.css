@@ -1044,3 +1044,22 @@
   .composer.voz-bloqueada .rec-hint{color:var(--dim-55);}
   @media (prefers-reduced-motion: reduce){ .rec-dot,.rl-chev{animation:none;} #micBtn{transition:none;} }
   .composer.voz-sujeta #micBtn .i-mic{display:block;}
+
+  /* v0.50.4 · Seguimiento: motivación sin elegir */
+  .esc-desc.sin-elegir{color:var(--dim-55);font-style:italic;}
+  .esc-row.falta{animation:faltaSacude .45s ease;}
+  .esc-row.falta .esc-btn{border-color:var(--danger);}
+  @keyframes faltaSacude{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+
+  /* v0.50.5 · Notas de voz: avance, saltar y velocidad */
+  .bubble .audio-b{min-width:210px;gap:9px;}
+  .audio-b .wave{position:relative;cursor:pointer;touch-action:none;height:30px;}
+  .audio-b .wave i{transition:opacity .12s;}
+  .audio-b .wave i.on{opacity:1;}
+  .audio-b .wave i:not(.on){opacity:.38;}
+  .wave-dot{position:absolute;top:50%;left:0;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:currentColor;opacity:0;transition:opacity .15s;pointer-events:none;}
+  .audio-b.sonando .wave-dot,.audio-b.buscando .wave-dot,.audio-b .wave:active .wave-dot{opacity:1;}
+  .audio-vel{flex:none;min-width:36px;height:24px;padding:0 7px;border-radius:12px;border:1px solid currentColor;background:transparent;color:inherit;opacity:.75;font:700 10.5px var(--f-mono);cursor:pointer;}
+  .audio-vel:active{opacity:1;transform:scale(.94);}
+  .audio-b.sin-audio .audio-vel{display:none;}
+  @media (prefers-reduced-motion: reduce){ .esc-row.falta{animation:none;} }
