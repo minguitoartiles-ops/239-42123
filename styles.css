@@ -1005,3 +1005,42 @@
   .sg-bloque .segui-card{background:var(--bg);margin-bottom:8px;}
   .sg-ver-todos{text-align:right;font:700 12.5px Archivo;padding:4px 4px 2px;cursor:pointer;}
   .sg-sin{font:400 12.5px/1.5 Archivo;color:var(--dim-6);padding:2px 2px 6px;}
+
+  /* v0.50.2 · Seguimiento: datos del anterior difuminados de fondo */
+  .sg-ant-aviso{margin:4px 0 14px;padding:10px 13px;border-radius:12px;background:var(--wash-soft);border:1px dashed var(--line-strong);font:500 12px/1.45 Archivo;font-family:var(--f-body);color:var(--dim-55);}
+  .field input.sg-ant::placeholder,.sg-text.sg-ant::placeholder{color:var(--dim-40);opacity:.75;}
+  .esc-btn.esc-ant:not(.on){border-style:dashed;border-color:var(--accent-line);box-shadow:inset 0 0 0 3px var(--accent-line);color:var(--dim-55);}
+  .sg-antes{font:600 11px var(--f-mono);color:var(--dim-40);white-space:nowrap;}
+
+  /* v0.50.3 · Barra del chat como WhatsApp: todo dentro de una sola barra */
+  .composer{position:relative;align-items:center;}
+  .composer-pill{align-items:flex-end;padding:4px 4px 4px 4px;border-radius:26px;gap:0;}
+  .composer textarea{padding:9px 6px;}
+  #micBtn,#sendBtn{background:none;border-radius:50%;}
+  #sendBtn{color:var(--accent);display:none;}
+  .composer.tiene-texto #sendBtn{display:flex;}
+  .composer.tiene-texto #micBtn{display:none;}
+  #micBtn{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .15s,background .15s,color .15s;}
+  #micBtn .i-send{display:none;}
+  #micBtn.rec{background:none;color:var(--dim-55);}
+  #micBtn .i-stop{display:none !important;}
+  .rec-trash{display:none;color:var(--danger);}
+  .composer .rec-live{gap:8px;overflow:hidden;}
+  .composer .rec-hint{flex:1;text-align:center;font:500 12.5px Archivo;font-family:var(--f-body);color:var(--dim-55);transition:opacity .1s;}
+  .rh-chev{font-size:16px;margin-right:2px;}
+  .rec-dot{animation:recLatido 1s ease-in-out infinite;}
+  @keyframes recLatido{50%{opacity:.25}}
+  /* manteniendo pulsado */
+  .composer.voz-sujeta #micBtn{background:var(--accent);color:var(--on-accent);transform:scale(1.35);}
+  .rec-lock{position:absolute;right:15px;bottom:calc(100% + 6px);width:40px;padding:10px 0 8px;display:none;flex-direction:column;align-items:center;gap:3px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--dim-55);box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:3;}
+  .rl-chev{animation:rlSube 1.1s ease-in-out infinite;}
+  @keyframes rlSube{0%,100%{transform:translateY(2px);opacity:.5}50%{transform:translateY(-3px);opacity:1}}
+  .composer.voz-sujeta.grabando .rec-lock{display:flex;}
+  /* grabación bloqueada: papelera a la izquierda y «Enviar» a la derecha */
+  .composer.voz-bloqueada .rec-trash{display:flex;}
+  .composer.voz-bloqueada #micBtn{color:var(--accent);}
+  .composer.voz-bloqueada #micBtn .i-mic{display:none;}
+  .composer.voz-bloqueada #micBtn .i-send{display:block;}
+  .composer.voz-bloqueada .rec-hint{color:var(--dim-55);}
+  @media (prefers-reduced-motion: reduce){ .rec-dot,.rl-chev{animation:none;} #micBtn{transition:none;} }
+  .composer.voz-sujeta #micBtn .i-mic{display:block;}
