@@ -665,3 +665,59 @@ function verImagenFicha(){
   const sh = showScreen;
   showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarImagenFicha(); };
 })();
+
+/* v0.51 · Ficha: adherencias del último seguimiento (antes salía «—» aunque lo hubiera) */
+function pintarAdherenciasFicha(){
+  const k = clienteActual, d = clientesData[k];
+  if (!d) return;
+  const r = (SEGUIMIENTOS[k] || [])[0];
+  const val = function(x, alt){ const n = numDe(x); return n != null ? n + '/10' : (alt != null ? alt + '/10' : '—'); };
+  setTxt('cd-adhE', val(r && r.e, d.adhE));
+  setTxt('cd-adhN', val(r && r.n, d.adhN));
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarAdherenciasFicha(); };
+})();
+
+/* =========================================================
+   v0.51 · Botón atrás del móvil: siempre a la pantalla principal
+   Cliente → «Hoy» · Profesional → panel de Clientes.
+   En la principal, atrás muestra el aviso y el siguiente atrás sale de la app
+   (la sesión sigue abierta; para cerrarla, Ajustes → Cerrar sesión).
+   ========================================================= */
+let noArmarAtras = false;
+armarAtras = (function(orig){
+  return function(){ if (noArmarAtras) { noArmarAtras = false; return; } orig(); };
+})(armarAtras);
+function hayCapaAbierta(){
+  if (document.querySelector('.fsd-overlay.show')) return true;
+  const ep = document.getElementById('emojiPanel');
+  if (ep && !ep.hidden) return true;
+  return ['videoModal', 'recursoPop', 'foodPicker', 'exPicker', 'notiPop', 'notiPopCoach'].some(capaVisible);
+}
+function avisoSalirApp(){
+  const n = nivelGuarda();
+  noArmarAtras = true;                                   // no se vuelve a poner marca: el próximo atrás sale
+  if (n > 0) { ignorarPop = true; history.go(-n); }
+  abrirDialogo({ titulo: '¿Salir de la app?', texto: 'Pulsa atrás otra vez para salir. Tu sesión seguirá abierta.', ok: 'Quedarme', soloOk: true });
+}
+function irAInicio(){
+  if (document.getElementById('coachBar').classList.contains('show')) backToCliente();   // guarda lo que se editaba
+  if (coachActivo) { abrirTabPro('clientes'); return; }
+  navHist.length = 0;
+  navDir = 'pop'; goTo('hoy', true); navDir = null;
+}
+atrasDentroApp = (function(orig){
+  return function(){
+    if (hayCapaAbierta()) return orig();                 // primero se cierran ventanas, avisos y paneles
+    const vis = pantallaVisible();
+    if (!vis || vis === 'view-splash') return orig();
+    const enInicio = coachActivo
+      ? (vis === 'view-coach-panel')
+      : (vis === 'app' && vistaActual === 'hoy' && !document.getElementById('coachBar').classList.contains('show'));
+    if (enInicio) { avisoSalirApp(); return true; }
+    irAInicio();
+    return true;
+  };
+})(atrasDentroApp);
