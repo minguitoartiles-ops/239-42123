@@ -994,3 +994,14 @@
   .kc-punt.v-n5{box-shadow:inset 0 -3px 0 #43B37B;}
   .kc-msgs.hay .kc-v b{color:var(--danger);}
   .kc-evo{font:600 11px var(--f-mono);color:var(--dim-55);white-space:nowrap;}
+
+  /* Pestaña Seguimientos: mismo formato que el detalle */
+  .sg-bloque{background:var(--card);border-radius:20px;padding:14px 14px 10px;margin-bottom:14px;border:1px solid var(--line);}
+  .sg-bloque.pend{border-color:rgba(217,80,63,.45);}
+  .sg-cab{display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:10px;}
+  .sg-cab .avatar{width:40px;height:40px;}
+  .sg-cab-der{display:flex;align-items:center;gap:8px;flex:none;}
+  .sg-glob{font:800 16px Archivo;font-variant-numeric:tabular-nums;}
+  .sg-bloque .segui-card{background:var(--bg);margin-bottom:8px;}
+  .sg-ver-todos{text-align:right;font:700 12.5px Archivo;padding:4px 4px 2px;cursor:pointer;}
+  .sg-sin{font:400 12.5px/1.5 Archivo;color:var(--dim-6);padding:2px 2px 6px;}
