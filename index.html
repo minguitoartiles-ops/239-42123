@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -130,6 +130,7 @@ if ('serviceWorker' in navigator) {
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
       <div class="app-version">Versión 0.47</div>
+      <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>

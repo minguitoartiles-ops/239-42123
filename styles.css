@@ -816,7 +816,7 @@
   .tbi.active .tbi-emo{filter:none;opacity:1;background:var(--accent-wash);}
   .tbi.active{color:var(--ink);}
   .tbi:active .tbi-emo{transform:scale(.88);}
-  .esp-entreno #app.coach-view .tbi.active .tbi-emo,.esp-nutri #app.coach-view .tbi.active .tbi-emo{background:color-mix(in srgb, var(--esp) 22%, transparent);}
+  .esp-entreno #app.coach-view .tbi.active .tbi-emo,.esp-nutri #app.coach-view .tbi.active .tbi-emo{background:var(--accent-wash);background:color-mix(in srgb, var(--esp) 22%, transparent);}
   @media (prefers-reduced-motion: reduce){ .tbi-emo{transition:none;} }
 
   /* Panel del profesional: datos clave de cada cliente */
@@ -846,3 +846,39 @@
   #view-perfil .avatar.lg{position:relative;}
   #view-perfil .avatar.lg::after{content:"＋";position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:700 13px/22px Archivo;text-align:center;border:2px solid var(--bg);}
   #app.coach-view #view-perfil .avatar.lg::after{display:none;}
+
+  /* ================= Compatibilidad Android e iOS ================= */
+  body{height:100vh;height:100dvh;height:var(--app-h,100dvh);}
+  .phone{height:100vh;height:100dvh;height:var(--app-h,100dvh);}
+  #content.en-chat{padding-bottom:0;}
+  #view-splash{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .sc,.alta-body,.chat-list,.fsd-sheet{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  button,.list-row,.tbi,.pro-btn,.cliente-card{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  input,textarea,select{font-size:16px;}            /* evita el zoom automático del iPhone al escribir */
+  .instalar-card{width:100%;margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:12px 14px;border-radius:16px;background:var(--accent-wash);color:var(--ink);font:400 12.5px/1.45 Archivo;}
+  .instalar-card[hidden]{display:none;}
+  .instalar-card > b{font:700 13.5px Archivo;}
+  .instalar-card .btn-eq{height:38px;padding:0 18px;margin-top:4px;}
+  .ico-share{display:inline-block;width:13px;height:16px;vertical-align:-3px;border:1.6px solid currentColor;border-top:none;border-radius:2px;position:relative;margin:0 2px;}
+  .ico-share::before{content:"";position:absolute;left:50%;top:-6px;width:1.6px;height:12px;background:currentColor;transform:translateX(-50%);}
+  .ico-share::after{content:"";position:absolute;left:50%;top:-6px;width:6px;height:6px;border-left:1.6px solid currentColor;border-top:1.6px solid currentColor;transform:translateX(-50%) rotate(45deg);}
+  @supports not (height:100dvh){ body,.phone{height:var(--app-h,100vh);} }
+  /* Entrada compacta en móviles de poca altura (iPhone SE, Galaxy, etc.) */
+  @media (max-height: 820px){
+    #view-splash{padding:6px 22px 16px;}
+    .logo-mark{margin:10px 0 8px;}
+    .logo-mark img{width:58px;height:auto;}
+    .wordmark{font-size:24px;}
+    .tagline{font-size:18px;margin:4px 0 8px;}
+    .app-version{margin-top:0;}
+    .instalar-card{margin-top:8px;padding:9px 12px;font-size:12px;}
+    .login-card{padding:14px 16px;border-radius:18px;}
+    .field input.code-input{height:48px;font-size:20px;}
+    .login-hint{margin-top:6px;}
+    .pro-quick{margin-top:10px;}
+    .pro-btn{padding:9px 12px;}
+  }
+  @media (max-height: 600px){
+    .logo-mark{display:none;}
+    .login-hint{display:none;}
+  }
