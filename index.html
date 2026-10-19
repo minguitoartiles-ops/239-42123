@@ -130,7 +130,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.50.1</div>
+      <div class="app-version">Versión 0.50.3</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -626,24 +626,31 @@ if ('serviceWorker' in navigator) {
           <div class="chat-list" id="chatList"><div class="picker-empty" id="chatVacio">Aún no hay mensajes. Escribe el primero.</div></div>
           <div class="emoji-panel" id="emojiPanel" hidden></div>
           <div class="composer" id="composer">
+            <div class="rec-lock" id="recLock" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <svg class="rl-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+            </div>
             <div class="composer-pill">
-              <button type="button" class="cmp-ico" id="emojiBtn" onclick="toggleEmojis()" aria-label="Emojis" aria-expanded="false" title="Emojis">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><circle cx="9" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r=".9" fill="currentColor" stroke="none"/></svg>
-              </button>
-              <textarea id="chatInput" rows="1" placeholder="Mensaje" aria-label="Escribe un mensaje" enterkeyhint="send"></textarea>
-              <span class="rec-live" id="recLive"><span class="rec-dot"></span><span id="recTime">0:00</span><span class="rec-hint">Grabando… pulsa ■ para enviar</span></span>
               <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="subirImagen(this)">
               <button type="button" class="cmp-ico" id="clipBtn" onclick="document.getElementById('chatFile').click()" aria-label="Adjuntar imagen" title="Adjuntar imagen">
                 <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg>
               </button>
+              <button type="button" class="cmp-ico" id="emojiBtn" onclick="toggleEmojis()" aria-label="Emojis" aria-expanded="false" title="Emojis">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.5V8a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5h4.5"/><path d="M21 12.5 12.5 21"/><path d="M21 12.5h-4.5a4 4 0 0 0-4 4V21"/><path d="M8.5 13.5a4.2 4.2 0 0 0 4 2"/><circle cx="9" cy="9.5" r=".9" fill="currentColor" stroke="none"/><circle cx="15" cy="9.5" r=".9" fill="currentColor" stroke="none"/></svg>
+              </button>
+              <button type="button" class="cmp-ico rec-trash" id="recTrash" onclick="cancelarGrabacion()" aria-label="Borrar la grabación" title="Borrar la grabación">
+                <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>
+              </button>
+              <textarea id="chatInput" rows="1" placeholder="Escribe un mensaje" aria-label="Escribe un mensaje" enterkeyhint="send"></textarea>
+              <span class="rec-live" id="recLive"><span class="rec-dot"></span><span id="recTime">0:00</span><span class="rec-hint" id="recHint"><span class="rh-chev">‹</span> Desliza para cancelar</span></span>
+              <button type="button" class="cmp-ico" id="micBtn" aria-label="Mantén pulsado para grabar una nota de voz" title="Mantén pulsado para grabar">
+                <svg class="i-mic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>
+                <svg class="i-send" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6l.1 6.5L15 12 3.5 13.9z"/></svg>
+              </button>
+              <button type="button" class="cmp-ico" id="sendBtn" onclick="sendMsg()" aria-label="Enviar" title="Enviar">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6l.1 6.5L15 12 3.5 13.9z"/></svg>
+              </button>
             </div>
-            <button type="button" class="cmp-main" id="micBtn" onclick="toggleMic()" aria-label="Grabar nota de voz" title="Grabar nota de voz">
-              <svg class="i-mic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>
-              <svg class="i-stop" viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="5" width="14" height="14" rx="2.5" fill="currentColor"/></svg>
-            </button>
-            <button type="button" class="cmp-main" id="sendBtn" onclick="sendMsg()" aria-label="Enviar">
-              <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor"><path d="M3.4 20.4 21 12 3.4 3.6l.1 6.5L15 12 3.5 13.9z"/></svg>
-            </button>
           </div>
         </section>
 
