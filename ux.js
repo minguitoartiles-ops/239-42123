@@ -915,3 +915,166 @@ guardarPlan = function(){
   const prev = PLANES[clienteActual] || {};
   PLANES[clienteActual] = Object.assign({}, prev, { ent: contEnt().innerHTML, nut: contNut().innerHTML });
 };
+
+/* =========================================================
+   Compatibilidad Android e iOS
+   ========================================================= */
+const esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const esAndroid = /Android/i.test(navigator.userAgent);
+function esInstalada(){
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+
+/* --- Guardado con aviso si la memoria del móvil se llena (antes fallaba en silencio) --- */
+let avisoMemoria = false;
+guardarTodo = function(){
+  if (fsdBloqueoGuardado) return;
+  try { sincronizarInputs(contEnt()); sincronizarInputs(contNut()); guardarPlan(); guardarChat(); } catch(e){}
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify({
+      v: 1, clientes: clientesData, seg: SEGUIMIENTOS, planes: PLANES, notis: notisCoach,
+      sesion: (window.fsdSesionCliente && clienteActual) ? { cliente: clienteActual, tipo: 'cliente' } : null
+    }));
+    avisoMemoria = false;
+  } catch(e){
+    if (!avisoMemoria) {
+      avisoMemoria = true;
+      toast('La memoria de la app está llena y no se han guardado los últimos cambios. Descarga una copia en Ajustes y borra fotos o audios antiguos.');
+    }
+  }
+};
+
+/* --- Fotos del chat: se reducen antes de guardarlas (una foto de móvil podía llenar la memoria) --- */
+function reducirImagen(file, max, calidad, cb){
+  const u = URL.createObjectURL(file);
+  const im = new Image();
+  im.onload = function(){
+    let w = im.naturalWidth, h = im.naturalHeight;
+    const k = Math.min(1, max / Math.max(w, h));
+    w = Math.round(w * k); h = Math.round(h * k);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    c.getContext('2d').drawImage(im, 0, 0, w, h);
+    URL.revokeObjectURL(u);
+    let d = '';
+    try { d = c.toDataURL('image/jpeg', calidad); } catch(e){}
+    cb(d);
+  };
+  im.onerror = function(){ URL.revokeObjectURL(u); cb(''); };
+  im.src = u;
+}
+subirImagen = function(input){
+  const f = input.files && input.files[0];
+  input.value = '';
+  if (!f) return;
+  reducirImagen(f, 1024, 0.72, function(url){
+    if (!url) { toast('No se ha podido abrir esa imagen'); return; }
+    const b = burbujaNueva();
+    b.classList.add('media');
+    const img = document.createElement('img');
+    img.src = url; img.alt = 'Imagen enviada';
+    b.appendChild(img);
+    meterEnChat(b);
+  });
+};
+/* lo que entra al chat (fotos, audios) se guarda al momento */
+meterEnChat = (function(orig){
+  return function(b){ orig(b); decorarChat(); guardarTodo(); pintarChatHero(); };
+})(meterEnChat);
+
+/* --- Notas de voz: formato que entiende cada móvil y guardadas de verdad --- */
+function formatoAudio(){
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  const opciones = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/aac'];   // iPhone: mp4 · Android: webm
+  for (let i = 0; i < opciones.length; i++) if (MediaRecorder.isTypeSupported(opciones[i])) return opciones[i];
+  return '';
+}
+const MAX_AUDIO_SEG = 60;
+toggleMic = function(){
+  if (mediaRec && mediaRec.state === 'recording') { mediaRec.stop(); return; }
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) {
+    toast('Este navegador no permite grabar notas de voz.');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+    const mt = formatoAudio();
+    try { mediaRec = mt ? new MediaRecorder(stream, { mimeType: mt, audioBitsPerSecond: 24000 }) : new MediaRecorder(stream); }
+    catch(e){ mediaRec = new MediaRecorder(stream); }
+    recChunks = []; recSegs = 0;
+    setTxt('recTime', '0:00');
+    mediaRec.ondataavailable = function(e){ if (e.data && e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop = function(){
+      clearInterval(recInt); recInt = null; recUI(false);
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      const tipo = (mediaRec && mediaRec.mimeType) || mt || 'audio/mp4';
+      const segs = recSegs;
+      mediaRec = null;
+      if (!recChunks.length || segs < 1) return;
+      const fr = new FileReader();
+      fr.onload = function(){ addAudioBubble(fr.result, segs); };
+      fr.readAsDataURL(new Blob(recChunks, { type: tipo }));
+    };
+    mediaRec.start();
+    recUI(true);
+    recInt = setInterval(function(){
+      recSegs++;
+      setTxt('recTime', fmtDur(recSegs));
+      if (recSegs >= MAX_AUDIO_SEG && mediaRec && mediaRec.state === 'recording') mediaRec.stop();
+    }, 1000);
+  }).catch(function(){
+    toast('Sin permiso para el micrófono. Actívalo en los ajustes del móvil para esta app.');
+  });
+};
+
+/* --- Teclado: la barra del chat siempre visible por encima (iPhone no redimensiona solo) --- */
+if (window.visualViewport) {
+  const vv = window.visualViewport;
+  const ajustarAlto = function(){
+    document.documentElement.style.setProperty('--app-h', Math.round(vv.height) + 'px');
+    if (esIOS) window.scrollTo(0, 0);
+    const cl = document.getElementById('chatList');
+    if (cl && document.activeElement && document.activeElement.id === 'chatInput') cl.scrollTop = cl.scrollHeight;
+  };
+  vv.addEventListener('resize', ajustarAlto);
+  ajustarAlto();
+}
+
+/* --- Alternativa a :has() para iPhones con iOS antiguo --- */
+goTo = (function(orig){
+  return function(n, s){ orig(n, s); const c = document.getElementById('content'); if (c) c.classList.toggle('en-chat', n === 'chat'); };
+})(goTo);
+
+/* --- Pedir al navegador que no borre los datos de la app --- */
+if (navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(function(){}); }
+
+/* --- Ayuda para instalar la app (Android: botón; iPhone: pasos) --- */
+let promptInstalar = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  promptInstalar = e;
+  pintarAyudaInstalar();
+});
+window.addEventListener('appinstalled', function(){ promptInstalar = null; pintarAyudaInstalar(); toast('App instalada'); });
+function pintarAyudaInstalar(){
+  const c = document.getElementById('instalarCard');
+  if (!c) return;
+  if (esInstalada()) { c.hidden = true; return; }
+  let html = '<b>Instala la app en tu móvil</b>';
+  if (promptInstalar) {
+    html += '<span>Tendrás su icono en la pantalla de inicio y se abrirá a pantalla completa.</span><button class="btn-eq" onclick="instalarApp()">Instalar</button>';
+  } else if (esIOS) {
+    html += '<span>En Safari, pulsa <i class="ico-share" aria-label="Compartir"></i> <b>Compartir</b> y después <b>«Añadir a pantalla de inicio»</b>.</span>';
+  } else if (esAndroid) {
+    html += '<span>En Chrome, abre el menú <b>⋮</b> y pulsa <b>«Instalar aplicación»</b> o <b>«Añadir a pantalla de inicio»</b>.</span>';
+  } else {
+    html += '<span>Abre este enlace en tu móvil (Chrome en Android, Safari en iPhone) para instalarla.</span>';
+  }
+  c.innerHTML = html;
+  c.hidden = false;
+}
+function instalarApp(){
+  if (!promptInstalar) return;
+  promptInstalar.prompt();
+  promptInstalar.userChoice.then(function(){ promptInstalar = null; pintarAyudaInstalar(); });
+}
+pintarAyudaInstalar();
