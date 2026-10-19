@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.48.2';
+const APP_VERSION = '0.48.4';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -418,13 +418,8 @@ function htmlAjustes(rol){
     + (prefPermitidas() ? '' : ' Como no has aceptado las cookies de preferencias, la elección solo dura hasta que cierres la app.')
     + '</div></div></div>';
 
-  /* --- Notificaciones (cliente) --- */
-  if (cliente) {
-    h += '<div class="section-lbl">Notificaciones</div><div class="list-group">'
-      + '<div class="list-row"><span>Recordatorios de comida</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>'
-      + '<div class="list-row"><span>Aviso de entreno</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>'
-      + '</div>';
-  }
+  /* --- Notificaciones (cliente y profesional) --- */
+  if (typeof htmlAjustesAvisos === 'function') h += htmlAjustesAvisos(rol);
 
   /* --- Dispositivos --- */
   h += '<div class="section-lbl">Dispositivos y apps de salud</div>';
@@ -561,6 +556,7 @@ const LEGAL_COOKIES =
 + '<tr><td>fsd_datos_v1</td><td>Técnica</td><td>Guardar tus planes, seguimientos y mensajes en el dispositivo</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_fotos</td><td>Técnica</td><td>Guardar la foto de perfil de los profesionales</td><td>Hasta que la quites</td></tr>'
 + '<tr><td>fsd_dispositivos_confianza</td><td>Técnica</td><td>Recordar dispositivos de confianza de los profesionales</td><td>30 días</td></tr>'
++ '<tr><td>fsd_avisos</td><td>Técnica</td><td>Guardar tus notificaciones y qué tipos quieres recibir</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
 + '<tr><td>fsd_tema</td><td>Preferencias</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
