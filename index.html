@@ -73,6 +73,7 @@ if ('serviceWorker' in navigator) {
         <p>Para prepararte el plan y hacer tu seguimiento tratamos datos de salud: peso, medidas, fotos, alimentación, alergias, entrenamiento, descanso, estrés y cómo te encuentras.</p>
         <p>Por ley necesitamos tu consentimiento explícito. Puedes retirarlo cuando quieras en Ajustes → Privacidad.</p>
         <label class="chk-row" for="csChk"><input type="checkbox" id="csChk" onchange="csCambio()"><span>Doy mi consentimiento explícito para que Fitness sin Dramas trate mis datos de salud con el fin de prestarme el asesoramiento, según la <a class="lnk" href="#" onclick="abrirLegal('privacidad');return false;">política de privacidad</a>.</span></label>
+        <label class="chk-row" for="csCom"><input type="checkbox" id="csCom"><span>Quiero recibir el boletín, novedades y ofertas de productos propios de Fitnessindramas. <i class="opc">Opcional: puedes darte de baja cuando quieras.</i></span></label>
         <div class="btn-row">
           <button class="btn-eq" onclick="csRechazar()">No acepto</button>
           <button class="btn-primary btn-eq-p" id="csOk" onclick="csAceptar()" disabled>Aceptar y continuar</button>

@@ -6,7 +6,7 @@
    ========================================================= */
 
 const APP_VERSION = '0.47';
-const POLICY_V = '2026-10-19';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
+const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
 const CONSENT_MESES = 24;               // renovación recomendada por la AEPD
@@ -464,6 +464,7 @@ function htmlAjustes(rol){
     if (d.consentSalud && d.consentSalud.fecha) {
       h += fila('Consentimiento de datos de salud', pill('Dado el ' + fechaCorta(d.consentSalud.fecha), true));
       h += fila('Retirar consentimiento', '', 'retirarConsentSalud()', 'danger');
+      h += '<div class="list-row"><span>Boletín, novedades y ofertas</span><div class="toggle' + (d.consentComercial ? ' on' : '') + '" onclick="toggleComercial(this)" role="switch" aria-checked="' + (d.consentComercial ? 'true' : 'false') + '"><div class="toggle-knob"></div></div></div>';
     } else {
       h += fila('Consentimiento de datos de salud', pill('Pendiente'), 'comprobarConsentSalud()');
     }
@@ -496,59 +497,77 @@ function abrirAjustesCoach(){
    TEXTOS LEGALES
    ========================================================= */
 const PH = function(t){ return '<span class="ph">[' + t + ']</span>'; };
+const TITULAR = {
+  nombre: 'Domingo Artiles Bordón',
+  nif: '45374373L',
+  direccion: 'Calle Juan XXIII n.º 33, 3.º B, 35110 Santa Lucía de Tirajana (Las Palmas)',
+  correo: 'fitnessindramas@gmail.com',
+  marca: 'Fitnessindramas (Fitness sin Dramas)'
+};
 const LEGAL_PRIVACIDAD =
   '<p class="legal-meta">Última actualización: 19 de octubre de 2026</p>'
 + '<p class="legal-aviso">Versión de prueba: por ahora los datos se guardan solo en este dispositivo y no se envían a ningún servidor.</p>'
-+ '<h4>1. Quién trata tus datos</h4>'
-+ '<p>Responsable: Fitness sin Dramas, ' + PH('nombre y apellidos o razón social') + ', NIF ' + PH('NIF') + ', con domicilio en ' + PH('dirección postal') + '. Contacto: ' + PH('correo de contacto') + '.</p>'
++ '<h4>1. Responsable del tratamiento</h4>'
++ '<p><b>' + TITULAR.nombre + '</b>, profesional autónomo, NIF ' + TITULAR.nif + ', con domicilio en ' + TITULAR.direccion + '. Nombre comercial: ' + TITULAR.marca + '. Contacto: <b>' + TITULAR.correo + '</b>.</p>'
++ '<p>El servicio lo prestan dos profesionales autónomos: Domingo, entrenador, y Fátima, dietista-nutricionista. Cada uno accede solo a los datos que necesita para su parte del asesoramiento.</p>'
 + '<h4>2. Qué datos tratamos</h4>'
 + '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono, código de acceso y, si la añades, tu foto de perfil.</li>'
 + '<li><b>Datos de salud y físicos:</b> peso, altura, medidas, fotos de progreso, alimentación, alergias e intolerancias, entrenamiento, descanso, estrés, sensaciones y adherencia.</li>'
-+ '<li><b>Mensajes</b> que intercambias con tu equipo en el chat.</li>'
++ '<li><b>Mensajes</b> que intercambias con tu equipo en el chat, incluidas fotos y notas de voz.</li>'
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
++ '<li><b>Compras de productos propios y merchandising:</b> nombre, dirección de envío, teléfono y datos del pedido.</li>'
 + '<li><b>Pago:</b> lo gestiona Stripe. No guardamos los datos de tu tarjeta.</li></ul>'
 + '<h4>3. Para qué los usamos</h4>'
 + '<ul><li>Prestarte el asesoramiento de entrenamiento y nutrición: planes, seguimiento y ajustes.</li>'
 + '<li>Comunicarnos contigo a través de la app.</li>'
-+ '<li>Gestionar la contratación, el cobro y la facturación.</li>'
++ '<li>Gestionar la contratación, el cobro, la facturación y, si compras productos, el envío.</li>'
++ '<li>Enviarte nuestro boletín, novedades y ofertas de productos propios, <b>solo si lo aceptas</b>.</li>'
++ '<li>Conocer cómo se usa la app con analítica, <b>solo si aceptas esas cookies</b>.</li>'
 + '<li>Proteger el acceso a las cuentas.</li></ul>'
-+ '<p>No tomamos decisiones automatizadas con efectos jurídicos sobre ti ni elaboramos perfiles con fines comerciales.</p>'
++ '<p>No tomamos decisiones automatizadas con efectos jurídicos sobre ti.</p>'
 + '<h4>4. Base legal</h4>'
-+ '<ul><li><b>Contrato</b> (art. 6.1.b RGPD): para prestarte el servicio que has contratado.</li>'
-+ '<li><b>Consentimiento explícito</b> (art. 9.2.a RGPD): para tratar tus datos de salud. Puedes retirarlo en Ajustes → Privacidad. Sin él no podemos ofrecerte una asesoría personalizada.</li>'
++ '<ul><li><b>Contrato</b> (art. 6.1.b RGPD): prestarte el servicio y gestionar tus compras.</li>'
++ '<li><b>Consentimiento explícito</b> (art. 9.2.a RGPD): tratar tus datos de salud. Sin él no podemos ofrecerte una asesoría personalizada.</li>'
++ '<li><b>Consentimiento</b> (art. 6.1.a RGPD y art. 21 LSSI): comunicaciones comerciales y analítica. Es voluntario y no condiciona el servicio.</li>'
 + '<li><b>Obligación legal</b> (art. 6.1.c RGPD): facturación y obligaciones fiscales.</li>'
 + '<li><b>Interés legítimo</b> (art. 6.1.f RGPD): seguridad de la app y prevención de accesos indebidos.</li></ul>'
++ '<p>Puedes retirar cualquier consentimiento en Ajustes → Privacidad o escribiendo a ' + TITULAR.correo + '.</p>'
 + '<h4>5. Cuánto tiempo los guardamos</h4>'
-+ '<p>Mientras tu asesoría esté activa. Al terminar, los bloqueamos durante los plazos en que puedan exigirse responsabilidades legales (art. 32 LOPDGDD) y después los suprimimos. Los datos de facturación se conservan durante los plazos que marca la normativa fiscal y mercantil.</p>'
++ '<p>Mientras tu asesoría esté activa. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja.</p>'
 + '<h4>6. Con quién los compartimos</h4>'
-+ '<p>No cedemos tus datos a terceros salvo obligación legal. Trabajamos con proveedores que los tratan por nuestra cuenta:</p>'
++ '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta:</p>'
 + '<ul><li>GitHub, Inc.: alojamiento de la app.</li>'
-+ '<li>Google LLC (Google Fonts): tipografías. Al cargarlas recibe tu dirección IP.</li>'
-+ '<li>Stripe: gestión de pagos.</li></ul>'
-+ '<p>Algunos están en EE. UU. Las transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o en otras garantías adecuadas (art. 46 RGPD), como las cláusulas contractuales tipo.</p>'
-+ '<h4>7. Tus derechos</h4>'
-+ '<p>Puedes pedir acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad, y retirar tu consentimiento en cualquier momento. Escríbenos a ' + PH('correo de contacto') + ' indicando qué derecho ejerces; podremos pedirte que acredites tu identidad. Respondemos en el plazo de un mes.</p>'
++ '<li>Google LLC: tipografías (Google Fonts, que recibe tu dirección IP) y correo electrónico.</li>'
++ '<li>Stripe: gestión de pagos.</li>'
++ '<li>Empresas de mensajería: envío de productos, si compras.</li></ul>'
++ '<p>Algunos proveedores están en EE. UU. Esas transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o en cláusulas contractuales tipo (art. 46 RGPD).</p>'
++ '<h4>7. Clientes fuera de España</h4>'
++ '<p>Prestamos el servicio en todo el mundo. Sea cual sea tu país, tratamos tus datos conforme al Reglamento General de Protección de Datos y a la normativa española.</p>'
++ '<h4>8. Tus derechos</h4>'
++ '<p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad, y retirar tu consentimiento en cualquier momento. Escribe a <b>' + TITULAR.correo + '</b> indicando qué derecho ejerces; podremos pedirte que acredites tu identidad. Respondemos en el plazo de un mes.</p>'
 + '<p>Puedes descargar tus datos desde Ajustes → Copias de seguridad. Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es, C/ Jorge Juan 6, 28001 Madrid).</p>'
-+ '<h4>8. Menores</h4>'
-+ '<p>El servicio está dirigido a mayores de 18 años. Los menores solo pueden usarlo con la autorización de sus padres o tutores legales.</p>'
-+ '<h4>9. Seguridad</h4>'
-+ '<p>Cada cliente entra con un código personal y los profesionales con contraseña y verificación en dos pasos. Aplicamos medidas técnicas y organizativas adecuadas al riesgo (art. 32 RGPD), teniendo en cuenta que tratamos datos de salud.</p>'
-+ '<h4>10. Cambios</h4>'
++ '<h4>9. Solo personas adultas</h4>'
++ '<p>El servicio es exclusivamente para mayores de 18 años. Si detectamos datos de un menor, los eliminaremos.</p>'
++ '<h4>10. Seguridad</h4>'
++ '<p>Cada cliente entra con un código personal y los profesionales con contraseña. Aplicamos medidas técnicas y organizativas adecuadas al riesgo (art. 32 RGPD), teniendo en cuenta que tratamos datos de salud.</p>'
++ '<h4>11. Cambios</h4>'
 + '<p>Si cambiamos esta política te avisaremos en la app y, cuando haga falta, te pediremos de nuevo el consentimiento.</p>';
 
 const LEGAL_COOKIES =
-  '<p class="legal-meta">Última actualización: 19 de octubre de 2026</p>'
-+ '<p>Las cookies y tecnologías similares guardan información en tu dispositivo. Esta app no usa cookies de publicidad ni de analítica. Usa el almacenamiento local del navegador y una caché para funcionar sin conexión.</p>'
+  '<p class="legal-meta">Última actualización: 19 de octubre de 2026 · Responsable: ' + TITULAR.nombre + ' (' + TITULAR.marca + '), ' + TITULAR.correo + '</p>'
++ '<p>Las cookies y tecnologías similares guardan información en tu dispositivo. Ahora mismo esta app solo usa almacenamiento técnico y, si lo aceptas, de preferencias. No usa cookies de publicidad ni de analítica.</p>'
 + '<h4>Qué guardamos</h4>'
 + '<div class="legal-tabla"><table><thead><tr><th>Nombre</th><th>Tipo</th><th>Para qué</th><th>Duración</th></tr></thead><tbody>'
 + '<tr><td>fsd_datos_v1</td><td>Técnica</td><td>Guardar tus planes, seguimientos y mensajes en el dispositivo</td><td>Hasta que borres los datos</td></tr>'
-+ '<tr><td>fsd_dispositivos_confianza</td><td>Técnica</td><td>Recordar los dispositivos de confianza de los profesionales (verificación en dos pasos)</td><td>30 días</td></tr>'
-+ '<tr><td>fsd_fotos</td><td>Técnica</td><td>Guardar la foto de perfil de los profesionales en el dispositivo</td><td>Hasta que la quites</td></tr>'
++ '<tr><td>fsd_fotos</td><td>Técnica</td><td>Guardar la foto de perfil de los profesionales</td><td>Hasta que la quites</td></tr>'
++ '<tr><td>fsd_dispositivos_confianza</td><td>Técnica</td><td>Recordar dispositivos de confianza de los profesionales</td><td>30 días</td></tr>'
 + '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
 + '<tr><td>fsd_tema</td><td>Preferencias</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
 + '</tbody></table></div>'
 + '<p>Todas son propias. Las técnicas son necesarias para que la app funcione y no requieren consentimiento (art. 22.2 LSSI). Las de preferencias solo se guardan si las aceptas.</p>'
++ '<h4>Analítica en el futuro</h4>'
++ '<p>Tenemos previsto medir el uso de la app para mejorarla. Cuando lo activemos, actualizaremos esta tabla con cada cookie, su proveedor y su duración, y te pediremos permiso antes de usarlas. Sin tu permiso no se instalará ninguna.</p>'
 + '<h4>Terceros</h4>'
 + '<p>Las tipografías se cargan desde Google Fonts. No instalan cookies, pero Google recibe tu dirección IP.</p>'
 + '<h4>Cómo cambiar tu elección</h4>'
