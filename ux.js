@@ -508,6 +508,7 @@ syncChatPerspective = (function(orig){
 function capaVisible(id){ const el = document.getElementById(id); return !!(el && el.classList.contains('show')); }
 function atrasDentroApp(){
   /* 1. ventanas y capas abiertas */
+  if (capaVisible('proPass')) { cerrarPassPro(); return true; }
   if (capaVisible('dlgOverlay')) { cerrarDialogo(false); return true; }
   if (capaVisible('legalOverlay')) { cerrarLegal(); return true; }
   if (capaVisible('cookieConfig')) { cookiesCerrarConfig(); return true; }
@@ -589,3 +590,46 @@ window.addEventListener('storage', function(e){
   pintarChatHero(); pintarHistorialCliente(); pintarCambiosCuerpo(); pintarProgreso();
   if (clienteActual) { setTxt('fichaSegN', (SEGUIMIENTOS[clienteActual] || []).length); setTxt('fichaChatN', contarMensajes(clienteActual)); }
 });
+
+/* =========================================================
+   v0.44 · Contraseña en el acceso directo de profesionales
+   Solo se guarda la huella SHA-256 (nunca la contraseña).
+   Ojo: en una app sin servidor esto es un cierre de cortesía,
+   no seguridad real; la seguridad llegará con cuentas en servidor.
+   ========================================================= */
+const PRO_HASH = {
+  domingo: 'ebae2c1adf746cc77c6fc004773014594f63b6163ba809b1489646de67f421d3',
+  fatima:  '694a7b907fd5774f2b3dd6ae3f42eaf54843622e8b1165140d53aff75f443ce5'
+};
+let proPendiente = null;
+function pedirPassPro(usuario){
+  proPendiente = usuario;
+  document.getElementById('proPassTit').textContent = 'Contraseña de ' + usuario;
+  const i = document.getElementById('proPassInput');
+  i.value = '';
+  document.getElementById('proPassErr').textContent = '';
+  document.getElementById('proPass').classList.add('show');
+  setTimeout(function(){ try { i.focus(); } catch(e){} }, 60);
+}
+function cerrarPassPro(){
+  document.getElementById('proPass').classList.remove('show');
+  proPendiente = null;
+}
+function huellaPro(usuario, pw){
+  const datos = new TextEncoder().encode('fsd-pro:' + norm(usuario) + ':' + pw.trim().toLowerCase());
+  return crypto.subtle.digest('SHA-256', datos).then(function(buf){
+    return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+  });
+}
+function confirmarPassPro(){
+  const i = document.getElementById('proPassInput');
+  const err = document.getElementById('proPassErr');
+  if (!proPendiente) return;
+  if (!i.value.trim()) { err.textContent = 'Escribe la contraseña.'; i.focus(); return; }
+  if (!window.crypto || !crypto.subtle) { err.textContent = 'Abre la app desde su dirección segura (https) para entrar.'; return; }
+  const u = proPendiente;
+  huellaPro(u, i.value).then(function(h){
+    if (h === PRO_HASH[norm(u)]) { cerrarPassPro(); entrarComo(u); }
+    else { err.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.'; i.select(); }
+  });
+}

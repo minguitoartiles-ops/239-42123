@@ -100,6 +100,21 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
 
+    <!-- CONTRASEÑA DEL ACCESO DIRECTO DE PROFESIONALES -->
+    <div class="fsd-overlay dlg-layer" id="proPass" role="dialog" aria-modal="true" aria-labelledby="proPassTit">
+      <div class="fsd-sheet dlg">
+        <h3 id="proPassTit">Contraseña</h3>
+        <form onsubmit="confirmarPassPro();return false;">
+          <div class="field"><label for="proPassInput">Contraseña</label><input type="password" id="proPassInput" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+          <div class="picker-new-error" id="proPassErr" role="alert"></div>
+          <div class="btn-row">
+            <button type="button" class="btn-eq" onclick="cerrarPassPro()">Cancelar</button>
+            <button type="submit" class="btn-primary btn-eq-p">Entrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <input type="file" id="restoreInput" accept="application/json,.json" hidden onchange="restaurarCopia(this)">
     <div class="fsd-toast" id="fsdToast" role="status" aria-live="polite"></div>
 
@@ -114,7 +129,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.43</div>
+      <div class="app-version">Versión 0.44</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -126,8 +141,8 @@ if ('serviceWorker' in navigator) {
       <div class="pro-quick">
         <div class="pro-quick-lbl">Acceso directo de profesionales</div>
         <div class="pro-quick-row">
-          <button class="pro-btn ent" onclick="entrarComo('Domingo')"><b>Domingo</b><span>Entrenamiento</span></button>
-          <button class="pro-btn nut" onclick="entrarComo('Fátima')"><b>Fátima</b><span>Nutrición</span></button>
+          <button class="pro-btn ent" onclick="pedirPassPro('Domingo')"><b>Domingo</b><span>Entrenamiento <svg class="pro-ico" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6v12M17.5 6v12M3 9.5v5M21 9.5v5M6.5 12h11"/></svg></span></button>
+          <button class="pro-btn nut" onclick="pedirPassPro('Fátima')"><b>Fátima</b><span>Nutrición <span class="pro-emoji" aria-hidden="true">🍕</span></span></button>
         </div>
       </div>
     </div>
