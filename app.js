@@ -1587,7 +1587,8 @@ function confirmAlta(){
   const key='c'+Date.now();
   clientesData[key]={nombre:nombre,semana:'1 de 12',objetivo:objetivo,adhE:null,adhN:null,
     tonelaje:'—',tonelajeDelta:'Sin datos todavía',peso:peso,pesoDelta:'Peso inicial',
-    revision:'Primera revisión el lunes',mensajes:0,codigo:codigo};
+    revision:'Primera revisión el lunes',mensajes:0,codigo:codigo,
+    email:(campos[1]&&campos[1].value||'').trim(),telefono:(campos[2]&&campos[2].value||'').trim(),fechaAlta:new Date().toISOString()};
   SEGUIMIENTOS[key]=[];
   PLANES[key]={ent:'',nut:''};
   const card=document.createElement('div');
@@ -1637,28 +1638,10 @@ function pick(el){
   if(mb) updateMealSummary(mb);
   calcularPlan();
 }
-function aplicarTema(oscuro){
-  document.getElementById('screenRoot').classList.toggle('light', !oscuro);
-  ['darkToggle','darkToggleCoach'].forEach(function(id){
-    const t=document.getElementById(id);
-    if(t) t.classList.toggle('on', !!oscuro);
-  });
-}
-function toggleTheme(el){
-  const oscuro=!el.classList.contains('on');
-  aplicarTema(oscuro);
-  try{ localStorage.setItem('fsd_tema', oscuro?'oscuro':'claro'); }catch(e){}
-}
-function cargarTema(){
-  let t='claro';
-  try{ t=localStorage.getItem('fsd_tema')||'claro'; }catch(e){}
-  aplicarTema(t==='oscuro');
-}
 function entrarProfesionalPrueba(){
   coachActivo=COACHES[0]; coachPend=null;
   entrarAlPanel();
 }
-cargarTema();
 function burbujaNueva(){
   const coach=isCoachView();
   const b=document.createElement('div');

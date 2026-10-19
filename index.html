@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0E1013">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Fitness sin dramas">
 <title>Fitnessindramas — Prototipo (Semana viva)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,6 +28,82 @@ if ('serviceWorker' in navigator) {
 <div class="phone">
   <div class="screen light" id="screenRoot">
 
+    <!-- COOKIES: primera capa (aceptar, rechazar y configurar al mismo nivel) -->
+    <div class="fsd-overlay ck-layer" id="cookieBanner" role="dialog" aria-modal="true" aria-labelledby="ckTitulo">
+      <div class="fsd-sheet">
+        <h3 id="ckTitulo">Tu privacidad</h3>
+        <p>Fitness sin Dramas guarda información en tu dispositivo. La técnica es necesaria para que la app funcione. Con tu permiso, guardamos también tu preferencia de apariencia. No usamos cookies de publicidad ni de analítica.</p>
+        <p><a class="lnk" href="#" onclick="abrirLegal('cookies');return false;">Política de cookies</a> · <a class="lnk" href="#" onclick="abrirLegal('privacidad');return false;">Política de privacidad</a></p>
+        <div class="btn-row">
+          <button class="btn-eq" onclick="cookiesRechazar()">Rechazar</button>
+          <button class="btn-eq" onclick="cookiesConfigurar()">Configurar</button>
+          <button class="btn-eq" onclick="cookiesAceptar()">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COOKIES: segunda capa -->
+    <div class="fsd-overlay ck-layer" id="cookieConfig" role="dialog" aria-modal="true" aria-labelledby="ckcTitulo">
+      <div class="fsd-sheet">
+        <div class="sheet-head"><h3 id="ckcTitulo">Configurar cookies</h3><button class="x-btn" onclick="cookiesCerrarConfig()" aria-label="Cerrar">×</button></div>
+        <div class="ck-cat">
+          <div class="ck-cat-top"><b>Técnicas</b><span class="pill ok">Siempre activas</span></div>
+          <p>Guardan tus datos en el dispositivo, tu sesión, la verificación en dos pasos y tu elección sobre cookies. Sin ellas la app no funciona.</p>
+        </div>
+        <div class="ck-cat">
+          <label class="ck-cat-top" for="ckPref"><b>Preferencias</b><input type="checkbox" id="ckPref" class="ck-switch"></label>
+          <p>Recuerdan si prefieres el modo claro, oscuro o automático.</p>
+        </div>
+        <div class="ck-cat">
+          <div class="ck-cat-top"><b>Analíticas y publicidad</b><span class="pill">No se usan</span></div>
+          <p>No medimos tu uso ni mostramos publicidad.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn-eq" onclick="cookiesRechazar()">Rechazar todo</button>
+          <button class="btn-eq" onclick="cookiesGuardarSeleccion()">Guardar</button>
+          <button class="btn-eq" onclick="cookiesAceptar()">Aceptar todo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSENTIMIENTO EXPLÍCITO DE DATOS DE SALUD -->
+    <div class="fsd-overlay" id="consentSalud" role="dialog" aria-modal="true" aria-labelledby="csTitulo">
+      <div class="fsd-sheet">
+        <h3 id="csTitulo">Tus datos de salud</h3>
+        <p>Para prepararte el plan y hacer tu seguimiento tratamos datos de salud: peso, medidas, fotos, alimentación, alergias, entrenamiento, descanso, estrés y cómo te encuentras.</p>
+        <p>Por ley necesitamos tu consentimiento explícito. Puedes retirarlo cuando quieras en Ajustes → Privacidad.</p>
+        <label class="chk-row" for="csChk"><input type="checkbox" id="csChk" onchange="csCambio()"><span>Doy mi consentimiento explícito para que Fitness sin Dramas trate mis datos de salud con el fin de prestarme el asesoramiento, según la <a class="lnk" href="#" onclick="abrirLegal('privacidad');return false;">política de privacidad</a>.</span></label>
+        <div class="btn-row">
+          <button class="btn-eq" onclick="csRechazar()">No acepto</button>
+          <button class="btn-primary btn-eq-p" id="csOk" onclick="csAceptar()" disabled>Aceptar y continuar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXTOS LEGALES -->
+    <div class="fsd-overlay legal-layer" id="legalOverlay" role="dialog" aria-modal="true" aria-labelledby="legalTitulo">
+      <div class="fsd-sheet full">
+        <div class="sheet-head"><h3 id="legalTitulo">Política de privacidad</h3><button class="x-btn" onclick="cerrarLegal()" aria-label="Cerrar">×</button></div>
+        <div class="legal" id="legalCuerpo"></div>
+      </div>
+    </div>
+
+    <!-- DIÁLOGO -->
+    <div class="fsd-overlay dlg-layer" id="dlgOverlay" role="alertdialog" aria-modal="true" aria-labelledby="dlgTitulo">
+      <div class="fsd-sheet dlg">
+        <h3 id="dlgTitulo"></h3>
+        <p id="dlgTexto"></p>
+        <div class="btn-row">
+          <button class="btn-eq" id="dlgCancel" onclick="cerrarDialogo(false)">Cancelar</button>
+          <button class="btn-eq" id="dlgOk" onclick="cerrarDialogo(true)">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <input type="file" id="restoreInput" accept="application/json,.json" hidden onchange="restaurarCopia(this)">
+    <div class="fsd-toast" id="fsdToast" role="status" aria-live="polite"></div>
+
+
     <!-- SPLASH -->
     <div id="view-splash">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
@@ -38,7 +114,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.2</div>
+      <div class="app-version">Versión 0.3</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -147,6 +223,9 @@ if ('serviceWorker' in navigator) {
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
           <span class="bell-badge hide" id="coachBellBadge">0</span>
         </button>
+        <button class="bell" onclick="abrirAjustesCoach()" aria-label="Ajustes" title="Ajustes" style="order:4">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+        </button>
         <div style="flex:1"><div class="eyebrow" id="panelWho">Fitness sin dramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Panel de coach</div></div>
       </div>
 
@@ -168,12 +247,20 @@ if ('serviceWorker' in navigator) {
         <div id="listaClientes"></div>
         <div class="vacio" id="sinClientes"><b>Todavía no hay clientes</b><span>Pulsa «Nuevo cliente» para dar de alta al primero.</span></div>
 
-        <div class="section-lbl">Ajustes</div>
+        <div class="alta-label">Cuenta</div>
         <div class="list-group">
-          <div class="list-row"><span>Modo oscuro</span><div class="toggle" id="darkToggleCoach" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
+          <div class="list-row" onclick="abrirAjustesCoach()"><span>Ajustes y privacidad</span><span class="chev">›</span></div>
         </div>
-        <div class="logout-row"><span onclick="coachLogout()">Cerrar sesión</span><span>v 0.2</span></div>
       </div>
+    </div>
+
+    <!-- AJUSTES (vista coach) -->
+    <div id="view-coach-ajustes" style="display:none">
+      <div class="alta-top">
+        <button class="back-btn" onclick="backToPanel()" aria-label="Volver">‹</button>
+        <div style="flex:1"><div class="eyebrow">Panel de coach</div><div class="h-title" style="margin-top:2px;font-size:22px">Ajustes</div></div>
+      </div>
+      <div class="alta-body"><div id="ajustesCoach"></div></div>
     </div>
 
     <!-- FICHA DE CLIENTE (vista coach) -->
@@ -567,14 +654,15 @@ if ('serviceWorker' in navigator) {
             <div class="list-row"><span>Alergias e intolerancias</span><span class="chev">›</span></div>
           </div>
 
-          <div class="section-lbl">Ajustes</div>
           <div class="list-group">
-            <div class="list-row"><span>Recordatorios de comida</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-            <div class="list-row"><span>Aviso de entreno</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-            <div class="list-row"><span>Modo oscuro</span><div class="toggle" id="darkToggle" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
+            <div class="list-row" onclick="goTo('ajustes')"><span>Ajustes y privacidad</span><span class="chev">›</span></div>
           </div>
+        </section>
 
-          <div class="logout-row"><span onclick="cerrarSesionCliente()">Cerrar sesión</span><span onclick="borrarDatos()" style="color:#E05C4B;cursor:pointer">Borrar datos de prueba</span><span>v 0.2</span></div>
+        <section class="view" id="view-ajustes">
+          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button></div>
+          <div class="h-title ajx-title">Ajustes</div>
+          <div id="ajustesCliente"></div>
         </section>
 
       </div>
@@ -585,6 +673,7 @@ if ('serviceWorker' in navigator) {
         <button class="tbi" id="tab-entreno" onclick="goTo('entreno')"><div class="tbi-shape sh-entreno"></div>ENTRENAMIENTO</button>
         <button class="tbi" id="tab-progreso" onclick="goTo('progreso')"><div class="tbi-shape sh-progreso"></div>PROGRESO</button>
         <button class="tbi" id="tab-chat" onclick="goTo('chat')"><div class="tbi-shape sh-chat"></div>CHAT</button>
+        <button class="tbi" id="tab-ajustes" onclick="goTo('ajustes')"><div class="tbi-shape sh-ajustes"></div>AJUSTES</button>
       </nav>
     </div>
 
@@ -682,5 +771,6 @@ if ('serviceWorker' in navigator) {
 <p class="caption">Prototipo interactivo — dirección "Semana viva" a partir de vuestro documento de diseño. Toca las pestañas, completa series en Entreno, marca comidas y escribe en el chat.</p>
 
 <script src="app.js" defer></script>
+<script src="ajustes.js" defer></script>
 </body>
 </html>
