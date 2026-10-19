@@ -431,7 +431,7 @@ actualizarPanel = (function(orig){
     Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
       const n = s[claves[i]] || 0;
       const pie = card.querySelector('.kc-pie span:last-child');
-      if (pie && n) pie.innerHTML = '💬 ' + esc(pie.textContent.replace('💬', '').trim()) + ' · <b class="kc-nuevos">' + n + ' sin leer</b>';
+      if (pie && n && !card.querySelector('.kc-msgs')) pie.innerHTML = '💬 ' + esc(pie.textContent.replace('💬', '').trim()) + ' · <b class="kc-nuevos">' + n + ' sin leer</b>';
     });
   };
 })(actualizarPanel);

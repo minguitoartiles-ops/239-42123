@@ -986,3 +986,11 @@
   .sg-nota{font:400 12px/1.45 Archivo;color:var(--dim-6);margin-top:8px;}
   .sg-ver{font-weight:700;color:var(--ink);white-space:nowrap;}
   .panel-stat .val.warn{color:var(--danger);}
+
+  /* Tarjetas de Clientes: puntuación global, adherencias y mensajes */
+  .kc-punt .kc-v b{font:800 17px Archivo;}
+  .kc-punt.v-n1{box-shadow:inset 0 -3px 0 #E05C4B;} .kc-punt.v-n2{box-shadow:inset 0 -3px 0 #E8894A;}
+  .kc-punt.v-n3{box-shadow:inset 0 -3px 0 #D9B23F;} .kc-punt.v-n4{box-shadow:inset 0 -3px 0 #8FBF5A;}
+  .kc-punt.v-n5{box-shadow:inset 0 -3px 0 #43B37B;}
+  .kc-msgs.hay .kc-v b{color:var(--danger);}
+  .kc-evo{font:600 11px var(--f-mono);color:var(--dim-55);white-space:nowrap;}
