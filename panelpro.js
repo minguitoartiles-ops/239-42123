@@ -911,3 +911,27 @@ goTo = (function(orig){
 atrasDentroApp = (function(orig){
   return function(){ if (capaVisible('alergiasSheet')) { cerrarAlergias(); return true; } return orig(); };
 })(atrasDentroApp);
+
+/* v0.51 · Pestaña Clientes: colores de valoración en los recuadros (misma escala que Seguimientos) */
+function colorearTarjetasClientes(){
+  Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card){
+    ['kc-ent', 'kc-nut'].forEach(function(cls){
+      const box = card.querySelector('.kc.' + cls);
+      if (!box) return;
+      const v = box.querySelector('.kc-v');
+      const m = v && v.textContent.match(/([\d.,]+)\s*\/\s*10/);
+      for (let i = 1; i <= 5; i++) box.classList.remove('v-n' + i);
+      if (!m) return;
+      const n = nivel(limitar(parseFloat(m[1].replace(',', '.')) / 10));
+      box.classList.add('v-n' + n);
+      const num = v.firstChild;
+      if (num && num.nodeType === 3) { const b = document.createElement('b'); b.className = 'v' + n; b.textContent = num.textContent; v.replaceChild(b, num); }
+    });
+    const msg = card.querySelector('.kc.kc-msgs');
+    if (msg) msg.classList.toggle('v-n1', msg.classList.contains('hay'));
+  });
+}
+pintarListaClientes = (function(orig){
+  return function(){ orig(); colorearTarjetasClientes(); };
+})(pintarListaClientes);
+actualizarPanel();
