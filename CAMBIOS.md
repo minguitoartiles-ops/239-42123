@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.48.4 (actual)
-Cambios acumulados hacia la 0.49: **8 de 10** (0.48.1 tras el 2.º, 0.48.2 tras el 4.º, 0.48.3 tras el 6.º, 0.48.4 tras el 8.º)
+## Versión 0.49 (actual)
+Cambios acumulados hacia la 0.50: **0 de 10**
+
+## Versión 0.48 → 0.48.4
 
 ### Hacia la 0.49
 1. 19/10/2026 22:56 · Pantalla de acceso: logo, tarjeta y accesos agrupados y centrados
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.49: **8 de 10** (0.48.1 tras el 2.º, 0.48.2 tras 
 6. 19/10/2026 23:20 · Tipos de aviso: mensajes, plan actualizado, recordatorio y revisión de seguimiento, seguimientos recibidos, altas y pendientes
 7. 19/10/2026 23:20 · Ajustes → Notificaciones: un interruptor por tipo (sustituye a los dos que no funcionaban)
 8. 19/10/2026 23:20 · Avisos del móvil opcionales (con permiso); tocar el aviso abre la app
+9. 19/10/2026 23:28 · Chat estilo grupos: foto (o inicial) y nombre de quien escribe; lo propio a la derecha
+10. 19/10/2026 23:28 · Cabecera del chat del profesional con la foto del cliente → **sube a la 0.49**
 
 ## Versión 0.47
 

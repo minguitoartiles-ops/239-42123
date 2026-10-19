@@ -1145,3 +1145,94 @@ function ocultarToast(){
   const g = goTo;
   goTo = function(n, s){ if (n !== vistaActual) ocultarToast(); g(n, s); };
 })();
+
+/* =========================================================
+   Chat estilo grupos de WhatsApp: foto y nombre de quien escribe
+   Todo lo que se añade aquí es visual: no se guarda en la conversación.
+   ========================================================= */
+const MARCAS_CHAT = ['msg-otro', 'msg-mio', 'sin-nombre', 'sin-av'];
+function autorBurbuja(b){
+  const s = b.querySelector('.sender:not(.sender-x)');
+  if (b.classList.contains('out')) return { tipo: 'cliente', nombre: (clientesData[clienteActual] || {}).nombre || 'Cliente' };
+  const n = s ? s.textContent.trim() : 'Equipo';
+  return { tipo: 'pro', nombre: n };
+}
+function esMio(b, autor){
+  if (!isCoachView()) return b.classList.contains('out');
+  return autor.tipo === 'pro' && coachActivo && norm(autor.nombre) === norm(coachActivo.u);
+}
+function colorAutor(autor){
+  if (autor.tipo === 'cliente') return 'av-cli';
+  return norm(autor.nombre) === 'fatima' ? 'av-nut' : 'av-ent';
+}
+function fotoAutor(autor){ return autor.tipo === 'cliente' ? fotoDe('cliente:' + clienteActual) : fotoDe(autor.nombre); }
+decorarChat = function(){
+  const list = document.getElementById('chatList');
+  if (!list) return;
+  /* limpiar lo añadido antes */
+  Array.prototype.forEach.call(list.querySelectorAll('.msg-av, .msg-av2, .sender-x'), function(x){ x.remove(); });
+  const burbujas = Array.prototype.slice.call(list.querySelectorAll('.bubble'));
+  const autores = burbujas.map(autorBurbuja);
+  burbujas.forEach(function(b, i){
+    MARCAS_CHAT.forEach(function(c){ b.classList.remove(c); });
+    const a = autores[i];
+    const mio = esMio(b, a);
+    b.classList.add(mio ? 'msg-mio' : 'msg-otro');
+    if (mio) return;
+    const mismoAntes = i > 0 && !esMio(burbujas[i - 1], autores[i - 1]) && autores[i - 1].nombre === a.nombre;
+    const mismoDespues = i < burbujas.length - 1 && !esMio(burbujas[i + 1], autores[i + 1]) && autores[i + 1].nombre === a.nombre;
+    /* nombre encima (solo en el primero de una racha) */
+    if (a.tipo === 'cliente') {
+      const s = document.createElement('div');
+      s.className = 'sender sender-x';
+      s.textContent = a.nombre;
+      b.insertBefore(s, b.firstChild);
+    }
+    if (mismoAntes) b.classList.add('sin-nombre');
+    /* foto a la izquierda (solo en el último de una racha) */
+    if (mismoDespues) { b.classList.add('sin-av'); return; }
+    const av = document.createElement('span');
+    av.className = 'msg-av2 ' + colorAutor(a);
+    av.setAttribute('aria-hidden', 'true');
+    const url = fotoAutor(a);
+    if (url) { av.style.backgroundImage = 'url("' + url + '")'; av.classList.add('con-foto'); }
+    else av.textContent = (a.nombre || '?').trim().charAt(0).toUpperCase();
+    b.appendChild(av);
+  });
+  pintarCabeceraChat();
+};
+guardarChat = function(){
+  if (!clienteActual) return;
+  const l = document.getElementById('chatList');
+  if (!l) return;
+  const copia = l.cloneNode(true);
+  Array.prototype.forEach.call(copia.querySelectorAll('.msg-av, .msg-av2, .sender-x'), function(x){ x.remove(); });
+  Array.prototype.forEach.call(copia.querySelectorAll('.bubble'), function(b){ MARCAS_CHAT.forEach(function(c){ b.classList.remove(c); }); });
+  PLANES[clienteActual] = PLANES[clienteActual] || { ent: '', nut: '' };
+  PLANES[clienteActual].chat = copia.innerHTML;
+};
+/* cabecera del chat del profesional: foto del cliente junto a su nombre */
+function pintarCabeceraChat(){
+  const t = document.getElementById('chatTitle');
+  if (!t) return;
+  let w = document.getElementById('chatHead');
+  if (!w) {
+    w = document.createElement('div');
+    w.id = 'chatHead'; w.className = 'chat-head';
+    t.parentNode.insertBefore(w, t);
+    const av = document.createElement('span');
+    av.id = 'chatHeadAv'; av.className = 'chat-head-av av-cli'; av.setAttribute('aria-hidden', 'true');
+    w.appendChild(av); w.appendChild(t);
+  }
+  const av = document.getElementById('chatHeadAv');
+  const coach = isCoachView() && clienteActual && clientesData[clienteActual];
+  av.hidden = !coach;
+  if (!coach) return;
+  const url = fotoDe('cliente:' + clienteActual);
+  if (url) { av.style.backgroundImage = 'url("' + url + '")'; av.classList.add('con-foto'); av.textContent = ''; }
+  else { av.style.backgroundImage = ''; av.classList.remove('con-foto'); av.textContent = (clientesData[clienteActual].nombre || '?').charAt(0).toUpperCase(); }
+}
+syncChatPerspective = (function(orig){
+  return function(){ orig(); decorarChat(); };
+})(syncChatPerspective);
+decorarChat();
