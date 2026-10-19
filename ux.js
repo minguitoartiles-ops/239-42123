@@ -333,6 +333,7 @@ pintarAtras = function(){
   const origShow = showScreen;
   showScreen = function(id){
     origShow(id);
+    if (id === 'view-coach-panel') { actualizarPanel(); if (typeof pintarNotisCoach === 'function') pintarNotisCoach(); }
     animar(document.getElementById(id), navDir || 'push');
   };
   ['backToSplash', 'backToPanel', 'backToCliente', 'coachLogout', 'cerrarSesionCliente'].forEach(function(fn){
@@ -443,3 +444,148 @@ goToEntrenoCoach = (function(orig){
 goToPlanCoach = (function(orig){
   return function(){ if (coachActivo && coachActivo.rol === 'entrenador') return; orig(); };
 })(goToPlanCoach);
+
+/* =========================================================
+   v0.43 · Barra de escritura estilo WhatsApp/Telegram
+   ========================================================= */
+const esTactil = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+function crecerInput(){
+  const t = document.getElementById('chatInput');
+  if (!t) return;
+  t.style.height = 'auto';
+  t.style.height = Math.min(t.scrollHeight, 132) + 'px';
+}
+function actualizarComposer(){
+  const t = document.getElementById('chatInput');
+  const c = document.getElementById('composer');
+  if (!t || !c) return;
+  c.classList.toggle('tiene-texto', t.value.trim().length > 0);
+  crecerInput();
+}
+(function(){
+  const t = document.getElementById('chatInput');
+  if (!t) return;
+  t.addEventListener('input', actualizarComposer);
+  /* Enter: en el móvil hace salto de línea (como WhatsApp); en ordenador envía, Mayús+Enter salta línea.
+     Se intercepta en captura para que el atajo antiguo de app.js no actúe. */
+  document.addEventListener('keydown', function(e){
+    if (e.target !== t || e.key !== 'Enter') return;
+    e.stopPropagation();
+    if (esTactil || e.shiftKey) return;
+    e.preventDefault();
+    sendMsg();
+  }, true);
+})();
+insertarEmoji = (function(orig){
+  return function(e){ orig(e); actualizarComposer(); };
+})(insertarEmoji);
+sendMsg = (function(orig){
+  return function(){
+    orig();
+    actualizarComposer();
+    if (programarGuardado && guardadoPend) { clearTimeout(guardadoPend); guardadoPend = null; }
+    guardarTodo();                       // guardar al instante, sin esperar
+  };
+})(sendMsg);
+recUI = (function(orig){
+  return function(on){
+    orig(on);
+    const c = document.getElementById('composer');
+    if (c) c.classList.toggle('grabando', !!on);
+  };
+})(recUI);
+syncChatPerspective = (function(orig){
+  return function(){
+    orig();
+    const t = document.getElementById('chatInput');
+    if (t) t.placeholder = 'Mensaje';
+  };
+})(syncChatPerspective);
+
+/* =========================================================
+   v0.43 · Botón «atrás» del móvil dentro de la app
+   ========================================================= */
+function capaVisible(id){ const el = document.getElementById(id); return !!(el && el.classList.contains('show')); }
+function atrasDentroApp(){
+  /* 1. ventanas y capas abiertas */
+  if (capaVisible('dlgOverlay')) { cerrarDialogo(false); return true; }
+  if (capaVisible('legalOverlay')) { cerrarLegal(); return true; }
+  if (capaVisible('cookieConfig')) { cookiesCerrarConfig(); return true; }
+  if (capaVisible('cookieBanner') || capaVisible('consentSalud')) return true;   // hay que elegir una opción
+  const ep = document.getElementById('emojiPanel');
+  if (ep && !ep.hidden) { cerrarEmojis(); return true; }
+  const capas = [['videoModal', cerrarVideoModal], ['recursoPop', cerrarRecurso], ['foodPicker', closeFoodPicker],
+                 ['exPicker', closeExercisePicker], ['notiPop', cerrarNotis], ['notiPopCoach', cerrarNotisCoach]];
+  for (let k = 0; k < capas.length; k++) {
+    if (capaVisible(capas[k][0]) && typeof capas[k][1] === 'function') { capas[k][1](); return true; }
+  }
+  /* 2. pantallas */
+  const visible = topScreens.filter(function(id){
+    const el = document.getElementById(id);
+    return el && el.style.display !== 'none' && getComputedStyle(el).display !== 'none';
+  })[0];
+  if (!visible || visible === 'view-splash' || visible === 'view-coach-panel') return false;
+  if (visible === 'app') {
+    if (document.getElementById('coachBar').classList.contains('show')) { backToCliente(); return true; }
+    if (navHist.length) { volverAtras(); return true; }
+    if (vistaActual !== 'hoy') { navDir = 'pop'; goTo('hoy', true); navDir = null; return true; }
+    return false;
+  }
+  const btn = document.getElementById(visible).querySelector('.back-btn');
+  if (btn) { btn.click(); return true; }
+  return false;
+}
+function armarAtras(){
+  if (!history.state || !history.state.fsd) {
+    try { history.pushState({ fsd: 1 }, ''); } catch(e){}
+  }
+}
+window.addEventListener('popstate', function(){
+  if (atrasDentroApp()) { armarAtras(); return; }
+  toast('Pulsa atrás otra vez para salir');
+});
+document.addEventListener('pointerdown', armarAtras, true);
+
+/* =========================================================
+   v0.43 · Ficha y datos siempre al día
+   ========================================================= */
+function contarMensajes(k){
+  const html = PLANES[k] && PLANES[k].chat;
+  if (!html) return 0;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.querySelectorAll('.bubble').length;
+}
+goToCliente = (function(orig){
+  return function(key){
+    orig(key);
+    setTxt('fichaSegN', (SEGUIMIENTOS[key] || []).length);
+    setTxt('fichaChatN', contarMensajes(key));
+  };
+})(goToCliente);
+
+/* Dos pestañas del mismo navegador (p. ej. cliente y profesional) se actualizan solas */
+window.addEventListener('storage', function(e){
+  if (e.key !== DB_KEY || !e.newValue) return;
+  let d = null;
+  try { d = JSON.parse(e.newValue); } catch(err){ return; }
+  if (!d || !d.clientes) return;
+  [[clientesData, d.clientes], [SEGUIMIENTOS, d.seg || {}], [PLANES, d.planes || {}]].forEach(function(par){
+    Object.keys(par[0]).forEach(function(k){ if (!(k in par[1])) delete par[0][k]; });
+    Object.keys(par[1]).forEach(function(k){
+      if (par[0] === PLANES && k === clienteActual && par[0][k]) {
+        par[0][k].chat = par[1][k].chat;        // solo la conversación: no pisar un plan que se está editando
+      } else par[0][k] = par[1][k];
+    });
+  });
+  notisCoach = d.notis || [];
+  const cl = document.getElementById('chatList');
+  if (cl && clienteActual && PLANES[clienteActual] && PLANES[clienteActual].chat && cl.innerHTML !== PLANES[clienteActual].chat) {
+    cl.innerHTML = PLANES[clienteActual].chat;
+    cl.scrollTop = cl.scrollHeight;
+  }
+  actualizarPanel();
+  if (typeof pintarNotisCoach === 'function') pintarNotisCoach();
+  pintarChatHero(); pintarHistorialCliente(); pintarCambiosCuerpo(); pintarProgreso();
+  if (clienteActual) { setTxt('fichaSegN', (SEGUIMIENTOS[clienteActual] || []).length); setTxt('fichaChatN', contarMensajes(clienteActual)); }
+});

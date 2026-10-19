@@ -774,3 +774,31 @@
   .esp-entreno #app.coach-view .tbi.active .tbi-shape,.esp-nutri #app.coach-view .tbi.active .tbi-shape{background:var(--esp);border-color:var(--esp);}
   .coach-bar-left{display:flex;align-items:center;gap:8px;min-width:0;}
   .coach-bar-volver{height:30px;padding:0 12px 0 8px;font-size:13px;}
+
+  /* ================= v0.43 · Barra de escritura estilo WhatsApp ================= */
+  .composer{flex:none;display:flex;align-items:flex-end;gap:8px;margin:8px -22px 0;padding:8px 10px 10px;border-top:1px solid var(--line);background:var(--bg);}
+  .composer-pill{flex:1;min-width:0;display:flex;align-items:flex-end;gap:2px;min-height:48px;padding:4px 6px;border-radius:24px;background:var(--card);border:1px solid var(--line);}
+  .composer-pill:focus-within{border-color:var(--accent-line);}
+  .composer textarea{flex:1;min-width:0;resize:none;border:none;outline:none;background:transparent;color:var(--ink);font:400 16px/1.4 var(--f-body);padding:9px 4px;max-height:132px;overflow-y:auto;}
+  .composer textarea::placeholder{color:var(--dim-40);}
+  .cmp-ico{width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;background:none;color:var(--dim-55);cursor:pointer;}
+  .cmp-ico:active,.cmp-ico[aria-expanded="true"]{color:var(--ink);background:var(--wash-med);}
+  .cmp-main{width:48px;height:48px;flex:none;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;background:var(--accent);color:var(--on-accent);cursor:pointer;transition:transform .15s;}
+  .cmp-main:active{transform:scale(.92);}
+  .cmp-ico:focus-visible,.cmp-main:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  #sendBtn{display:none;}
+  .composer.tiene-texto #sendBtn{display:flex;}
+  .composer.tiene-texto #micBtn{display:none;}
+  #micBtn .i-stop{display:none;}
+  #micBtn.rec{background:var(--danger);color:#fff;}
+  #micBtn.rec .i-mic{display:none;}
+  #micBtn.rec .i-stop{display:block;}
+  .composer .rec-live{flex:1;min-width:0;padding:0 6px;height:38px;}
+  .composer .rec-hint{font:500 12px Archivo;color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .composer.grabando #emojiBtn,.composer.grabando #clipBtn{display:none;}
+  #view-chat .emoji-panel{margin-top:8px;}
+  .bubble{white-space:pre-wrap;overflow-wrap:anywhere;}
+  @media (prefers-reduced-motion: reduce){ .cmp-main{transition:none;} }
+  #view-chat{padding:0 !important;}
+  #content:has(#view-chat.active){padding-bottom:0;}
+  .composer{padding-bottom:calc(10px + 0px);}
