@@ -1145,3 +1145,30 @@
   .kc.v-n5{box-shadow:inset 0 -3px 0 #43B37B;}
   .kc .kc-v b[class^="v"]{font-weight:800;}
   .kc.kc-msgs.v-n1{background:rgba(224,92,75,.08);}
+
+  /* v0.52 · Pestaña Chats del profesional */
+  .tbi{position:relative;}
+  .tab-badge{position:absolute;top:-4px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 5px;border-radius:999px;background:var(--accent);color:var(--on-accent);font:700 10px/17px var(--f-mono);text-align:center;}
+  .tab-badge.rojo{background:var(--danger);color:#fff;}
+  .tab-badge[hidden]{display:none;}
+  .chats-stats{margin-bottom:6px;}
+  .chat-filas{display:flex;flex-direction:column;gap:8px;}
+  .chat-fila{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:16px;background:var(--card);border:1px solid var(--line);cursor:pointer;}
+  .chat-fila:active{transform:scale(.99);}
+  .chat-fila.espera{border-color:var(--accent);}
+  .chat-fila.rojo{border:1.5px solid var(--danger);background:rgba(217,80,63,.07);}
+  .chat-fila-av{width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 17px Archivo;background-size:cover;background-position:center;}
+  .chat-fila-txt{flex:1;min-width:0;}
+  .chat-fila-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+  .chat-fila-top b{font:700 14.5px Archivo;font-family:var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-fila-t{font:600 10.5px var(--f-mono);color:var(--dim-55);white-space:nowrap;flex:none;}
+  .chat-fila.rojo .chat-fila-t{color:var(--danger);}
+  .chat-fila-ult{font:400 12.5px Archivo;font-family:var(--f-body);color:var(--dim-6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+  .chat-fila-est{display:inline-block;margin-top:6px;font:700 9.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--accent-line);color:var(--ink);}
+  .chat-fila.rojo .chat-fila-est{background:var(--danger);color:#fff;}
+  .chat-fila-n{flex:none;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--danger);color:#fff;font:700 11px/22px var(--f-mono);text-align:center;}
+  .ficha-chat-btn{position:relative;margin-left:auto;align-self:center;display:flex;align-items:center;gap:6px;height:38px;padding:0 15px;border-radius:999px;border:none;background:var(--accent);color:var(--on-accent);font:700 13px Archivo;font-family:var(--f-body);cursor:pointer;flex:none;}
+  .ficha-chat-btn.rojo{background:var(--danger);color:#fff;}
+  .ficha-chat-btn .tab-badge{top:-6px;left:auto;right:-6px;background:var(--danger);color:#fff;border:2px solid var(--bg);}
+  #view-coach-chats{flex:1 1 auto;flex-direction:column;min-height:0;}
+  .chat-fila-av{color:#fff;}
