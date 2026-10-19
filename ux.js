@@ -498,7 +498,7 @@ syncChatPerspective = (function(orig){
   return function(){
     orig();
     const t = document.getElementById('chatInput');
-    if (t) t.placeholder = 'Mensaje';
+    if (t) t.placeholder = 'Escribe un mensaje';
   };
 })(syncChatPerspective);
 
@@ -1330,3 +1330,253 @@ function vaciarFormularioAlta(){
 goToAlta = (function(orig){
   return function(){ vaciarFormularioAlta(); orig(); };
 })(goToAlta);
+
+/* =========================================================
+   v0.50.2 · Seguimiento: lo del seguimiento anterior, difuminado de fondo
+   ========================================================= */
+const SG_ESCALAS = ['agujetas', 'motiv'];
+const SG_RANGOS = [['rEntreno', 'e', 8], ['rNutri', 'n', 8], ['rEstres', 'x', 3]];
+function sgAnterior(){
+  const lista = (clienteActual && SEGUIMIENTOS[clienteActual]) || [];
+  return lista[0] || null;
+}
+function pintarSeguimientoAnterior(){
+  const sec = document.getElementById('view-seguimiento');
+  if (!sec) return;
+  const r = sgAnterior();
+  // textos: progreso, sensaciones, obstáculos, descanso
+  const txt = sec.querySelectorAll('.sg-text');
+  Array.prototype.forEach.call(txt, function(t, i){
+    if (t.dataset.ej == null) t.dataset.ej = t.placeholder;
+    let ant = '';
+    if (r && r.textos) ant = r.textos[i] || '';
+    else if (r && i === 0) ant = r.prog || '';
+    t.placeholder = ant || t.dataset.ej;
+    t.classList.toggle('sg-ant', !!ant);
+  });
+  // medidas
+  const nums = sec.querySelectorAll('.row2col input');
+  MEDIDAS.forEach(function(m, i){
+    const inp = nums[i];
+    if (!inp) return;
+    if (inp.dataset.ej == null) inp.dataset.ej = inp.placeholder;
+    const v = r && r.med ? r.med[m[0]] : null;
+    inp.placeholder = v != null ? fmtNum(v) : inp.dataset.ej;
+    inp.classList.toggle('sg-ant', v != null);
+  });
+  // escalas (agujetas, motivación): el número anterior con un aro suave
+  const filas = sec.querySelectorAll('.esc-row');
+  [r && r.agujetas, r && r.m].forEach(function(v, i){
+    if (!filas[i]) return;
+    Array.prototype.forEach.call(filas[i].querySelectorAll('.esc-btn'), function(b){
+      b.classList.toggle('esc-ant', !!v && b.textContent.trim() === String(v));
+    });
+  });
+  // deslizadores: «antes 7» difuminado al lado
+  SG_RANGOS.forEach(function(g){
+    const out = document.getElementById(g[0]);
+    if (!out) return;
+    const fila = out.parentElement;
+    let s = fila.querySelector('.sg-antes');
+    const v = r ? r[g[1]] : null;
+    if (v == null || v === '—') { if (s) s.remove(); return; }
+    if (!s) { s = document.createElement('span'); s.className = 'sg-antes'; fila.appendChild(s); }
+    s.textContent = 'antes ' + v;
+  });
+  // aviso arriba del formulario
+  let aviso = document.getElementById('sgAntAviso');
+  if (!r) { if (aviso) aviso.remove(); return; }
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.id = 'sgAntAviso';
+    aviso.className = 'sg-ant-aviso';
+    const primero = sec.querySelector('.sg-block');
+    primero.parentNode.insertBefore(aviso, primero);
+  }
+  aviso.textContent = 'En gris claro verás lo que pusiste en el seguimiento anterior (' + (r.s || 'último') + ').';
+}
+function vaciarSeguimiento(){
+  const sec = document.getElementById('view-seguimiento');
+  if (!sec) return;
+  Array.prototype.forEach.call(sec.querySelectorAll('.sg-text, .row2col input'), function(el){ el.value = ''; });
+  const filas = sec.querySelectorAll('.esc-row');
+  SG_ESCALAS.forEach(function(g, i){
+    const b = filas[i] && filas[i].querySelector('.esc-btn');
+    if (b) setEscala(b, g, 1);
+  });
+  SG_RANGOS.forEach(function(g){
+    const out = document.getElementById(g[0]);
+    const inp = out && out.parentElement.querySelector('input[type=range]');
+    if (inp) { inp.value = g[2]; out.textContent = g[2]; }
+  });
+}
+guardarSeguimiento = (function(orig){
+  return function(){
+    const sec = document.getElementById('view-seguimiento');
+    const textos = Array.prototype.map.call(sec.querySelectorAll('.sg-text'), function(t){ return t.value.trim(); });
+    const lista = (clienteActual && SEGUIMIENTOS[clienteActual]) || [];
+    const antes = lista.length;
+    orig();
+    const nueva = (clienteActual && SEGUIMIENTOS[clienteActual]) || [];
+    if (nueva.length > antes && nueva[0]) { nueva[0].textos = textos; programarGuardado(); }
+    vaciarSeguimiento();
+    pintarSeguimientoAnterior();
+  };
+})(guardarSeguimiento);
+goTo = (function(orig){
+  return function(n, s){ orig(n, s); if (n === 'seguimiento') pintarSeguimientoAnterior(); };
+})(goTo);
+
+/* =========================================================
+   v0.50.3 · Notas de voz como en WhatsApp
+   Mantener pulsado: graba · soltar: envía
+   Deslizar arriba: bloquea (sigue grabando sin el dedo) · deslizar a la izquierda: cancela
+   ========================================================= */
+const VOZ_CANCELAR_PX = 90, VOZ_BLOQUEAR_PX = 70, VOZ_MIN_MS = 600;
+const vozG = { estado: 'libre', id: null, x0: 0, y0: 0, t0: 0, stream: null, descartar: false, bloqueada: false };
+function vozComposer(){ return document.getElementById('composer'); }
+function vozPintarArrastre(dx, dy){
+  const h = document.getElementById('recHint');
+  const l = document.getElementById('recLock');
+  if (h) h.style.transform = 'translateX(' + Math.max(-VOZ_CANCELAR_PX, Math.min(0, dx)) + 'px)';
+  if (h) h.style.opacity = String(1 - Math.min(1, Math.max(0, -dx) / VOZ_CANCELAR_PX) * .7);
+  if (l) l.style.transform = 'translateY(' + Math.max(-VOZ_BLOQUEAR_PX / 2, Math.min(0, dy / 2)) + 'px)';
+}
+function vozLimpiarUI(){
+  const c = vozComposer();
+  if (c) c.classList.remove('voz-sujeta', 'voz-bloqueada');
+  vozPintarArrastre(0, 0);
+}
+/* Arranca la grabación. Si el dedo ya se soltó mientras el móvil pedía permiso, no graba. */
+function iniciarGrabacion(){
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) {
+    toast('Este navegador no permite grabar notas de voz.');
+    vozG.estado = 'libre'; vozLimpiarUI();
+    return;
+  }
+  vozG.estado = 'pidiendo';
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+    if (vozG.estado !== 'pidiendo') {            // se soltó o se canceló antes de tener micrófono
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      return;
+    }
+    const mt = formatoAudio();
+    try { mediaRec = mt ? new MediaRecorder(stream, { mimeType: mt, audioBitsPerSecond: 24000 }) : new MediaRecorder(stream); }
+    catch(e){ mediaRec = new MediaRecorder(stream); }
+    vozG.stream = stream; vozG.descartar = false; vozG.t0 = Date.now();
+    recChunks = []; recSegs = 0;
+    setTxt('recTime', '0:00');
+    mediaRec.ondataavailable = function(e){ if (e.data && e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop = function(){
+      clearInterval(recInt); recInt = null; recUI(false); vozLimpiarUI();
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      const tipo = (mediaRec && mediaRec.mimeType) || mt || 'audio/mp4';
+      const ms = Date.now() - vozG.t0;
+      const descartar = vozG.descartar;
+      mediaRec = null; vozG.stream = null; vozG.estado = 'libre'; vozG.bloqueada = false;
+      if (descartar || !recChunks.length || ms < VOZ_MIN_MS) return;
+      const segs = Math.max(1, Math.round(ms / 1000));
+      const fr = new FileReader();
+      fr.onload = function(){ addAudioBubble(fr.result, segs); };
+      fr.readAsDataURL(new Blob(recChunks, { type: tipo }));
+    };
+    mediaRec.start();
+    vozG.estado = 'grabando';
+    recUI(true);
+    if (navigator.vibrate) { try { navigator.vibrate(30); } catch(e){} }
+    recInt = setInterval(function(){
+      recSegs++;
+      setTxt('recTime', fmtDur(recSegs));
+      if (recSegs >= MAX_AUDIO_SEG && mediaRec && mediaRec.state === 'recording') terminarGrabacion(true);
+    }, 1000);
+  }).catch(function(){
+    vozG.estado = 'libre'; vozLimpiarUI();
+    toast('Sin permiso para el micrófono. Actívalo en los ajustes del móvil para esta app.');
+  });
+}
+function terminarGrabacion(enviar){
+  if (mediaRec && mediaRec.state === 'recording') {
+    vozG.descartar = !enviar;
+    vozG.estado = 'parando';
+    mediaRec.stop();
+  } else {
+    vozG.estado = 'libre'; vozG.bloqueada = false; vozLimpiarUI();
+  }
+}
+function cancelarGrabacion(){
+  terminarGrabacion(false);
+  toast('Nota de voz borrada');
+}
+function bloquearGrabacion(){
+  vozG.bloqueada = true;
+  const c = vozComposer();
+  if (c) { c.classList.remove('voz-sujeta'); c.classList.add('voz-bloqueada'); }
+  vozPintarArrastre(0, 0);
+  setTxt('recHint', 'Grabando…');
+  if (navigator.vibrate) { try { navigator.vibrate(20); } catch(e){} }
+}
+/* El botón antiguo (tocar para empezar / parar) ya no se usa; queda por si algo lo llama */
+toggleMic = function(){
+  if (vozG.bloqueada || (mediaRec && mediaRec.state === 'recording')) terminarGrabacion(true);
+  else toast('Mantén pulsado el micrófono para grabar.');
+};
+recUI = (function(orig){
+  return function(on){
+    orig(on);
+    if (on && !vozG.bloqueada) {
+      const h = document.getElementById('recHint');
+      if (h) h.innerHTML = '<span class="rh-chev">‹</span> Desliza para cancelar';
+    }
+  };
+})(recUI);
+(function(){
+  const mic = document.getElementById('micBtn');
+  if (!mic) return;
+  mic.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  mic.addEventListener('pointerdown', function(e){
+    if (e.button && e.button !== 0) return;
+    e.preventDefault();
+    if (vozG.bloqueada) return;                 // con la grabación bloqueada, el botón es «Enviar» (click)
+    if (vozG.estado !== 'libre') return;
+    vozG.id = e.pointerId; vozG.gesto = e.pointerId; vozG.x0 = e.clientX; vozG.y0 = e.clientY; vozG.tPulsar = Date.now();
+    try { mic.setPointerCapture(e.pointerId); } catch(err){}
+    const c = vozComposer();
+    if (c) c.classList.add('voz-sujeta');
+    cerrarEmojis();
+    iniciarGrabacion();
+  });
+  mic.addEventListener('pointermove', function(e){
+    if (e.pointerId !== vozG.id || vozG.bloqueada || vozG.estado === 'libre') return;
+    const dx = e.clientX - vozG.x0, dy = e.clientY - vozG.y0;
+    if (dx < -VOZ_CANCELAR_PX) { vozG.id = null; cancelarGrabacion(); return; }
+    if (dy < -VOZ_BLOQUEAR_PX && Math.abs(dx) < VOZ_CANCELAR_PX / 2) { vozG.id = null; bloquearGrabacion(); return; }
+    vozPintarArrastre(dx, dy);
+  });
+  const soltar = function(e){
+    // al soltar el dedo tras bloquear, el navegador manda un «click» que no debe enviar la nota
+    if (e.pointerId === vozG.gesto) { vozG.gesto = null; if (vozG.bloqueada) vozG.ignorarClickHasta = Date.now() + 400; }
+    if (e.pointerId !== vozG.id) return;
+    vozG.id = null;
+    if (vozG.bloqueada) return;
+    const corto = Date.now() - (vozG.tPulsar || 0) < VOZ_MIN_MS;
+    if (vozG.estado === 'pidiendo') {          // aún no había micrófono (p. ej. el móvil pedía permiso)
+      vozG.estado = 'libre'; vozLimpiarUI();
+      if (corto && e.type === 'pointerup') toast('Mantén pulsado el micrófono para grabar.');
+      return;
+    }
+    if (vozG.estado !== 'grabando') return;
+    if (corto) { terminarGrabacion(false); toast('Mantén pulsado el micrófono para grabar.'); return; }
+    terminarGrabacion(e.type === 'pointerup');
+  };
+  mic.addEventListener('pointerup', soltar);
+  mic.addEventListener('pointercancel', soltar);
+  // con la grabación bloqueada, el botón del micrófono pasa a ser «Enviar»
+  mic.addEventListener('click', function(){
+    if (!vozG.bloqueada || Date.now() < (vozG.ignorarClickHasta || 0)) return;
+    terminarGrabacion(true);
+  });
+})();
+/* si se sale del chat a mitad de grabación, se descarta */
+goTo = (function(orig){
+  return function(n, s){ if (n !== 'chat' && vozG.estado !== 'libre') terminarGrabacion(false); orig(n, s); };
+})(goTo);
