@@ -598,3 +598,6 @@
   .tbi-shape{width:20px;height:20px;border:1.5px solid var(--dim-40);}
   .tbi.active .tbi-shape{background:var(--accent);border-color:var(--accent);border-radius:50% !important;}
   .sh-hoy{border-radius:7px;} .sh-plan{border-radius:7px;} .sh-entreno{border-radius:50%;} .sh-progreso{border-radius:3px;} .sh-chat{border-radius:7px 7px 7px 2px;}
+
+  /* versión visible de la app */
+  .app-version{text-align:center;font:500 11px Archivo,sans-serif;opacity:.55;margin-top:6px;letter-spacing:.04em;}
