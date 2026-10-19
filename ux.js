@@ -1132,3 +1132,16 @@ function confirmarSalidaCoach(){
     onOk: function(){ coachLogout(); }
   });
 }
+
+/* Los avisos flotantes desaparecen al cambiar de pantalla o de pestaña */
+function ocultarToast(){
+  const t = document.getElementById('fsdToast');
+  if (t) t.classList.remove('show');
+  clearTimeout(toast._t);
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ ocultarToast(); sh(id); };
+  const g = goTo;
+  goTo = function(n, s){ if (n !== vistaActual) ocultarToast(); g(n, s); };
+})();
