@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.51';
+const APP_VERSION = '0.51.2';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -508,6 +508,7 @@ const LEGAL_PRIVACIDAD =
 + '<h4>2. Qué datos tratamos</h4>'
 + '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono, código de acceso y, si la añades, tu foto de perfil.</li>'
 + '<li><b>Datos de salud y físicos:</b> peso, altura, medidas, fotos de progreso, alimentación, alergias e intolerancias, entrenamiento, descanso, estrés, sensaciones y adherencia.</li>'
++ '<li><b>Tu imagen</b> (fotos y vídeos), solo para publicarla si nos das permiso para ello.</li>'
 + '<li><b>Mensajes</b> que intercambias con tu equipo en el chat, incluidas fotos y notas de voz.</li>'
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
 + '<li><b>Compras de productos propios y merchandising:</b> nombre, dirección de envío, teléfono y datos del pedido.</li>'
@@ -518,17 +519,19 @@ const LEGAL_PRIVACIDAD =
 + '<li>Gestionar la contratación, el cobro, la facturación y, si compras productos, el envío.</li>'
 + '<li>Enviarte nuestro boletín, novedades y ofertas de productos propios, <b>solo si lo aceptas</b>.</li>'
 + '<li>Conocer cómo se usa la app con analítica, <b>solo si aceptas esas cookies</b>.</li>'
++ '<li>Publicar fotos o vídeos tuyos en nuestras redes sociales y web con fines de marketing y divulgación, <b>solo con lo que autorices</b> en el formulario de uso de imagen.</li>'
 + '<li>Proteger el acceso a las cuentas.</li></ul>'
 + '<p>No tomamos decisiones automatizadas con efectos jurídicos sobre ti.</p>'
 + '<h4>4. Base legal</h4>'
 + '<ul><li><b>Contrato</b> (art. 6.1.b RGPD): prestarte el servicio y gestionar tus compras.</li>'
 + '<li><b>Consentimiento explícito</b> (art. 9.2.a RGPD): tratar tus datos de salud. Sin él no podemos ofrecerte una asesoría personalizada.</li>'
 + '<li><b>Consentimiento</b> (art. 6.1.a RGPD y art. 21 LSSI): comunicaciones comerciales y analítica. Es voluntario y no condiciona el servicio.</li>'
++ '<li><b>Consentimiento expreso</b> (art. 6.1.a RGPD y Ley Orgánica 1/1982 de protección del derecho a la propia imagen): uso de tu imagen en redes sociales y web. Eliges qué autorizas (fotos sin la cara, fotos o vídeos en los que se te reconoce, tu nombre o testimonio), es voluntario, no condiciona el servicio y puedes revocarlo en cualquier momento.</li>'
 + '<li><b>Obligación legal</b> (art. 6.1.c RGPD): facturación y obligaciones fiscales.</li>'
 + '<li><b>Interés legítimo</b> (art. 6.1.f RGPD): seguridad de la app y prevención de accesos indebidos.</li></ul>'
 + '<p>Puedes retirar cualquier consentimiento en Ajustes → Privacidad o escribiendo a ' + TITULAR.correo + '.</p>'
 + '<h4>5. Cuánto tiempo los guardamos</h4>'
-+ '<p>Mientras tu asesoría esté activa. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja.</p>'
++ '<p>Mientras tu asesoría esté activa. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
 + '<h4>6. Con quién los compartimos</h4>'
 + '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta:</p>'
 + '<ul><li>GitHub, Inc.: alojamiento de la app.</li>'

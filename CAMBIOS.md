@@ -3,11 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.51 (actual)
-Cambios acumulados hacia la 0.52: **1 de 10**
+## Versión 0.51.2 (actual)
+Cambios acumulados hacia la 0.52: **4 de 10** (0.51.1 tras el 2.º · 0.51.2 tras el 4.º)
 
 ### Hacia la 0.52
 1. 20/10/2026 00:20 · Botón atrás del móvil: al entrar desde las notificaciones (o al pulsar atrás varias veces seguidas) ya no saca de la app; las marcas de historial se ponen siempre con un toque
+2. 20/10/2026 00:30 · Gestión del cliente: los globos solo cuentan lo pendiente (seguimientos sin revisar y mensajes sin leer) y desaparecen al abrirlos; también se marcan como leídos sus avisos → **0.51.1**
+3. 20/10/2026 00:30 · Sensaciones del día: el cliente cuenta cómo le ha ido en Entrenamiento y en Nutrición (ánimo + comentario); le llega al profesional de cada área y se ve en la tarjeta del panel y en la ficha
+4. 20/10/2026 00:30 · Consentimiento de uso de imagen para redes (fotos sin cara, reconocible, nombre o testimonio), cambiable en Ajustes y visible en la ficha; añadido a la política de privacidad → **0.51.2**
 
 ## Versión 0.50 → 0.50.4
 
