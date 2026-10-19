@@ -1236,3 +1236,79 @@ syncChatPerspective = (function(orig){
   return function(){ orig(); decorarChat(); };
 })(syncChatPerspective);
 decorarChat();
+
+/* =========================================================
+   Gramos de todas las opciones de comida y resumen rápido
+   - Sin combinación completa: cada opción muestra los gramos que cubren
+     el objetivo de su macronutriente en esa comida (equivalencia).
+   - Con una opción elegida en cada columna: se mantiene el ajuste exacto.
+   ========================================================= */
+const MACRO_COLS = [['protein', 'p', '🥩', 'Proteína'], ['carb', 'c', '🍚', 'Carbohidrato'], ['fat', 'f', '🥑', 'Grasa']];
+function repartoComida(i, total){
+  /* reparto de la calculadora de Fátima; si no suma 100 %, se usa en proporción */
+  const ins = Array.prototype.slice.call(document.querySelectorAll('.calc-meal')).slice(0, total);
+  const pct = ins.map(function(x){ return Math.max(0, parseFloat(x.value) || 0); });
+  const suma = pct.reduce(function(a, b){ return a + b; }, 0);
+  if (ins.length < total || !suma) return 1 / total;
+  return pct[i] / suma;
+}
+calcularPlan = (function(orig){
+  return function(){
+    orig();
+    const obj = window.objNutri;
+    const blocks = mealBlocks();
+    if (obj && blocks.length) {
+      blocks.forEach(function(b, i){
+        const body = b.querySelector('.meal-body') || b;
+        const completa = MACRO_COLS.every(function(m){ return body.querySelector('.chip.' + m[0] + '.selected'); });
+        if (completa) return;                                    // ya lo ha calculado el ajuste exacto
+        const share = repartoComida(i, blocks.length);
+        MACRO_COLS.forEach(function(m){
+          const objetivo = obj[m[1]] * share;
+          Array.prototype.forEach.call(body.querySelectorAll('.chip.' + m[0]), function(ch){
+            if (ch.classList.contains('chip-add')) return;
+            const inf = foodInfo(chipName(ch));
+            if (!inf || !inf[m[1]]) { setChipQty(ch, ''); return; }
+            setChipQty(ch, '· ' + Math.round(objetivo / inf[m[1]] * 100 / 5) * 5 + ' g');
+          });
+        });
+      });
+    }
+    pintarResumenGramos();
+  };
+})(calcularPlan);
+function pintarResumenGramos(){
+  const cont = document.getElementById('comidasCont');
+  if (!cont) return;
+  let r = document.getElementById('resumenGramos');
+  if (!r) {
+    r = document.createElement('details');
+    r.id = 'resumenGramos'; r.className = 'resumen-g'; r.open = true;
+    cont.parentNode.insertBefore(r, cont);
+  }
+  const blocks = mealBlocks();
+  const conOpciones = blocks.filter(function(b){ return b.querySelector('.meal-body .chip:not(.chip-add)'); });
+  r.hidden = !conOpciones.length;
+  if (!conOpciones.length) { r.innerHTML = ''; return; }
+  let h = '<summary><span>Resumen rápido de cantidades</span><small>Elige una opción de cada fila</small></summary><div class="rg-cuerpo">';
+  blocks.forEach(function(b){
+    const titulo = (b.querySelector('.meal-block-title') || {}).textContent || 'Comida';
+    const filas = MACRO_COLS.map(function(m){
+      const ops = Array.prototype.filter.call(b.querySelectorAll('.meal-body .chip.' + m[0]), function(ch){ return !ch.classList.contains('chip-add'); })
+        .map(function(ch){
+          const q = ch.querySelector('.chip-qty');
+          const g = q ? q.textContent.replace('·', '').trim() : '';
+          return '<span class="rg-op' + (ch.classList.contains('selected') ? ' sel' : '') + '">' + esc(chipName(ch)) + (g ? ' <b>' + esc(g) + '</b>' : '') + '</span>';
+        });
+      if (!ops.length) return '';
+      return '<div class="rg-fila ' + m[0] + '"><span class="rg-ico" title="' + m[3] + '" aria-label="' + m[3] + '">' + m[2] + '</span><div class="rg-ops">' + ops.join('') + '</div></div>';
+    }).join('');
+    if (!filas) return;
+    h += '<div class="rg-comida"><div class="rg-tit">' + esc(titulo.trim()) + '</div>' + filas + '</div>';
+  });
+  h += '<p class="rg-nota">Cantidades en crudo. Si eliges una opción de cada fila, se ajustan para cuadrar la comida.</p></div>';
+  r.innerHTML = h;
+}
+pick = (function(orig){
+  return function(el){ orig(el); if (el && el.closest && el.closest('#comidasCont')) pintarResumenGramos(); };
+})(pick);

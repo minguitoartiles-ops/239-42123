@@ -3,8 +3,15 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.49 (actual)
-Cambios acumulados hacia la 0.50: **0 de 10**
+## Versión 0.49.2 (actual)
+Cambios acumulados hacia la 0.50: **5 de 10** (0.49.1 tras el 2.º, 0.49.2 tras el 4.º)
+
+### Hacia la 0.50
+1. 19/10/2026 23:35 · Capa de la campana y selectores sin las esquinas del antiguo marco
+2. 19/10/2026 23:35 · «Mensajes sin leer» real en el panel y en cada tarjeta de cliente (por profesional)
+3. 19/10/2026 23:35 · Logo pequeño visible en iPhone SE y pantallas bajas
+4. 19/10/2026 23:35 · Iconos siempre dentro de los botones de acceso de profesionales
+5. 19/10/2026 23:35 · Gramos de todas las opciones de comida y resumen rápido de cantidades en Nutrición
 
 ## Versión 0.48 → 0.48.4
 

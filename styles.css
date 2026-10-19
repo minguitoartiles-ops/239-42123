@@ -928,3 +928,48 @@
   .chat-head-av{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:700 15px Archivo;color:#fff;background-size:cover;background-position:center;}
   .chat-head-av[hidden]{display:none;}
   .chat-head .h-title{margin-top:0 !important;}
+
+  /* 1 · Capas a pantalla completa sin las esquinas del antiguo marco */
+  .noti-pop,.picker-overlay{border-radius:0;}
+
+  /* 3 · iPhone SE y pantallas muy bajas: logo pequeño en vez de ocultarlo */
+  @media (max-height: 600px){
+    .logo-mark{display:block;margin:4px 0 4px;}
+    .logo-mark img{width:40px;}
+    #view-splash .logo-mark{margin-top:auto;}
+    #view-splash .wordmark{margin-top:0;}
+    .wordmark{font-size:21px;}
+  }
+
+  /* 4 · Botones de profesionales: el icono siempre dentro del botón */
+  .pro-btn{overflow:hidden;}
+  .pro-btn > span{flex-wrap:wrap;row-gap:2px;max-width:100%;}
+  @media (max-width: 360px){
+    .pro-btn{padding:9px 10px;}
+    .pro-btn > span{font-size:9px;letter-spacing:.03em;gap:4px;}
+    .pro-ico{width:15px;height:15px;}
+  }
+
+  /* 2 · Mensajes sin leer en las tarjetas de cliente */
+  .kc-nuevos{color:var(--danger);font-weight:700;}
+
+  /* 5 · Resumen rápido de cantidades en Nutrición */
+  .resumen-g{background:var(--card);border-radius:20px;padding:14px 16px;margin:0 0 14px;}
+  .resumen-g[hidden]{display:none;}
+  .resumen-g summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;cursor:pointer;list-style:none;}
+  .resumen-g summary::-webkit-details-marker{display:none;}
+  .resumen-g summary span{font:700 14px Archivo;}
+  .resumen-g summary small{font:500 11px Archivo;color:var(--dim-55);}
+  .rg-cuerpo{margin-top:10px;display:flex;flex-direction:column;gap:12px;}
+  .rg-comida{border-top:1px solid var(--line);padding-top:10px;}
+  .rg-comida:first-child{border-top:none;padding-top:0;}
+  .rg-tit{font:700 12.5px Archivo;margin-bottom:6px;}
+  .rg-fila{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px;}
+  .rg-ico{flex:none;width:22px;font-size:15px;line-height:22px;text-align:center;}
+  .rg-ops{display:flex;flex-wrap:wrap;gap:5px;min-width:0;}
+  .rg-op{font:500 12px Archivo;padding:3px 9px;border-radius:999px;background:var(--wash-med);white-space:nowrap;}
+  .rg-op b{font:700 12px Archivo;font-variant-numeric:tabular-nums;}
+  .rg-fila.protein .rg-op.sel{background:var(--protein-line);}
+  .rg-fila.carb .rg-op.sel{background:var(--carb-line);}
+  .rg-fila.fat .rg-op.sel{background:var(--fat-line);}
+  .rg-nota{font:400 11px/1.45 Archivo;color:var(--dim-55);margin:0;}
