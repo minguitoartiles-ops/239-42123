@@ -9,6 +9,7 @@ function enterApp(){
   err.textContent='';
   guardarPlan();
   clienteActual=k;
+  window.fsdSesionCliente=true;
   cargarPlan(k);
   pintarCliente();
   document.getElementById('app').classList.remove('coach-view');
@@ -266,7 +267,7 @@ function guardarTodo(){
     guardarChat();
     localStorage.setItem(DB_KEY, JSON.stringify({
       v:1, clientes:clientesData, seg:SEGUIMIENTOS, planes:PLANES,
-      notis:notisCoach, sesion:{cliente:clienteActual}
+      notis:notisCoach, sesion:(window.fsdSesionCliente&&clienteActual)?{cliente:clienteActual,tipo:'cliente'}:null
     }));
   }catch(e){}
 }
@@ -290,6 +291,7 @@ function borrarDatos(){
   location.reload();
 }
 function cerrarSesionCliente(){
+  window.fsdSesionCliente=false;
   clienteActual=null;
   guardarTodo();
   document.getElementById('app').style.display='none';
@@ -1346,6 +1348,8 @@ function trustOlvidar(u){
   trustWrite(o);
 }
 function entrarAlPanel(){
+  window.fsdSesionCliente=false;
+  guardarTodo();
   document.getElementById('panelWho').textContent=coachActivo.u+' · '+coachActivo.rol;
   const row=document.getElementById('trustRow');
   const fiable=esConfiable(coachActivo.u);
@@ -1768,7 +1772,8 @@ document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='
 (function(){
   const s=cargarTodo();
   actualizarPanel();
-  if(s&&s.cliente&&clientesData[s.cliente]){
+  if(s&&s.cliente&&s.tipo==='cliente'&&clientesData[s.cliente]){
+    window.fsdSesionCliente=true;
     clienteActual=s.cliente;
     cargarPlan(s.cliente);
     pintarCliente();

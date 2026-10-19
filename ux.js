@@ -525,7 +525,8 @@ function atrasDentroApp(){
     const el = document.getElementById(id);
     return el && el.style.display !== 'none' && getComputedStyle(el).display !== 'none';
   })[0];
-  if (!visible || visible === 'view-splash' || visible === 'view-coach-panel') return false;
+  if (visible === 'view-coach-panel') { coachLogout(); return true; }   // como mucho, a la pantalla de acceso
+  if (!visible || visible === 'view-splash') return false;
   if (visible === 'app') {
     if (document.getElementById('coachBar').classList.contains('show')) { backToCliente(); return true; }
     if (navHist.length) { volverAtras(); return true; }
@@ -633,3 +634,61 @@ function confirmarPassPro(){
     else { err.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.'; i.select(); }
   });
 }
+
+/* =========================================================
+   v0.45 · Datos clave de cada cliente en el panel del profesional
+   ========================================================= */
+function diasDesde(iso){
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return null;
+  return Math.floor((Date.now() - t) / 86400000);
+}
+function haceTxt(d){ return d == null ? '—' : (d === 0 ? 'hoy' : (d === 1 ? 'ayer' : 'hace ' + d + ' días')); }
+function datoCliente(lista, clave){
+  const vals = lista.filter(function(r){ return r.med && r.med[clave] != null; });
+  if (!vals.length) return { v: null, f: '' };
+  const v = vals[0].med[clave];
+  const prev = vals[1] ? vals[1].med[clave] : null;
+  let f = '';
+  if (prev != null) { const d = v - prev; f = Math.abs(d) < 0.05 ? '=' : (d > 0 ? '↑' : '↓'); }
+  return { v: v, f: f };
+}
+pintarListaClientes = function(){
+  const cont = document.getElementById('listaClientes');
+  if (!cont) return;
+  const rol = coachActivo ? coachActivo.rol : null;
+  cont.innerHTML = Object.keys(clientesData).map(function(k){
+    const d = clientesData[k];
+    const segs = SEGUIMIENTOS[k] || [];
+    const ult = segs[0];
+    const dUlt = ult ? diasDesde(ult.fecha) : null;
+    const dAlta = d.fechaAlta ? diasDesde(d.fechaAlta) : null;
+    let estado, cls;
+    if (!segs.length && (dAlta == null || dAlta < 7)) { estado = 'Nuevo'; cls = 'nuevo'; }
+    else if (!segs.length || dUlt > 7) { estado = 'Seguimiento pendiente'; cls = 'pend'; }
+    else { estado = 'Al día'; cls = 'ok'; }
+    const peso = datoCliente(segs, 'peso'), cint = datoCliente(segs, 'cintura');
+    const ent = ult ? ult.e : null, nut = ult ? ult.n : null;
+    const msgs = contarMensajes(k);
+    function celda(lbl, val, extra, destacar){
+      return '<div class="kc' + (destacar ? ' dest' : '') + '"><span class="kc-l">' + lbl + '</span><span class="kc-v">' + val + (extra ? ' <i>' + extra + '</i>' : '') + '</span></div>';
+    }
+    const celdas = [
+      celda('Peso', peso.v != null ? fmtNum(peso.v) + '<small> kg</small>' : '—', peso.f),
+      celda('Cintura', cint.v != null ? fmtNum(cint.v) + '<small> cm</small>' : '—', cint.f),
+      celda('Entreno', ent != null && ent !== '—' ? esc(ent) + '<small>/10</small>' : '—', '', rol === 'entrenador'),
+      celda('Nutrición', nut != null && nut !== '—' ? esc(nut) + '<small>/10</small>' : '—', '', rol === 'dietista')
+    ];
+    if (rol === 'dietista') { const t = celdas[2]; celdas[2] = celdas[3]; celdas[3] = t; }
+    return '<div class="cliente-card kcard" onclick="goToCliente(\'' + k + '\')">'
+      + '<div class="kc-top"><div class="avatar"></div>'
+      +   '<div class="cliente-info"><div class="cliente-name">' + esc(d.nombre) + '</div>'
+      +   '<div class="cliente-sub">Semana ' + esc(d.semana || '—') + ' · ' + esc(d.objetivo || 'Sin objetivo') + '</div></div>'
+      +   '<div class="cliente-flags"><span class="kc-estado ' + cls + '">' + estado + '</span></div></div>'
+      + '<div class="kc-grid">' + celdas.join('') + '</div>'
+      + '<div class="kc-pie"><span>📋 Último seguimiento: ' + (ult ? haceTxt(dUlt) : 'ninguno') + '</span>'
+      +   '<span>💬 ' + msgs + '</span></div>'
+      + '</div>';
+  }).join('');
+};
+actualizarPanel();
