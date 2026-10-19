@@ -1078,3 +1078,26 @@ function instalarApp(){
   promptInstalar.userChoice.then(function(){ promptInstalar = null; pintarAyudaInstalar(); });
 }
 pintarAyudaInstalar();
+
+/* Consentimiento comercial (boletín y ofertas): voluntario, separado y revocable — art. 21 LSSI */
+csAceptar = (function(orig){
+  return function(){
+    const d = clientesData[clienteActual];
+    const com = document.getElementById('csCom');
+    if (d) d.consentComercial = (com && com.checked) ? { fecha: new Date().toISOString() } : null;
+    orig();
+  };
+})(csAceptar);
+comprobarConsentSalud = (function(orig){
+  return function(){ const c = document.getElementById('csCom'); if (c) c.checked = false; orig(); };
+})(comprobarConsentSalud);
+function toggleComercial(el){
+  const d = clientesData[clienteActual];
+  if (!d) return;
+  const on = !el.classList.contains('on');
+  d.consentComercial = on ? { fecha: new Date().toISOString() } : null;
+  el.classList.toggle('on', on);
+  el.setAttribute('aria-checked', on ? 'true' : 'false');
+  guardarTodo();
+  toast(on ? 'Te avisaremos de novedades y ofertas' : 'Te has dado de baja del boletín');
+}

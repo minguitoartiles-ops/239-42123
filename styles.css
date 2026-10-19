@@ -882,3 +882,9 @@
     .logo-mark{display:none;}
     .login-hint{display:none;}
   }
+  .chk-row .opc{display:block;font-style:normal;color:var(--dim-55);font-size:12px;margin-top:3px;}
+
+  /* Desplazamiento vertical: las pantallas no pueden crecer más que el móvil; su contenido se desplaza dentro */
+  .screen{min-height:0;}
+  #view-splash,#view-alta,#view-coach-login,#view-coach-2fa,#view-coach-panel,#view-coach-cliente,#view-coach-seguimientos,#view-coach-ajustes,#app{flex:1 1 auto;flex-direction:column;min-height:0;}
+  .alta-body,.sc{flex:1 1 auto;min-height:0;overflow-y:auto;}
