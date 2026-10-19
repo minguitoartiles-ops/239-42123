@@ -802,3 +802,10 @@
   #view-chat{padding:0 !important;}
   #content:has(#view-chat.active){padding-bottom:0;}
   .composer{padding-bottom:calc(10px + 0px);}
+
+  /* v0.44 · iconos de los accesos directos */
+  .pro-ico{flex:none;color:var(--ink);margin-left:2px;}
+  .pro-emoji{font-size:15px;line-height:1;letter-spacing:0;margin-left:2px;}
+  #proPass .field{margin:6px 0 4px;}
+  #proPassErr{min-height:18px;margin:2px 0 8px;}
+  .pro-btn .pro-emoji::before{content:none;display:none;}
