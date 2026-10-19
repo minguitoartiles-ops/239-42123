@@ -1072,7 +1072,7 @@ function guardarSeguimiento(){
     nutri:document.getElementById('rNutri').textContent,
     estres:document.getElementById('rEstres').textContent,
     peso:peso,
-    progreso:txt[0]?txt[0].value.trim():'', obstaculos:txt[3]?txt[3].value.trim():''
+    progreso:txt[0]?txt[0].value.trim():'', obstaculos:txt[2]?txt[2].value.trim():''
   });
   b.textContent='Seguimiento enviado ✓';
   b.disabled=true;
