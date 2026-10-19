@@ -277,3 +277,80 @@ atrasDentroApp = (function(orig){
     return r;
   };
 })(atrasDentroApp);
+
+/* =========================================================
+   Pestaña Seguimientos con el mismo formato y colores que el detalle
+   Orden: primero pendientes, después peor puntuación global arriba.
+   ========================================================= */
+function colorearSeguimientos(cont){
+  Array.prototype.forEach.call(cont.querySelectorAll('.segui-card'), function(card){
+    let suma = 0, n = 0;
+    Array.prototype.forEach.call(card.querySelectorAll('.segui-stats > div'), function(d){
+      const lbl = d.querySelector('.segui-lbl'), val = d.querySelector('.segui-val');
+      if (!lbl || !val) return;
+      const m = val.textContent.match(/([\d.,]+)\s*\/\s*(\d+)/);
+      if (!m) return;
+      let p = parseFloat(m[1].replace(',', '.')) / parseFloat(m[2]);
+      if (/estr[eé]s/i.test(lbl.textContent)) p = 1 - p;
+      p = limitar(p);
+      val.className = 'segui-val v' + nivel(p);
+      suma += p; n++;
+    });
+    const wk = card.querySelector('.segui-week');
+    if (wk && n) {
+      const media = suma / n;
+      let b = wk.querySelector('.sem-badge');
+      if (!b) { b = document.createElement('span'); wk.appendChild(b); }
+      b.className = 'sem-badge b' + nivel(media);
+      b.textContent = Math.round(media * 100) + ' %';
+    }
+  });
+}
+pintarSegsResumen = function(){
+  const cont = document.getElementById('segsResumen');
+  if (!cont) return;
+  setTxt('segsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  const claves = Object.keys(clientesData);
+  if (!claves.length) {
+    cont.innerHTML = '<div class="vacio"><b>Todavía no hay clientes</b><span>Cuando des de alta a alguien y envíe su seguimiento, lo verás aquí.</span></div>';
+    return;
+  }
+  const datos = claves.map(function(k){
+    const segs = SEGUIMIENTOS[k] || [];
+    const dias = diasSinSeguimiento(k);
+    const p = puntuacionCliente(k, 0);
+    return { k: k, d: clientesData[k], segs: segs, dias: dias, pendiente: dias != null && dias >= 7, p: p ? p.total : null };
+  });
+  datos.sort(function(a, b){
+    if (a.pendiente !== b.pendiente) return a.pendiente ? -1 : 1;
+    if (a.pendiente) return (b.dias || 0) - (a.dias || 0);
+    return (a.p == null ? 999 : a.p) - (b.p == null ? 999 : b.p);     // peor puntuación arriba
+  });
+  const pend = datos.filter(function(x){ return x.pendiente; }).length;
+  const semana = datos.reduce(function(n, x){
+    return n + x.segs.filter(function(r){ return r.fecha && Date.now() - new Date(r.fecha).getTime() < 7 * DIA_MS; }).length;
+  }, 0);
+  let h = '<div class="panel-stats">'
+    + '<div class="panel-stat"><div class="val">' + (datos.length - pend) + '</div><div class="lbl">Al día</div></div>'
+    + '<div class="panel-stat"><div class="val' + (pend ? ' warn' : '') + '">' + pend + '</div><div class="lbl">Pendientes</div></div>'
+    + '<div class="panel-stat"><div class="val">' + semana + '</div><div class="lbl">Recibidos esta semana</div></div>'
+    + '</div>'
+    + '<div class="segui-leyenda"><span>Deficiente</span><span class="leyenda-barra"></span><span>Excelente</span></div>';
+  h += datos.map(function(x){
+    const estado = x.pendiente
+      ? '<span class="kc-estado pend">' + (x.segs.length ? 'Pendiente · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
+      : (x.segs.length ? '<span class="kc-estado ok">Al día</span>' : '<span class="kc-estado nuevo">Nuevo</span>');
+    const glob = x.p != null ? '<span class="sg-glob v' + nivelPuntuacion(x.p) + '" title="Puntuación global">' + x.p + '</span>' : '';
+    const cab = '<div class="sg-cab" onclick="abrirSegsCliente(\'' + x.k + '\',' + (x.segs.length ? 'true' : 'false') + ')">'
+      + '<div class="avatar' + (x.d.foto ? ' con-foto' : '') + '"' + (x.d.foto ? ' style="background-image:url(&quot;' + x.d.foto + '&quot;)"' : '') + '></div>'
+      + '<div class="cliente-info"><div class="cliente-name">' + esc(x.d.nombre) + '</div><div class="cliente-sub">' + esc(x.d.objetivo || 'Sin objetivo') + '</div></div>'
+      + '<div class="sg-cab-der">' + glob + estado + '</div></div>';
+    const cuerpo = x.segs.length
+      ? tarjetaSeguimiento(x.segs[0], 0, x.segs)
+        + '<div class="sg-ver-todos" onclick="abrirSegsCliente(\'' + x.k + '\',true)">Ver sus ' + x.segs.length + ' seguimiento' + (x.segs.length === 1 ? '' : 's') + ' ›</div>'
+      : '<div class="sg-sin">Aún no ha enviado ningún seguimiento' + (x.dias != null ? ' · alta ' + haceTxt(x.dias) : '') + '.</div>';
+    return '<div class="sg-bloque' + (x.pendiente ? ' pend' : '') + '">' + cab + cuerpo + '</div>';
+  }).join('');
+  cont.innerHTML = h;
+  colorearSeguimientos(cont);
+};
