@@ -1,6 +1,6 @@
 // Service worker: deja la app disponible sin conexión.
 // Al cambiar archivos, sube CACHE_VERSION para que los móviles reciban la nueva versión.
-const CACHE_VERSION = 'fsd-0.3';
+const CACHE_VERSION = 'fsd-0.4';
 const CACHE_NAME = CACHE_VERSION;
 const SHELL = [
   './',
@@ -8,6 +8,7 @@ const SHELL = [
   './styles.css',
   './app.js',
   './ajustes.js',
+  './ux.js',
   './manifest.webmanifest',
   './assets/logo_oscuro.png',
   './assets/logo_claro.png',
