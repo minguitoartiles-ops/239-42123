@@ -888,3 +888,11 @@
   .screen{min-height:0;}
   #view-splash,#view-alta,#view-coach-login,#view-coach-2fa,#view-coach-panel,#view-coach-cliente,#view-coach-seguimientos,#view-coach-ajustes,#app{flex:1 1 auto;flex-direction:column;min-height:0;}
   .alta-body,.sc{flex:1 1 auto;min-height:0;overflow-y:auto;}
+
+  /* Pantalla de acceso: logo, tarjeta y accesos agrupados y centrados en vertical */
+  #view-splash .logo-mark{margin-top:auto;}
+  #view-splash .login-card{margin-top:22px;}
+  #view-splash .pro-quick{margin-bottom:auto;}
+  #view-splash .login-card,#view-splash .pro-quick,#view-splash .instalar-card{max-width:420px;}
+  @media (max-height: 820px){ #view-splash .login-card{margin-top:14px;} }
+  @media (max-height: 600px){ #view-splash .wordmark{margin-top:auto;} }
