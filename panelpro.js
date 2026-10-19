@@ -268,3 +268,12 @@ pintarListaClientes = (function(orig){
   };
 })(pintarListaClientes);
 actualizarPanel();
+
+/* Cliente en «Hoy»: el atrás del móvil pregunta antes de salir a la pantalla de acceso */
+atrasDentroApp = (function(orig){
+  return function(){
+    const r = orig();
+    if (!r && pantallaVisible() === 'app' && !isCoachView() && clienteActual) { confirmarSalidaCliente(); return true; }
+    return r;
+  };
+})(atrasDentroApp);
