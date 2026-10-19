@@ -1,6 +1,6 @@
 // Service worker: deja la app disponible sin conexión.
 // Al cambiar archivos, sube CACHE_VERSION para que los móviles reciban la nueva versión.
-const CACHE_VERSION = 'fsd-v2';
+const CACHE_VERSION = 'fsd-v3';
 const CACHE_NAME = CACHE_VERSION;
 const SHELL = [
   './',
@@ -35,16 +35,18 @@ self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
   var url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return; // fuentes de Google: red normal
+  // Red primero: así cada apertura muestra la versión publicada; la caché solo se usa sin conexión.
   event.respondWith(
-    caches.match(event.request).then(function (cached) {
-      if (cached) return cached;
-      return fetch(event.request).then(function (resp) {
-        if (resp && resp.status === 200) {
-          var copy = resp.clone();
-          caches.open(CACHE_NAME).then(function (c) { c.put(event.request, copy); });
-        }
-        return resp;
-      }).catch(function () { return caches.match('./index.html'); });
+    fetch(event.request).then(function (resp) {
+      if (resp && resp.status === 200) {
+        var copy = resp.clone();
+        caches.open(CACHE_NAME).then(function (c) { c.put(event.request, copy); });
+      }
+      return resp;
+    }).catch(function () {
+      return caches.match(event.request).then(function (cached) {
+        return cached || caches.match('./index.html');
+      });
     })
   );
 });
