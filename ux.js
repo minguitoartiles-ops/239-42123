@@ -753,3 +753,165 @@ function enviarCodigoCoach(){
 goToCliente = (function(orig){
   return function(key){ orig(key); ocultarCodigoCoach(); };
 })(goToCliente);
+
+/* =========================================================
+   Foto de perfil (clientes y profesionales) para las conversaciones
+   Se recorta en cuadrado y se reduce a 192 px (JPEG) antes de guardarla.
+   ========================================================= */
+const FOTOS_KEY = 'fsd_fotos';
+let fotosCoachMem = null;
+function leerFotosCoach(){
+  if (fotosCoachMem) return fotosCoachMem;
+  try { fotosCoachMem = JSON.parse(localStorage.getItem(FOTOS_KEY) || '{}') || {}; } catch(e){ fotosCoachMem = {}; }
+  return fotosCoachMem;
+}
+function guardarFotosCoach(o){
+  fotosCoachMem = o;
+  try { localStorage.setItem(FOTOS_KEY, JSON.stringify(o)); } catch(e){ toast('No hay espacio para guardar la foto en este dispositivo'); }
+}
+function fotoDe(quien){            // quien: 'cliente:<clave>' o nombre de profesional
+  if (!quien) return '';
+  if (quien.indexOf('cliente:') === 0) { const d = clientesData[quien.slice(8)]; return d && d.foto ? d.foto : ''; }
+  return leerFotosCoach()[norm(quien)] || '';
+}
+function pintarFoto(el, url){
+  if (!el) return;
+  if (url) { el.style.backgroundImage = 'url("' + url + '")'; el.classList.add('con-foto'); }
+  else { el.style.backgroundImage = ''; el.classList.remove('con-foto'); }
+}
+let fotoDestino = null;
+function elegirFoto(destino){
+  fotoDestino = destino;
+  let i = document.getElementById('fotoInput');
+  if (!i) {
+    i = document.createElement('input');
+    i.type = 'file'; i.accept = 'image/*'; i.id = 'fotoInput'; i.hidden = true;
+    i.addEventListener('change', function(){ procesarFoto(i.files && i.files[0]); });
+    document.body.appendChild(i);
+  }
+  i.value = '';
+  i.click();
+}
+function procesarFoto(file){
+  if (!file || !fotoDestino) return;
+  if (!/^image\//.test(file.type)) { toast('Elige una imagen'); return; }
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = function(){
+    const lado = Math.min(img.naturalWidth, img.naturalHeight);
+    const sx = (img.naturalWidth - lado) / 2, sy = (img.naturalHeight - lado) / 2;
+    const c = document.createElement('canvas');
+    c.width = c.height = 192;
+    c.getContext('2d').drawImage(img, sx, sy, lado, lado, 0, 0, 192, 192);
+    URL.revokeObjectURL(url);
+    let dato = '';
+    try { dato = c.toDataURL('image/jpeg', 0.82); } catch(e){}
+    if (!dato) { toast('No se ha podido leer la imagen'); return; }
+    asignarFoto(fotoDestino, dato);
+    toast('Foto de perfil actualizada');
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); toast('No se ha podido abrir esa imagen'); };
+  img.src = url;
+}
+function asignarFoto(destino, dato){
+  if (destino.indexOf('cliente:') === 0) {
+    const d = clientesData[destino.slice(8)];
+    if (!d) return;
+    if (dato) d.foto = dato; else delete d.foto;
+    guardarTodo();
+  } else {
+    const o = leerFotosCoach();
+    if (dato) o[norm(destino)] = dato; else delete o[norm(destino)];
+    guardarFotosCoach(o);
+  }
+  pintarAvatares();
+  refrescarAjustes();
+}
+function quitarFoto(destino){ asignarFoto(destino, ''); toast('Foto quitada'); }
+function destinoPropio(rol){
+  if (rol === 'cliente') return clienteActual ? 'cliente:' + clienteActual : null;
+  return coachActivo ? coachActivo.u : null;
+}
+/* fila «Foto de perfil» para la sección Cuenta de Ajustes */
+function filaFoto(rol){
+  const dest = destinoPropio(rol);
+  if (!dest) return '';
+  const tiene = !!fotoDe(dest);
+  const url = fotoDe(dest);
+  return '<div class="list-row foto-row" style="cursor:default"><span class="foto-row-l">'
+    + '<span class="avatar foto-prev' + (tiene ? ' con-foto' : '') + '"' + (tiene ? ' style="background-image:url(&quot;' + url + '&quot;)"' : '') + '></span>Foto de perfil</span>'
+    + '<span class="ajx-acts"><button class="mini-btn" onclick="elegirFoto(\'' + dest.replace(/'/g, "\\'") + '\')">' + (tiene ? 'Cambiar' : 'Añadir') + '</button>'
+    + (tiene ? '<button class="mini-btn" onclick="quitarFoto(\'' + dest.replace(/'/g, "\\'") + '\')">Quitar</button>' : '')
+    + '</span></div>';
+}
+
+/* pintar fotos en toda la app */
+function pintarAvatares(){
+  const propia = clienteActual ? fotoDe('cliente:' + clienteActual) : '';
+  pintarFoto(document.querySelector('#view-hoy .topline .avatar'), propia);
+  pintarFoto(document.querySelector('#view-perfil .avatar.lg'), propia);
+  /* etiquetas del equipo en el chat y vista previa en «Hoy» */
+  Array.prototype.forEach.call(document.querySelectorAll('.team-chip'), function(ch){
+    const nombre = ch.textContent.split('·')[0].trim();
+    const dot = ch.querySelector('.dot');
+    pintarFoto(dot, fotoDe(nombre));
+  });
+  const minis = document.querySelectorAll('.chat-hero-avs .av-mini');
+  pintarFoto(minis[0], fotoDe('Fátima'));
+  pintarFoto(minis[1], fotoDe('Domingo'));
+  /* tarjetas de clientes en el panel del profesional */
+  const claves = Object.keys(clientesData);
+  Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
+    pintarFoto(card.querySelector('.avatar'), claves[i] ? fotoDe('cliente:' + claves[i]) : '');
+  });
+  decorarChat();
+}
+/* foto junto al nombre en cada mensaje (no se guarda en la conversación) */
+function decorarChat(){
+  const list = document.getElementById('chatList');
+  if (!list) return;
+  Array.prototype.forEach.call(list.querySelectorAll('.bubble .sender'), function(s){
+    const viejo = s.querySelector('.msg-av');
+    if (viejo) viejo.remove();
+    const url = fotoDe(s.textContent.trim());
+    if (url) {
+      const im = document.createElement('img');
+      im.className = 'msg-av'; im.alt = ''; im.src = url;
+      s.insertBefore(im, s.firstChild);
+    }
+  });
+}
+guardarChat = function(){
+  if (!clienteActual) return;
+  const l = document.getElementById('chatList');
+  if (!l) return;
+  const copia = l.cloneNode(true);
+  Array.prototype.forEach.call(copia.querySelectorAll('.msg-av'), function(x){ x.remove(); });
+  PLANES[clienteActual] = PLANES[clienteActual] || { ent: '', nut: '' };
+  PLANES[clienteActual].chat = copia.innerHTML;
+};
+/* el avatar del perfil del cliente abre el selector de foto */
+(function(){
+  const a = document.querySelector('#view-perfil .avatar.lg');
+  if (a) { a.title = 'Cambiar foto de perfil'; a.addEventListener('click', function(){ if (clienteActual && !isCoachView()) elegirFoto('cliente:' + clienteActual); }); }
+})();
+/* volver a pintar cuando cambia lo que se ve */
+(function(){
+  const g = goTo;
+  goTo = function(n, s){ g(n, s); pintarAvatares(); };
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); pintarAvatares(); };
+  const sm = sendMsg;
+  sendMsg = function(){ sm(); decorarChat(); };
+  const pl = pintarListaClientes;
+  pintarListaClientes = function(){ pl(); pintarAvatares(); };
+})();
+window.addEventListener('storage', function(e){ if (e.key === DB_KEY || e.key === FOTOS_KEY) { fotosCoachMem = null; pintarAvatares(); } });
+pintarAvatares();
+
+/* Corrección: guardar el plan ya no borra la conversación ni otros datos del cliente */
+guardarPlan = function(){
+  if (!clienteActual) return;
+  const prev = PLANES[clienteActual] || {};
+  PLANES[clienteActual] = Object.assign({}, prev, { ent: contEnt().innerHTML, nut: contNut().innerHTML });
+};

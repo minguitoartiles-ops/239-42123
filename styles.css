@@ -836,3 +836,13 @@
   .kc-pie{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font:500 11.5px Archivo;color:var(--dim-6);}
   .kc-pie span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .tbi-emo{opacity:.85;filter:grayscale(.85);}
+
+  /* Foto de perfil */
+  .avatar.con-foto,.av-mini.con-foto,.team-chip .dot.con-foto{background-size:cover;background-position:center;background-repeat:no-repeat;}
+  .team-chip .dot.con-foto{width:24px;height:24px;border-radius:50%;margin:-4px 0 -4px -6px;}
+  .foto-row-l{display:flex;align-items:center;gap:12px;}
+  .foto-prev{width:40px;height:40px;cursor:default;}
+  .msg-av{width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:-5px;margin-right:6px;border:1px solid var(--line-strong);}
+  #view-perfil .avatar.lg{position:relative;}
+  #view-perfil .avatar.lg::after{content:"＋";position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:700 13px/22px Archivo;text-align:center;border:2px solid var(--bg);}
+  #app.coach-view #view-perfil .avatar.lg::after{display:none;}
