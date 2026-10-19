@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0E1013">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fitness sin dramas">
+<title>Fitnessindramas — Prototipo (Semana viva)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Caveat:wght@600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen" id="screenRoot">
+
+    <!-- SPLASH -->
+    <div id="view-splash">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+
+      <div class="logo-mark" aria-hidden="true">
+        <img class="logo-dark-img" src="assets/logo_oscuro.png" width="88" alt="">
+        <img class="logo-light-img" src="assets/logo_claro.png" width="88" alt="">
+      </div>
+      <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
+      <div class="tagline">Para la vida real</div>
+
+      <div class="login-card">
+        <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
+        <button class="btn-primary" onclick="enterApp()">Entrar</button>
+        <div class="picker-new-error" id="loginError" style="text-align:center"></div>
+        <p class="login-hint">Tu coach te ha dado de alta y te ha enviado un código de acceso personal. Introdúcelo aquí para entrar a tu plan.</p>
+      </div>
+      <div class="coach-link" onclick="goToCoachLogin()">¿Eres coach? Entrar al panel</div>
+    </div>
+
+    <!-- ALTA DE CLIENTE (vista coach) -->
+    <div id="view-alta" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="backToPanel()">‹</button>
+        <div><div class="eyebrow">Nueva ficha</div><div class="h-title" style="margin-top:2px;font-size:22px">Alta de cliente</div></div>
+      </div>
+
+      <div class="alta-body">
+        <div class="field"><label>Nombre completo</label><input type="text" placeholder="Nombre y apellidos"></div>
+        <div class="field"><label>Correo</label><input type="email" placeholder="correo@ejemplo.com"></div>
+        <div class="field"><label>Teléfono</label><input type="tel" placeholder="+34 600 000 000"></div>
+
+        <div class="alta-label">Objetivo</div>
+        <div class="chips">
+          <div class="chip protein selected" onclick="pick(this)">Perder grasa</div>
+          <div class="chip protein" onclick="pick(this)">Ganar músculo</div>
+          <div class="chip protein" onclick="pick(this)">Recomposición</div>
+          <div class="chip protein" onclick="pick(this)">Mantenimiento</div>
+        </div>
+
+        <div class="alta-label">Medidas iniciales</div>
+        <div class="row2col">
+          <div class="field"><label>Peso (kg)</label><input type="text" inputmode="decimal" placeholder="68,0"></div>
+          <div class="field"><label>Altura (cm)</label><input type="number" placeholder="165"></div>
+        </div>
+        <div class="row2col">
+          <div class="field"><label>Cintura (cm)</label><input type="text" inputmode="decimal" placeholder="78"></div>
+          <div class="field"><label>Cadera (cm)</label><input type="text" inputmode="decimal" placeholder="98"></div>
+        </div>
+        <div class="row2col">
+          <div class="field"><label>Bíceps (cm)</label><input type="text" inputmode="decimal" placeholder="28"></div>
+          <div class="field"><label>Muslo (cm)</label><input type="text" inputmode="decimal" placeholder="54"></div>
+        </div>
+
+        <span id="generatedCode" style="display:none">XXXX-XXXX</span>
+
+        <div class="picker-new-error" id="altaError"></div>
+        <button class="btn-done" style="margin-top:6px;width:100%" onclick="confirmAlta()" id="confirmBtn">Dar de alta</button>
+        <p class="alta-hint" id="altaPista">Al darlo de alta se generará su código de acceso automáticamente.</p>
+
+        <div class="alta-ok" id="altaOk">
+          <div class="alta-ok-tit">✓ Cliente dado de alta</div>
+          <div class="alta-ok-sub" id="altaOkNombre">—</div>
+          <div class="alta-ok-lbl">Su código de acceso</div>
+          <div class="alta-ok-code" id="altaOkCode">—</div>
+          <div class="alta-ok-btns">
+            <button class="btn-copy" onclick="copiarCodigoAlta()" id="altaOkCopy">Copiar código</button>
+            <button class="picker-btn-solid" onclick="cerrarAltaOk()">Volver al panel</button>
+          </div>
+          <p class="alta-hint" style="margin-top:12px">Compártelo por WhatsApp o email. Con él entrará a la app por primera vez.</p>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="view-coach-login" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="backToSplash()">‹</button>
+        <div><div class="eyebrow">Acceso restringido</div><div class="h-title" style="margin-top:2px;font-size:22px">Panel de coach</div></div>
+      </div>
+      <div class="alta-body">
+        <div class="field"><label>Usuario</label><input type="text" id="coachUser" placeholder="Tu nombre" autocapitalize="words"></div>
+        <div class="field"><label>Contraseña</label><input type="password" id="coachPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')coachLogin()"></div>
+        <div class="picker-new-error" id="coachLoginError"></div>
+        <button class="btn-primary" onclick="coachLogin()">Continuar</button>
+        <p class="alta-hint">Este panel da acceso a los datos de todos los clientes. Tras la contraseña te pediremos un código de verificación.</p>
+        <div class="demo-note" style="margin-top:14px">Versión de prueba — credenciales de demostración: <b>Domingo</b> o <b>Fátima</b>, contraseña <b>demo1234</b>. Cámbialas por las reales solo cuando la app tenga autenticación de verdad.</div>
+      </div>
+    </div>
+
+    <div id="view-coach-2fa" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="goToCoachLogin()">‹</button>
+        <div><div class="eyebrow">Verificación en dos pasos</div><div class="h-title" style="margin-top:2px;font-size:22px">Revisa tu correo</div></div>
+      </div>
+      <div class="alta-body">
+        <p class="alta-hint" style="margin:0 0 16px">Hemos enviado un código de 6 dígitos a <b id="fa2Mail">—</b>. Caduca en 10 minutos.</p>
+        <div class="field"><label>Código de verificación</label><input type="text" id="fa2Code" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')coach2fa()"></div>
+        <div class="picker-new-error" id="fa2Error"></div>
+        <label class="trust-check"><input type="checkbox" id="fa2Trust" checked><span>Confiar en este dispositivo durante 30 días</span></label>
+        <button class="btn-primary" onclick="coach2fa()">Entrar al panel</button>
+        <div class="demo-note">Modo prototipo — aquí no se envían correos de verdad. Tu código es <b id="fa2Demo">000000</b>.</div>
+      </div>
+    </div>
+
+    <!-- PANEL DE COACH -->
+    <div id="view-coach-panel" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="coachLogout()" title="Cerrar sesión">‹</button>
+        <button class="bell" id="coachBell" onclick="abrirNotisCoach()" aria-label="Notificaciones" style="order:3">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="bell-badge hide" id="coachBellBadge">0</span>
+        </button>
+        <div style="flex:1"><div class="eyebrow" id="panelWho">Fitness sin dramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Panel de coach</div></div>
+      </div>
+
+      <div class="alta-body">
+        <div class="panel-stats">
+          <div class="panel-stat"><div class="val" id="statClientes">0</div><div class="lbl">Clientes activos</div></div>
+          <div class="panel-stat"><div class="val" id="statRevis">0</div><div class="lbl">Revisiones esta semana</div></div>
+          <div class="panel-stat"><div class="val warn" id="statMsg">0</div><div class="lbl">Mensajes sin leer</div></div>
+        </div>
+
+        <button class="btn-primary" style="margin-bottom:16px" onclick="goToAlta()">+ Nuevo cliente</button>
+
+        <div class="trust-row" id="trustRow">
+          <span id="trustTxt">Dispositivo de confianza</span>
+          <button class="btn-copy" onclick="desvincularDispositivo()">Desvincular</button>
+        </div>
+
+        <div class="alta-label">Tus clientes</div>
+        <div id="listaClientes"></div>
+        <div class="vacio" id="sinClientes"><b>Todavía no hay clientes</b><span>Pulsa «Nuevo cliente» para dar de alta al primero.</span></div>
+      </div>
+    </div>
+
+    <!-- FICHA DE CLIENTE (vista coach) -->
+    <div id="view-coach-cliente" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="backToPanel()">‹</button>
+        <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" id="cd-nombre" style="margin-top:2px;font-size:22px">—</div></div>
+      </div>
+
+      <div class="alta-body">
+        <div class="sub" id="cd-meta" style="margin-bottom:16px">Semana 6 de 12 · Perder grasa</div>
+
+        <div class="stat-row">
+          <div class="stat-card"><div class="lbl">Adherencia entreno</div><div class="val" id="cd-adhE" style="font-size:21px">8/10</div></div>
+          <div class="stat-card"><div class="lbl">Adherencia nutrición</div><div class="val" id="cd-adhN" style="font-size:21px">8/10</div></div>
+        </div>
+
+        <div class="tonelaje-card">
+          <div class="tonelaje-label">Tonelaje esta semana</div>
+          <div class="tonelaje-value" id="cd-tonelaje">1.040 kg</div>
+          <div class="tonelaje-delta" id="cd-tonelajeDelta">+80 kg vs la semana pasada</div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card"><div class="lbl">Peso actual</div><div class="val" id="cd-peso" style="font-size:21px">68,4 kg</div><div class="delta" id="cd-pesoDelta">−3,2 kg en 6 semanas</div></div>
+          <div class="stat-card"><div class="lbl">Próxima revisión</div><div class="val" id="cd-revision" style="font-size:15px;margin-top:12px">Lunes 17</div></div>
+        </div>
+
+        <div class="alta-label">Gestión del cliente</div>
+        <div class="list-group">
+          <div class="list-row" onclick="goToSeguimientos()"><span>Seguimientos realizados</span><span class="chev">›</span></div>
+          <div class="list-row" onclick="goToEntrenoCoach()"><span>Entrenamiento</span><span class="chev">›</span></div>
+          <div class="list-row" onclick="goToPlanCoach()"><span>Plan nutricional</span><span class="chev">›</span></div>
+          <div class="list-row" onclick="verConversacion()"><span>Conversación</span><span class="chev">›</span></div>
+        </div>
+        <p class="alta-hint">En esta versión de prueba, el entrenamiento, el plan y la conversación son el mismo ejemplo para los 4 clientes. En producción cada uno tendría los suyos.</p>
+      </div>
+    </div>
+
+    <!-- SEGUIMIENTOS (vista coach) -->
+    <div id="view-coach-seguimientos" style="display:none">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+      <div class="alta-top">
+        <button class="back-btn" onclick="backToCliente()">‹</button>
+        <div><div class="eyebrow">Seguimientos</div><div class="h-title" id="seguiNombre" style="margin-top:2px;font-size:22px">—</div></div>
+      </div>
+      <div class="alta-body" id="seguiList"></div>
+        </div>
+
+    <!-- APP -->
+    <div id="app">
+      <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
+
+      <div class="coach-bar" id="coachBar">
+        <span class="coach-bar-left"><span class="coach-bar-back" onclick="backToCliente()">‹</span> <span id="coachBarLabel">Editando:</span> <b id="coachBarName">Marta</b></span>
+        <button onclick="editarPlan()" id="editarBtn">Editar</button>
+      </div>
+
+      <div class="sc" id="content">
+
+        <!-- HOY -->
+        <section class="view active" id="view-hoy">
+          <div class="topline">
+            <div><div class="eyebrow" id="hoyFecha">—</div><div class="h-title" id="hoySaludo">Hola</div></div>
+            <div class="topline-acts">
+              <button class="bell" onclick="abrirNotis()" aria-label="Notificaciones">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                <span class="bell-badge hide" id="bellBadge">0</span>
+              </button>
+              <div class="avatar" onclick="goTo('perfil')" title="Tu perfil"></div>
+            </div>
+          </div>
+
+          <div class="week-row" id="weekRow"></div>
+
+          <div class="segui-aviso" id="seguiAviso" onclick="goTo('seguimiento')">
+            <div class="segui-aviso-txt">
+              <div class="segui-aviso-lbl">Seguimiento semanal</div>
+              <div class="segui-aviso-main" id="seguiCuando">—</div>
+              <div class="segui-aviso-sub">Peso, medidas y cómo te has sentido</div>
+            </div>
+            <div class="segui-aviso-cta" id="seguiCta">Ver</div>
+          </div>
+
+          <div class="chat-hero" onclick="goTo('chat')">
+            <div class="chat-hero-top">
+              <div class="chat-hero-avs"><span class="av-mini"></span><span class="av-mini"></span></div>
+              <span class="pill" id="chatHeroPill">2 sin leer</span>
+            </div>
+            <div class="chat-hero-title">Habla con Fátima y Domingo</div>
+            <div class="chat-hero-msg">«¿Cómo llevas los desayunos? ¿Te sacian hasta la comida?»</div>
+            <div class="chat-hero-cta">Abrir conversación</div>
+          </div>
+
+          <div class="card entreno-hoy" onclick="goTo('entreno')" style="cursor:pointer">
+            <div class="card-head"><b>Entrenamiento</b><span>Ver sesiones ›</span></div>
+            <div class="ent-wrap">
+              <div class="ent-ring" id="entRing">
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--wash-med)" stroke-width="9"/><circle id="entArc" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="138.2" transform="rotate(-90 50 50)"/></svg>
+                <div class="kcal-inner"><b id="entHechas">2</b><span>de <span id="entTotal">4</span> sesiones</span></div>
+              </div>
+              <div class="kcal-side">
+                <div class="kcal-line"><span class="ki">✅</span><div><b id="entOk">2</b><span>completadas</span></div></div>
+                <div class="kcal-line"><span class="ki">📅</span><div><b id="entFalta">2</b><span>pendientes</span></div></div>
+                <div class="kcal-line"><span class="ki">🏋️</span><div><b id="entTon">0 kg</b><span>tonelaje</span></div></div>
+              </div>
+            </div>
+            <p class="ent-note" id="entNota">Entrena los días que mejor te vengan.</p>
+          </div>
+
+          <div class="card nutri-hoy" onclick="goTo('plan')">
+            <div class="card-head"><b>Plan nutricional</b><span>Ver plan ›</span></div>
+            <div class="kcal-wrap">
+              <div class="kcal-ring" id="kcalRing"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--wash-med)" stroke-width="9"/><circle id="kcalArc" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="176.9" transform="rotate(-90 50 50)"/></svg><div class="kcal-inner"><b id="kcalRest">1.283</b><span>kcal restantes</span></div></div>
+              <div class="kcal-side">
+                <div class="kcal-line"><span class="ki">🎯</span><div><b id="kcalObj">2.000</b><span>objetivo</span></div></div>
+                <div class="kcal-line"><span class="ki">🍽️</span><div><b id="kcalCome">717</b><span>ingeridas</span></div></div>
+                <div class="kcal-line"><span class="ki">✅</span><div><b id="kcalComidas">2 de 5</b><span>comidas</span></div></div>
+              </div>
+            </div>
+            <div class="macro-rings">
+              <div class="mring"><div class="mr" id="mrP"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--wash-med)" stroke-width="11"/><circle id="mrPArc" cx="50" cy="50" r="44" fill="none" stroke="var(--protein)" stroke-width="11" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="176.9" transform="rotate(-90 50 50)"/></svg><span>🥩</span></div><b id="mgP">54 g</b><span>Proteína</span></div>
+              <div class="mring"><div class="mr" id="mrC"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--wash-med)" stroke-width="11"/><circle id="mrCArc" cx="50" cy="50" r="44" fill="none" stroke="var(--carb)" stroke-width="11" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="168.6" transform="rotate(-90 50 50)"/></svg><span>🍚</span></div><b id="mgC">88 g</b><span>Carbos</span></div>
+              <div class="mring"><div class="mr" id="mrF"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--wash-med)" stroke-width="11"/><circle id="mrFArc" cx="50" cy="50" r="44" fill="none" stroke="var(--fat)" stroke-width="11" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="149.3" transform="rotate(-90 50 50)"/></svg><span>🥑</span></div><b id="mgF">26 g</b><span>Grasas</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><b>Tu cumplimiento</b><span id="cumplGlobal">92 %</span></div>
+            <div class="cumpl-row">
+              <div class="cumpl-lbl"><span>Entrenos</span><b id="cumplEntrenoTxt">2 de 4</b></div>
+              <div class="progress-line"><div class="progress-fill" id="cumplEntrenoBar" style="width:50%"></div></div>
+            </div>
+            <div class="cumpl-row">
+              <div class="cumpl-lbl"><span>Comidas</span><b id="cumplComidasTxt">2 de 5</b></div>
+              <div class="progress-line"><div class="progress-fill" id="cumplComidasBar" style="width:40%"></div></div>
+            </div>
+            <div class="cumpl-link">
+              <div class="cumpl-link-txt">Y esto es lo que está haciendo en tu cuerpo</div>
+              <div class="cumpl-stats">
+                <div class="cumpl-stat"><b>−3,2 kg</b><span>Peso</span></div>
+                <div class="cumpl-stat"><b>−4 cm</b><span>Cintura</span></div>
+                <div class="cumpl-stat"><b>+1 cm</b><span>Bíceps</span></div>
+              </div>
+              <p class="cumpl-note" id="cumplNota">Las semanas que pasas del 85 % de cumplimiento bajas <b>0,6 kg</b> de media.</p>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- SEGUIMIENTO SEMANAL -->
+        <section class="view" id="view-seguimiento">
+          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 6px">
+            <div class="eyebrow">Rellenar cada domingo o lunes</div>
+            <div class="h-title" style="font-size:27px">Seguimiento semanal</div>
+            <div class="sub" style="margin-top:8px">Con esto Fátima y Domingo ajustan tu plan. Sé sincero: no hay respuestas malas.</div></div>
+          </div>
+
+          <div class="sg-block">
+            <div class="sg-cat">Entrenamiento</div>
+
+            <div class="sg-q"><label>Agujetas</label><span class="sg-help">Elige el número que mejor describa tu semana</span></div>
+            <div class="esc-row"><button class="esc-btn on" onclick="setEscala(this,'agujetas',1)">1</button><button class="esc-btn" onclick="setEscala(this,'agujetas',2)">2</button><button class="esc-btn" onclick="setEscala(this,'agujetas',3)">3</button><button class="esc-btn" onclick="setEscala(this,'agujetas',4)">4</button></div><div class="esc-desc" id="agujetasDesc">No has tenido nada de agujetas.</div>
+
+            <div class="sg-q"><label>¿Has progresado esta semana?</label><span class="sg-help">Más cargas, más repeticiones, mejora técnica, superar barreras…</span></div>
+            <textarea class="sg-text" rows="3" placeholder="He metido más peso en todos los ejercicios con buena técnica…"></textarea>
+
+            <div class="sg-q"><label>Sensaciones</label><span class="sg-help">Cómo te encuentras, algo que quieras añadir</span></div>
+            <textarea class="sg-text" rows="3" placeholder="Cada vez me acerco más al fallo, pero las búlgaras me pueden a nivel mental…"></textarea>
+
+            <div class="sg-q"><label>He cumplido el entreno</label></div>
+            <div class="sg-range"><input type="range" min="1" max="10" value="8" oninput="setRango(this,'rEntreno')"><output id="rEntreno">8</output><span class="sg-de">/10</span></div>
+
+            <div class="sg-q"><label>Grado de motivación</label><span class="sg-help">Elige el número con el que más te identifiques</span></div>
+            <div class="esc-row"><button class="esc-btn on" onclick="setEscala(this,'motiv',1)">1</button><button class="esc-btn" onclick="setEscala(this,'motiv',2)">2</button><button class="esc-btn" onclick="setEscala(this,'motiv',3)">3</button><button class="esc-btn" onclick="setEscala(this,'motiv',4)">4</button><button class="esc-btn" onclick="setEscala(this,'motiv',5)">5</button></div><div class="esc-desc" id="motivDesc">Me está resultando imposible cumplir con el plan, no me siento bien y estoy perdiendo las ganas de continuar.</div>
+          </div>
+
+          <div class="sg-block">
+            <div class="sg-cat">Nutrición</div>
+            <div class="sg-q"><label>He cumplido con el plan nutricional</label></div>
+            <div class="sg-range"><input type="range" min="1" max="10" value="8" oninput="setRango(this,'rNutri')"><output id="rNutri">8</output><span class="sg-de">/10</span></div>
+
+            <div class="sg-q"><label>¿Qué obstáculos has encontrado esta semana con la alimentación?</label></div>
+            <textarea class="sg-text" rows="3" placeholder="Me cuesta saciarme, picoteo mucho, no me organizo bien, pido a domicilio…"></textarea>
+          </div>
+
+          <div class="sg-block">
+            <div class="sg-cat">Bienestar</div>
+            <div class="sg-q"><label>¿Cómo ha sido tu descanso?</label></div>
+            <textarea class="sg-text" rows="3" placeholder="Me ha costado dormir, me he despertado varias veces, he dormido poco…"></textarea>
+
+            <div class="sg-q"><label>¿Cuál es tu nivel de estrés?</label><span class="sg-help">1 es nada, 10 es muy alto</span></div>
+            <div class="sg-range"><input type="range" min="1" max="10" value="3" oninput="setRango(this,'rEstres')"><output id="rEstres">3</output><span class="sg-de">/10</span></div>
+          </div>
+
+          <div class="sg-block">
+            <div class="sg-cat">Datos biométricos</div>
+            <div class="sg-q"><label>Peso actual en ayunas</label></div>
+            <div class="row2col"><div class="field"><label>Peso (kg)</label><input type="text" inputmode="decimal" placeholder="69,0"></div><div class="field"><label>Cintura (cm)</label><input type="number" placeholder="78"></div></div>
+            <div class="row2col"><div class="field"><label>Cadera (cm)</label><input type="number" placeholder="98"></div><div class="field"><label>Bíceps (cm)</label><input type="number" placeholder="28"></div></div>
+            <div class="row2col"><div class="field"><label>Muslo (cm)</label><input type="number" placeholder="54"></div><div class="field"><label>&nbsp;</label><div class="sg-foto">+ Añadir fotos</div></div></div>
+          </div>
+
+          <button class="btn-primary" id="sgSave" onclick="guardarSeguimiento()">Enviar seguimiento</button>
+          <p class="alta-hint" style="text-align:center">Lo recibirán Fátima y Domingo al momento.</p>
+        </section>
+
+        <!-- ENTRENO -->
+        <section class="view" id="view-entreno">
+          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 18px">
+            <div class="eyebrow">Semana 6</div>
+            <div class="h-title" style="font-size:29px">Tus sesiones</div>
+            <div class="sub" id="entSub" style="margin-top:8px">—</div></div>
+          </div>
+
+          <div class="tonelaje-card">
+            <div class="tonelaje-label">Tonelaje esta semana</div>
+            <div class="tonelaje-value" id="tonelajeValue">0 kg</div>
+            <div class="tonelaje-delta" id="tonelajeDelta">Registra tus pesos para verlo</div>
+          </div>
+
+          <div id="sesionesCont"></div>
+
+          <button class="add-sesion-btn" onclick="addSesion()">+ Añadir sesión</button>
+
+          <div class="section-lbl" style="margin-top:20px">Recursos</div>
+          <div class="card" style="padding:4px 16px;">
+            <div class="menu-row" onclick="abrirRecurso('glosario')">
+              <div class="menu-badge">PDF</div>
+              <div class="menu-info"><div class="menu-name">Glosario de entrenamiento</div><div class="menu-meta">Drop sets, superseries, AMRAP, EMOM, rest pauses…</div></div>
+              <span class="chev">›</span>
+            </div>
+            <div class="menu-row" onclick="abrirRecurso('rir')">
+              <div class="menu-badge">RIR</div>
+              <div class="menu-info"><div class="menu-name">Cómo funciona el RIR</div><div class="menu-meta">Ajusta el peso al esfuerzo que te pauto</div></div>
+              <span class="chev">›</span>
+            </div>
+            <div class="menu-row" onclick="abrirRecurso('calentamiento')">
+              <div class="menu-badge">PDF</div>
+              <div class="menu-info"><div class="menu-name">Guía de calentamiento</div><div class="menu-meta">Cómo preparar el cuerpo antes de entrenar</div></div>
+              <span class="chev">›</span>
+            </div>
+          </div>
+          <p class="alta-hint" style="margin:10px 2px 0">¿Alguna duda con un término o con el calentamiento? Consúltalo aquí antes de preguntar.</p>
+
+        </section>
+
+        <!-- PLAN -->
+        <section class="view" id="view-plan">
+          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 16px"><div class="h-title" style="margin-top:0">Plan nutricional</div><div class="sub">Ajustado por Fátima. Elige una opción de cada columna — todo se pesa en crudo.</div></div></div>
+          <div class="day-row">
+            <div class="day-pill">L</div><div class="day-pill">M</div><div class="day-pill active">X</div>
+            <div class="day-pill">J</div><div class="day-pill">V</div><div class="day-pill">S</div><div class="day-pill">D</div>
+          </div>
+
+          <div class="plan-resumen" id="planResumen">
+            <div class="plan-resumen-lbl">Tu objetivo diario</div>
+            <div class="plan-resumen-kcal" id="resKcal">—</div>
+            <div class="plan-resumen-note" id="resNote">Reparto en 5 comidas</div>
+            <div class="plan-macros">
+              <div class="plan-macro p"><div class="m-val" id="resP">—</div><div class="m-lbl">Proteína</div></div>
+              <div class="plan-macro c"><div class="m-val" id="resC">—</div><div class="m-lbl">Carbohidrato</div></div>
+              <div class="plan-macro f"><div class="m-val" id="resF">—</div><div class="m-lbl">Grasa</div></div>
+            </div>
+          </div>
+          <div class="calc-card" id="calcCard">
+            <div class="calc-title">Calculadora de cantidades</div>
+            <div class="calc-row">
+              <label>Calorías objetivo<input type="number" id="calcKcal" value="2000" oninput="calcularPlan()"></label>
+              <label>Proteína %<input type="number" oninput="calcularPlan()" id="calcP" value="30"></label>
+              <label>Carbo %<input type="number" oninput="calcularPlan()" id="calcC" value="45"></label>
+              <label>Grasa %<input type="number" oninput="calcularPlan()" id="calcF" value="25"></label>
+            </div>
+            <div class="calc-sub">Reparto por comida (%)</div>
+            <div class="calc-row" id="calcMealRow">
+              <label>C1<input type="number" oninput="calcularPlan()" class="calc-meal" value="25"></label>
+              <label>C2<input type="number" oninput="calcularPlan()" class="calc-meal" value="10"></label>
+              <label>C3<input type="number" oninput="calcularPlan()" class="calc-meal" value="30"></label>
+              <label>C4<input type="number" oninput="calcularPlan()" class="calc-meal" value="10"></label>
+              <label>C5<input type="number" oninput="calcularPlan()" class="calc-meal" value="25"></label>
+            </div>
+            <button class="btn-primary" onclick="calcularPlan()">Calcular cantidades</button>
+            <div class="calc-result" id="calcResult"></div>
+          </div>
+
+          <div id="comidasCont"></div>
+
+          <button class="add-meal-btn" onclick="addMeal()">+ Añadir comida</button>
+          <div class="section-lbl">Menús semanales</div>
+          <div class="card" style="padding:4px 16px;">
+            <div class="menu-row" onclick="sendPrompt ? null : null">
+              <div class="menu-badge">PDF</div>
+              <div class="menu-info"><div class="menu-name">Menú semana · Otoño</div><div class="menu-meta">Fátima · sube cada semana</div></div>
+              <span class="chev">›</span>
+            </div>
+            <div class="menu-row">
+              <div class="menu-badge">PDF</div>
+              <div class="menu-info"><div class="menu-name">Batch cooking del domingo</div><div class="menu-meta">Ideas para preparar en lote</div></div>
+              <span class="chev">›</span>
+            </div>
+            <div class="menu-row">
+              <div class="menu-badge">PDF</div>
+              <div class="menu-info"><div class="menu-name">Menú semana · alternativas</div><div class="menu-meta">Para variar sin salir del plan</div></div>
+              <span class="chev">›</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROGRESO -->
+        <section class="view" id="view-progreso">
+          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 18px"><div class="h-title" style="margin-top:0">Tu progreso</div><div class="sub">Seis semanas cumpliendo. Eso ya no es suerte.</div></div></div>
+          <div class="ring-card">
+            <div class="ring"><div class="ring-inner"><div class="n">6</div><div class="l">DE 12 SEM.</div></div></div>
+            <div class="ring-text"><b>Vas por delante del plan</b><p>Semana 6 de 12. Aquí abajo tienes lo que llevas esta semana, en directo.</p></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><b>Esta semana</b><span id="pgSemana">—</span></div>
+            <div class="cumpl-row">
+              <div class="cumpl-lbl"><span>Sesiones hechas</span><b id="pgSesiones">—</b></div>
+              <div class="progress-line"><div class="progress-fill" id="pgBarSes" style="width:0%"></div></div>
+            </div>
+            <div class="cumpl-row">
+              <div class="cumpl-lbl"><span>Comidas cumplidas</span><b id="pgComidas">—</b></div>
+              <div class="progress-line"><div class="progress-fill" id="pgBarCom" style="width:0%"></div></div>
+            </div>
+            <div class="cumpl-stats" style="margin-top:14px">
+              <div class="cumpl-stat"><b id="pgTonelaje">— kg</b><span>Tonelaje</span></div>
+              <div class="cumpl-stat"><b>68,4 kg</b><span>Peso</span></div>
+              <div class="cumpl-stat"><b>−4 cm</b><span>Cintura</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chart-head"><b>Peso</b><span>−3,2 kg en 6 semanas</span></div>
+            <div class="bars">
+              <div class="bar-col"><div class="bar" style="height:100px;background:rgba(136,185,230,.18)"></div><span class="bar-lbl">S1</span></div>
+              <div class="bar-col"><div class="bar" style="height:88px;background:rgba(136,185,230,.22)"></div><span class="bar-lbl">S2</span></div>
+              <div class="bar-col"><div class="bar" style="height:80px;background:rgba(136,185,230,.28)"></div><span class="bar-lbl">S3</span></div>
+              <div class="bar-col"><div class="bar" style="height:83px;background:rgba(136,185,230,.34)"></div><span class="bar-lbl">S4</span></div>
+              <div class="bar-col"><div class="bar" style="height:70px;background:rgba(136,185,230,.5)"></div><span class="bar-lbl">S5</span></div>
+              <div class="bar-col"><div class="bar" style="height:60px"></div><span class="bar-lbl on">S6</span></div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="lbl">Fuerza</div><div class="val" style="font-size:21px">+18 %</div><div class="delta dim">en press banca</div></div>
+            <div class="stat-card"><div class="lbl">Cintura</div><div class="val" style="font-size:21px">−4 cm</div><div class="delta dim">desde el inicio</div></div>
+          </div>
+          <div class="quote-card">
+            <div class="q">Para la vida real</div>
+            <div class="p">Falló el jueves y siguió el viernes. Eso es lo que mueve la aguja.</div>
+          </div>
+        </section>
+
+        <!-- CHAT -->
+        <section class="view" id="view-chat" style="padding:0 22px;">
+          <div class="view-top" style="flex:none;padding-bottom:0"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1"><div class="h-title" id="chatTitle" style="margin-top:0">Tu equipo</div><div class="sub" id="chatSub" style="margin-top:2px">Fátima y Domingo, en la misma conversación</div></div></div>
+          <div class="team-row" style="flex:none">
+            <div class="team-chip"><span class="dot"></span>Fátima · dietista</div>
+            <div class="team-chip"><span class="dot"></span>Domingo · entrenador</div>
+          </div>
+          <div class="chat-list" id="chatList"><div class="picker-empty" id="chatVacio">Aún no hay mensajes. Escribe el primero.</div></div>
+          <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Escribe a tu equipo…">
+            <span class="rec-live" id="recLive"><span class="rec-dot"></span><span id="recTime">0:00</span></span>
+            <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="subirImagen(this)">
+            <button class="icon-circ" onclick="document.getElementById('chatFile').click()" aria-label="Adjuntar imagen" title="Adjuntar imagen">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </button>
+            <button class="icon-circ" id="micBtn" onclick="toggleMic()" aria-label="Grabar audio" title="Grabar nota de voz">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg>
+            </button>
+            <button class="icon-circ send" onclick="sendMsg()" aria-label="Enviar">➤</button>
+          </div>
+        </section>
+
+        <!-- PERFIL -->
+        <section class="view" id="view-perfil">
+          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button></div>
+          <div class="profile-head"><div class="avatar lg"></div><div><b id="perfNombre">—</b><span id="perfMeta">Sin asesoría activa</span></div></div>
+
+          <div class="card-accent" style="display:flex;justify-content:space-between;align-items:center;padding:17px;">
+            <div><div style="font:700 14px Archivo">Revisión semanal</div><div style="font:500 12px Archivo;opacity:.75;margin-top:3px">Lunes 17 · sube peso y fotos</div></div>
+            <div style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 12px Archivo;cursor:pointer">Preparar</div>
+          </div>
+
+          <div class="section-lbl">Mi asesoría</div>
+          <div class="list-group">
+            <div class="list-row"><span>Objetivo · Perder grasa</span><span class="chev">›</span></div>
+            <div class="list-row"><span>Mis medidas y fotos</span><span class="chev">›</span></div>
+            <div class="list-row"><span>Alergias e intolerancias</span><span class="chev">›</span></div>
+          </div>
+
+          <div class="section-lbl">Ajustes</div>
+          <div class="list-group">
+            <div class="list-row"><span>Recordatorios de comida</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
+            <div class="list-row"><span>Aviso de entreno</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
+            <div class="list-row"><span>Modo oscuro</span><div class="toggle on" id="darkToggle" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
+          </div>
+
+          <div class="logout-row"><span onclick="cerrarSesionCliente()">Cerrar sesión</span><span onclick="borrarDatos()" style="color:#E05C4B;cursor:pointer">Borrar datos de prueba</span><span>v 1.0</span></div>
+        </section>
+
+      </div>
+
+      <nav class="tb">
+        <button class="tbi active" id="tab-hoy" onclick="goTo('hoy')"><div class="tbi-shape sh-hoy"></div>HOY</button>
+        <button class="tbi" id="tab-plan" onclick="goTo('plan')"><div class="tbi-shape sh-plan"></div>NUTRICIÓN</button>
+        <button class="tbi" id="tab-entreno" onclick="goTo('entreno')"><div class="tbi-shape sh-entreno"></div>ENTRENAMIENTO</button>
+        <button class="tbi" id="tab-progreso" onclick="goTo('progreso')"><div class="tbi-shape sh-progreso"></div>PROGRESO</button>
+        <button class="tbi" id="tab-chat" onclick="goTo('chat')"><div class="tbi-shape sh-chat"></div>CHAT</button>
+      </nav>
+    </div>
+
+
+    <div class="picker-overlay" id="recursoPop">
+      <div class="picker-sheet">
+        <div class="picker-head">
+          <div><div class="picker-eyebrow" id="recEyebrow">Recurso</div><div class="picker-title" id="recTitulo">—</div></div>
+          <button class="picker-close" onclick="cerrarRecurso()">✕</button>
+        </div>
+        <div class="picker-list" id="recCuerpo"></div>
+      </div>
+    </div>
+    <div class="picker-overlay" id="videoModal">
+      <div class="picker-sheet" style="height:auto">
+        <div class="picker-head">
+          <div><div class="picker-eyebrow">Vídeo de técnica</div><div class="picker-title" id="vmEx">—</div></div>
+          <button class="picker-close" onclick="cerrarVideoModal()">✕</button>
+        </div>
+        <input class="picker-search" id="vmUrl" placeholder="https://youtu.be/…" style="margin-bottom:4px">
+        <div class="picker-new-error" id="vmError"></div>
+        <div class="picker-new-actions">
+          <button class="picker-btn-ghost" onclick="quitarVideo()">Quitar</button>
+          <button class="picker-btn-solid" onclick="guardarVideo()">Guardar enlace</button>
+        </div>
+        <p class="alta-hint">Pega el enlace de tu vídeo de YouTube. El cliente lo verá como «Ver técnica».</p>
+      </div>
+    </div>
+    <div class="noti-pop" id="notiPopCoach">
+      <div class="noti-card">
+        <div class="noti-head"><b>Notificaciones</b><button class="picker-close" onclick="cerrarNotisCoach()">✕</button></div>
+        <div class="noti-list" id="notiListCoach"></div>
+      </div>
+    </div>
+    <div class="noti-pop" id="notiPop">
+      <div class="noti-card">
+        <div class="noti-head"><b>Notificaciones</b><button class="picker-close" onclick="cerrarNotis()">✕</button></div>
+        <div class="noti-list"><div class="picker-empty">No tienes notificaciones.</div></div>
+      </div>
+    </div>
+    <div class="picker-overlay" id="foodPicker">
+      <div class="picker-sheet">
+        <div class="picker-head">
+          <div><div class="picker-eyebrow">Añadir alimento</div><div class="picker-title" id="foodPickerTitle">Proteína</div></div>
+          <button class="picker-close" onclick="closeFoodPicker()">✕</button>
+        </div>
+        <input class="picker-search" id="foodSearch" placeholder="Buscar alimento…" oninput="renderFoodList()">
+        <div class="picker-list" id="foodList"></div>
+        <div class="picker-newform" id="foodNewForm">
+          <input class="picker-search" id="newFoodName" placeholder="Nombre del alimento" style="margin-bottom:8px">
+          <select class="picker-select" id="newFoodGroup" style="width:100%"></select>
+          <div class="calc-sub">Macros por 100 g</div>
+          <div class="calc-row">
+            <label>Proteína<input type="number" id="newFoodP" placeholder="0"></label>
+            <label>Carbo<input type="number" id="newFoodC" placeholder="0"></label>
+            <label>Grasa<input type="number" id="newFoodF" placeholder="0"></label>
+          </div>
+          <div class="picker-new-error" id="newFoodError"></div>
+          <div class="picker-new-actions">
+            <button class="picker-btn-ghost" onclick="toggleNewFood(false)">Cancelar</button>
+            <button class="picker-btn-solid" onclick="saveNewFood()">Guardar y añadir</button>
+          </div>
+        </div>
+        <button class="picker-new-btn" id="foodNewBtn" onclick="toggleNewFood(true)">+ Crear alimento nuevo</button>
+      </div>
+    </div>
+    <div class="picker-overlay" id="exPicker">
+      <div class="picker-sheet">
+        <div class="picker-head">
+          <div><div class="picker-eyebrow">Cambiar ejercicio</div><div class="picker-title" id="pickerCurrent">—</div></div>
+          <button class="picker-close" onclick="closeExercisePicker()">✕</button>
+        </div>
+        <input class="picker-search" id="pickerSearch" placeholder="Buscar ejercicio…" oninput="renderPickerList()">
+        <div class="picker-filters" id="pickerFilters"></div>
+        <div class="picker-list" id="pickerList"></div>
+        <div class="picker-newform" id="pickerNewForm">
+          <input class="picker-search" id="newExName" placeholder="Nombre del ejercicio" style="margin-bottom:8px">
+          <div class="picker-new-row">
+            <select class="picker-select" id="newExMus"></select>
+            <select class="picker-select" id="newExEq"></select>
+          </div>
+          <div class="picker-new-error" id="newExError"></div>
+          <div class="picker-new-actions">
+            <button class="picker-btn-ghost" onclick="toggleNewExercise(false)">Cancelar</button>
+            <button class="picker-btn-solid" onclick="saveNewExercise()">Guardar y usar</button>
+          </div>
+        </div>
+        <button class="picker-new-btn" id="pickerNewBtn" onclick="toggleNewExercise(true)">+ Crear ejercicio nuevo</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="caption">Prototipo interactivo — dirección "Semana viva" a partir de vuestro documento de diseño. Toca las pestañas, completa series en Entreno, marca comidas y escribe en el chat.</p>
+
+<script src="app.js" defer></script>
+</body>
+</html>
