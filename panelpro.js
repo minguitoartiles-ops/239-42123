@@ -354,3 +354,314 @@ pintarSegsResumen = function(){
   cont.innerHTML = h;
   colorearSeguimientos(cont);
 };
+
+/* =========================================================
+   v0.51 · Gestión del cliente: el globo solo marca lo pendiente
+   y desaparece en cuanto el profesional lo abre
+   ========================================================= */
+function segsSinVer(k){
+  if (!coachActivo) return 0;
+  const yo = norm(coachActivo.u);
+  return (SEGUIMIENTOS[k] || []).filter(function(r){ return !(r.vistoPor && r.vistoPor[yo]); }).length;
+}
+function msgsSinLeer(k){ return coachActivo ? (sinLeerDe(clavePro(coachActivo.u))[k] || 0) : 0; }
+function pintarGlobo(id, n, txt){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = n;
+  el.hidden = !n;
+  el.classList.toggle('pill-nuevo', !!n);
+  el.setAttribute('aria-label', n ? n + ' ' + txt : '');
+}
+function pintarPendientesFicha(){
+  const k = clienteActual;
+  if (!k) return;
+  pintarGlobo('fichaSegN', segsSinVer(k), n1(segsSinVer(k), 'seguimiento sin revisar', 'seguimientos sin revisar'));
+  pintarGlobo('fichaChatN', msgsSinLeer(k), n1(msgsSinLeer(k), 'mensaje sin leer', 'mensajes sin leer'));
+}
+function n1(n, uno, varios){ return n === 1 ? uno : varios; }
+/* al abrir los seguimientos se dan por vistos todos (y sus avisos de la campana) */
+goToSeguimientos = (function(orig){
+  return function(){
+    orig();
+    const k = clienteActual;
+    if (!k || !coachActivo) return;
+    const yo = norm(coachActivo.u), ahora = new Date().toISOString();
+    let cambio = false;
+    (SEGUIMIENTOS[k] || []).forEach(function(r){
+      r.vistoPor = r.vistoPor || {};
+      if (!r.vistoPor[yo]) { r.vistoPor[yo] = ahora; cambio = true; }
+    });
+    const pro = clavePro(coachActivo.u);
+    ((leerAvisos().lista[pro]) || []).forEach(function(x){
+      if (x.tipo === 'seguimientos' && x.ir && x.ir.cliente === k && !x.leida) { x.leida = true; cambio = true; }
+    });
+    if (cambio) { guardarAvisos(); guardarTodo(); pintarCampanas(); }
+  };
+})(goToSeguimientos);
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarPendientesFicha(); };
+})();
+goToCliente = (function(orig){
+  return function(k){ orig(k); pintarPendientesFicha(); };
+})(goToCliente);
+window.addEventListener('storage', function(){ pintarPendientesFicha(); });
+
+/* =========================================================
+   v0.51 · Sensaciones del día (cliente en Nutrición y Entrenamiento)
+   Se guardan en la ficha del cliente: clientesData[k].sens = [{ f, area, animo, txt, hora, visto }]
+   ========================================================= */
+TIPOS_PRO.push({ id: 'sensaciones', ico: '🗒️', nombre: 'Sensaciones del día', desc: 'Cuando un cliente cuenta cómo le ha ido el entreno o la comida' });
+const ANIMOS = [null, ['😣', 'Muy mal'], ['😕', 'Regular'], ['😐', 'Normal'], ['🙂', 'Bien'], ['💪', 'Genial']];
+const AREAS_SENS = {
+  ent: { vista: 'entreno', ico: '🏋️', nombre: 'Entrenamiento', rol: 'entrenador', pregunta: '¿Cómo te ha ido el entreno hoy?', ej: 'Me he notado fuerte en sentadilla, pero me molestaba el hombro en press…' },
+  nut: { vista: 'plan', ico: '🍽️', nombre: 'Nutrición', rol: 'dietista', pregunta: '¿Cómo te ha ido hoy con la comida?', ej: 'He pasado hambre por la tarde, me ha costado la cena fuera…' }
+};
+function sensDe(k){ const c = clientesData[k]; return (c && c.sens) || []; }
+function sensHoy(k, area){ const f = hoyISO(); return sensDe(k).filter(function(s){ return s.f === f && s.area === area; })[0] || null; }
+function proDeArea(area){ return COACHES.filter(function(c){ return c.rol === AREAS_SENS[area].rol; })[0]; }
+function diasEntre(f){ const a = new Date(f + 'T12:00:00'), b = new Date(hoyISO() + 'T12:00:00'); return Math.round((b - a) / DIA_MS); }
+function cuandoSens(s){ const d = diasEntre(s.f); return d === 0 ? 'hoy' : (d === 1 ? 'ayer' : 'hace ' + d + ' días'); }
+
+/* ---------- tarjeta del cliente ---------- */
+let sensBorrador = {};   // ánimo elegido antes de enviar, por área
+function htmlSensCliente(area){
+  const A = AREAS_SENS[area], k = clienteActual, hoy = sensHoy(k, area), pro = proDeArea(area);
+  const sel = sensBorrador[area] != null ? sensBorrador[area] : (hoy ? hoy.animo : null);
+  const editando = !hoy || sensBorrador[area + '_ed'];
+  let h = '<div class="sens-card" data-area="' + area + '">'
+    + '<div class="sens-top"><span class="sens-ico" aria-hidden="true">' + A.ico + '</span><div><b>' + A.pregunta + '</b>'
+    + '<span>Lo verá ' + esc(pro ? pro.u : 'tu equipo') + '. Puedes cambiarlo durante el día.</span></div></div>';
+  if (!editando) {
+    h += '<div class="sens-hecho"><span class="sens-emo">' + ANIMOS[hoy.animo][0] + '</span><div><b>' + ANIMOS[hoy.animo][1] + '</b>'
+      + (hoy.txt ? '<span>' + esc(hoy.txt) + '</span>' : '') + '<small>Enviado hoy a las ' + esc(hoy.hora) + ' ✓</small></div>'
+      + '<button class="mini-btn" onclick="editarSens(\'' + area + '\')">Cambiar</button></div>';
+    return h + '</div>';
+  }
+  h += '<div class="sens-animos" role="radiogroup" aria-label="Cómo te has sentido">';
+  for (let i = 1; i <= 5; i++) {
+    h += '<button type="button" role="radio" aria-checked="' + (sel === i) + '" class="sens-animo' + (sel === i ? ' on' : '') + '" onclick="elegirAnimo(\'' + area + '\',' + i + ')">'
+      + '<span>' + ANIMOS[i][0] + '</span><small>' + ANIMOS[i][1] + '</small></button>';
+  }
+  h += '</div><textarea class="sg-text sens-txt" id="sensTxt-' + area + '" rows="2" placeholder="' + esc(A.ej) + '">' + esc(hoy && hoy.txt || '') + '</textarea>'
+    + '<button class="btn-primary sens-enviar" onclick="enviarSens(\'' + area + '\')"' + (sel ? '' : ' disabled') + '>Enviar a ' + esc(pro ? pro.u : 'tu equipo') + '</button>';
+  return h + '</div>';
+}
+/* ---------- vista del profesional dentro del plan del cliente: solo lectura ---------- */
+function htmlSensLista(k, area, max){
+  const lista = sensDe(k).filter(function(s){ return !area || s.area === area; }).slice(0, max || 7);
+  if (!lista.length) return '<div class="picker-empty">Aún no ha contado sensaciones' + (area ? ' de ' + AREAS_SENS[area].nombre.toLowerCase() : '') + '.</div>';
+  return lista.map(function(s){
+    return '<div class="sens-item"><span class="sens-emo" title="' + ANIMOS[s.animo][1] + '">' + ANIMOS[s.animo][0] + '</span>'
+      + '<div><b>' + AREAS_SENS[s.area].ico + ' ' + AREAS_SENS[s.area].nombre + ' · ' + cuandoSens(s) + ' · ' + esc(s.hora) + '</b>'
+      + '<span>' + (s.txt ? esc(s.txt) : '<i>' + ANIMOS[s.animo][1] + ', sin comentario</i>') + '</span></div></div>';
+  }).join('');
+}
+function pintarSens(area){
+  const A = AREAS_SENS[area];
+  const v = document.getElementById('view-' + A.vista);
+  if (!v || !clienteActual) return;
+  let box = document.getElementById('sensBox-' + area);
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'sensBox-' + area; box.className = 'sens-box';
+    const top = v.querySelector('.view-top');
+    top.parentNode.insertBefore(box, top.nextSibling);
+  }
+  box.innerHTML = isCoachView()
+    ? '<div class="section-lbl">Sensaciones del cliente</div><div class="sens-lista">' + htmlSensLista(clienteActual, area, 5) + '</div>'
+    : htmlSensCliente(area);
+}
+function elegirAnimo(area, n){ sensBorrador[area] = n; pintarSens(area); }
+function editarSens(area){ sensBorrador[area + '_ed'] = true; pintarSens(area); }
+function enviarSens(area){
+  const k = clienteActual, c = clientesData[k];
+  const animo = sensBorrador[area] || (sensHoy(k, area) || {}).animo;
+  if (!c || !animo) { toast('Elige cómo te has sentido.'); return; }
+  const t = document.getElementById('sensTxt-' + area);
+  const txt = t ? t.value.trim().slice(0, 600) : '';
+  const ahora = new Date();
+  const hora = String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0');
+  c.sens = c.sens || [];
+  const ya = sensHoy(k, area);
+  const nuevo = { f: hoyISO(), area: area, animo: animo, txt: txt, hora: hora, visto: {} };
+  if (ya) c.sens[c.sens.indexOf(ya)] = nuevo; else c.sens.unshift(nuevo);
+  if (c.sens.length > 90) c.sens.length = 90;
+  sensBorrador[area] = null; sensBorrador[area + '_ed'] = false;
+  guardarTodo();
+  const pro = proDeArea(area);
+  if (pro) crearAviso(clavePro(pro.u), 'sensaciones', c.nombre + ': ' + ANIMOS[animo][0] + ' ' + AREAS_SENS[area].nombre.toLowerCase() + (ya ? ' (actualizado)' : ''),
+    txt ? recortar(txt) : ANIMOS[animo][1], { cliente: k, vista: 'ficha' });
+  pintarSens(area);
+  toast('Enviado a ' + (pro ? pro.u : 'tu equipo') + ' ✓');
+}
+goTo = (function(orig){
+  return function(n, s){
+    orig(n, s);
+    if (n === 'entreno') pintarSens('ent');
+    if (n === 'plan') pintarSens('nut');
+  };
+})(goTo);
+
+/* ---------- profesional: tarjeta del panel y ficha ---------- */
+function sensSinVer(k){
+  if (!coachActivo) return [];
+  const yo = norm(coachActivo.u);
+  return sensDe(k).filter(function(s){ return !(s.visto && s.visto[yo]); });
+}
+function lineaSensTarjeta(k){
+  const rol = coachActivo ? coachActivo.rol : null;
+  const partes = ['ent', 'nut'].map(function(area){
+    const s = sensDe(k).filter(function(x){ return x.area === area; })[0];
+    if (!s || diasEntre(s.f) > 6) return '';
+    const mio = AREAS_SENS[area].rol === rol;
+    return '<span class="kc-sens-a' + (mio ? ' mio' : '') + '">' + AREAS_SENS[area].ico + ' ' + ANIMOS[s.animo][0] + ' ' + cuandoSens(s)
+      + (mio && s.txt ? ' · «' + esc(recortar(s.txt, 42)) + '»' : '') + '</span>';
+  }).filter(Boolean);
+  if (!partes.length) return '';
+  const n = sensSinVer(k).length;
+  return '<div class="kc-sens">' + partes.join('') + (n ? '<b class="kc-sens-n">' + n + ' nueva' + (n > 1 ? 's' : '') + '</b>' : '') + '</div>';
+}
+pintarListaClientes = (function(orig){
+  return function(){
+    orig();
+    const claves = Object.keys(clientesData);
+    Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
+      const k = claves[i]; if (!k) return;
+      const viejo = card.querySelector('.kc-sens'); if (viejo) viejo.remove();
+      const html = lineaSensTarjeta(k);
+      if (!html) return;
+      const pie = card.querySelector('.kc-pie');
+      const tmp = document.createElement('div'); tmp.innerHTML = html;
+      if (pie) pie.parentNode.insertBefore(tmp.firstChild, pie); else card.appendChild(tmp.firstChild);
+    });
+  };
+})(pintarListaClientes);
+function pintarSensFicha(){
+  const k = clienteActual;
+  const v = document.getElementById('view-coach-cliente');
+  if (!k || !v) return;
+  let box = document.getElementById('fichaSens');
+  if (!box) {
+    box = document.createElement('div'); box.id = 'fichaSens';
+    const gest = Array.prototype.filter.call(v.querySelectorAll('.alta-label'), function(x){ return /Gestión/.test(x.textContent); })[0];
+    gest.parentNode.insertBefore(box, gest);
+  }
+  const nuevas = sensSinVer(k).length;
+  box.innerHTML = '<div class="alta-label">Sensaciones del día' + (nuevas ? ' <span class="pill pill-nuevo">' + nuevas + '</span>' : '') + '</div>'
+    + '<div class="sens-lista ficha">' + htmlSensLista(k, null, 7) + '</div>';
+  // al entrar en la ficha se dan por vistas (el globo desaparece la próxima vez)
+  if (nuevas && coachActivo) {
+    const yo = norm(coachActivo.u), ahora = new Date().toISOString();
+    sensDe(k).forEach(function(s){ s.visto = s.visto || {}; if (!s.visto[yo]) s.visto[yo] = ahora; });
+    const pro = clavePro(coachActivo.u);
+    ((leerAvisos().lista[pro]) || []).forEach(function(x){ if (x.tipo === 'sensaciones' && x.ir && x.ir.cliente === k) x.leida = true; });
+    guardarAvisos(); guardarTodo(); pintarCampanas();
+    setTimeout(function(){ const p = box.querySelector('.pill-nuevo'); if (p) p.classList.add('visto'); }, 1600);
+  }
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarSensFicha(); if (id === 'view-coach-panel') actualizarPanel(); };
+})();
+window.addEventListener('storage', function(){
+  if (pantallaVisible && pantallaVisible() === 'view-coach-cliente') pintarSensFicha();
+  if (typeof vistaActual !== 'undefined' && document.getElementById('app').style.display !== 'none') {
+    if (vistaActual === 'entreno') pintarSens('ent');
+    if (vistaActual === 'plan') pintarSens('nut');
+  }
+});
+actualizarPanel();
+
+/* =========================================================
+   v0.51 · Consentimiento de uso de imagen (redes sociales, marketing y divulgación)
+   Se guarda en clientesData[k].consentImagen = { fecha, v, progreso, reconocible, nombre }
+   ========================================================= */
+TIPOS_PRO.push({ id: 'imagen', ico: '📸', nombre: 'Permisos de imagen', desc: 'Cuando un cliente cambia lo que autoriza publicar' });
+const CI_OPCIONES = [['progreso', 'Fotos de progreso sin la cara'], ['reconocible', 'Fotos o vídeos en los que se le reconoce'], ['nombre', 'Su nombre o testimonio']];
+function ciDecidido(d){ return !!(d && d.consentImagen && d.consentImagen.fecha); }
+function ciResumen(d){
+  if (!ciDecidido(d)) return { txt: 'Pendiente', ok: false };
+  const si = CI_OPCIONES.filter(function(o){ return d.consentImagen[o[0]]; });
+  return si.length ? { txt: 'Autorizado ' + si.length + ' de 3', ok: true } : { txt: 'No autorizado', ok: false };
+}
+function abrirConsentImagen(){
+  const d = clientesData[clienteActual];
+  if (!d) return;
+  const c = d.consentImagen || {};
+  document.getElementById('ciProgreso').checked = !!c.progreso;
+  document.getElementById('ciReconocible').checked = !!c.reconocible;
+  document.getElementById('ciNombre').checked = !!c.nombre;
+  document.getElementById('consentImagen').classList.add('show');
+}
+function comprobarConsentImagen(){
+  if (!clienteActual || isCoachView()) return;
+  const d = clientesData[clienteActual];
+  if (!d || !(d.consentSalud && d.consentSalud.fecha) || ciDecidido(d)) return;
+  abrirConsentImagen();
+}
+function ciGuardar(ninguno){
+  const d = clientesData[clienteActual];
+  if (!d) return;
+  const val = function(id){ return !ninguno && document.getElementById(id).checked; };
+  const antes = d.consentImagen;
+  d.consentImagen = { fecha: new Date().toISOString(), v: POLICY_V, progreso: val('ciProgreso'), reconocible: val('ciReconocible'), nombre: val('ciNombre') };
+  guardarTodo();
+  document.getElementById('consentImagen').classList.remove('show');
+  const r = ciResumen(d);
+  toast(r.ok ? 'Guardado: ' + r.txt.toLowerCase() : 'Guardado: no se publicará tu imagen');
+  // si cambia una decisión ya tomada, se avisa a los dos profesionales
+  if (antes && antes.fecha) avisarPros('imagen', d.nombre + ' ha cambiado su permiso de imagen', r.txt, { cliente: clienteActual, vista: 'ficha' });
+  if (vistaActual === 'ajustes' && typeof renderAjustes === 'function') renderAjustes('cliente');
+}
+csAceptar = (function(orig){ return function(){ orig(); setTimeout(comprobarConsentImagen, 250); }; })(csAceptar);
+comprobarConsentSalud = (function(orig){
+  return function(){ orig(); if (!document.getElementById('consentSalud').classList.contains('show')) comprobarConsentImagen(); };
+})(comprobarConsentSalud);
+atrasDentroApp = (function(orig){
+  return function(){ if (capaVisible('consentImagen')) return true; return orig(); };   // hay que elegir una opción
+})(atrasDentroApp);
+/* Ajustes del cliente → Privacidad */
+htmlAjustes = (function(orig){
+  return function(rol){
+    let h = orig(rol);
+    const d = clienteActual && clientesData[clienteActual];
+    if (rol !== 'cliente' || !d || !(d.consentSalud && d.consentSalud.fecha)) return h;
+    const r = ciResumen(d);
+    const filaCI = fila('Uso de tu imagen en redes', pill(r.txt, r.ok), 'abrirConsentImagen()');
+    const marca = fila('Retirar consentimiento', '', 'retirarConsentSalud()', 'danger');
+    return h.indexOf(marca) > -1 ? h.replace(marca, filaCI + marca) : h;
+  };
+})(htmlAjustes);
+/* Ficha del cliente (profesionales): qué ha autorizado */
+function pintarImagenFicha(){
+  const d = clientesData[clienteActual];
+  const v = document.getElementById('view-coach-cliente');
+  if (!d || !v) return;
+  let row = document.getElementById('fichaImagen');
+  if (!row) {
+    const cod = document.getElementById('fichaCodigo');
+    const lr = cod && cod.closest('.list-row');
+    if (!lr) return;
+    row = document.createElement('div');
+    row.id = 'fichaImagen'; row.className = 'list-row';
+    row.onclick = verImagenFicha;
+    lr.parentNode.insertBefore(row, lr.nextSibling);
+  }
+  const r = ciResumen(d);
+  row.innerHTML = '<span>Uso de imagen en redes</span><span class="ajx-acts"><span class="pill' + (r.ok ? ' ok' : '') + '">' + esc(r.txt) + '</span><span class="chev">›</span></span>';
+}
+function verImagenFicha(){
+  const d = clientesData[clienteActual];
+  if (!d) return;
+  const c = d.consentImagen;
+  const texto = ciDecidido(d)
+    ? CI_OPCIONES.map(function(o){ return (c[o[0]] ? '✓ ' : '✗ ') + o[1]; }).join('\n') + '\n\nDecidido el ' + fechaCorta(c.fecha) + '.' + (c.nombre ? '' : ' Publicar siempre de forma anónima.')
+    : 'Todavía no ha respondido. Se le preguntará la próxima vez que entre en la app. Mientras tanto, no se puede publicar su imagen.';
+  abrirDialogo({ titulo: 'Uso de imagen de ' + d.nombre, texto: texto, ok: 'Entendido', soloOk: true });
+}
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') pintarImagenFicha(); };
+})();
