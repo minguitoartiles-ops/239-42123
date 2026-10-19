@@ -349,3 +349,65 @@ pintarCambiosCuerpo();
 pintarHistorialCliente();
 pintarProgreso();
 pintarAtras();
+
+/* =========================================================
+   v0.41 · Panel del coach con los clientes reales
+   ========================================================= */
+function pintarListaClientes(){
+  const cont = document.getElementById('listaClientes');
+  if (!cont) return;
+  const claves = Object.keys(clientesData);
+  cont.innerHTML = claves.map(function(k){
+    const d = clientesData[k];
+    const segs = SEGUIMIENTOS[k] || [];
+    const ult = segs[0];
+    const sub = 'Semana ' + esc(d.semana || '—') + ' · ' + (ult && ult.fecha ? 'último seguimiento ' + fechaCorta(ult.fecha) : 'sin seguimientos todavía');
+    const flag = segs.length ? '' : '<span class="adh-badge new">Nuevo</span>';
+    return '<div class="cliente-card" onclick="goToCliente(\'' + k + '\')">'
+      + '<div class="avatar"></div>'
+      + '<div class="cliente-info"><div class="cliente-name">' + esc(d.nombre) + '</div>'
+      + '<div class="cliente-sub">' + sub + '</div></div>'
+      + '<div class="cliente-flags">' + flag + '</div></div>';
+  }).join('');
+}
+function revisionesSemana(){
+  const desde = Date.now() - 7 * 86400000;
+  let n = 0;
+  Object.keys(SEGUIMIENTOS).forEach(function(k){
+    if (!clientesData[k]) return;
+    (SEGUIMIENTOS[k] || []).forEach(function(r){
+      if (r.fecha && new Date(r.fecha).getTime() >= desde) n++;
+    });
+  });
+  return n;
+}
+actualizarPanel = (function(orig){
+  return function(){
+    orig();
+    setTxt('statRevis', revisionesSemana());
+    pintarListaClientes();
+  };
+})(actualizarPanel);
+
+function eliminarCliente(){
+  const k = clienteActual;
+  const d = k ? clientesData[k] : null;
+  if (!d) return;
+  abrirDialogo({
+    titulo: 'Eliminar a ' + d.nombre,
+    texto: 'Se borrarán su ficha, su plan, sus seguimientos y la conversación de este dispositivo. Su código de acceso dejará de funcionar. No se puede deshacer.',
+    ok: 'Eliminar', peligro: true,
+    onOk: function(){
+      delete clientesData[k];
+      delete SEGUIMIENTOS[k];
+      delete PLANES[k];
+      clienteActual = null;
+      guardarTodo();
+      actualizarPanel();
+      backToPanel();
+      toast('Cliente eliminado');
+    }
+  });
+}
+
+actualizarPanel();
