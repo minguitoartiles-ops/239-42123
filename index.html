@@ -146,7 +146,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.52</div>
+      <div class="app-version">Versión 0.52.1</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -482,6 +482,10 @@ if ('serviceWorker' in navigator) {
 
             <div class="sg-q"><label>He cumplido el entreno</label></div>
             <div class="sg-range"><input type="range" min="1" max="10" value="8" oninput="setRango(this,'rEntreno')"><output id="rEntreno">8</output><span class="sg-de">/10</span></div>
+
+            <div class="sg-q"><label>Pasos medios al día esta semana</label><span class="sg-help">Míralo en el móvil o el reloj: en iPhone, Salud → Pasos → «S» (semana); en Android, Google Fit, Samsung Health o la app de tu reloj.</span></div>
+            <div class="sg-range sg-pasos sin-tocar" id="sgPasos"><input type="range" min="0" max="20000" step="250" value="6000" aria-label="Pasos medios al día" oninput="setPasos(this)"><output id="rPasos">—</output></div>
+            <div class="esc-desc" id="pasosDesc">Desliza para indicar tus pasos medios. Si no lo sabes, déjalo sin tocar.</div>
 
             <div class="sg-q"><label>Grado de motivación</label><span class="sg-help">Elige el número con el que más te identifiques</span></div>
             <div class="esc-row"><button class="esc-btn" onclick="setEscala(this,'motiv',1)">1</button><button class="esc-btn" onclick="setEscala(this,'motiv',2)">2</button><button class="esc-btn" onclick="setEscala(this,'motiv',3)">3</button><button class="esc-btn" onclick="setEscala(this,'motiv',4)">4</button><button class="esc-btn" onclick="setEscala(this,'motiv',5)">5</button></div><div class="esc-desc sin-elegir" id="motivDesc">Toca un número para elegir tu grado de motivación.</div>
