@@ -543,7 +543,9 @@ function armarAtras(){
   }
 }
 window.addEventListener('popstate', function(){
+  if (ignorarPop) { ignorarPop = false; return; }
   if (atrasDentroApp()) { armarAtras(); return; }
+  salirDeGuardas();
   toast('Pulsa atrás otra vez para salir');
 });
 document.addEventListener('pointerdown', armarAtras, true);
@@ -1107,20 +1109,29 @@ function toggleComercial(el){
    Chrome se salta las entradas de historial creadas sin un toque del usuario.
    La marca se renueva en cada toque, así siempre hay una que Chrome respeta.
    ========================================================= */
-let guardaSinGesto = false;
+/* v0.51 (cambio 1 hacia la 0.52) · Varias marcas de una vez, puestas siempre con un toque.
+   Antes, tras cada «atrás» se ponía una marca nueva sin toque; Chrome la daba por sospechosa y,
+   al pulsar atrás dos veces seguidas (p. ej. al entrar desde una notificación), sacaba de la app. */
+const GUARDAS = 6;
+let ignorarPop = false;
 document.removeEventListener('pointerdown', armarAtras, true);   // sustituye al vigilante anterior
-function ponerGuarda(conGesto){
-  try { history.pushState({ fsd: 1, t: Date.now() }, ''); } catch(e){}
-  guardaSinGesto = !conGesto;
+function nivelGuarda(){ const st = history.state; return st && st.fsd ? (st.n || 1) : 0; }
+function rellenarGuardas(){
+  for (let n = nivelGuarda() + 1; n <= GUARDAS; n++) {
+    try { history.pushState({ fsd: 1, n: n }, ''); } catch(e){ break; }
+  }
 }
-armarAtras = function(){            // al abrir y tras cada «atrás» atendido (sin toque)
-  if (!history.state || !history.state.fsd) ponerGuarda(false);
-  else guardaSinGesto = true;
+armarAtras = function(){            // tras un «atrás» atendido: si quedan marcas, no se crea ninguna
+  if (nivelGuarda() > 0) return;
+  try { history.pushState({ fsd: 1, n: 1 }, ''); } catch(e){}   // último recurso (sin toque)
 };
+function salirDeGuardas(){           // en la pantalla de acceso: se baja hasta la entrada real
+  const n = nivelGuarda();
+  if (n > 0) { ignorarPop = true; history.go(-n); }
+}
 document.addEventListener('pointerdown', function(){
-  if (!history.state || !history.state.fsd || guardaSinGesto) ponerGuarda(true);
+  if (nivelGuarda() < GUARDAS) rellenarGuardas();
 }, true);
-guardaSinGesto = true;              // la marca puesta al abrir la app se creó sin toque
 
 /* Aviso antes de salir del espacio del profesional a la pantalla de acceso */
 function confirmarSalidaCoach(){
