@@ -1,9 +1,10 @@
 # Registro de cambios — Fitness sin Dramas
 
-La versión sube cada 10 cambios o mejoras (norma desde la 0.47).
+La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
+(norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.48 (actual)
-Cambios acumulados hacia la 0.49: **4 de 10**
+## Versión 0.48.2 (actual)
+Cambios acumulados hacia la 0.49: **4 de 10** (0.48.1 tras el 2.º, 0.48.2 tras el 4.º)
 
 ### Hacia la 0.49
 1. 19/10/2026 22:56 · Pantalla de acceso: logo, tarjeta y accesos agrupados y centrados
