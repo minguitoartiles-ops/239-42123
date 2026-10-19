@@ -896,3 +896,14 @@
   #view-splash .login-card,#view-splash .pro-quick,#view-splash .instalar-card{max-width:420px;}
   @media (max-height: 820px){ #view-splash .login-card{margin-top:14px;} }
   @media (max-height: 600px){ #view-splash .wordmark{margin-top:auto;} }
+
+  /* Notificaciones */
+  .noti-head{gap:10px;}
+  .noti-acts{display:flex;align-items:center;gap:8px;}
+  .noti-item{position:relative;align-items:flex-start;}
+  .noti-item.leida{opacity:.62;}
+  .noti-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;margin-top:6px;margin-left:auto;}
+  .aviso-row{align-items:center;gap:12px;}
+  .aviso-l{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .aviso-l > span{font:500 13.5px Archivo;}
+  .aviso-l small{font:400 11.5px/1.4 Archivo;color:var(--dim-55);}
