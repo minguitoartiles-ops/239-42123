@@ -1101,3 +1101,23 @@ function toggleComercial(el){
   guardarTodo();
   toast(on ? 'Te avisaremos de novedades y ofertas' : 'Te has dado de baja del boletín');
 }
+
+/* =========================================================
+   v0.48 · Botón atrás fiable en Chrome Android
+   Chrome se salta las entradas de historial creadas sin un toque del usuario.
+   La marca se renueva en cada toque, así siempre hay una que Chrome respeta.
+   ========================================================= */
+let guardaSinGesto = false;
+document.removeEventListener('pointerdown', armarAtras, true);   // sustituye al vigilante anterior
+function ponerGuarda(conGesto){
+  try { history.pushState({ fsd: 1, t: Date.now() }, ''); } catch(e){}
+  guardaSinGesto = !conGesto;
+}
+armarAtras = function(){            // al abrir y tras cada «atrás» atendido (sin toque)
+  if (!history.state || !history.state.fsd) ponerGuarda(false);
+  else guardaSinGesto = true;
+};
+document.addEventListener('pointerdown', function(){
+  if (!history.state || !history.state.fsd || guardaSinGesto) ponerGuarda(true);
+}, true);
+guardaSinGesto = true;              // la marca puesta al abrir la app se creó sin toque

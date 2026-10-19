@@ -2,8 +2,10 @@
 
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47).
 
-## Versión 0.47 (actual)
-Cambios acumulados hacia la 0.48: **9 de 10**
+## Versión 0.48 (actual)
+Cambios acumulados hacia la 0.49: **0 de 10**
+
+## Versión 0.47
 
 - Código de acceso del cliente visible en su ficha para los profesionales (mostrar, copiar y enviar)
 - Quitada una nota antigua e incorrecta de la ficha del cliente
@@ -18,3 +20,4 @@ Cambios acumulados hacia la 0.48: **9 de 10**
 7. 19/10/2026 22:40 · Ayuda para instalar la app (Android e iPhone) y entrada compacta en móviles pequeños
 8. 19/10/2026 22:45 · Políticas de privacidad y cookies completas con los datos del titular; consentimiento opcional para boletín y ofertas
 9. 19/10/2026 22:45 · Corregido el desplazamiento vertical en las pantallas de los profesionales (panel, alta, ficha, ajustes)
+10. 19/10/2026 22:50 · Botón atrás fiable en Chrome Android: desde el panel lleva a la pantalla de acceso → **sube a la 0.48**
