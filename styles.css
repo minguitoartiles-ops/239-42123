@@ -1138,3 +1138,10 @@
   .alg-banner{margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1.5px solid var(--danger);background:var(--card);}
   .alg-banner-t{font:700 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--danger);margin-bottom:8px;}
   .alg-banner[hidden]{display:none;}
+
+  /* v0.51 · Colores de valoración en todos los recuadros de la tarjeta de cliente */
+  .kc.v-n1{box-shadow:inset 0 -3px 0 #E05C4B;} .kc.v-n2{box-shadow:inset 0 -3px 0 #E8894A;}
+  .kc.v-n3{box-shadow:inset 0 -3px 0 #D9B23F;} .kc.v-n4{box-shadow:inset 0 -3px 0 #8FBF5A;}
+  .kc.v-n5{box-shadow:inset 0 -3px 0 #43B37B;}
+  .kc .kc-v b[class^="v"]{font-weight:800;}
+  .kc.kc-msgs.v-n1{background:rgba(224,92,75,.08);}
