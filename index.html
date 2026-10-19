@@ -26,7 +26,7 @@ if ('serviceWorker' in navigator) {
 <body>
 
 <div class="phone">
-  <div class="screen" id="screenRoot">
+  <div class="screen light" id="screenRoot">
 
     <!-- SPLASH -->
     <div id="view-splash">
@@ -38,7 +38,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.1</div>
+      <div class="app-version">Versión 0.2</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -47,6 +47,7 @@ if ('serviceWorker' in navigator) {
         <p class="login-hint">Tu coach te ha dado de alta y te ha enviado un código de acceso personal. Introdúcelo aquí para entrar a tu plan.</p>
       </div>
       <div class="coach-link" onclick="goToCoachLogin()">¿Eres coach? Entrar al panel</div>
+      <div class="coach-link" onclick="entrarProfesionalPrueba()">Entrar como profesional (prueba)</div>
     </div>
 
     <!-- ALTA DE CLIENTE (vista coach) -->
@@ -166,6 +167,12 @@ if ('serviceWorker' in navigator) {
         <div class="alta-label">Tus clientes</div>
         <div id="listaClientes"></div>
         <div class="vacio" id="sinClientes"><b>Todavía no hay clientes</b><span>Pulsa «Nuevo cliente» para dar de alta al primero.</span></div>
+
+        <div class="section-lbl">Ajustes</div>
+        <div class="list-group">
+          <div class="list-row"><span>Modo oscuro</span><div class="toggle" id="darkToggleCoach" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
+        </div>
+        <div class="logout-row"><span onclick="coachLogout()">Cerrar sesión</span><span>v 0.2</span></div>
       </div>
     </div>
 
@@ -564,10 +571,10 @@ if ('serviceWorker' in navigator) {
           <div class="list-group">
             <div class="list-row"><span>Recordatorios de comida</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
             <div class="list-row"><span>Aviso de entreno</span><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-knob"></div></div></div>
-            <div class="list-row"><span>Modo oscuro</span><div class="toggle on" id="darkToggle" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
+            <div class="list-row"><span>Modo oscuro</span><div class="toggle" id="darkToggle" onclick="toggleTheme(this)"><div class="toggle-knob"></div></div></div>
           </div>
 
-          <div class="logout-row"><span onclick="cerrarSesionCliente()">Cerrar sesión</span><span onclick="borrarDatos()" style="color:#E05C4B;cursor:pointer">Borrar datos de prueba</span><span>v 1.0</span></div>
+          <div class="logout-row"><span onclick="cerrarSesionCliente()">Cerrar sesión</span><span onclick="borrarDatos()" style="color:#E05C4B;cursor:pointer">Borrar datos de prueba</span><span>v 0.2</span></div>
         </section>
 
       </div>

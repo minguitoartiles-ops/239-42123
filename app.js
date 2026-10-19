@@ -1637,10 +1637,28 @@ function pick(el){
   if(mb) updateMealSummary(mb);
   calcularPlan();
 }
-function toggleTheme(el){
-  el.classList.toggle('on');
-  document.getElementById('screenRoot').classList.toggle('light');
+function aplicarTema(oscuro){
+  document.getElementById('screenRoot').classList.toggle('light', !oscuro);
+  ['darkToggle','darkToggleCoach'].forEach(function(id){
+    const t=document.getElementById(id);
+    if(t) t.classList.toggle('on', !!oscuro);
+  });
 }
+function toggleTheme(el){
+  const oscuro=!el.classList.contains('on');
+  aplicarTema(oscuro);
+  try{ localStorage.setItem('fsd_tema', oscuro?'oscuro':'claro'); }catch(e){}
+}
+function cargarTema(){
+  let t='claro';
+  try{ t=localStorage.getItem('fsd_tema')||'claro'; }catch(e){}
+  aplicarTema(t==='oscuro');
+}
+function entrarProfesionalPrueba(){
+  coachActivo=COACHES[0]; coachPend=null;
+  entrarAlPanel();
+}
+cargarTema();
 function burbujaNueva(){
   const coach=isCoachView();
   const b=document.createElement('div');
