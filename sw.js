@@ -1,6 +1,6 @@
 // Service worker: deja la app disponible sin conexión.
 // Al cambiar archivos, sube CACHE_VERSION para que los móviles reciban la nueva versión.
-const CACHE_VERSION = 'fsd-0.48.2';
+const CACHE_VERSION = 'fsd-0.48.4';
 const CACHE_NAME = CACHE_VERSION;
 const SHELL = [
   './',
@@ -9,6 +9,7 @@ const SHELL = [
   './app.js',
   './ajustes.js',
   './ux.js',
+  './avisos.js',
   './manifest.webmanifest',
   './assets/logo_oscuro.png',
   './assets/logo_claro.png',
@@ -55,6 +56,17 @@ self.addEventListener('fetch', function (event) {
       return caches.match(event.request).then(function (cached) {
         return cached || caches.match('./index.html');
       });
+    })
+  );
+});
+
+// Al tocar un aviso del sistema, se abre (o se trae al frente) la app
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (lista) {
+      for (var i = 0; i < lista.length; i++) { if ('focus' in lista[i]) return lista[i].focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow('./index.html');
     })
   );
 });
