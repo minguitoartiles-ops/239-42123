@@ -973,3 +973,16 @@
   .rg-fila.carb .rg-op.sel{background:var(--carb-line);}
   .rg-fila.fat .rg-op.sel{background:var(--fat-line);}
   .rg-nota{font:400 11px/1.45 Archivo;color:var(--dim-55);margin:0;}
+
+  /* Espacio del profesional con barra inferior (Clientes · Seguimientos · Ajustes) */
+  #view-coach-segs{flex:1 1 auto;flex-direction:column;min-height:0;}
+  .coach-tb{flex:none;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));}
+  .coach-tb[hidden]{display:none;}
+  .coach-tb .tbi{font-size:8.5px;}
+  .esp-entreno .coach-tb .tbi.active,.esp-nutri .coach-tb .tbi.active{color:var(--ink);}
+  .esp-entreno .coach-tb .tbi.active .tbi-emo,.esp-nutri .coach-tb .tbi.active .tbi-emo{background:var(--accent-wash);background:color-mix(in srgb, var(--esp) 22%, transparent);}
+  #view-coach-ajustes .alta-top .back-btn{display:none;}
+  .sg-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .sg-nota{font:400 12px/1.45 Archivo;color:var(--dim-6);margin-top:8px;}
+  .sg-ver{font-weight:700;color:var(--ink);white-space:nowrap;}
+  .panel-stat .val.warn{color:var(--danger);}
