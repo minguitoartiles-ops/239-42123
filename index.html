@@ -114,7 +114,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.3</div>
+      <div class="app-version">Versión 0.4</div>
 
       <div class="login-card">
         <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
@@ -130,7 +130,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-alta" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="backToPanel()">‹</button>
+        <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div><div class="eyebrow">Nueva ficha</div><div class="h-title" style="margin-top:2px;font-size:22px">Alta de cliente</div></div>
       </div>
 
@@ -150,7 +150,7 @@ if ('serviceWorker' in navigator) {
         <div class="alta-label">Medidas iniciales</div>
         <div class="row2col">
           <div class="field"><label>Peso (kg)</label><input type="text" inputmode="decimal" placeholder="68,0"></div>
-          <div class="field"><label>Altura (cm)</label><input type="number" placeholder="165"></div>
+          <div class="field"><label>Altura (cm)</label><input type="text" inputmode="decimal" placeholder="165"></div>
         </div>
         <div class="row2col">
           <div class="field"><label>Cintura (cm)</label><input type="text" inputmode="decimal" placeholder="78"></div>
@@ -185,7 +185,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-login" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="backToSplash()">‹</button>
+        <button class="back-btn" onclick="backToSplash()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div><div class="eyebrow">Acceso restringido</div><div class="h-title" style="margin-top:2px;font-size:22px">Panel de coach</div></div>
       </div>
       <div class="alta-body">
@@ -201,7 +201,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-2fa" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="goToCoachLogin()">‹</button>
+        <button class="back-btn" onclick="goToCoachLogin()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div><div class="eyebrow">Verificación en dos pasos</div><div class="h-title" style="margin-top:2px;font-size:22px">Revisa tu correo</div></div>
       </div>
       <div class="alta-body">
@@ -218,7 +218,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-panel" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="coachLogout()" title="Cerrar sesión">‹</button>
+        <button class="back-btn" onclick="coachLogout()" title="Cerrar sesión"><span class="vb-chev" aria-hidden="true">‹</span>Salir</button>
         <button class="bell" id="coachBell" onclick="abrirNotisCoach()" aria-label="Notificaciones" style="order:3">
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
           <span class="bell-badge hide" id="coachBellBadge">0</span>
@@ -257,7 +257,7 @@ if ('serviceWorker' in navigator) {
     <!-- AJUSTES (vista coach) -->
     <div id="view-coach-ajustes" style="display:none">
       <div class="alta-top">
-        <button class="back-btn" onclick="backToPanel()" aria-label="Volver">‹</button>
+        <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div style="flex:1"><div class="eyebrow">Panel de coach</div><div class="h-title" style="margin-top:2px;font-size:22px">Ajustes</div></div>
       </div>
       <div class="alta-body"><div id="ajustesCoach"></div></div>
@@ -267,12 +267,12 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-cliente" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="backToPanel()">‹</button>
+        <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" id="cd-nombre" style="margin-top:2px;font-size:22px">—</div></div>
       </div>
 
       <div class="alta-body">
-        <div class="sub" id="cd-meta" style="margin-bottom:16px">Semana 6 de 12 · Perder grasa</div>
+        <div class="sub" id="cd-meta" style="margin-bottom:16px">—</div>
 
         <div class="stat-row">
           <div class="stat-card"><div class="lbl">Adherencia entreno</div><div class="val" id="cd-adhE" style="font-size:21px">8/10</div></div>
@@ -286,8 +286,8 @@ if ('serviceWorker' in navigator) {
         </div>
 
         <div class="stat-row">
-          <div class="stat-card"><div class="lbl">Peso actual</div><div class="val" id="cd-peso" style="font-size:21px">68,4 kg</div><div class="delta" id="cd-pesoDelta">−3,2 kg en 6 semanas</div></div>
-          <div class="stat-card"><div class="lbl">Próxima revisión</div><div class="val" id="cd-revision" style="font-size:15px;margin-top:12px">Lunes 17</div></div>
+          <div class="stat-card"><div class="lbl">Peso actual</div><div class="val" id="cd-peso" style="font-size:21px">—</div><div class="delta" id="cd-pesoDelta">Sin datos todavía</div></div>
+          <div class="stat-card"><div class="lbl">Próxima revisión</div><div class="val" id="cd-revision" style="font-size:15px;margin-top:12px">—</div></div>
         </div>
 
         <div class="alta-label">Gestión del cliente</div>
@@ -305,7 +305,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-seguimientos" style="display:none">
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
-        <button class="back-btn" onclick="backToCliente()">‹</button>
+        <button class="back-btn" onclick="backToCliente()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
         <div><div class="eyebrow">Seguimientos</div><div class="h-title" id="seguiNombre" style="margin-top:2px;font-size:22px">—</div></div>
       </div>
       <div class="alta-body" id="seguiList"></div>
@@ -349,11 +349,11 @@ if ('serviceWorker' in navigator) {
           <div class="chat-hero" onclick="goTo('chat')">
             <div class="chat-hero-top">
               <div class="chat-hero-avs"><span class="av-mini"></span><span class="av-mini"></span></div>
-              <span class="pill" id="chatHeroPill">2 sin leer</span>
+              <span class="pill" id="chatHeroPill" hidden></span>
             </div>
             <div class="chat-hero-title">Habla con Fátima y Domingo</div>
-            <div class="chat-hero-msg">«¿Cómo llevas los desayunos? ¿Te sacian hasta la comida?»</div>
-            <div class="chat-hero-cta">Abrir conversación</div>
+            <div class="chat-hero-msg" id="chatHeroMsg">Aún no hay mensajes. Escribe a tu equipo cuando lo necesites.</div>
+            <div class="chat-hero-cta" id="chatHeroCta">Escribir</div>
           </div>
 
           <div class="card entreno-hoy" onclick="goTo('entreno')" style="cursor:pointer">
@@ -400,13 +400,13 @@ if ('serviceWorker' in navigator) {
               <div class="progress-line"><div class="progress-fill" id="cumplComidasBar" style="width:40%"></div></div>
             </div>
             <div class="cumpl-link">
-              <div class="cumpl-link-txt">Y esto es lo que está haciendo en tu cuerpo</div>
+              <div class="cumpl-link-txt" id="cuTitulo">Tus cambios aparecerán aquí desde tu segundo seguimiento</div>
               <div class="cumpl-stats">
-                <div class="cumpl-stat"><b>−3,2 kg</b><span>Peso</span></div>
-                <div class="cumpl-stat"><b>−4 cm</b><span>Cintura</span></div>
-                <div class="cumpl-stat"><b>+1 cm</b><span>Bíceps</span></div>
+                <div class="cumpl-stat"><b id="cuPeso">—</b><span>Peso</span></div>
+                <div class="cumpl-stat"><b id="cuCintura">—</b><span>Cintura</span></div>
+                <div class="cumpl-stat"><b id="cuBiceps">—</b><span>Bíceps</span></div>
               </div>
-              <p class="cumpl-note" id="cumplNota">Las semanas que pasas del 85 % de cumplimiento bajas <b>0,6 kg</b> de media.</p>
+              <p class="cumpl-note" id="cumplNota"></p>
             </div>
           </div>
         </section>
@@ -414,7 +414,7 @@ if ('serviceWorker' in navigator) {
 
         <!-- SEGUIMIENTO SEMANAL -->
         <section class="view" id="view-seguimiento">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 6px">
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 6px">
             <div class="eyebrow">Rellenar cada domingo o lunes</div>
             <div class="h-title" style="font-size:27px">Seguimiento semanal</div>
             <div class="sub" style="margin-top:8px">Con esto Fátima y Domingo ajustan tu plan. Sé sincero: no hay respuestas malas.</div></div>
@@ -460,19 +460,21 @@ if ('serviceWorker' in navigator) {
           <div class="sg-block">
             <div class="sg-cat">Datos biométricos</div>
             <div class="sg-q"><label>Peso actual en ayunas</label></div>
-            <div class="row2col"><div class="field"><label>Peso (kg)</label><input type="text" inputmode="decimal" placeholder="69,0"></div><div class="field"><label>Cintura (cm)</label><input type="number" placeholder="78"></div></div>
-            <div class="row2col"><div class="field"><label>Cadera (cm)</label><input type="number" placeholder="98"></div><div class="field"><label>Bíceps (cm)</label><input type="number" placeholder="28"></div></div>
-            <div class="row2col"><div class="field"><label>Muslo (cm)</label><input type="number" placeholder="54"></div><div class="field"><label>&nbsp;</label><div class="sg-foto">+ Añadir fotos</div></div></div>
+            <div class="row2col"><div class="field"><label>Peso (kg)</label><input type="text" inputmode="decimal" placeholder="69,0"></div><div class="field"><label>Cintura (cm)</label><input type="text" inputmode="decimal" placeholder="78"></div></div>
+            <div class="row2col"><div class="field"><label>Cadera (cm)</label><input type="text" inputmode="decimal" placeholder="98"></div><div class="field"><label>Bíceps (cm)</label><input type="text" inputmode="decimal" placeholder="28"></div></div>
+            <div class="row2col"><div class="field"><label>Muslo (cm)</label><input type="text" inputmode="decimal" placeholder="54"></div><div class="field"><label>&nbsp;</label><div class="sg-foto">+ Añadir fotos</div></div></div>
           </div>
 
           <button class="btn-primary" id="sgSave" onclick="guardarSeguimiento()">Enviar seguimiento</button>
           <p class="alta-hint" style="text-align:center">Lo recibirán Fátima y Domingo al momento.</p>
+          <div class="section-lbl">Tus seguimientos</div>
+          <div id="historialSegui"></div>
         </section>
 
         <!-- ENTRENO -->
         <section class="view" id="view-entreno">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 18px">
-            <div class="eyebrow">Semana 6</div>
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px">
+            <div class="eyebrow" id="entSemana">Tu plan</div>
             <div class="h-title" style="font-size:29px">Tus sesiones</div>
             <div class="sub" id="entSub" style="margin-top:8px">—</div></div>
           </div>
@@ -511,7 +513,7 @@ if ('serviceWorker' in navigator) {
 
         <!-- PLAN -->
         <section class="view" id="view-plan">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 16px"><div class="h-title" style="margin-top:0">Plan nutricional</div><div class="sub">Ajustado por Fátima. Elige una opción de cada columna — todo se pesa en crudo.</div></div></div>
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 16px"><div class="h-title" style="margin-top:0">Plan nutricional</div><div class="sub">Ajustado por Fátima. Elige una opción de cada columna — todo se pesa en crudo.</div></div></div>
           <div class="day-row">
             <div class="day-pill">L</div><div class="day-pill">M</div><div class="day-pill active">X</div>
             <div class="day-pill">J</div><div class="day-pill">V</div><div class="day-pill">S</div><div class="day-pill">D</div>
@@ -550,32 +552,14 @@ if ('serviceWorker' in navigator) {
           <div id="comidasCont"></div>
 
           <button class="add-meal-btn" onclick="addMeal()">+ Añadir comida</button>
-          <div class="section-lbl">Menús semanales</div>
-          <div class="card" style="padding:4px 16px;">
-            <div class="menu-row" onclick="sendPrompt ? null : null">
-              <div class="menu-badge">PDF</div>
-              <div class="menu-info"><div class="menu-name">Menú semana · Otoño</div><div class="menu-meta">Fátima · sube cada semana</div></div>
-              <span class="chev">›</span>
-            </div>
-            <div class="menu-row">
-              <div class="menu-badge">PDF</div>
-              <div class="menu-info"><div class="menu-name">Batch cooking del domingo</div><div class="menu-meta">Ideas para preparar en lote</div></div>
-              <span class="chev">›</span>
-            </div>
-            <div class="menu-row">
-              <div class="menu-badge">PDF</div>
-              <div class="menu-info"><div class="menu-name">Menú semana · alternativas</div><div class="menu-meta">Para variar sin salir del plan</div></div>
-              <span class="chev">›</span>
-            </div>
-          </div>
         </section>
 
         <!-- PROGRESO -->
         <section class="view" id="view-progreso">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1;padding:0 0 18px"><div class="h-title" style="margin-top:0">Tu progreso</div><div class="sub">Seis semanas cumpliendo. Eso ya no es suerte.</div></div></div>
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px"><div class="h-title" style="margin-top:0">Tu progreso</div><div class="sub">Tu evolución, semana a semana.</div></div></div>
           <div class="ring-card">
-            <div class="ring"><div class="ring-inner"><div class="n">6</div><div class="l">DE 12 SEM.</div></div></div>
-            <div class="ring-text"><b>Vas por delante del plan</b><p>Semana 6 de 12. Aquí abajo tienes lo que llevas esta semana, en directo.</p></div>
+            <div class="ring" id="pgRing"><div class="ring-inner"><div class="n" id="pgSemNum">—</div><div class="l" id="pgSemTot">SEMANAS</div></div></div>
+            <div class="ring-text"><b id="pgRingTit">Tu asesoría</b><p id="pgRingTxt">Aquí tienes lo que llevas esta semana, en directo.</p></div>
           </div>
 
           <div class="card">
@@ -590,41 +574,36 @@ if ('serviceWorker' in navigator) {
             </div>
             <div class="cumpl-stats" style="margin-top:14px">
               <div class="cumpl-stat"><b id="pgTonelaje">— kg</b><span>Tonelaje</span></div>
-              <div class="cumpl-stat"><b>68,4 kg</b><span>Peso</span></div>
-              <div class="cumpl-stat"><b>−4 cm</b><span>Cintura</span></div>
+              <div class="cumpl-stat"><b id="pgPeso">—</b><span>Peso</span></div>
+              <div class="cumpl-stat"><b id="pgCintura">—</b><span>Cintura</span></div>
             </div>
           </div>
           <div class="card">
-            <div class="chart-head"><b>Peso</b><span>−3,2 kg en 6 semanas</span></div>
-            <div class="bars">
-              <div class="bar-col"><div class="bar" style="height:100px;background:rgba(136,185,230,.18)"></div><span class="bar-lbl">S1</span></div>
-              <div class="bar-col"><div class="bar" style="height:88px;background:rgba(136,185,230,.22)"></div><span class="bar-lbl">S2</span></div>
-              <div class="bar-col"><div class="bar" style="height:80px;background:rgba(136,185,230,.28)"></div><span class="bar-lbl">S3</span></div>
-              <div class="bar-col"><div class="bar" style="height:83px;background:rgba(136,185,230,.34)"></div><span class="bar-lbl">S4</span></div>
-              <div class="bar-col"><div class="bar" style="height:70px;background:rgba(136,185,230,.5)"></div><span class="bar-lbl">S5</span></div>
-              <div class="bar-col"><div class="bar" style="height:60px"></div><span class="bar-lbl on">S6</span></div>
-            </div>
+            <div class="chart-head"><b>Peso</b><span id="pgPesoDelta"></span></div>
+            <div id="pgChart"></div>
           </div>
           <div class="stat-row">
-            <div class="stat-card"><div class="lbl">Fuerza</div><div class="val" style="font-size:21px">+18 %</div><div class="delta dim">en press banca</div></div>
-            <div class="stat-card"><div class="lbl">Cintura</div><div class="val" style="font-size:21px">−4 cm</div><div class="delta dim">desde el inicio</div></div>
+            <div class="stat-card"><div class="lbl">Seguimientos</div><div class="val" id="pgNumSeg" style="font-size:21px">0</div><div class="delta dim">enviados</div></div>
+            <div class="stat-card"><div class="lbl">Cintura</div><div class="val" id="pgCinturaIni" style="font-size:21px">—</div><div class="delta dim">desde el primer seguimiento</div></div>
           </div>
           <div class="quote-card">
             <div class="q">Para la vida real</div>
-            <div class="p">Falló el jueves y siguió el viernes. Eso es lo que mueve la aguja.</div>
+            <div class="p">Lo que mueve la aguja es seguir, no ser perfecto.</div>
           </div>
         </section>
 
         <!-- CHAT -->
         <section class="view" id="view-chat" style="padding:0 22px;">
-          <div class="view-top" style="flex:none;padding-bottom:0"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button><div style="flex:1"><div class="h-title" id="chatTitle" style="margin-top:0">Tu equipo</div><div class="sub" id="chatSub" style="margin-top:2px">Fátima y Domingo, en la misma conversación</div></div></div>
+          <div class="view-top" style="flex:none;padding-bottom:0"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1"><div class="h-title" id="chatTitle" style="margin-top:0">Tu equipo</div><div class="sub" id="chatSub" style="margin-top:2px">Fátima y Domingo, en la misma conversación</div></div></div>
           <div class="team-row" style="flex:none">
             <div class="team-chip"><span class="dot"></span>Fátima · dietista</div>
             <div class="team-chip"><span class="dot"></span>Domingo · entrenador</div>
           </div>
           <div class="chat-list" id="chatList"><div class="picker-empty" id="chatVacio">Aún no hay mensajes. Escribe el primero.</div></div>
+          <div class="emoji-panel" id="emojiPanel" hidden></div>
           <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Escribe a tu equipo…">
+            <input type="text" id="chatInput" placeholder="Mensaje…">
+            <button class="icon-circ emoji-btn" id="emojiBtn" onclick="toggleEmojis()" aria-label="Emojis" aria-expanded="false" title="Emojis">😊</button>
             <span class="rec-live" id="recLive"><span class="rec-dot"></span><span id="recTime">0:00</span></span>
             <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="subirImagen(this)">
             <button class="icon-circ" onclick="document.getElementById('chatFile').click()" aria-label="Adjuntar imagen" title="Adjuntar imagen">
@@ -639,18 +618,18 @@ if ('serviceWorker' in navigator) {
 
         <!-- PERFIL -->
         <section class="view" id="view-perfil">
-          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button></div>
+          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button></div>
           <div class="profile-head"><div class="avatar lg"></div><div><b id="perfNombre">—</b><span id="perfMeta">Sin asesoría activa</span></div></div>
 
           <div class="card-accent" style="display:flex;justify-content:space-between;align-items:center;padding:17px;">
-            <div><div style="font:700 14px Archivo">Revisión semanal</div><div style="font:500 12px Archivo;opacity:.75;margin-top:3px">Lunes 17 · sube peso y fotos</div></div>
-            <div style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 12px Archivo;cursor:pointer">Preparar</div>
+            <div><div style="font:700 14px Archivo">Seguimiento semanal</div><div style="font:500 12px Archivo;opacity:.75;margin-top:3px">Peso, medidas y cómo te has sentido</div></div>
+            <div onclick="goTo('seguimiento')" style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 12px Archivo;cursor:pointer">Preparar</div>
           </div>
 
           <div class="section-lbl">Mi asesoría</div>
           <div class="list-group">
-            <div class="list-row"><span>Objetivo · Perder grasa</span><span class="chev">›</span></div>
-            <div class="list-row"><span>Mis medidas y fotos</span><span class="chev">›</span></div>
+            <div class="list-row" style="cursor:default"><span id="perfObjetivo">Objetivo · —</span></div>
+            <div class="list-row" onclick="goTo('seguimiento')"><span>Mis medidas y seguimientos</span><span class="chev">›</span></div>
             <div class="list-row"><span>Alergias e intolerancias</span><span class="chev">›</span></div>
           </div>
 
@@ -660,7 +639,7 @@ if ('serviceWorker' in navigator) {
         </section>
 
         <section class="view" id="view-ajustes">
-          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()" aria-label="Volver">‹</button></div>
+          <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button></div>
           <div class="h-title ajx-title">Ajustes</div>
           <div id="ajustesCliente"></div>
         </section>
@@ -772,5 +751,6 @@ if ('serviceWorker' in navigator) {
 
 <script src="app.js" defer></script>
 <script src="ajustes.js" defer></script>
+<script src="ux.js" defer></script>
 </body>
 </html>
