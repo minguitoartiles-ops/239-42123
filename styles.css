@@ -1063,3 +1063,46 @@
   .audio-vel:active{opacity:1;transform:scale(.94);}
   .audio-b.sin-audio .audio-vel{display:none;}
   @media (prefers-reduced-motion: reduce){ .esc-row.falta{animation:none;} }
+
+  /* v0.51 · Globo de pendientes en Gestión del cliente */
+  .pill.pill-nuevo{background:var(--danger);color:#fff;min-width:22px;text-align:center;font-weight:700;}
+  .pill[hidden]{display:none;}
+
+  /* v0.51 · Sensaciones del día */
+  .sens-box{margin:0 0 18px;}
+  .sens-card{border-radius:18px;background:var(--card);border:1px solid var(--line);padding:15px;}
+  .sens-top{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;}
+  .sens-top b{display:block;font:700 14px Archivo;font-family:var(--f-body);color:var(--ink);}
+  .sens-top span{display:block;font:400 11.5px/1.4 Archivo;font-family:var(--f-body);color:var(--dim-55);margin-top:2px;}
+  .sens-ico{font-size:22px;line-height:1;}
+  .sens-animos{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;}
+  .sens-animo{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);cursor:pointer;}
+  .sens-animo span{font-size:22px;line-height:1;}
+  .sens-animo small{font:600 9.5px var(--f-mono);color:var(--dim-55);white-space:nowrap;}
+  .sens-animo.on{border-color:var(--accent);background:var(--accent-line);box-shadow:inset 0 0 0 1px var(--accent);}
+  .sens-animo.on small{color:var(--ink);}
+  .sens-txt{margin-bottom:10px;}
+  .sens-enviar{margin:0;}
+  .sens-enviar:disabled{opacity:.45;cursor:default;}
+  .sens-hecho{display:flex;align-items:center;gap:11px;}
+  .sens-hecho > div{flex:1;min-width:0;}
+  .sens-hecho b{display:block;font:700 13px Archivo;font-family:var(--f-body);}
+  .sens-hecho span{display:block;font:400 12.5px/1.45 Archivo;font-family:var(--f-body);color:var(--ink);margin-top:2px;white-space:pre-wrap;overflow-wrap:anywhere;}
+  .sens-hecho small{display:block;font:600 10.5px var(--f-mono);color:var(--dim-55);margin-top:4px;}
+  .sens-emo{font-size:26px;line-height:1;flex:none;}
+  .sens-lista{display:flex;flex-direction:column;gap:8px;}
+  .sens-item{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:14px;background:var(--card);border:1px solid var(--line);}
+  .sens-item b{display:block;font:600 11px var(--f-mono);color:var(--dim-55);}
+  .sens-item span{display:block;font:400 13px/1.45 Archivo;font-family:var(--f-body);color:var(--ink);margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere;}
+  .sens-item i{color:var(--dim-55);}
+  .sens-lista.ficha{margin-bottom:18px;}
+  .kc-sens{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:10px;font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .kc-sens-a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .kc-sens-a.mio{color:var(--ink);}
+  .kc-sens-n{font:700 10px var(--f-mono);text-transform:uppercase;letter-spacing:.04em;background:var(--danger);color:#fff;padding:3px 8px;border-radius:999px;}
+  .alta-label .pill-nuevo{margin-left:6px;vertical-align:middle;transition:opacity .3s;}
+  .alta-label .pill-nuevo.visto{opacity:0;}
+
+  /* v0.51 · Consentimiento de uso de imagen */
+  .ci-nota{font:400 12px/1.5 Archivo;font-family:var(--f-body);color:var(--dim-55);margin:4px 0 14px;}
+  #dlgTexto{white-space:pre-line;}

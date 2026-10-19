@@ -81,6 +81,23 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
 
+    <!-- CONSENTIMIENTO DE USO DE IMAGEN (redes sociales, marketing y divulgación) -->
+    <div class="fsd-overlay" id="consentImagen" role="dialog" aria-modal="true" aria-labelledby="ciTitulo">
+      <div class="fsd-sheet">
+        <h3 id="ciTitulo">Tu imagen en nuestras redes</h3>
+        <p>A veces compartimos resultados y momentos de entreno en redes sociales (Instagram, TikTok, Facebook, YouTube) y en nuestra web para dar a conocer el método y divulgar.</p>
+        <p>Solo lo haremos con lo que marques aquí. Es voluntario, <b>no cambia en nada tu asesoría</b> y puedes cambiarlo cuando quieras en Ajustes → Privacidad.</p>
+        <label class="chk-row" for="ciProgreso"><input type="checkbox" id="ciProgreso"><span>Fotos de progreso (antes y después) <b>sin que se me vea la cara</b>.</span></label>
+        <label class="chk-row" for="ciReconocible"><input type="checkbox" id="ciReconocible"><span>Fotos o vídeos en los que <b>se me puede reconocer</b> (entrenando, en las fotos de progreso…).</span></label>
+        <label class="chk-row" for="ciNombre"><input type="checkbox" id="ciNombre"><span>Que aparezca <b>mi nombre o mi testimonio</b> junto a las imágenes. <i class="opc">Si no lo marcas, se publicarán de forma anónima.</i></span></label>
+        <p class="ci-nota">Antes de publicar nada, te enseñaremos la imagen. Si retiras el permiso, la quitaremos de nuestras publicaciones. Más detalles en la <a class="lnk" href="#" onclick="abrirLegal('privacidad');return false;">política de privacidad</a>.</p>
+        <div class="btn-row">
+          <button class="btn-eq" onclick="ciGuardar(true)">No autorizo</button>
+          <button class="btn-primary btn-eq-p" onclick="ciGuardar(false)">Guardar mi elección</button>
+        </div>
+      </div>
+    </div>
+
     <!-- TEXTOS LEGALES -->
     <div class="fsd-overlay legal-layer" id="legalOverlay" role="dialog" aria-modal="true" aria-labelledby="legalTitulo">
       <div class="fsd-sheet full">
@@ -130,7 +147,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.51</div>
+      <div class="app-version">Versión 0.51.2</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
