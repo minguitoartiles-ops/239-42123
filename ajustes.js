@@ -472,7 +472,7 @@ function htmlAjustes(rol){
   h += '</div>';
 
   /* --- Sesión --- */
-  h += '<div class="list-group">' + fila('Cerrar sesión', '', cliente ? 'cerrarSesionCliente()' : 'coachLogout()', 'danger') + '</div>';
+  h += '<div class="list-group">' + fila('Cerrar sesión', '', cliente ? 'cerrarSesionCliente()' : 'confirmarSalidaCoach()', 'danger') + '</div>';
   h += '<div class="ajx-foot">Fitness sin Dramas · versión ' + APP_VERSION + '</div>';
   return h;
 }

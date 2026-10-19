@@ -525,7 +525,7 @@ function atrasDentroApp(){
     const el = document.getElementById(id);
     return el && el.style.display !== 'none' && getComputedStyle(el).display !== 'none';
   })[0];
-  if (visible === 'view-coach-panel') { coachLogout(); return true; }   // como mucho, a la pantalla de acceso
+  if (visible === 'view-coach-panel') { confirmarSalidaCoach(); return true; }   // como mucho, a la pantalla de acceso (con aviso)
   if (!visible || visible === 'view-splash') return false;
   if (visible === 'app') {
     if (document.getElementById('coachBar').classList.contains('show')) { backToCliente(); return true; }
@@ -1121,3 +1121,14 @@ document.addEventListener('pointerdown', function(){
   if (!history.state || !history.state.fsd || guardaSinGesto) ponerGuarda(true);
 }, true);
 guardaSinGesto = true;              // la marca puesta al abrir la app se creó sin toque
+
+/* Aviso antes de salir del espacio del profesional a la pantalla de acceso */
+function confirmarSalidaCoach(){
+  const quien = coachActivo ? coachActivo.u : 'tu espacio';
+  abrirDialogo({
+    titulo: '¿Salir a la pantalla de acceso?',
+    texto: 'Se cerrará la sesión de ' + quien + '. Para volver a entrar tendrás que escribir tu contraseña.',
+    ok: 'Salir', cancel: 'Cancelar', peligro: true,
+    onOk: function(){ coachLogout(); }
+  });
+}
