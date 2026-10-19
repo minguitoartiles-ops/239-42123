@@ -37,9 +37,15 @@ self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
   var url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return; // fuentes de Google: red normal
-  // Red primero: así cada apertura muestra la versión publicada; la caché solo se usa sin conexión.
+  // Red primero y sin la copia del navegador: siempre se pregunta a GitHub si hay archivos nuevos
+  // (cache: 'no-cache' revalida; si no han cambiado, la respuesta es rápida y no se descarga nada).
+  // La caché propia solo se usa sin conexión.
+  var req = event.request;
+  var fresco = req.mode === 'navigate'
+    ? fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (r) { return r.redirected ? fetch(req) : r; })
+    : fetch(req, { cache: 'no-cache' });
   event.respondWith(
-    fetch(event.request).then(function (resp) {
+    fresco.then(function (resp) {
       if (resp && resp.status === 200) {
         var copy = resp.clone();
         caches.open(CACHE_NAME).then(function (c) { c.put(event.request, copy); });

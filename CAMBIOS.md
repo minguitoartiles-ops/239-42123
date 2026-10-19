@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47).
 
 ## Versión 0.48 (actual)
-Cambios acumulados hacia la 0.49: **2 de 10**
+Cambios acumulados hacia la 0.49: **3 de 10**
 
 ### Hacia la 0.49
 1. 19/10/2026 22:56 · Pantalla de acceso: logo, tarjeta y accesos agrupados y centrados
 2. 19/10/2026 23:05 · Aviso antes de salir a la pantalla de acceso (Domingo y Fátima); botón atrás verificado en el espacio de Fátima
+3. 19/10/2026 23:08 · Actualizaciones al momento: la app siempre comprueba con GitHub si hay archivos nuevos
 
 ## Versión 0.47
 
