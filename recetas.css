@@ -1,0 +1,70 @@
+/* =========================================================
+   Recetas de Fátima (20/10/2026)
+   ========================================================= */
+#ctab-recetas{display:none;}
+html.esc #coachTabs #ctab-recetas{display:flex !important;}
+html.esc .rc-volver{display:none;}
+.rc-nueva{width:100%;margin-bottom:8px;}
+.rc-ayuda{font:500 12.5px/1.45 var(--f-body);color:var(--dim-6);margin:4px 2px 14px;}
+.rc-vacio{padding:26px 16px;text-align:center;border:1.5px dashed var(--line-strong);border-radius:16px;color:var(--dim-6);font:500 13.5px var(--f-body);}
+.rc-num{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:var(--wash-med);font:700 11px var(--f-mono);color:var(--ink);}
+.rc-card{padding:14px 16px;margin-bottom:10px;}
+.rc-card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.rc-card-h b{font:800 17px/1.25 Archivo,sans-serif;color:var(--ink);}
+.rc-estado{flex:none;padding:3px 9px;border-radius:99px;background:var(--wash-med);font:700 10.5px var(--f-mono);color:var(--dim-6);white-space:nowrap;}
+.rc-estado.ok{background:rgba(116,188,138,.18);color:#2F7A47;}
+.rc-card-m{margin-top:6px;font:600 12.5px var(--f-mono);color:var(--ink);}
+.rc-card-i{margin-top:4px;font:500 12.5px/1.4 var(--f-body);color:var(--dim-6);}
+.rc-card-a{margin-top:6px;font:600 12px/1.4 var(--f-body);color:#B5561E;}
+.rc-card-b{display:flex;gap:8px;margin-top:12px;align-items:center;}
+.rc-card-b .btn-primary{flex:1 1 auto;min-height:42px;margin:0;}
+.rc-card-b .btn-eq{flex:none;min-height:42px;margin:0;}
+.rc-card-b .rc-borrar{width:42px;padding:0;border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;font-weight:800;}
+.rc-card-b .rc-borrar:hover{background:var(--del) !important;color:#fff !important;}
+/* editor */
+.rc-sheet .field{margin-bottom:12px;}
+.rc-rac input{max-width:120px;}
+.rc-ing-cab,.rc-ing{display:grid;grid-template-columns:minmax(0,1fr) 84px 38px;gap:8px;align-items:center;}
+.rc-ing-cab span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
+.rc-ing-cab span:nth-child(2){text-align:center;}
+#rcIngs{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.rc-ing input{width:100%;min-width:0;height:42px;border:1.5px solid var(--accent-line);border-radius:10px;background:var(--wash-soft);padding:0 10px;font:600 14px var(--f-body);color:var(--ink);}
+.rc-ing .rc-ing-g{text-align:center;font:700 15px var(--f-mono);}
+.rc-ing input:focus{outline:none;border-color:var(--accent);}
+.rc-sin{grid-column:1 / -1;margin-top:-2px;font:500 11.5px var(--f-body);color:#B5561E;}
+.rc-mas{margin:8px 0 10px;min-height:38px;padding:0 14px;border-radius:10px;border:1px dashed var(--accent-line);background:none;color:var(--accent);font:700 13px Archivo,sans-serif;cursor:pointer;}
+.rc-tot{padding:10px 12px;border-radius:12px;background:var(--accent-wash);font:500 12.5px/1.55 var(--f-body);color:var(--ink);margin-bottom:14px;}
+.rc-sheet textarea{width:100%;border:1.5px solid var(--accent-line);border-radius:12px;background:var(--wash-soft);padding:10px 12px;font:500 14px/1.45 var(--f-body);color:var(--ink);resize:vertical;}
+/* cliente */
+.rc-hoy{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 12px;padding:12px 14px;border-radius:18px;border:1.5px solid rgba(116,188,138,.55);background:rgba(116,188,138,.12);color:var(--ink);text-align:left;cursor:pointer;}
+.rc-hoy-ico{font-size:28px;flex:none;}
+.rc-hoy-t{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0;}
+.rc-hoy-t b{font:800 16px/1.25 Archivo,sans-serif;}
+.rc-hoy .ht-cta{flex:none;color:#2F7A47;font:700 13px var(--f-body);}
+.rc-recetario{margin:18px 0 8px;}
+.rc-it{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px;padding:12px 14px;border-radius:14px;border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);text-align:left;cursor:pointer;}
+.rc-it > span:first-child{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;min-width:0;}
+.rc-it b{font:700 15px Archivo,sans-serif;}
+.rc-it small{font:500 12px var(--f-body);color:var(--dim-6);}
+.rc-it small i{font-style:normal;color:#B5561E;font-weight:600;}
+.rc-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;background:rgba(116,188,138,.2);color:#2F7A47;font:700 10px var(--f-mono);vertical-align:middle;}
+.rc-por{margin-top:-4px;}
+.rc-aviso{margin:4px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(232,137,74,.14);color:#8A3E12;font:600 12.5px/1.45 var(--f-body);}
+.rc-aviso.suave{background:var(--wash-soft);color:var(--dim-6);font-weight:500;}
+.rc-coms{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.rc-ings{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;}
+.rc-ing-v{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font:500 14px var(--f-body);color:var(--ink);}
+.rc-ing-v + .rc-ing-v{border-top:1px solid var(--line);}
+.rc-ing-v b{font:700 14.5px var(--f-mono);white-space:nowrap;}
+.rc-mac{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;}
+.rc-mac div{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:12px;background:var(--wash-soft);}
+.rc-mac b{font:800 17px var(--f-mono);color:var(--ink);}
+.rc-mac span{font:600 10.5px var(--f-body);color:var(--dim-55);}
+.rc-nota{font-size:12.5px !important;}
+.rc-pasos{padding:12px 14px;border-radius:14px;background:var(--wash-soft);font:500 14px/1.6 var(--f-body);color:var(--ink);margin-bottom:12px;}
+.rc-orig{margin-top:6px;border:1px solid var(--line);border-radius:14px;}
+.rc-orig summary{padding:10px 14px;font:600 13px var(--f-body);color:var(--accent);cursor:pointer;}
+#view-coach-recetas{flex:1 1 auto;flex-direction:column;min-height:0;}
+.rc-card-h{flex-direction:column;align-items:flex-start;gap:6px;}
+.rc-estado{white-space:normal;}
+html.esc #view-coach-recetas .alta-body{max-width:880px;}
