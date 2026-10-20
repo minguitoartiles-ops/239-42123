@@ -1442,3 +1442,8 @@
 .ficha-chat-btn[hidden]{display:none !important;}
 /* v0.58.1 · pantallas «Más» y «Nutrición» del profesional: misma estructura que las demás pestañas */
 #view-coach-planes,#view-coach-mas{flex:1 1 auto;flex-direction:column;min-height:0;}
+/* v0.59.2 · aviso de macros poco creíbles al crear un alimento */
+.nu-kcal100{font:500 11.5px var(--f-mono);color:var(--dim-45);margin:6px 0 0;}
+#newFoodError .nu-aviso-macros{display:block;color:var(--ink);font:500 12.5px/1.45 var(--f-body);background:rgba(227,166,89,.16);border:1px solid var(--carb);border-radius:10px;padding:9px 11px;margin-top:6px;}
+#newFoodError .nu-aviso-acts{display:flex;gap:8px;margin-top:8px;}
+#newFoodError .nu-aviso-acts button{flex:1;}
