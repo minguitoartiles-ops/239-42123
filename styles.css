@@ -1493,3 +1493,8 @@
 .en-tec-btn{font-weight:700 !important;color:var(--carb) !important;border-color:rgba(227,166,89,.5) !important;}
 #enTecHoja .chips{flex-wrap:wrap;}
 #enTecHoja textarea{width:100%;}
+/* v0.60.5 · cantidades fijadas a mano */
+.coach-edit #comidasCont .chip-qty{cursor:text;border-bottom:1px dashed currentColor;}
+.chip-pin{margin-left:3px;font-size:11px;cursor:pointer;}
+#app:not(.coach-view) .chip-pin{display:none;}
+.chip-qty-in{width:58px;height:24px;padding:0 4px;border-radius:7px;border:1.5px solid var(--accent);background:var(--bg);color:var(--ink);font:600 12px var(--f-mono);text-align:center;}
