@@ -1,0 +1,147 @@
+/* =========================================================
+   Fitness sin Dramas · MODO ORDENADOR (v0.59)
+   Todo cuelga de html.esc: solo se activa con Fátima o Domingo en pantallas de 1100 px o más.
+   ========================================================= */
+.esc-logo,.esc-pie,.esc-vacio,.esc-buscar{display:none;}
+:root{ --esc-menu:232px; --esc-lista:clamp(330px, 27vw, 410px); }
+
+/* ---------- 1 · menú lateral ---------- */
+html.esc .screen{flex-direction:row;padding-left:var(--esc-menu);}
+html.esc .screen > [id^="view-"],html.esc .screen > #app{flex:1 1 0;min-width:0;height:100%;}
+html.esc #coachTabs,html.esc #coachTabs[hidden]{display:flex !important;position:fixed;left:0;top:0;bottom:0;width:var(--esc-menu);flex-direction:column;justify-content:flex-start;gap:2px;padding:18px 12px;border-top:none;border-right:1px solid var(--line);background:var(--wash-soft);z-index:30;}
+html.esc #coachTabs .tbi{flex:none;flex-direction:row;justify-content:flex-start;gap:10px;width:100%;padding:8px 10px;border-radius:12px;font:600 13px var(--f-body);letter-spacing:0;color:var(--dim-6);text-align:left;}
+html.esc #coachTabs .tbi:hover{background:var(--wash-med);color:var(--ink);}
+html.esc #coachTabs .tbi.active{background:var(--accent-wash);color:var(--ink);}
+html.esc #coachTabs .tbi-emo{width:30px;height:30px;font-size:18px;flex:none;background:none !important;}
+html.esc #coachTabs .tbi .tl-corto{display:none;}
+html.esc #coachTabs .tbi .tl-largo{display:inline;}
+html.esc #coachTabs .tab-badge{position:static;margin-left:auto;}
+html.esc #coachTabs #ctab-mas{display:none !important;}
+html.esc #coachTabs #ctab-pagos,html.esc #coachTabs #ctab-ajustes{display:flex !important;}
+html.esc #coachTabs #ctab-ajustes{order:5;}
+html.esc .esc-logo{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;margin-bottom:6px;border-bottom:1px solid var(--line);}
+html.esc .esc-logo img{width:40px;height:40px;border-radius:50%;flex:none;}
+html.esc .esc-logo b{display:block;font:700 13.5px var(--f-body);color:var(--ink);}
+html.esc .esc-logo span{display:block;font:500 10.5px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+html.esc .esc-pie{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);order:9;}
+html.esc .esc-pie-btn{position:relative;display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:none;border-radius:12px;background:none;color:var(--dim-6);font:600 13px var(--f-body);cursor:pointer;text-align:left;}
+html.esc .esc-pie-btn:hover{background:var(--wash-med);color:var(--ink);}
+html.esc .esc-pie-btn > span:first-child,html.esc .esc-pie-btn > svg{width:30px;text-align:center;flex:none;}
+html.esc .esc-pie-btn .bell-badge{position:static;margin-left:auto;}
+/* lo que ya hace el menú lateral sobra arriba */
+html.esc .alta-top .mj-bell,html.esc .alta-top .bell,html.esc #view-coach-panel .alta-top .back-btn{display:none !important;}
+
+/* anchos cómodos: el contenido no se estira de lado a lado */
+html.esc .alta-top,html.esc .alta-body{padding-left:max(28px, calc((100% - 1120px) / 2));padding-right:max(28px, calc((100% - 1120px) / 2));}
+html.esc #app .sc{padding-left:max(28px, calc((100% - 1180px) / 2));padding-right:max(28px, calc((100% - 1180px) / 2));}
+html.esc .coach-bar{padding-left:28px;padding-right:28px;}
+
+/* ---------- 2 y 6 · dos paneles ---------- */
+html.esc .screen.esc-dual > .esc-izq{flex:0 0 var(--esc-lista) !important;border-right:1px solid var(--line);background:var(--bg);}
+html.esc .esc-izq .alta-top,html.esc .esc-izq .alta-body{padding-left:18px;padding-right:18px;}
+html.esc .esc-vacio{flex:1 1 0;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--dim-45);text-align:center;padding:40px;}
+html.esc .esc-vacio > span:first-child{font-size:40px;}
+html.esc .esc-vacio b{font:700 17px var(--f-body);color:var(--ink);}
+html.esc .esc-vacio span{font:400 13.5px var(--f-body);max-width:340px;}
+html.esc .esc-buscar{display:block;width:100%;height:40px;margin:0 0 12px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);font:500 14px var(--f-body);}
+html.esc .esc-buscar:focus{outline:1.5px solid var(--accent);}
+html.esc .cliente-card.esc-oculto{display:none !important;}
+html.esc .esc-izq .cliente-card{cursor:pointer;transition:border-color .15s, box-shadow .15s;}
+html.esc .esc-izq .cliente-card:hover{border-color:var(--accent-line);}
+html.esc .cliente-card.esc-sel{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-wash);}
+html.esc .chat-fila{cursor:pointer;}
+html.esc .chat-fila.esc-sel{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-wash);}
+/* lista estrecha: tarjetas compactas */
+html.esc .esc-izq .panel-stats{gap:8px;}
+html.esc .esc-izq .panel-stat .lbl{font-size:10px;}
+html.esc #view-coach-panel:not(.esc-izq) .alta-body{max-width:none;}
+
+/* ---------- 3 · ficha en columnas ---------- */
+html.esc .esc-ficha-grid{columns:2 330px;column-gap:22px;}
+html.esc .esc-ficha-grid.una{columns:1;}
+html.esc .esc-grupo{break-inside:avoid;display:block;margin-bottom:18px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--bg);}
+html.esc .esc-grupo[hidden]{display:none;}
+html.esc .esc-grupo > :last-child{margin-bottom:0;}
+html.esc .esc-grupo > :first-child{margin-top:0;}
+html.esc .ficha-accesos{max-width:760px;}
+
+/* ---------- 4 · editor de entrenos tipo Excel ---------- */
+html.esc #app.coach-edit .sesion-card{margin-bottom:16px;}
+html.esc #app.coach-edit .ex-table-head{width:330px;margin-left:6px;}
+html.esc #app.coach-edit .ex-item{display:grid;grid-template-columns:330px minmax(0, 1fr);column-gap:24px;align-items:start;padding:10px 6px;border-radius:12px;}
+html.esc #app.coach-edit .ex-item:hover,html.esc #app.coach-edit .ex-item:focus-within{background:var(--wash-soft);}
+html.esc #app.coach-edit .ex-item > *{grid-column:1;}
+html.esc #app.coach-edit .ex-item > .ex-series{grid-column:2;grid-row:1 / span 6;margin:0;}
+html.esc #app.coach-edit .ex-item > .en-hist{grid-column:1 / -1;}
+/* la descripción ocupa una línea y se abre al hacer clic en ella */
+html.esc #app.coach-edit .ex-desc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-top:5px;padding-bottom:5px;font-size:12px;}
+html.esc #app.coach-edit .ex-desc:focus{white-space:normal;overflow:visible;}
+/* botones de la fila: aparecen al pasar el ratón */
+html.esc #app.coach-edit .ex-desc-restore,html.esc #app.coach-edit .ex-video-row,html.esc #app.coach-edit .en-ej-acts{opacity:0;transition:opacity .12s;}
+html.esc #app.coach-edit .ex-item:hover .ex-desc-restore,html.esc #app.coach-edit .ex-item:hover .ex-video-row,html.esc #app.coach-edit .ex-item:hover .en-ej-acts,
+html.esc #app.coach-edit .ex-item:focus-within .ex-desc-restore,html.esc #app.coach-edit .ex-item:focus-within .ex-video-row,html.esc #app.coach-edit .ex-item:focus-within .en-ej-acts{opacity:1;}
+html.esc #app.coach-edit .en-ej-acts{flex-direction:row;flex-wrap:wrap;align-items:center;}
+html.esc #app.coach-edit .en-pautas{flex-wrap:wrap;overflow:visible;}
+html.esc #app.coach-edit .en-pautas button,html.esc #app.coach-edit .en-ej-btns button{height:26px;font-size:10.5px;padding:0 7px;min-width:28px;}
+/* casillas de serie con ancho fijo, como celdas */
+html.esc #app .ex-series-inputs,html.esc #app .sr-plan,html.esc #app .sr-hechas{flex-wrap:nowrap;justify-content:flex-start;}
+html.esc #app .sr-cel,html.esc #app .serie-in{flex:0 0 78px;min-width:0;}
+html.esc #app .sr-hechas .sr-h{flex:0 0 78px;min-width:0;}
+html.esc #app .serie-in input{height:30px;}
+html.esc #app .en-herr{max-width:560px;}
+
+/* ---------- 5 · nutrición con la calculadora siempre a la vista ---------- */
+html.esc #app.coach-edit #view-plan.active{display:grid;grid-template-columns:minmax(0, 1fr) 380px;column-gap:26px;align-items:start;}
+html.esc #app.coach-edit #view-plan.active > *{grid-column:1;min-width:0;}
+html.esc #app.coach-edit #view-plan.active > #calcCard{grid-column:2;grid-row:1 / span 40;position:sticky;top:0;max-height:calc(100dvh - 140px);overflow-y:auto;margin-top:0;}
+html.esc #app.coach-edit #view-plan.active > #resumenGramos{grid-column:1;}
+
+/* ---------- 6 · chat ---------- */
+html.esc #app .bubble{max-width:62%;}
+html.esc #app.coach-view .tb{justify-content:center;gap:40px;}
+html.esc #app.coach-view .tb .tbi{flex:0 0 auto;}
+
+/* ---------- 7 · tablas anchas ---------- */
+html.esc .esc-tabla-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 18px;}
+html.esc .esc-tabla{border-collapse:collapse;width:100%;font:500 12.5px var(--f-mono);}
+html.esc .esc-tabla th,html.esc .esc-tabla td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;}
+html.esc .esc-tabla thead th{font:600 10.5px var(--f-mono);color:var(--dim-45);text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;background:var(--card);}
+html.esc .esc-tabla tbody th{font:600 12.5px var(--f-body);color:var(--ink);}
+html.esc .esc-tabla tbody tr:hover{background:var(--wash-soft);}
+html.esc .esc-tabla tbody tr:last-child > *{border-bottom:none;}
+html.esc .esc-nd{color:var(--dim-30);}
+html.esc #seguiList{display:grid;grid-template-columns:repeat(auto-fill, minmax(330px, 1fr));gap:14px;align-content:start;}
+html.esc #seguiList > .esc-tabla-wrap,html.esc #seguiList > .segui-leyenda,html.esc #seguiList > .picker-empty,html.esc #seguiList > .mj-pdf{grid-column:1 / -1;}
+html.esc #seguiList .segui-card{margin:0;}
+html.esc #segsResumen,html.esc #planesPro .planes-lista{display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:14px;align-content:start;}
+html.esc #segsResumen > :not(.kcard):not(.cliente-card){grid-column:1 / -1;}
+html.esc #segsResumen .cliente-card{margin:0;}
+html.esc .en-reg-scroll{max-width:100%;}
+
+/* ---------- 8 · ventanas en el centro ---------- */
+html.esc .fsd-overlay{align-items:center;}
+html.esc .fsd-sheet{border-radius:20px;max-width:640px;max-height:86vh;padding-bottom:22px;}
+html.esc .fsd-sheet.dlg{max-width:440px;}
+html.esc .fsd-sheet.full{max-width:760px;height:auto;max-height:88vh;border-radius:20px;padding-top:22px;}
+html.esc .picker-overlay{align-items:center;justify-content:center;border-radius:0;}
+html.esc .picker-sheet{width:min(680px, 92vw);height:min(80vh, 760px);border-radius:20px;border:1.5px solid var(--accent);}
+html.esc .noti-pop{align-items:flex-start;justify-content:flex-start;padding:70px 0 0 calc(var(--esc-menu) + 16px);border-radius:0;}
+html.esc .noti-card{width:420px;max-height:70vh;}
+html.esc .fsd-toast{bottom:28px;left:calc(50% + var(--esc-menu) / 2);}
+
+/* ---------- 9 · clientes: solo móvil o tablet ---------- */
+.esc-solo-movil{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:24px;background:var(--bg,#fff);overflow-y:auto;}
+.esc-solo-movil.show{display:flex;}
+.esc-sm-card{width:100%;max-width:440px;text-align:center;color:var(--ink);font-family:var(--f-body);}
+.esc-sm-logo{width:84px;height:84px;border-radius:50%;}
+.esc-sm-card h2{font:400 26px/1.15 var(--f-display);margin:16px 0 10px;}
+.esc-sm-card p{font:400 14.5px/1.5 var(--f-body);color:var(--dim-6);margin:0 0 16px;}
+.esc-sm-qr{display:block;margin:6px auto 10px;width:180px;height:180px;border-radius:12px;border:1px solid var(--line-strong);image-rendering:pixelated;background:#fff;}
+.esc-sm-url{font:600 12.5px var(--f-mono);color:var(--accent);margin-bottom:16px;word-break:break-all;}
+.esc-sm-card .esc-sm-nota{font-size:12.5px;color:var(--dim-45);}
+.esc-sm-card .btn-primary{width:100%;max-width:260px;}
+
+/* ajustes v0.59 */
+html.esc .esc-grupo .list-row .ajx-val{overflow-wrap:normal;}
+html.esc #view-coach-seguimientos > .mj-pdf{align-self:flex-end;width:auto;margin:6px max(28px, calc((100% - 1120px) / 2)) 0;padding:0 14px;}
+html.esc .esc-tabla th,html.esc .esc-tabla td{padding:8px 10px;}
