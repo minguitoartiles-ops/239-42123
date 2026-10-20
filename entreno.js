@@ -687,6 +687,7 @@ function enAplicarPlanGenerado(plan){
       enInsertarEjercicios(c.querySelector('.add-ej-btn'), s[1]);
     });
     enRenumerar(); enPrepararEdicion(); enTodoSync();
+    enPlegarDias();                                   // asistente e importación: solo se ven los días
     recalcEntreno(); recalcTonelaje(); programarGuardado();
   };
   hacer();
