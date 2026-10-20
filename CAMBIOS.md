@@ -3,8 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.55.3 (actual)
-Cambios acumulados hacia la 0.56: **6 de 10** (0.55.1 tras el 2.º · 0.55.2 tras el 4.º · 0.55.3 tras el 6.º)
+## Versión 0.56.1 (actual)
+Cambios acumulados hacia la 0.57: **2 de 10** (0.56.1 tras el 2.º)
+
+### Hacia la 0.57
+1. 20/10/2026 02:00 · Corregido: los pesos que apuntaba el cliente se perdían si cerraba la app sin hacer nada más; ahora se guardan al escribir y al salir
+2. 20/10/2026 02:00 · Corregido: «Revisiones esta semana» pasa a «Seguimientos esta semana» y los textos de prueba de la ficha («1.040 kg», «Marta») ya no aparecen → **0.56.1**
+
+## Versión 0.55 → 0.55.4
 
 ### Hacia la 0.56
 1. 20/10/2026 01:45 · Mejora: accesibilidad (interruptores con nombre y letras más grandes en la barra inferior)
@@ -13,6 +19,10 @@ Cambios acumulados hacia la 0.56: **6 de 10** (0.55.1 tras el 2.º · 0.55.2 tra
 4. 20/10/2026 01:45 · Acceso: el profesional puede denegar o permitir el acceso; al acabar la gracia se pierde el acceso (se puede desactivar) y enlace de pago opcional → **0.55.2**
 5. 20/10/2026 01:45 · Pestaña «Pagos clientes»: estado de cada cliente, ingresos, pendientes, filtros y últimos movimientos
 6. 20/10/2026 01:45 · Bajas de clientes (con motivo) y reactivación, sin borrar datos → **0.55.3**
+7. 20/10/2026 02:00 · Textos: «coach» pasa a «tu equipo» o «profesional» en toda la app
+8. 20/10/2026 02:00 · El panel del profesional se titula «Clientes» (antes «Entrenamiento» o «Nutrición») y Ajustes muestra quién eres → **0.55.4**
+9. 20/10/2026 02:00 · Ajustes del profesional: fuera el correo de prueba; se muestra el correo de contacto real
+10. 20/10/2026 02:00 · Ficha: tonelaje real de la semana (con comparación) y «Próxima revisión» con la fecha del lunes; fuera el acceso antiguo con contraseña de prueba del código → **sube a la 0.56**
 
 ### Hacia la 0.55
 1. 20/10/2026 01:45 · Mejora: editar los datos del cliente desde la ficha (objetivo, duración, fecha de alta, contacto)
