@@ -3,12 +3,26 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.58.1 (actual)
-Cambios acumulados hacia la 0.59: **2 de 10**
+## Versión 0.59.1 (actual)
+Cambios acumulados hacia la 0.60: **2 de 10**
+
+### Hacia la 0.60
+1. 20/10/2026 09:45 · Ordenador: los clientes solo pueden usar la app en el móvil o la tablet; en un ordenador ven un aviso con un código QR para abrirla en el móvil
+2. 20/10/2026 09:45 · Corregido: en pantallas grandes asomaba el texto antiguo «Prototipo interactivo…» → **0.59.1**
+
+## Versión 0.58.1 → 0.58.4
 
 ### Hacia la 0.59
 1. 20/10/2026 09:05 · Domingo: quitada la pestaña «Entrenos» de la barra de abajo (los entrenos se abren desde «Clientes»); Fátima mantiene «Nutrición»
 2. 20/10/2026 09:05 · Corregido: la pantalla «Más» salía descolocada (lista a la derecha y barra de abajo a media pantalla); ahora tiene la misma estructura que las demás pestañas → **0.58.1**
+3. 20/10/2026 09:45 · Ordenador (Fátima y Domingo): menú lateral con Clientes, Nutrición (Fátima), Chats, Seguimientos, Pagos, Ajustes, notificaciones y Salir, en vez de la barra de abajo
+4. 20/10/2026 09:45 · Ordenador: lista de clientes con buscador a la izquierda y ficha a la derecha; se cambia de cliente con un clic → **0.58.2**
+5. 20/10/2026 09:45 · Ordenador: la ficha del cliente se ordena en bloques a dos columnas (entreno, registro, seguimiento, datos, nutrición, suscripción), empezando por lo de cada profesional
+6. 20/10/2026 09:45 · Ordenador: editor de entrenos tipo Excel: ejercicio a la izquierda y series en casillas a la derecha, botones al pasar el ratón, el tabulador salta de casilla y Ctrl+S guarda → **0.58.3**
+7. 20/10/2026 09:45 · Ordenador: en nutrición, la calculadora (objetivo, macros, reparto y cuadre) queda fija a la derecha mientras se edita el plan
+8. 20/10/2026 09:45 · Ordenador: chats tipo WhatsApp Web, con la lista a la izquierda y la conversación a la derecha; Intro envía y Mayúsculas+Intro hace salto de línea → **0.58.4**
+9. 20/10/2026 09:45 · Ordenador: seguimientos en tabla semana a semana (peso, medidas, puntuaciones y pasos) y tarjetas en varias columnas
+10. 20/10/2026 09:45 · Ordenador: avisos, asistente, plantillas y selectores se abren como ventana centrada; Esc la cierra → **sube a la 0.59**
 
 ## Versión 0.57 → 0.57.4
 
