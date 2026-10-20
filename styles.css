@@ -1440,3 +1440,5 @@
 .en-reg tbody th{font:600 12px var(--f-body);color:var(--ink);text-transform:none;position:sticky;left:0;background:var(--card);max-width:140px;overflow:hidden;text-overflow:ellipsis;}
 .en-reg td{font-family:var(--f-mono);}
 .ficha-chat-btn[hidden]{display:none !important;}
+/* v0.58.1 · pantallas «Más» y «Nutrición» del profesional: misma estructura que las demás pestañas */
+#view-coach-planes,#view-coach-mas{flex:1 1 auto;flex-direction:column;min-height:0;}
