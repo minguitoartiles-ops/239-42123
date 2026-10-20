@@ -167,7 +167,7 @@ enPintarFilas = (function(orig){
     orig(it);
     const f = it.querySelector('.sr-filas'); if (!f) { it.classList.remove('ej-hecho'); return; }
     const cab = f.querySelector('.srf-cab');
-    if (cab && it.querySelector('.ex-desc') && !cab.querySelector('.ex-tec-btn')) {
+    if (false && cab && it.querySelector('.ex-desc') && !cab.querySelector('.ex-tec-btn')) {   // 20/10: la descripción pasa a «Notas» y se ve siempre (rutinas.js)
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'ex-tec-btn'; b.textContent = it.classList.contains('ver-tec') ? 'Ocultar técnica' : 'ⓘ Técnica';
       b.onclick = function(e){ e.stopPropagation(); it.classList.toggle('ver-tec'); b.textContent = it.classList.contains('ver-tec') ? 'Ocultar técnica' : 'ⓘ Técnica'; };

@@ -2,13 +2,16 @@
    Fitness sin Dramas — Entrenamiento para Domingo (estructura del Excel «Planificación»)
    - Sesiones «Día 1, Día 2…» con nombre editable.
    - Cada serie con sus repeticiones, RIR y peso (y repeticiones hechas por el cliente).
-   - RIR por colores: 0-2 rojo (alta) · 3-4 amarillo (media) · 5+ verde (baja).
+   - RIR por colores: 0-2 rojo (alta) · 3-4 naranja (media) · 5+ verde (baja), con un tono por cada valor.
    - Rapidez: varios ejercicios a la vez, pautas de un toque, duplicar, ordenar, plantillas.
    Se carga después de nutricion.js.
    ========================================================= */
 
 /* ---------- utilidades ---------- */
-function enRir(v){ const n = mjNum(v); return n == null ? '' : (n <= 2 ? 'rir-r' : (n <= 4 ? 'rir-a' : 'rir-v')); }
+// RIR por colores con gradación: 0 rojo muy oscuro · 1 rojo oscuro · 2 rojo claro · 3 naranja oscuro · 4 naranja claro · 5+ verde
+function enRir(v){ const n = mjNum(v); if (n == null) return ''; const g = n <= 2 ? 'rir-r' : (n <= 4 ? 'rir-a' : 'rir-v'); return g + ' rir-n rir-' + Math.max(0, Math.min(5, Math.round(n))); }
+const EN_RIR_CLS = ['rir-r', 'rir-a', 'rir-v', 'rir-n', 'rir-0', 'rir-1', 'rir-2', 'rir-3', 'rir-4', 'rir-5'];
+function enRirPoner(el, v){ EN_RIR_CLS.forEach(function(c){ el.classList.remove(c); }); const c = enRir(v); if (c) c.split(' ').forEach(function(x){ el.classList.add(x); }); }
 function enRirTxt(v){ const n = mjNum(v); return n == null ? '' : (n <= 2 ? 'Intensidad alta' : (n <= 4 ? 'Intensidad media' : 'Intensidad baja')); }
 function enPesos(item){ return Array.prototype.slice.call(item.querySelectorAll('.serie-in input')); }
 function enEditando(){ return !!coachEditing && isCoachView(); }
@@ -133,7 +136,7 @@ function enSyncSeries(it){
   // etiquetas de las filas
   const top = it.querySelector('.ex-weight-lbl'); if (top) top.textContent = 'Series: plan · peso (kg) · reps hechas';
   const rx = it.querySelectorAll('.rx-field')[2];
-  if (rx) { rx.classList.remove('rir-r', 'rir-a', 'rir-v'); const c = enRir(rx.value); if (c) rx.classList.add(c); }
+  if (rx) enRirPoner(rx, rx.value);
 }
 function enTodoSync(){ Array.prototype.forEach.call(contEnt().querySelectorAll('.ex-item'), enSyncSeries); enLeyendaRir(); }
 /* cambiar el número de series, o las reps/RIR de la cabecera («igual en todas») */
@@ -175,7 +178,7 @@ document.addEventListener('input', function(e){
     const v = t.value.replace(/[^0-9\-]/g, '');
     if (v !== t.value) t.value = v;
     p.dataset[clave] = v; p.setAttribute('data-' + clave, v);
-    if (clave === 'rir') { t.classList.remove('rir-r', 'rir-a', 'rir-v'); const c = enRir(v); if (c) t.classList.add(c); }
+    if (clave === 'rir') enRirPoner(t, v);
     recalcTonelaje(); programarGuardado();
     return;
   }
@@ -212,9 +215,9 @@ function enLeyendaRir(){
     l = document.createElement('details'); l.id = 'enLeyenda'; l.className = 'en-leyenda';
     contEnt().parentNode.insertBefore(l, contEnt());
   }
-  l.innerHTML = '<summary><span class="sr-badge rir-r">RIR 0-2</span><span class="sr-badge rir-a">RIR 3-4</span><span class="sr-badge rir-v">RIR 5+</span><span class="en-ley-q">¿Qué es el RIR?</span></summary>'
+  l.innerHTML = '<summary><span class="en-ley-rir">' + ['0', '1', '2', '3', '4', '5'].map(function(r){ return '<span class="sr-badge ' + enRir(r) + '">' + (r === '5' ? '5+' : r) + '</span>'; }).join('') + '</span><span class="en-ley-q">¿Qué es el RIR?</span></summary>'
     + '<p><b>RIR = repeticiones en reserva</b>: las que te quedarían antes de no poder hacer ni una más con buena técnica.</p>'
-    + '<p><b class="t-r">Rojo, intensidad alta (RIR 0-2)</b>: acabas al fallo o a 1-2 repeticiones de él. <b class="t-a">Amarillo, media (3-4)</b>: exigente pero con margen. <b class="t-v">Verde, baja (5 o más)</b>: técnica, calentamiento o descarga.</p>'
+    + '<p><b class="t-r">Rojo, intensidad alta (RIR 0-2)</b>: acabas al fallo o a 1-2 repeticiones de él. <b class="t-a">Naranja, media (3-4)</b>: exigente pero con margen. <b class="t-v">Verde, baja (5 o más)</b>: técnica, calentamiento o descarga.</p>'
     + '<p>Elige el peso con el que llegues a las repeticiones marcadas con ese margen. Si te sobran muchas, sube el peso la próxima vez.</p>';
 }
 
@@ -1497,7 +1500,7 @@ function enFilaHTML(it, p, i, h, soloVer){
   const tipoTxt = (EN_TIPOS.filter(function(t){ return t[0] === tipo; })[0] || EN_TIPOS[0])[1];
   return '<div class="srf' + (ok ? ' ok' : '') + '" data-i="' + i + '">'
     + '<div class="srf-l1">'
-    + '<button type="button" class="srf-n" data-a="mas"' + (soloVer ? ' tabindex="-1"' : '') + ' aria-label="Opciones de la serie ' + (i + 1) + '">S' + (i + 1) + (tipo ? '<small>' + esc(tipoTxt) + '</small>' : '') + '</button>'
+    + '<button type="button" class="srf-n" data-a="mas"' + (soloVer ? ' tabindex="-1"' : '') + ' aria-label="Opciones de la serie ' + (i + 1) + '"><span class="srf-n-t"><span>Serie</span> <b>' + (i + 1) + '</b></span>' + (tipo ? '<small>' + esc(tipoTxt) + '</small>' : '') + '</button>'
     + '<label class="srf-reps"><input type="text" inputmode="numeric" data-a="reps" value="' + esc(reps) + '" placeholder="' + esc(enRepsPlan(plan) || '—') + '"' + ro + ' aria-label="Repeticiones hechas serie ' + (i + 1) + '"><span>reps</span></label>'
     + '<span class="srf-x" aria-hidden="true">×</span>'
     + '<div class="srf-peso"><button type="button" data-a="menos"' + dis + ' aria-label="Quitar 2,5 kg">−</button>'
@@ -1532,7 +1535,7 @@ function enPintarFilas(it){
   const d = clienteActual && clientesData[clienteActual];
   const hist = d && d.registro && d.registro.ej && d.registro.ej[enNombreEj(it)];
   const ult = hist && hist.length ? enMejorSerie(hist[hist.length - 1].s) : null;
-  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + ' × ' + esc(p0.dataset.reps || '—') + (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '') + '</span>'
+  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + (pesos.length === 1 ? ' serie' : ' series') + ' × ' + esc(p0.dataset.reps || '—') + ' reps' + (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '') + '</span>'
     + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + '</div>'
     + pesos.map(function(p, i){ return enFilaHTML(it, p, i, hechas[i], isCoachView()); }).join('');
   abiertas.forEach(function(a, i){ const o = f.querySelectorAll('.srf-opc')[i]; if (o && a) o.hidden = false; });

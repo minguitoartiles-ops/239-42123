@@ -1,0 +1,121 @@
+/* =========================================================
+   Creación de rutinas (20/10/2026): jerarquía de textos, pauta única por ejercicio,
+   notas, vídeo de ejemplo, arrastrar y gradación de colores del RIR
+   ========================================================= */
+
+/* ---------- jerarquía: día > ejercicio ---------- */
+#view-entreno .sesion-num{font-size:11px;}
+#view-entreno .sesion-title{font:800 20px/1.2 Archivo,sans-serif;letter-spacing:-.01em;margin-top:3px;}
+#view-entreno .sesion-card.open > .sesion-head{padding-bottom:10px;}
+#app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 16px/1.25 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-item{padding-top:6px;}
+
+/* ---------- el profesional no marca sesiones como hechas ---------- */
+#app.coach-view .ses-tick{display:none !important;}
+
+/* ---------- notas: lo que escribe Domingo (vacías no se ven al cliente) ---------- */
+.ex-desc-restore,.ex-desc-tag{display:none !important;}
+#app:not(.coach-edit) #view-entreno .ex-item .ex-desc{display:block;}
+#app:not(.coach-edit) #view-entreno .ex-item .ex-desc:empty{display:none !important;}
+#app:not(.coach-edit) #view-entreno .ex-desc{margin:6px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:10px;background:var(--accent-wash);color:var(--ink);font:500 13px/1.45 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 11px var(--f-mono);color:var(--accent);letter-spacing:.02em;}
+.coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 13px/1.45 Archivo,sans-serif;color:var(--ink);margin:8px 0;}
+.coach-edit #view-entreno .ex-desc:empty::before{content:attr(data-ph);color:var(--dim-45);font-style:italic;}
+
+/* ---------- vídeo de ejemplo ---------- */
+.ex-video{font:700 13px Archivo,sans-serif;padding:7px 12px;border-radius:10px;border:1px solid var(--accent-line);background:var(--accent-wash);}
+.coach-edit .ex-video{display:none !important;}
+.coach-edit .ex-link-btn{font-size:12px;padding:8px 12px;min-height:36px;}
+.ru-video{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:0 0 12px;border-radius:12px;overflow:hidden;background:#000;}
+.ru-video.ig{aspect-ratio:auto;height:560px;max-width:400px;background:var(--wash-soft);}
+.ru-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+/* ---------- editor: una tarjeta por ejercicio con sus columnas ---------- */
+.coach-edit #view-entreno .ex-table-head{display:none !important;}
+.coach-edit #view-entreno .sr-plan{display:none !important;}
+.coach-edit #view-entreno .sesion-body{counter-reset:ej;}
+.coach-edit #view-entreno .ex-item{counter-increment:ej;margin:10px 0;padding:10px 12px 4px;border:1px solid var(--line-strong);border-radius:14px;background:var(--bg);}
+.coach-edit #view-entreno .ex-item + .ex-item{border-top:1px solid var(--line-strong);}
+.coach-edit #view-entreno .ex-table-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 10px;padding:2px 0 4px;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 100%;order:0;display:flex;align-items:baseline;gap:8px;font:700 17px/1.25 Archivo,sans-serif;color:var(--ink);text-align:left;border-bottom:none;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell::before{content:counter(ej, decimal-leading-zero);flex:none;font:700 13px var(--f-mono);color:var(--dim-45);}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell::after{font-size:12px;}
+.coach-edit #view-entreno .ex-table-row > .ru-asa{order:-1;}
+.ru-asa{display:none;}
+.coach-edit .ru-asa{display:flex;align-items:center;justify-content:center;flex:none;width:26px;height:30px;margin:0 -4px 0 -6px;border-radius:8px;color:var(--dim-45);font-size:18px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
+.coach-edit .ru-asa:hover{background:var(--wash-med);color:var(--ink);}
+/* con el asa, el nombre comparte la primera línea */
+.coach-edit #view-entreno .ex-table-row:has(> .ru-asa) > .ex-name-cell{flex:1 1 calc(100% - 40px);}
+.coach-edit #view-entreno .ru-f{flex:1 1 0;order:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;min-width:0;}
+.coach-edit #view-entreno .ru-f::before{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.coach-edit #view-entreno .ru-se::before{content:"Series";}
+.coach-edit #view-entreno .ru-re::before{content:"Reps";}
+.coach-edit #view-entreno .ru-ri::before{content:"RIR";}
+.coach-edit #view-entreno .ru-f .rx-field{width:100%;height:42px;font:700 17px var(--f-mono);border-radius:10px;}
+/* la técnica y las acciones, más limpias */
+.coach-edit #view-entreno .ex-video-row{padding:0 0 8px;}
+.coach-edit #view-entreno .ex-series{margin:0;}
+
+/* ---------- arrastrar ---------- */
+.coach-edit #sesionesCont .ex-item{-webkit-touch-callout:none;}
+.coach-edit #sesionesCont .ex-table-row,.coach-edit #sesionesCont .en-ej-acts{user-select:none;-webkit-user-select:none;}
+.ru-drag,.ru-drag *{cursor:grabbing !important;user-select:none !important;-webkit-user-select:none !important;}
+.ex-item.ru-arrastrando{opacity:.45;outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-wash) !important;}
+.ru-fantasma{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;padding:9px 14px;border-radius:12px;background:var(--ink);color:var(--bg);font:700 14px Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
+.ru-fantasma span{opacity:.6;margin-right:4px;}
+.sesion-head.ru-soltar{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-wash);border-radius:14px;}
+
+/* ---------- ordenador: el ejercicio en una fila ---------- */
+html.esc #app.coach-edit #view-entreno .ex-item{display:block;padding:12px 16px 6px;}
+html.esc #app.coach-edit #view-entreno .ex-item > *{grid-column:auto;}
+html.esc #app.coach-edit #view-entreno .ex-table-row{flex-wrap:nowrap;align-items:flex-end;gap:14px;}
+html.esc #app.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 auto;align-self:center;font-size:17px;}
+html.esc #app.coach-edit #view-entreno .ru-f{flex:0 0 92px;}
+html.esc #app.coach-edit #view-entreno .ex-desc{max-width:760px;white-space:normal !important;}
+html.esc #app.coach-edit #view-entreno .ex-video-row,html.esc #app.coach-edit #view-entreno .en-ej-acts{opacity:1;}
+html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-content:space-between;}
+
+/* ---------- RIR: un tono por cada valor ---------- */
+.rir-0{--rc:#7A1712;} .rir-1{--rc:#B3261E;} .rir-2{--rc:#E2665A;}
+.rir-3{--rc:#D06A12;} .rir-4{--rc:#F2A65A;} .rir-5{--rc:#4FA86A;}
+.sr-badge.rir-n,.sr-rir.rir-n,.rx-field.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
+.rir-0.sr-badge,.rir-0.rx-field,.rir-1.sr-badge,.rir-1.rx-field,.rir-3.sr-badge,.rir-3.rx-field{background:color-mix(in srgb, var(--rc) 24%, transparent) !important;}
+.srf-cab b.rir-n{color:color-mix(in srgb, var(--rc) 85%, #000);border-color:var(--rc);}
+.srf-rir > button.rir-n{color:color-mix(in srgb, var(--rc) 85%, #000);}
+.srf-rir > button.sel.rir-n{background:var(--rc);color:#fff;}
+.srf-rir > button.sel.rir-2,.srf-rir > button.sel.rir-4{color:#1b0f05;}
+#view-entreno .srf-rirb.rir-n{background:color-mix(in srgb, var(--rc) 20%, transparent);color:color-mix(in srgb, var(--rc) 80%, #000);}
+.en-ley-rir{display:inline-flex;gap:4px;flex-wrap:wrap;}
+.en-ley-rir .sr-badge{min-width:30px;text-align:center;}
+
+/* ---------- «Serie 1» en las filas del cliente ---------- */
+.srf .srf-n{width:auto;min-width:72px;padding:0 8px;}
+.srf-n-t{display:flex;align-items:baseline;gap:4px;white-space:nowrap;font:700 13px var(--f-mono);}
+.srf-n-t b{font-size:15px;}
+.srf-n small{flex-basis:100%;}
+@media (max-width:380px){
+  .srf .srf-n{min-width:44px;padding:0 4px;}
+  .srf-n-t{flex-direction:column;align-items:center;gap:0;line-height:1.05;}
+  .srf-n-t span{font-size:10px;letter-spacing:.02em;}
+  .srf-n-t b{font-size:16px;}
+}
+/* correcciones de la fila del editor */
+.coach-edit #view-entreno .ex-table-row > .ru-asa{flex:none !important;width:26px;text-align:center;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell{justify-content:flex-start;text-align:left !important;}
+.coach-edit #view-entreno .ru-f{flex:1 1 72px !important;}
+html.esc #app.coach-edit #view-entreno .ru-f{flex:0 0 92px !important;}
+#view-entreno .sesion-title{font-size:22px;}
+html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center;}
+@media (max-width:400px){
+  .coach-edit #view-entreno .ru-f{flex:1 1 52px !important;}
+  .coach-edit #view-entreno .ex-item{padding:10px 10px 4px;}
+  .coach-edit #view-entreno .en-ej-btns{flex-wrap:wrap;gap:5px;}
+  .coach-edit #view-entreno .en-ej-btns button,.coach-edit #view-entreno .en-tec-btn{white-space:nowrap;flex:none;padding:0 6px;width:auto;min-width:32px;}
+}
+@media (max-width:400px){
+  .coach-edit #view-entreno .en-ej-btns button:not(.en-tec-btn){min-width:32px;width:32px;padding:0;}
+}
+@media (max-width:400px){
+  .coach-edit #view-entreno .en-ej-btns{gap:3px;justify-content:space-between;}
+  .coach-edit #view-entreno .en-tec-btn{font-size:12px !important;padding:0 4px !important;}
+}
