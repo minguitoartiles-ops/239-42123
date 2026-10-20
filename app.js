@@ -1300,7 +1300,7 @@ function removeMeal(ev,el){
   guardarTodo();
 }
 function toggleSwitch(el){ el.classList.toggle('on'); }
-const topScreens=['view-splash','view-coach-login','view-coach-2fa','view-alta','view-coach-panel','view-coach-cliente','view-coach-seguimientos','app'];
+const topScreens=['view-splash','view-alta','view-coach-panel','view-coach-cliente','view-coach-seguimientos','app'];
 function showScreen(id){
   topScreens.forEach(function(s){ document.getElementById(s).style.display='none'; });
   document.getElementById(id).style.display='flex';
@@ -1309,8 +1309,8 @@ function goToAlta(){ showScreen('view-alta'); }
 function backToSplash(){ showScreen('view-splash'); }
 function backToPanel(){ showScreen('view-coach-panel'); }
 const COACHES=[
-  {u:'Domingo',p:'demo1234',rol:'entrenador',mail:'domingo@ejemplo.com'},
-  {u:'Fátima',p:'demo1234',rol:'dietista',mail:'fatima@ejemplo.com'}
+  {u:'Domingo',rol:'entrenador',mail:'fitnessindramas@gmail.com'},
+  {u:'Fátima',rol:'dietista',mail:'fitnessindramas@gmail.com'}
 ];
 let coachPend=null, coachActivo=null, fa2Esperado='';
 function maskMail(m){
@@ -1366,39 +1366,8 @@ function desvincularDispositivo(){
   trustOlvidar(coachActivo.u);
   document.getElementById('trustRow').classList.remove('show');
 }
-function goToCoachLogin(){
-  document.getElementById('coachLoginError').textContent='';
-  document.getElementById('coachPass').value='';
-  showScreen('view-coach-login');
-}
-function coachLogin(){
-  const u=document.getElementById('coachUser').value.trim();
-  const p=document.getElementById('coachPass').value;
-  const err=document.getElementById('coachLoginError');
-  if(!u||!p){ err.textContent='Introduce usuario y contraseña.'; return; }
-  const m=COACHES.filter(function(x){ return norm(x.u)===norm(u); })[0];
-  if(!m||m.p!==p){ err.textContent='Usuario o contraseña incorrectos.'; return; }
-  if(esConfiable(m.u)){ coachActivo=m; coachPend=null; entrarAlPanel(); return; }
-  coachPend=m;
-  fa2Esperado=String(Math.floor(100000+Math.random()*900000));
-  document.getElementById('fa2Mail').textContent=maskMail(m.mail);
-  document.getElementById('fa2Demo').textContent=fa2Esperado;
-  document.getElementById('fa2Code').value='';
-  document.getElementById('fa2Error').textContent='';
-  showScreen('view-coach-2fa');
-}
-function coach2fa(){
-  const code=document.getElementById('fa2Code').value.trim();
-  const err=document.getElementById('fa2Error');
-  if(code!==fa2Esperado){ err.textContent='Código incorrecto. Revisa tu correo.'; return; }
-  coachActivo=coachPend; coachPend=null; fa2Esperado='';
-  if(document.getElementById('fa2Trust').checked) trustGuardar(coachActivo.u);
-  entrarAlPanel();
-}
 function coachLogout(){
   coachActivo=null; coachPend=null; fa2Esperado='';
-  document.getElementById('coachUser').value='';
-  document.getElementById('coachPass').value='';
   backToSplash();
 }
 function nivel(p){ return p<0.35?1:(p<0.55?2:(p<0.7?3:(p<0.85?4:5))); }
@@ -1640,10 +1609,6 @@ function pick(el){
   const mb=el.closest('.meal-block');
   if(mb) updateMealSummary(mb);
   calcularPlan();
-}
-function entrarProfesionalPrueba(){
-  coachActivo=COACHES[0]; coachPend=null;
-  entrarAlPanel();
 }
 function burbujaNueva(){
   const coach=isCoachView();

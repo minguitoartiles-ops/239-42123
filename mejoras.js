@@ -1381,3 +1381,58 @@ actualizarPanel = (function(orig){
   return function(){ orig(); setTxt('statClientes', Object.keys(clientesData).filter(function(k){ return !mjEsBaja(clientesData[k]); }).length); };
 })(actualizarPanel);
 actualizarPanel();
+
+/* =========================================================
+   C · Ficha del cliente: tonelaje real de la semana y próxima revisión
+   ========================================================= */
+function mjTonelajeCliente(k){
+  const p = PLANES[k];
+  if (!p || !p.ent) return null;
+  const t = document.createElement('div'); t.innerHTML = p.ent;
+  const hay = Array.prototype.some.call(t.querySelectorAll('.serie-in input'), function(x){ return (x.getAttribute('value') || '').trim() !== ''; });
+  Array.prototype.forEach.call(t.querySelectorAll('.serie-in input'), function(x){ x.value = x.getAttribute('value') || ''; });
+  return hay ? tonelajeDe(t) : 0;
+}
+function mjPintarFichaSemana(){
+  const k = clienteActual, d = clientesData[k];
+  if (!d) return;
+  const ton = mjTonelajeCliente(k);
+  const reg = d.registro && d.registro.ton || [];
+  const ant = reg.length ? reg[reg.length - 1].kg : null;
+  const tv = document.getElementById('cd-tonelaje'), td = document.getElementById('cd-tonelajeDelta');
+  if (tv && td) {
+    if (!ton) { tv.textContent = '—'; td.textContent = ant ? 'Aún sin pesos esta semana · la anterior: ' + fmtMil(ant) + ' kg' : 'Sin pesos registrados esta semana'; td.className = 'tonelaje-delta'; }
+    else {
+      tv.textContent = fmtMil(Math.round(ton)) + ' kg';
+      if (ant) { const df = Math.round(ton - ant); td.textContent = (df > 0 ? '+' : (df < 0 ? '−' : '')) + fmtMil(Math.abs(df)) + ' kg vs la semana pasada'; td.className = 'tonelaje-delta' + (df > 0 ? ' up' : ''); }
+      else { td.textContent = 'Primera semana con pesos'; td.className = 'tonelaje-delta'; }
+    }
+  }
+  // próxima revisión: el seguimiento se envía cada lunes
+  const hoy = new Date(), lunes = mjLunes(hoy), esLunes = ((hoy.getDay() + 6) % 7) === 0;
+  const ult = (SEGUIMIENTOS[k] || [])[0];
+  const estaSemana = ult && new Date(ult.fecha) >= lunes;
+  let txt;
+  if (mjEsBaja(d)) txt = 'De baja';
+  else if (esLunes && !estaSemana) txt = 'Hoy, lunes ' + mjFecha(mjISO(hoy)).slice(0, 5);
+  else {
+    const prox = new Date(lunes.getTime() + 7 * DIA_MS);
+    txt = 'Lunes ' + mjFecha(mjISO(prox)).slice(0, 5) + (estaSemana ? ' · esta semana ya enviado' : '');
+  }
+  setTxt('cd-revision', txt);
+}
+goToCliente = (function(orig){ return function(k){ orig(k); mjPintarFichaSemana(); }; })(goToCliente);
+(function(){
+  const sh = showScreen;
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') mjPintarFichaSemana(); if (id === 'view-coach-ajustes') setTxt('ajustesWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas'); };
+})();
+
+/* Los pesos y textos del plan se guardan al escribir y al salir de la app
+   (antes, si el cliente solo apuntaba pesos y cerraba, se perdían) */
+document.addEventListener('input', function(e){
+  if (e.target.closest && e.target.closest('#sesionesCont, #comidasCont') && clienteActual) programarGuardado();
+}, true);
+function mjGuardarYa(){ try { if (clienteActual || coachActivo) guardarTodo(); } catch(e){} }
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'hidden') mjGuardarYa(); });
+window.addEventListener('pagehide', mjGuardarYa);
+cerrarSesionCliente = (function(orig){ return function(){ mjGuardarYa(); orig.apply(this, arguments); }; })(cerrarSesionCliente);
