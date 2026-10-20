@@ -145,3 +145,16 @@ html.esc .fsd-toast{bottom:28px;left:calc(50% + var(--esc-menu) / 2);}
 html.esc .esc-grupo .list-row .ajx-val{overflow-wrap:normal;}
 html.esc #view-coach-seguimientos > .mj-pdf{align-self:flex-end;width:auto;margin:6px max(28px, calc((100% - 1120px) / 2)) 0;padding:0 14px;}
 html.esc .esc-tabla th,html.esc .esc-tabla td{padding:8px 10px;}
+
+/* ---------- v0.60.3 · el equipo puede ver la app de un cliente desde el ordenador ---------- */
+.esc-sm-equipo{display:block;margin:16px auto 0;background:none;border:none;color:var(--dim-45);font:500 12.5px var(--f-body);text-decoration:underline;cursor:pointer;}
+.esc-sm-form{margin:12px auto 0;max-width:300px;display:flex;flex-direction:column;gap:8px;text-align:left;}
+.esc-sm-form[hidden]{display:none;}
+.esc-sm-quien{display:flex;gap:8px;justify-content:center;}
+.esc-sm-form input{height:42px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);padding:0 14px;font:500 15px var(--f-body);}
+.esc-sm-err{min-height:16px;font:500 12.5px var(--f-body);color:var(--danger);text-align:center;}
+html.esc-cliente body{background:#E7ECF2 !important;align-items:center;}
+html.esc-cliente .phone{width:430px;max-width:100%;box-shadow:0 0 0 1px rgba(0,0,0,.08), 0 20px 60px rgba(0,0,0,.12);background:var(--bg);}
+.esc-cli-pill{position:fixed;top:14px;left:14px;z-index:300;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:99px;background:#12151A;color:#fff;font:500 12.5px Archivo,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.esc-cli-pill[hidden]{display:none;}
+.esc-cli-pill button{border:none;border-radius:99px;padding:5px 12px;background:#88B9E6;color:#0E1013;font:700 12px Archivo,sans-serif;cursor:pointer;}
