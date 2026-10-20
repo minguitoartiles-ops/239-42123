@@ -1535,7 +1535,12 @@ function enPintarFilas(it){
   const d = clienteActual && clientesData[clienteActual];
   const hist = d && d.registro && d.registro.ej && d.registro.ej[enNombreEj(it)];
   const ult = hist && hist.length ? enMejorSerie(hist[hist.length - 1].s) : null;
-  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + (pesos.length === 1 ? ' serie' : ' series') + ' × ' + esc(p0.dataset.reps || '—') + ' reps' + (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '') + '</span>'
+  // si cada serie tiene su pauta: «3 series · 5 / 10 / 10 reps · RIR 2 / 1 / 1»
+  const vr = pesos.map(function(p){ return p.dataset.reps || '—'; }), vi = pesos.map(function(p){ return p.dataset.rir == null ? '' : p.dataset.rir; });
+  const rDist = vr.some(function(v){ return v !== vr[0]; }), iDist = vi.some(function(v){ return v !== vi[0]; });
+  const txtRir = iDist ? ' · RIR ' + vi.map(function(v){ return v !== '' ? '<b class="srf-rir-v ' + enRir(v) + '">' + esc(v) + '</b>' : '—'; }).join(' / ')
+    : (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '');
+  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + (pesos.length === 1 ? ' serie' : ' series') + (rDist ? ' · ' + vr.map(esc).join(' / ') : ' × ' + esc(p0.dataset.reps || '—')) + ' reps' + txtRir + '</span>'
     + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + '</div>'
     + pesos.map(function(p, i){ return enFilaHTML(it, p, i, hechas[i], isCoachView()); }).join('');
   abiertas.forEach(function(a, i){ const o = f.querySelectorAll('.srf-opc')[i]; if (o && a) o.hidden = false; });
