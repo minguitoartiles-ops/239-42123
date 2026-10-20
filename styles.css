@@ -1498,3 +1498,81 @@
 .chip-pin{margin-left:3px;font-size:11px;cursor:pointer;}
 #app:not(.coach-view) .chip-pin{display:none;}
 .chip-qty-in{width:58px;height:24px;padding:0 4px;border-radius:7px;border:1.5px solid var(--accent);background:var(--bg);color:var(--ink);font:600 12px var(--f-mono);text-align:center;}
+/* v0.61 · apuntar series fila a fila (modelo de la captura de Domingo) */
+.ex-series.sr-nuevo > .sr-plan,.ex-series.sr-nuevo > .ex-series-inputs,.ex-series.sr-nuevo + .sr-hechas,.ex-series.sr-nuevo > .sr-hechas,.ex-series.sr-nuevo > .ex-series-top{display:none !important;}
+.ex-item > .sr-hechas{display:none;}
+.coach-edit .ex-item > .sr-hechas{display:flex;}
+.sr-filas{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.srf-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;font:500 12.5px var(--f-mono);color:var(--dim-6);}
+.srf-cab b{font-weight:700;padding:1px 7px;border-radius:7px;border:1.5px solid transparent;}
+.srf-cab b.rir-r{color:var(--rir-r);border-color:var(--rir-r);}
+.srf-cab b.rir-a{color:var(--rir-a);border-color:var(--rir-a);}
+.srf-cab b.rir-v{color:var(--rir-v);border-color:var(--rir-v);}
+.srf-ref b{color:var(--accent);border:none;padding:0;}
+.srf{border-radius:16px;padding:8px;background:var(--wash-soft);border:1px solid var(--line);transition:background .15s,border-color .15s;}
+.srf.ok{background:var(--accent-wash);border-color:var(--accent-line);}
+.srf-l1{display:flex;align-items:center;gap:6px;}
+.srf-n{flex:none;width:42px;height:44px;border-radius:12px;border:1px dashed var(--line-strong);background:none;color:var(--ink);font:700 13px var(--f-mono);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;}
+.srf.ok .srf-n{border-style:solid;}
+.srf-n small{font:600 7.5px var(--f-body);color:var(--carb);text-transform:uppercase;}
+.srf-reps{flex:1 1 0;min-width:0;height:44px;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:12px;background:var(--bg);border:1px solid var(--line-strong);padding:0 8px;}
+.srf-reps input{width:100%;min-width:0;border:none;background:none;text-align:right;font:700 17px var(--f-mono);color:var(--ink);}
+.srf-reps span{font:500 11px var(--f-body);color:var(--dim-45);}
+.srf-x{flex:none;color:var(--dim-40);font-size:13px;}
+.srf-peso{flex:1.3 1 0;min-width:0;height:44px;display:flex;align-items:stretch;border-radius:12px;background:var(--bg);border:1px solid var(--line-strong);overflow:hidden;}
+.srf-peso:focus-within{border:2px solid var(--accent);}
+.srf-peso button{flex:none;width:30px;border:none;background:none;color:var(--accent);font:600 18px var(--f-body);cursor:pointer;}
+.srf-peso input{flex:1;min-width:0;border:none;border-left:1px solid var(--line);border-right:1px solid var(--line);background:none;text-align:center;font:700 17px var(--f-mono);color:var(--ink);}
+.srf-reps input:focus,.srf-peso input:focus{outline:none;}
+.srf-ok{flex:none;width:46px;height:44px;border-radius:12px;border:1.5px solid var(--accent-line);background:var(--bg);color:var(--accent);font:700 18px var(--f-body);cursor:pointer;}
+.srf.ok .srf-ok,.srf-ok[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.srf-l2{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.srf-rir{flex:1;min-width:0;display:flex;align-items:stretch;height:36px;border-radius:11px;border:1px solid var(--line-strong);overflow:hidden;background:var(--bg);}
+.srf-rir-l{flex:none;display:flex;align-items:center;gap:4px;padding:0 6px 0 9px;font:700 11px var(--f-mono);color:var(--dim-6);border-right:1px solid var(--line);}
+.srf-q{width:17px;height:17px;border-radius:50%;border:1px solid var(--dim-40);background:none;color:var(--dim-6);font:700 10px var(--f-body);padding:0;cursor:pointer;}
+.srf-rir > button{flex:1;min-width:0;border:none;border-right:1px solid var(--line);background:none;font:700 13px var(--f-mono);cursor:pointer;color:var(--ink);position:relative;}
+.srf-rir > button:last-child{border-right:none;}
+.srf-rir > button.rir-r{color:var(--rir-r);}
+.srf-rir > button.rir-a{color:#B9802F;}
+.srf-rir > button.rir-v{color:#3E8F57;}
+.srf-rir > button.obj::after{content:"";position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor;opacity:.7;}
+.srf-rir > button.sel.rir-r{background:var(--rir-r);color:#fff;}
+.srf-rir > button.sel.rir-a{background:var(--rir-a);color:#1b1205;}
+.srf-rir > button.sel.rir-v{background:var(--rir-v);color:#08210f;}
+.srf-rir > button.sel::after{background:currentColor;}
+.srf-nota-b{flex:none;width:38px;height:36px;border-radius:11px;border:1px solid var(--line-strong);background:var(--bg);color:var(--dim-6);font-size:15px;cursor:pointer;}
+.srf-nota-b.con{color:var(--accent);border-color:var(--accent-line);}
+.srf-nota-t{margin:6px 2px 0;font:500 12px/1.4 var(--f-body);color:var(--dim-6);}
+.srf-opc{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.srf-opc[hidden]{display:none;}
+.srf-tipos{display:flex;border-radius:11px;background:var(--bg);border:1px solid var(--line-strong);overflow:hidden;}
+.srf-tipos button{flex:1;min-width:0;height:34px;border:none;background:none;color:var(--dim-6);font:600 11.5px var(--f-body);cursor:pointer;}
+.srf-tipos button.sel{background:var(--accent-wash);color:var(--ink);}
+.srf-nota{height:38px;border-radius:11px;border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);padding:0 12px;font:500 13.5px var(--f-body);}
+.srf button:disabled{cursor:default;}
+@media (max-width:360px){ .srf-n{width:36px;} .srf-peso button{width:24px;} .srf-reps input,.srf-peso input{font-size:15px;} .srf-ok{width:40px;} .srf-rir-l{padding:0 4px 0 6px;} }
+html.esc .srf{max-width:560px;}
+/* v0.61 · filas de series: que quepan reps y peso en móviles estrechos */
+.srf-reps{flex:0 0 74px;padding:0 6px;}
+.srf-peso{flex:1 1 0;}
+.srf-peso input{min-width:44px;}
+.srf-tipos{overflow-x:auto;scrollbar-width:none;}
+.srf-tipos::-webkit-scrollbar{display:none;}
+.srf-tipos button{flex:1 0 auto;padding:0 10px;}
+@media (max-width:420px){
+  .srf-l1{gap:5px;}
+  .srf-n{width:34px;}
+  .srf-reps{flex-basis:50px;flex-direction:column;justify-content:center;gap:0;padding:0 2px;}
+  .srf-reps input{text-align:center;font-size:16px;line-height:1.1;}
+  .srf-reps span{font-size:8.5px;line-height:1;margin-top:-1px;}
+  .srf-x{display:none;}
+  .srf-peso button{width:26px;font-size:17px;}
+  .srf-peso input{font-size:16px;}
+  .srf-ok{width:40px;}
+  .srf-rir-l{padding:0 4px 0 7px;font-size:10px;}
+  .srf-q{width:15px;height:15px;font-size:9px;}
+  .srf-rir > button{font-size:12px;}
+  .srf-nota-b{width:34px;}
+  .srf-tipos button{font-size:11px;padding:0 8px;}
+}
+@media (max-width:420px){ .srf-peso input{min-width:0;} .srf-reps{flex-basis:46px;} .srf-peso button{width:24px;} }
