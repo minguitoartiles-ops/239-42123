@@ -1456,3 +1456,15 @@
 .fe-registro[open] > summary::after{transform:rotate(180deg);}
 .fe-registro[open] > summary{margin-bottom:8px;}
 #app.coach-view:not(.coach-edit) #comidasCont .chip:not(.chip-add){cursor:default;}
+/* v0.60.1 · botón Deshacer en la barra de edición */
+.en-deshacer{display:inline-flex;align-items:center;gap:5px;background:var(--bg) !important;color:var(--ink) !important;border:1px solid var(--accent-line) !important;}
+.en-deshacer span:first-child{font-size:15px;line-height:1;}
+.en-deshacer[hidden]{display:none !important;}
+.en-deshacer:disabled{opacity:.4;cursor:default;}
+@media (max-width:480px){ .en-deshacer .en-deshacer-txt{display:none;} .en-deshacer{padding:7px 10px !important;} }
+@media (max-width:360px){
+  .coach-bar{gap:6px;padding-left:12px;padding-right:12px;}
+  .coach-bar-volver{font-size:0 !important;padding:0 8px !important;}
+  .coach-bar-volver .vb-chev{font-size:16px;}
+  .coach-bar .nu-nav{padding:0 2px;}
+}

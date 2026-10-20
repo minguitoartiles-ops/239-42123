@@ -1101,3 +1101,140 @@ pintarResumenGramos();
     pick(ch);
   });
 })();
+
+/* =========================================================
+   78 · Deshacer (botón ↶ y Ctrl+Z / Cmd+Z): hasta 20 pasos atrás mientras se edita un plan
+   ========================================================= */
+const EN_UNDO_MAX = 20;
+let enUndo = { entreno: [], plan: [] }, enUndoUlt = { entreno: null, plan: null }, enUndoPausa = false, enUndoT = null;
+function enUndoVista(){ return vistaActual === 'plan' ? 'plan' : (vistaActual === 'entreno' ? 'entreno' : null); }
+function enUndoCont(v){ return v === 'plan' ? contNut() : contEnt(); }
+function enUndoFoto(v){
+  const cont = enUndoCont(v);
+  sincronizarInputs(cont);
+  const foto = { html: cont.innerHTML, calc: null };
+  if (v === 'plan') {
+    foto.calc = Array.prototype.map.call(document.querySelectorAll('#calcCard input'), function(i){ return i.value; });
+    sincronizarInputs(document.getElementById('calcCard'));
+  }
+  // huella sin lo que no es un cambio real (días abiertos o plegados, gramos calculados, botones de edición)
+  const t = document.createElement('div'); t.innerHTML = foto.html;
+  Array.prototype.forEach.call(t.querySelectorAll('.chip-qty, .chip-x, .chip-add, .en-hist, .sr-plan, .en-ej-acts, .en-ses-acts, .meal-sum'), function(x){ x.remove(); });
+  Array.prototype.forEach.call(t.querySelectorAll('.sesion-body, .chip, .ex-desc'), function(x){ x.removeAttribute('style'); });
+  Array.prototype.forEach.call(t.querySelectorAll('.sesion-card, .sesion-chevron, .meal-block'), function(x){ x.classList.remove('open'); });
+  Array.prototype.forEach.call(t.querySelectorAll('[contenteditable], [data-edit-ready], [readonly], [tabindex]'), function(x){ x.removeAttribute('contenteditable'); x.removeAttribute('readonly'); x.removeAttribute('tabindex'); delete x.dataset.editReady; });
+  foto.huella = t.innerHTML + '|' + (foto.calc || []).join(',');
+  return foto;
+}
+function enUndoReiniciar(){
+  enUndo = { entreno: [], plan: [] };
+  enUndoUlt = { entreno: null, plan: null };
+  const v = enUndoVista();
+  if (coachEditing && v) enUndoUlt[v] = enUndoFoto(v);
+  enUndoPintar();
+}
+function enUndoRegistrar(){
+  clearTimeout(enUndoT);
+  enUndoT = setTimeout(function(){
+    const v = enUndoVista();
+    if (!coachEditing || !v) return;
+    const f = enUndoFoto(v);
+    const ult = enUndoUlt[v];
+    if (enUndoPausa || !ult) { enUndoUlt[v] = f; return; }
+    if (f.huella === ult.huella) { enUndoUlt[v] = f; return; }        // abrir o plegar días no es un cambio, pero se recuerda cómo estaban
+    enUndo[v].push(ult);
+    if (enUndo[v].length > EN_UNDO_MAX) enUndo[v].shift();
+    enUndoUlt[v] = f;
+    enUndoPintar();
+  }, 450);
+}
+function enDeshacer(){
+  const v = enUndoVista();
+  if (!coachEditing || !v) return;
+  clearTimeout(enUndoT);
+  // si hay un cambio a medio registrar, se registra primero para no perderlo
+  const ahora = enUndoFoto(v);
+  if (enUndoUlt[v] && ahora.huella !== enUndoUlt[v].huella) { enUndo[v].push(enUndoUlt[v]); enUndoUlt[v] = ahora; }
+  const prev = enUndo[v].pop();
+  if (!prev) { toast('No hay nada que deshacer'); enUndoPintar(); return; }
+  enUndoPausa = true;
+  const cont = enUndoCont(v);
+  // los días que tienes abiertos siguen abiertos después de deshacer
+  const abiertos = Array.prototype.map.call(cont.querySelectorAll('.sesion-card'), function(c){ const b = c.querySelector('.sesion-body'); return !!b && b.style.display !== 'none'; });
+  cont.innerHTML = prev.html;
+  Array.prototype.forEach.call(cont.querySelectorAll('.sesion-card'), function(c, i){
+    if (i >= abiertos.length) return;
+    const b = c.querySelector('.sesion-body'), ch = c.querySelector('.sesion-chevron');
+    if (b) b.style.display = abiertos[i] ? 'block' : 'none';
+    if (ch) ch.classList.toggle('open', abiertos[i]);
+    c.classList.toggle('open', abiertos[i]);
+  });
+  limpiarEditables(cont);
+  if (v === 'plan') {
+    if (prev.calc) Array.prototype.forEach.call(document.querySelectorAll('#calcCard input'), function(i, n){ if (prev.calc[n] != null) i.value = prev.calc[n]; });
+    if (prev.calc && typeof nuGuardarObjetivo === 'function') { clearTimeout(mjGuardarNutPend); nuGuardarObjetivo(); }   // que el objetivo guardado no lo vuelva a pisar
+    enableNutricionEdit();
+    Array.prototype.forEach.call(cont.querySelectorAll('.meal-block-title'), function(t){ t.setAttribute('contenteditable', 'true'); });
+    Array.prototype.forEach.call(cont.querySelectorAll('.chip-x'), function(el){ el.style.display = 'inline-block'; });
+    Array.prototype.forEach.call(cont.querySelectorAll('.chip-add'), function(el){ el.style.display = 'inline-flex'; });
+    if (typeof renumberMeals === 'function') renumberMeals();
+    calcularPlan();
+    if (typeof refreshAllSummaries === 'function') refreshAllSummaries();
+  } else {
+    Array.prototype.forEach.call(cont.querySelectorAll('.rx-field'), function(f){ f.removeAttribute('readonly'); });
+    Array.prototype.forEach.call(cont.querySelectorAll('.ex-desc'), function(d){ d.setAttribute('contenteditable', 'true'); });
+    enRenumerar(); enPrepararEdicion(); enTodoSync();
+    recalcEntreno(); recalcTonelaje();
+  }
+  enUndoUlt[v] = enUndoFoto(v);
+  programarGuardado();
+  setTimeout(function(){ enUndoPausa = false; enUndoUlt[v] = enUndoFoto(v); }, 500);
+  toast('Deshecho' + (enUndo[v].length ? ' · quedan ' + enUndo[v].length : ''));
+  enUndoPintar();
+}
+/* botón en la barra de edición */
+(function(){
+  const bar = document.getElementById('coachBar'), ed = document.getElementById('editarBtn');
+  if (!bar || !ed) return;
+  const b = document.createElement('button');
+  b.type = 'button'; b.id = 'enDeshacerBtn'; b.className = 'en-deshacer';
+  b.setAttribute('aria-label', 'Deshacer el último cambio'); b.title = 'Deshacer (Ctrl+Z)';
+  b.innerHTML = '<span aria-hidden="true">↶</span><span class="en-deshacer-txt">Deshacer</span>';
+  b.onclick = enDeshacer;
+  ed.parentNode.insertBefore(b, ed);
+})();
+function enUndoPintar(){
+  const b = document.getElementById('enDeshacerBtn'); if (!b) return;
+  const v = enUndoVista();
+  b.hidden = !(coachEditing && v);
+  b.disabled = !(v && enUndo[v].length);
+}
+/* qué cuenta como cambio */
+(function(){
+  const obs = new MutationObserver(function(){ if (coachEditing) enUndoRegistrar(); });
+  [contEnt(), contNut(), document.getElementById('calcCard')].forEach(function(c){
+    if (c) obs.observe(c, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class'] });
+  });
+  document.addEventListener('input', function(e){
+    if (coachEditing && e.target.closest && e.target.closest('#sesionesCont, #comidasCont, #calcCard')) enUndoRegistrar();
+  }, true);
+})();
+editarPlan = (function(orig){ return function(){ orig(); enUndoReiniciar(); }; })(editarPlan);
+cargarPlan = (function(orig){ return function(k){ orig(k); enUndoReiniciar(); }; })(cargarPlan);
+goTo = (function(orig){ return function(){ const r = orig.apply(this, arguments); const v = enUndoVista(); if (coachEditing && v && !enUndoUlt[v]) enUndoUlt[v] = enUndoFoto(v); enUndoPintar(); return r; }; })(goTo);
+document.addEventListener('keydown', function(e){
+  if (!coachEditing || !enUndoVista()) return;
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'z' || e.key === 'Z')) {
+    if (document.querySelector('.fsd-overlay.show, .picker-overlay.show')) return;   // en una ventana, el deshacer normal del campo
+    e.preventDefault();
+    enDeshacer();
+  }
+});
+enUndoPintar();
+/* pantallas muy estrechas: «Guardar» en vez de «Guardar cambios» para que quepa el nombre del cliente */
+function enTextoGuardar(){
+  const b = document.getElementById('editarBtn'); if (!b) return;
+  if (coachEditing) b.textContent = window.innerWidth <= 360 ? 'Guardar' : 'Guardar cambios';
+}
+editarPlan = (function(orig){ return function(){ orig(); enTextoGuardar(); }; })(editarPlan);
+window.addEventListener('resize', enTextoGuardar);
