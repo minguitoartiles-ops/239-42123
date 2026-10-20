@@ -3,12 +3,30 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.61.1 (actual)
-Cambios acumulados hacia la 0.62: **2 de 10**
+## Versión 0.62 → 0.62.3 (actual)
+Cambios acumulados hacia la 0.63: **6 de 10**
+
+### Hacia la 0.63
+1. 20/10/2026 16:50 · Plan nutricional (profesionales, móvil): barra fija con el cuadre del día (kcal y macros frente al objetivo) y calculadora plegable que muestra en una línea el objetivo y el reparto
+2. 20/10/2026 16:50 · Seguimientos (profesionales): una línea por cliente con su estado; «Ver resumen ▾» despliega el detalle → **0.62.1**
+3. 20/10/2026 16:50 · Seguimiento semanal del cliente en 4 pasos (Entrenamiento, Nutrición, Bienestar y Datos biométricos) con barra de progreso y botones Anterior / Siguiente; si falta un dato obligatorio salta a ese paso; el historial pasa a «Progreso»
+4. 20/10/2026 16:50 · Ordenador: filas de clientes más compactas, seguimientos en rejilla, pestañas del cliente (Entrenamiento / Nutrición / Chat) en la barra del editor y atajos Ctrl+K (buscar cliente) y Alt+↑↓ (cliente anterior / siguiente) → **0.62.2**
+5. 20/10/2026 16:50 · Ajustes en apartados plegables (el primero abierto; recuerda cuáles dejaste abiertos)
+6. 20/10/2026 16:50 · Recompensas para el cliente: mensaje corto de motivación al completar una sesión, la semana de entrenos, un récord de peso en un ejercicio, el día de nutrición, enviar el seguimiento o tener una semana de nota (entreno y nutrición ≥ 8); rachas de semanas de entrenos, días de nutrición y semanas de seguimiento con hitos (2, 3, 4, 6, 8… semanas; 3, 5, 7, 10… días); tarjeta «🏅 Tus logros» en Progreso → **0.62.3**
+
+## Versión 0.61.1 → 0.61.4
 
 ### Hacia la 0.62
 1. 20/10/2026 13:10 · Corregido: no se podía mover un ejercicio por encima o por debajo del título de una superserie o circuito
 2. 20/10/2026 13:10 · Corregido: «Deshacer» juntaba en un solo paso dos acciones hechas muy seguidas; ahora cada acción es un paso → **0.61.1**
+3. 20/10/2026 16:50 · Hoy (cliente): tarjetas «Hoy toca» (la sesión que corresponde, con su progreso) y «Ahora» (la comida de esta franja); el aviso del chat ocupa menos
+4. 20/10/2026 16:50 · Entreno (cliente): se abre directamente el día que toca; las sensaciones van al final y el tonelaje en una línea → **0.61.2**
+5. 20/10/2026 16:50 · Entreno (cliente): ejercicio compacto (la pauta no se repite, «Técnica» plegada); al completar un ejercicio se pliega y la pantalla baja sola al siguiente; barra fija con ejercicio y series hechas
+6. 20/10/2026 16:50 · Nutrición (cliente): la comida de ahora sale abierta y marcada «AHORA»; el resto plegadas mostrando las opciones elegidas → **0.61.3**
+7. 20/10/2026 16:50 · Textos de al menos 11 px y botones más grandes (marcar sesión y comida, barra del editor, flechas de cliente)
+8. 20/10/2026 16:50 · Corregido: en el ordenador, al volver atrás la app no sabía qué pantalla estaba abierta → **0.61.4**
+9. 20/10/2026 16:50 · Clientes (profesionales): buscador en el móvil, filtros «Necesitan atención» (mensajes, +48 h sin respuesta, seguimientos nuevos, pagos) y «Sin plan», los urgentes primero con el motivo; tarjetas más compactas; el aviso de copia de seguridad se puede posponer una semana
+10. 20/10/2026 16:50 · Editor de entreno: solo la pauta (fuera tonelaje, sensaciones, recursos y campos del cliente) y botones de la barra más grandes → **sube a la 0.62**
 
 ## Versión 0.60 → 0.60.4
 
