@@ -161,3 +161,5 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 /* textos de borrar en rojo */
 .mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del) !important;border-color:var(--del-line) !important;}
 html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15px !important;}
+/* Fátima no marca comidas como tomadas: el check solo lo ve el cliente */
+#app.coach-view .meal-eat{display:none !important;}
