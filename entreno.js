@@ -1047,7 +1047,32 @@ function enEstadoPlanRol(k, vista){
 }
 function enPintarFicha(){
   if (!coachActivo || !clienteActual) return;
-  enPintarAccesos(); enPintarEntrenoFicha(); enPintarRegistroFicha(); enAplicarSeccion();
+  enPintarAccesos(); enPintarEntrenoFicha(); enPintarRegistroFicha(); enOrdenarFicha(); enAplicarSeccion(); enLapizNombre();
+}
+/* 84 · orden de la ficha: Gestión del cliente, Suscripción y luego el resto (nutrición antes para Fátima, después del entreno para Domingo) */
+function enOrdenarFicha(){
+  const v = document.getElementById('view-coach-cliente'); if (!v) return;
+  const body = v.querySelector('.alta-body');
+  if (document.getElementById('escFichaGrid')) return;               // en el ordenador lo ordenan los bloques
+  const sec = document.getElementById('fichaSecciones'); if (!sec) return;
+  const lbl = Array.prototype.filter.call(body.children, function(x){ return x.classList.contains('alta-label') && /Gestión/i.test(x.textContent); })[0];
+  const lista = lbl && lbl.nextElementSibling && lbl.nextElementSibling.classList.contains('list-group') ? lbl.nextElementSibling : null;
+  const pago = document.getElementById('fichaPago'), nut = document.getElementById('fichaNutri'), ent = document.getElementById('fichaEntrenoRes');
+  let ref = sec.nextSibling;
+  const poner = function(el){ if (el && el.parentNode === body) { body.insertBefore(el, ref); ref = el.nextSibling; } };
+  poner(lbl); poner(lista); poner(pago);
+  if (coachActivo && coachActivo.rol === 'dietista') poner(nut);
+  else if (nut && ent && ent.parentNode === body) body.insertBefore(nut, ent.nextSibling);
+}
+/* 85 · lápiz junto al nombre para cambiarlo (abre «Nombre, objetivo, duración y contacto») */
+function enLapizNombre(){
+  const n = document.getElementById('cd-nombre'); if (!n || document.getElementById('cdEditNom')) return;
+  const b = document.createElement('button');
+  b.type = 'button'; b.id = 'cdEditNom'; b.className = 'cd-edit-nom';
+  b.setAttribute('aria-label', 'Cambiar el nombre y los datos del cliente'); b.title = 'Cambiar nombre y datos';
+  b.textContent = '✎';
+  b.onclick = function(){ abrirEditarCliente(); setTimeout(function(){ const i = document.getElementById('mjEcNom'); if (i) { i.focus(); i.select(); } }, 60); };
+  n.parentNode.appendChild(b);
 }
 (function(){
   const sh = showScreen;
