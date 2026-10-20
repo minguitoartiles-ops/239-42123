@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.64 (actual)
-Cambios acumulados hacia la 0.65: **1 de 10**
+## Versión 0.64 → 0.64.1 (actual)
+Cambios acumulados hacia la 0.65: **2 de 10**
 
 ### Hacia la 0.65
 1. 20/10/2026 18:51 · Botones de eliminar más grandes y en rojo en toda la app: ✕ de días, comidas, ejercicios y series (38 px, fondo rojo claro, rojo entero al pasar por encima) y ✕ de cada alimento como círculo rojo con zona de toque más grande; «Borrar» plantilla, «Quitar» foto y «Quitar» vídeo en rojo
+2. 20/10/2026 18:54 · Plan nutricional: Fátima ya no ve el check de «comida tomada» al crear o revisar el plan (solo lo ve el cliente) → **0.64.1**
 
 ## Versión 0.63 → 0.63.4
 
