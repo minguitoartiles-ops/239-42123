@@ -17,6 +17,7 @@ Se activarán cuando Domingo decida montar el servidor. Cada entrada indica de d
 | 11 | **Pagos y acceso entre móviles**: que el bloqueo, los recordatorios de pago y la baja lleguen al móvil del cliente, y que los pagos con Stripe se registren solos | Ahora el profesional registra los pagos a mano y el bloqueo solo actúa en el móvil donde están los datos | 20/10/2026 |
 | 12 | **Asistente con Claude directo dentro de la app** (sin copiar y pegar) | Llamar a Claude necesita una clave privada guardada en un servidor; ahora se copia la petición y se pega la respuesta | 20/10/2026 |
 | 13 | **Logros y rachas del cliente visibles para Fátima y Domingo** (y que no se pierdan al cambiar de móvil) | Los logros se calculan y guardan en el móvil del cliente; los profesionales no los ven | 20/10/2026 |
+| 14 | **Recetas de Fátima en el móvil de cada cliente** (y su aviso) | Las recetas y sus avisos se guardan en el dispositivo donde Fátima las crea; solo las ven los clientes de ese mismo dispositivo | 20/10/2026 |
 | 10 | **Pasos medios semanales automáticos** en el seguimiento (Salud, Health Connect, Samsung Health, Garmin) | Ahora el cliente los indica con un deslizador; leerlos solos necesita app nativa (o servidor para Garmin) | 20/10/2026 |
 
 **Aparte (no es Supabase, necesita app nativa):** Apple Salud, Samsung Health y Health Connect solo se pueden leer desde una app instalada desde App Store o Google Play.
