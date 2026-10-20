@@ -192,8 +192,8 @@ function escFiltrarClientes(){
 
 /* ---------- 3 · Ficha en columnas ---------- */
 const ESC_GRUPOS = {
-  entrenador: ['entreno', 'registro', 'segui', 'datos', 'nutri', 'pago', 'gestion'],
-  dietista: ['nutri', 'segui', 'datos', 'entreno', 'registro', 'pago', 'gestion']
+  entrenador: ['gestion', 'pago', 'entreno', 'nutri', 'segui', 'datos'],
+  dietista: ['gestion', 'pago', 'nutri', 'segui', 'datos', 'entreno']
 };
 enSeccionDe = (function(orig){ return function(el){ return el.id === 'escFichaGrid' ? 'siempre' : orig(el); }; })(enSeccionDe);
 function escAgruparFicha(){

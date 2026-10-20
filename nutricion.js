@@ -490,7 +490,7 @@ function nuPintarFicha(){
   const k = clienteActual, v = document.getElementById('view-coach-cliente');
   if (!k || !v || !coachActivo) return;
   let box = document.getElementById('fichaNutri');
-  if (coachActivo.rol !== 'dietista') { if (box) box.remove(); return; }
+  // v0.60.2: también Domingo ve el resumen del plan nutricional
   if (!box) {
     box = document.createElement('div'); box.id = 'fichaNutri';
     const body = v.querySelector('.alta-body');
