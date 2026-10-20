@@ -3,8 +3,22 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.57 (actual)
-Cambios acumulados hacia la 0.58: **0 de 10**
+## Versión 0.58 (actual)
+Cambios acumulados hacia la 0.59: **0 de 10**
+
+## Versión 0.57 → 0.57.4
+
+### Hacia la 0.58
+1. 20/10/2026 02:55 · Entreno: las sesiones se pueden renombrar tocando su nombre (encima sigue «Día 1, Día 2…» como en el Excel)
+2. 20/10/2026 02:55 · Entreno: reps y RIR por serie (S1…S5), como en la hoja «Entrenamiento»; la cabecera los pone iguales en todas de una vez → **0.57.1**
+3. 20/10/2026 02:55 · Entreno más rápido: pautas de un toque (3×10 · RIR 2, 4×8, 5×5…), añadir varios ejercicios a la vez, duplicar y ordenar ejercicios y días, y plantillas (Full body, Torso/Pierna, Empuje/Tirón/Pierna, Weider y las tuyas)
+4. 20/10/2026 02:55 · RIR por colores para el cliente: rojo 0-2, amarillo 3-4 y verde 5 o más, con leyenda «¿Qué es el RIR?» → **0.57.2**
+5. 20/10/2026 02:55 · Barra de abajo según quién entra: Domingo «Clientes · Entrenos · Chats · Seguimientos · Más» y Fátima «Clientes · Nutrición · Chats · Seguimientos · Más»; Pagos y Ajustes pasan a «Más»
+6. 20/10/2026 02:55 · Pestaña «Entrenos» / «Nutrición»: cada cliente con el estado de su plan (sin plan, toca revisar, actualizado hace X); al tocarlo se abre ya en edición, se guarda solo y las flechas ‹ › siguen editando → **0.57.3**
+7. 20/10/2026 02:55 · Ficha del cliente: cuatro accesos grandes (Entreno, Nutrición, Chat, Seguimientos, en orden según el profesional), apartados como las hojas del Excel y resumen del entrenamiento; botón «Entreno» / «Plan» en cada tarjeta
+8. 20/10/2026 02:55 · Registro de pesos como en el Excel: el cliente apunta peso y reps hechas en cada serie, se guarda cada semana, ve su historial por ejercicio y el profesional ve la tabla semanal con 🏆 cuando sube → **0.57.4**
+9. 20/10/2026 02:55 · ✨ Asistente de entrenamiento: crea un plan base con días, nivel, material, tiempo, objetivo, prioridad y molestias; o «Preparar con Claude»: copia la petición, pégala en Claude e importa su respuesta
+10. 20/10/2026 02:55 · Corregido: un ejercicio nuevo creado desde «+ Añadir ejercicio» no se añadía a la sesión, y los ejercicios propios se perdían al cerrar la app → **sube a la 0.58**
 
 ## Versión 0.56 → 0.56.4
 
