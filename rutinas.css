@@ -120,23 +120,22 @@ html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center
   .coach-edit #view-entreno .en-tec-btn{font-size:12px !important;padding:0 4px !important;}
 }
 
-/* ---------- ajustar serie a serie ---------- */
-.ru-ss{margin:6px 0 4px;}
-.ru-ss-t{display:flex;align-items:center;gap:8px;width:100%;min-height:36px;padding:6px 10px;border:1px dashed var(--accent-line);border-radius:10px;background:none;color:var(--accent);font:700 12.5px Archivo,sans-serif;cursor:pointer;text-align:left;}
-.ru-ss-t small{margin-left:auto;font:600 11px var(--f-mono);color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ru-ss.abierto .ru-ss-t{border-style:solid;border-radius:10px 10px 0 0;background:var(--accent-wash);}
-.ru-ss-l{display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid var(--accent-line);border-top:none;border-radius:0 0 10px 10px;}
-.ru-ss-f{display:flex;align-items:center;gap:8px;}
-.ru-ss-n{flex:0 0 58px;font:700 12.5px var(--f-mono);color:var(--ink);white-space:nowrap;}
-.ru-ss-f label{display:flex;align-items:center;gap:5px;flex:1 1 0;min-width:0;font:600 10.5px var(--f-mono);color:var(--dim-55);text-transform:uppercase;}
-.ru-ss-f input{width:100%;min-width:0;height:38px;border:1.5px solid var(--accent-line);border-radius:9px;background:var(--wash-soft);text-align:center;font:700 15px var(--f-mono);color:var(--ink);}
-.ru-ss-f input:focus{outline:none;border-color:var(--accent);}
-.ru-ss-x{flex:none;width:34px;height:34px;border-radius:9px;border:1px solid rgba(217,80,63,.35);background:none;color:var(--danger);cursor:pointer;}
-.ru-ss-x:disabled{opacity:.3;cursor:default;}
-.ru-ss-mas{align-self:flex-start;min-height:36px;padding:0 12px;border-radius:9px;border:1px dashed var(--accent-line);background:none;color:var(--accent);font:700 12.5px Archivo,sans-serif;cursor:pointer;}
+/* ---------- pauta serie a serie (forma principal de escribirla) ---------- */
+.coach-edit #view-entreno .ru-f{display:none !important;}
+.ru-ss{margin:8px 0 6px;max-width:440px;}
+.ru-ss-cab,.ru-ss-f{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 34px;gap:8px;align-items:center;}
+.ru-ss-cab span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.ru-ss-cab span:first-child{text-align:left;}
+.ru-ss-l{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.ru-ss-n{font:700 13px var(--f-mono);color:var(--ink);white-space:nowrap;}
+.ru-ss-f input{width:100%;min-width:0;height:40px;border:1.5px solid var(--accent-line);border-radius:10px;background:var(--wash-soft);text-align:center;font:700 16px var(--f-mono);color:var(--ink);}
+.ru-ss-f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);}
+.ru-ss-f input::placeholder{color:var(--dim-45);}
+.ru-ss-x{width:34px;height:34px;border-radius:9px;border:1px solid rgba(217,80,63,.3);background:none;color:var(--danger);cursor:pointer;font-size:13px;}
+.ru-ss-x:disabled{opacity:.25;cursor:default;}
+.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 14px;border-radius:10px;border:1px dashed var(--accent-line);background:none;color:var(--accent);font:700 12.5px Archivo,sans-serif;cursor:pointer;}
+.ru-ss-mas:hover{background:var(--accent-wash);}
 .ru-ss-rir.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
-.coach-edit #view-entreno .rx-field::placeholder{font-size:12px;color:var(--dim-45);}
+@media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:6px;} .ru-ss-n{font-size:12px;} }
 .srf-cab .srf-rir-v{padding:0 4px;border-radius:5px;}
 html.esc #app.coach-edit .ru-ss{max-width:520px;}
-@media (max-width:400px){ .ru-ss-n{flex-basis:48px;font-size:11.5px;} .ru-ss-f label > span{display:none;} }
-.ru-ss-f label + label{margin-left:8px;padding-left:8px;border-left:1px solid var(--line);}

@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.63 → 0.63.4 (actual)
-Cambios acumulados hacia la 0.64: **9 de 10**
+## Versión 0.64 (actual)
+Cambios acumulados hacia la 0.65: **0 de 10**
+
+## Versión 0.63 → 0.63.4
 
 ### Hacia la 0.64
 1. 20/10/2026 18:10 · Editor de rutinas: cada ejercicio es una tarjeta con sus propias columnas «Series · Reps · RIR» (en el ordenador, en la misma fila que el nombre)
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.64: **9 de 10**
 7. 20/10/2026 18:10 · RIR con un tono por valor: 0 rojo muy oscuro, 1 rojo oscuro, 2 rojo claro, 3 naranja oscuro, 4 naranja claro, 5+ verde (antes 3-4 era amarillo)
 8. 20/10/2026 18:10 · Una sola pauta por ejercicio: Domingo pone series, reps y RIR una vez y se aplican a todas las series (fuera la edición serie a serie). En los planes ya hechos, si las series eran distintas se vacían reps y RIR para ponerlos a mano; → **0.63.4**
 9. 20/10/2026 18:32 · Entreno: «Ajustar serie a serie» en cada ejercicio para dar a cada serie sus reps y su RIR (p. ej. 1×5 RIR 2 + 2×10 RIR 1), añadir una serie (copia la última) o quitar una concreta; arriba se lee «varía» y, si se cambian las reps o el RIR de arriba, se aplican a todas (se puede deshacer). El cliente ve «3 series · 5 / 10 / 10 reps · RIR 2 / 1 / 1». El asistente y la importación vuelven a respetar las series distintas
+10. 20/10/2026 18:43 · Entreno: la tabla «Serie · Reps · RIR» con una fila por serie pasa a ser la forma normal de escribir la pauta (siempre visible, sin botón «Ajustar serie a serie»); fuera los bloques sueltos Series / Reps / RIR. Las pautas rápidas (3×10 · RIR 2…) rellenan todas las filas. Al arrastrar, basta con entrar un poco en el ejercicio vecino para cambiarlos de sitio → **sube a la 0.64**
 
 ## Versión 0.62 → 0.62.4
 
