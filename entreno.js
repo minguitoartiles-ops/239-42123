@@ -386,6 +386,16 @@ function abrirPlantillas(){
     + '<button class="btn-eq" style="width:100%;margin-top:12px" onclick="enGuardarPlantilla()">Guardar el plan actual como plantilla</button></div>';
   o.classList.add('show');
 }
+function enPlegarDias(){
+  Array.prototype.forEach.call(contEnt().querySelectorAll('.sesion-card'), function(c){
+    const body = c.querySelector('.sesion-body'), ch = c.querySelector('.sesion-chevron');
+    if (body) body.style.display = 'none';
+    if (ch) ch.classList.remove('open');
+    c.classList.remove('open');
+  });
+  const sc = contEnt().closest('.sc'); const h = document.getElementById('enHerr');
+  if (sc && h) sc.scrollTop = Math.max(0, sc.scrollTop + h.getBoundingClientRect().top - sc.getBoundingClientRect().top - 12);
+}
 function enAplicarPlantilla(nombre, propia){
   const hacer = function(){
     if (!coachEditing) editarPlan();
@@ -401,6 +411,7 @@ function enAplicarPlantilla(nombre, propia){
       });
     }
     enRenumerar(); enPrepararEdicion(); enTodoSync();
+    enPlegarDias();                                   // solo se ven los días; se abre el que se quiera tocar
     recalcEntreno(); recalcTonelaje(); programarGuardado();
     mjCerrarHoja('enPlantillas');
     toast('Plantilla aplicada: ' + nombre);
