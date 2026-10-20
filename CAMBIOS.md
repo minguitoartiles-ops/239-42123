@@ -4,11 +4,12 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.59.1 (actual)
-Cambios acumulados hacia la 0.60: **2 de 10**
+Cambios acumulados hacia la 0.60: **3 de 10**
 
 ### Hacia la 0.60
 1. 20/10/2026 09:45 · Ordenador: los clientes solo pueden usar la app en el móvil o la tablet; en un ordenador ven un aviso con un código QR para abrirla en el móvil
 2. 20/10/2026 09:45 · Corregido: en pantallas grandes asomaba el texto antiguo «Prototipo interactivo…» → **0.59.1**
+3. 20/10/2026 09:40 · Entreno: al aplicar una plantilla los días salen plegados (solo el nombre de cada día) y se abre el que se quiera editar
 
 ## Versión 0.58.1 → 0.58.4
 
