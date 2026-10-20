@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.55.3';
+const APP_VERSION = '0.56.1';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -405,7 +405,7 @@ function htmlAjustes(rol){
     const c = coachActivo;
     h += fila('Usuario', val(c && c.u));
     h += fila('Rol', val(c && (c.rol === 'dietista' ? 'Dietista' : 'Entrenador')));
-    h += fila('Correo', val(c && c.mail ? maskMail(c.mail) : '—'));
+    h += fila('Correo de contacto', val(TITULAR.correo));
     h += fila('Cambiar contraseña', chev(), 'infoContrasena()');
   }
   h += '</div>';

@@ -429,7 +429,7 @@ function aplicarEspacio(){
   root.classList.toggle('esp-entreno', rol === 'entrenador');
   root.classList.toggle('esp-nutri', rol === 'dietista');
   const t = document.querySelector('#view-coach-panel .alta-top .h-title');
-  if (t) t.textContent = rol === 'dietista' ? 'Nutrición' : (rol === 'entrenador' ? 'Entrenamiento' : 'Panel de coach');
+  if (t) t.textContent = 'Clientes';
 }
 entrarAlPanel = (function(orig){
   return function(){ orig(); aplicarEspacio(); };
