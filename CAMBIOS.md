@@ -3,8 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.58 (actual)
-Cambios acumulados hacia la 0.59: **0 de 10**
+## Versión 0.58.1 (actual)
+Cambios acumulados hacia la 0.59: **2 de 10**
+
+### Hacia la 0.59
+1. 20/10/2026 09:05 · Domingo: quitada la pestaña «Entrenos» de la barra de abajo (los entrenos se abren desde «Clientes»); Fátima mantiene «Nutrición»
+2. 20/10/2026 09:05 · Corregido: la pantalla «Más» salía descolocada (lista a la derecha y barra de abajo a media pantalla); ahora tiene la misma estructura que las demás pestañas → **0.58.1**
 
 ## Versión 0.57 → 0.57.4
 

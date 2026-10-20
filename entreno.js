@@ -801,7 +801,8 @@ function enPintarTabRol(){
   const nutri = coachActivo && coachActivo.rol === 'dietista';
   setTxt('ctabPlanesTxt', nutri ? 'NUTRICIÓN' : 'ENTRENOS');
   setTxt('ctabPlanesEmo', nutri ? '🍕' : '🏋️');
-  const b = document.getElementById('ctab-planes'); if (b) b.setAttribute('aria-label', nutri ? 'Planes de nutrición' : 'Planes de entrenamiento');
+  const b = document.getElementById('ctab-planes');
+  if (b) { b.setAttribute('aria-label', 'Planes de nutrición'); b.hidden = !nutri; }   // Domingo trabaja los entrenos desde «Clientes»
 }
 let enPlanDesdeTab = false;
 function enEstadoPlan(k){
@@ -862,7 +863,6 @@ function enPintarMas(){
   c.innerHTML = '<div class="list-group">'
     + '<div class="list-row" onclick="abrirTabPro(\'pagos\')"><span>💳 Pagos clientes</span><span class="ajx-acts">' + (n ? '<span class="pill pill-nuevo">' + n + '</span>' : '') + '<span class="chev">›</span></span></div>'
     + '<div class="list-row" onclick="abrirTabPro(\'ajustes\')"><span>⚙️ Ajustes</span><span class="chev">›</span></div>'
-    + '<div class="list-row" onclick="abrirTabPro(\'planes\'); setTimeout(function(){},0)"><span>' + (enVistaRol() === 'plan' ? '🍕 Planes de nutrición' : '🏋️ Planes de entrenamiento') + '</span><span class="chev">›</span></div>'
     + '</div>';
 }
 abrirTabPro = (function(orig){
