@@ -15,6 +15,7 @@ Se activarán cuando Domingo decida montar el servidor. Cada entrada indica de d
 | 8 | **Tienda de productos propios y merchandising** | Pedidos y envíos necesitan servidor y Stripe | 19/10/2026 |
 | 9 | **Conexión con Garmin** | Garmin solo comparte datos con un servidor aprobado | 19/10/2026 |
 | 11 | **Pagos y acceso entre móviles**: que el bloqueo, los recordatorios de pago y la baja lleguen al móvil del cliente, y que los pagos con Stripe se registren solos | Ahora el profesional registra los pagos a mano y el bloqueo solo actúa en el móvil donde están los datos | 20/10/2026 |
+| 12 | **Asistente con Claude directo dentro de la app** (sin copiar y pegar) | Llamar a Claude necesita una clave privada guardada en un servidor; ahora se copia la petición y se pega la respuesta | 20/10/2026 |
 | 10 | **Pasos medios semanales automáticos** en el seguimiento (Salud, Health Connect, Samsung Health, Garmin) | Ahora el cliente los indica con un deslizador; leerlos solos necesita app nativa (o servidor para Garmin) | 20/10/2026 |
 
 **Aparte (no es Supabase, necesita app nativa):** Apple Salud, Samsung Health y Health Connect solo se pueden leer desde una app instalada desde App Store o Google Play.

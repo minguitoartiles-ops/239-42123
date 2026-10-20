@@ -146,7 +146,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.57</div>
+      <div class="app-version">Versión 0.58</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -295,6 +295,22 @@ if ('serviceWorker' in navigator) {
         <div style="flex:1"><div class="eyebrow" id="pagosWho">Fitness sin dramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Pagos clientes</div></div>
       </div>
       <div class="alta-body"><div id="pagosPro"></div></div>
+    </div>
+
+    <!-- PLANES (pestaña Entrenos / Nutrición del profesional) -->
+    <div id="view-coach-planes" style="display:none">
+      <div class="alta-top">
+        <div style="flex:1"><div class="eyebrow" id="planesWho">Fitness sin dramas</div><div class="h-title" style="margin-top:2px;font-size:22px" id="planesTit">Planes</div></div>
+      </div>
+      <div class="alta-body"><div id="planesPro"></div></div>
+    </div>
+
+    <!-- MÁS (pestaña del profesional) -->
+    <div id="view-coach-mas" style="display:none">
+      <div class="alta-top">
+        <div style="flex:1"><div class="eyebrow" id="masWho">Fitness sin dramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Más</div></div>
+      </div>
+      <div class="alta-body"><div id="masPro"></div></div>
     </div>
 
     <!-- AJUSTES (vista coach) -->
@@ -818,5 +834,6 @@ if ('serviceWorker' in navigator) {
 <script src="panelpro.js" defer></script>
 <script src="mejoras.js" defer></script>
 <script src="nutricion.js" defer></script>
+<script src="entreno.js" defer></script>
 </body>
 </html>
