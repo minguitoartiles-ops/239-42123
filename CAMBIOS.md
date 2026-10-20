@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.60.2 (actual)
-Cambios acumulados hacia la 0.61: **5 de 10**
+## Versión 0.60.3 (actual)
+Cambios acumulados hacia la 0.61: **6 de 10**
 
 ### Hacia la 0.61
 1. 20/10/2026 10:35 · Corregido: en un plan guardado, las opciones de cada comida no se podían tocar al volver a abrirlo; el cliente ya puede elegir su opción
@@ -12,6 +12,7 @@ Cambios acumulados hacia la 0.61: **5 de 10**
 3. 20/10/2026 11:00 · Ficha: «Gestión del cliente» arriba, después «Suscripción» y luego el resto; Domingo también ve el resumen del plan nutricional (después del entreno)
 4. 20/10/2026 11:00 · Ficha: lápiz ✎ junto al nombre para cambiar el nombre y los datos del cliente → **0.60.2**
 5. 20/10/2026 11:10 · Ordenador: en el aviso «La app de clientes funciona en el móvil», «Soy del equipo» pide la contraseña de Fátima o Domingo y abre la app de ese cliente con el ancho de un móvil (con aviso «Vista de cliente» y botón Salir); los clientes siguen bloqueados
+6. 20/10/2026 11:40 · Entreno: técnicas avanzadas con «⚡ Técnica» en cada ejercicio: myo reps, drop set y rest-pause con pauta editable; superseries (A1/A2…) y circuitos por tiempo (EMOM, AMRAP, Tabata, intervalos) con minutos para un grupo de ejercicios seguidos; el cliente ve la pauta y «¿Cómo se hace?», y en AMRAP apunta las rondas → **0.60.3**
 
 ## Versión 0.59.1 → 0.59.4
 

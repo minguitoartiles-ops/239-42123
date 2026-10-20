@@ -1263,3 +1263,205 @@ function enTextoGuardar(){
 }
 editarPlan = (function(orig){ return function(){ orig(); enTextoGuardar(); }; })(editarPlan);
 window.addEventListener('resize', enTextoGuardar);
+
+/* =========================================================
+   83 · Técnicas avanzadas: por ejercicio (myo reps, drop set, rest-pause) y por grupo
+        (superserie y circuitos por tiempo: EMOM, AMRAP, Tabata, intervalos)
+   Se guardan en el propio ejercicio:
+     data-tec="myo|drop|rp"  data-tec-p="pauta"
+     data-grupo="id"  data-grupo-t="ss|emom|amrap|tabata|int"  (en el primero: data-grupo-p, data-grupo-min)
+   ========================================================= */
+const EN_TEC = {
+  myo:  { n: 'Myo reps', e: '🔥', p: 'Activación de 12-15 reps + 4 mini-series de 3-5 reps, 5 respiraciones entre ellas',
+          i: 'Haz una serie de activación cerca del fallo. Después descansa solo 3-5 respiraciones y haz mini-series cortas con el mismo peso. Paras cuando no salgan las repeticiones de la mini-serie.' },
+  drop: { n: 'Drop set', e: '⬇️', p: '2 bajadas de peso del 20 % sin descanso',
+          i: 'Al terminar la serie, baja el peso (más o menos un 20 %) y sigue sin descansar. Repite las bajadas indicadas.' },
+  rp:   { n: 'Rest-pause', e: '⏸️', p: '2 pausas de 15 s al llegar al fallo técnico',
+          i: 'Cuando no puedas hacer otra repetición con buena técnica, descansa 10-20 s y sigue con el mismo peso. Repite las pausas indicadas.' }
+};
+const EN_GRUPO = {
+  ss:     { n: 'Superserie', e: '🔗', p: 'Sin descanso entre ejercicios; descansa 90 s al acabar la ronda', min: false,
+            i: 'Haz los ejercicios del grupo seguidos, sin descanso entre ellos. Descansa al terminar cada ronda y repite las series indicadas.' },
+  emom:   { n: 'EMOM', e: '⏱️', p: 'Cada minuto empieza el siguiente ejercicio; descansa lo que sobre del minuto', min: 12,
+            i: 'EMOM = cada minuto, en el minuto. Al empezar cada minuto haz las repeticiones del ejercicio que toca y descansa lo que quede. Ve rotando los ejercicios hasta acabar el tiempo.' },
+  amrap:  { n: 'AMRAP', e: '🔁', p: 'Máximas rondas posibles con buena técnica; apunta las rondas', min: 15,
+            i: 'AMRAP = tantas rondas como puedas. Repite el circuito sin parar hasta que acabe el tiempo y apunta cuántas rondas completas has hecho.' },
+  tabata: { n: 'Tabata', e: '⚡', p: '20 s de trabajo / 10 s de descanso, 8 rondas', min: 4,
+            i: 'Trabaja a tope 20 s y descansa 10 s. Repite 8 rondas (4 minutos) por bloque.' },
+  int:    { n: 'Intervalos', e: '⏲️', p: '40 s de trabajo / 20 s de descanso, rotando ejercicios', min: 16,
+            i: 'Trabaja el tiempo indicado en cada ejercicio, descansa y pasa al siguiente. Repite el circuito hasta acabar el tiempo.' }
+};
+let enTecOcupado = false;
+function enTecItems(cuerpo){ return Array.prototype.filter.call(cuerpo.children, function(x){ return x.classList.contains('ex-item'); }); }
+/* repasa grupos (deben ser ejercicios seguidos, 2 o más) y pinta etiquetas y explicaciones */
+function enTecSync(){
+  if (enTecOcupado) return;
+  enTecOcupado = true;
+  try {
+    const ed = enEditando(), cliente = !isCoachView();
+    Array.prototype.forEach.call(contEnt().querySelectorAll('.sesion-body'), function(cuerpo){
+      Array.prototype.forEach.call(cuerpo.querySelectorAll('.en-grupo-h'), function(h){
+        const inp = h.querySelector('.en-rondas'); if (inp) { const pri = h.nextElementSibling; if (pri && pri.classList.contains('ex-item')) pri.dataset.rondas = inp.value; }
+        h.remove();
+      });
+      const items = enTecItems(cuerpo);
+      // grupos: tramos seguidos con el mismo data-grupo
+      const tramos = [];
+      items.forEach(function(it, i){
+        const g = it.dataset.grupo;
+        const prev = i > 0 && items[i - 1].nextElementSibling === it ? items[i - 1] : null;
+        if (g && prev && prev.dataset.grupo === g && tramos.length && tramos[tramos.length - 1].g === g) tramos[tramos.length - 1].its.push(it);
+        else if (g) tramos.push({ g: g, its: [it] });
+      });
+      let letra = 0;
+      const usados = {};
+      tramos.forEach(function(t){
+        if (t.its.length < 2 || usados[t.g]) { t.its.forEach(enTecSoltar); return; }
+        usados[t.g] = 1;
+        const pri = t.its[0];
+        const tipo = pri.dataset.grupoT || 'ss', def = EN_GRUPO[tipo] || EN_GRUPO.ss;
+        const L = String.fromCharCode(65 + (letra++ % 26));
+        t.its.forEach(function(it, i){ it.dataset.grupoT = tipo; it.dataset.lbl = L + (i + 1); it.classList.add('en-en-grupo'); it.classList.toggle('en-g-ini', i === 0); it.classList.toggle('en-g-fin', i === t.its.length - 1); });
+        const h = document.createElement('div');
+        h.className = 'en-grupo-h t-' + tipo;
+        const min = def.min ? (pri.dataset.grupoMin || def.min) : null;
+        h.innerHTML = '<div class="en-grupo-tit"><b>' + def.e + ' ' + def.n + (min ? ' ' + esc(String(min)) + ' min' : '') + ' · ' + L + '</b>'
+          + (ed ? '<button type="button" class="mini-btn" onclick="enTecAbrir(this.parentNode.parentNode.nextElementSibling)">Cambiar</button>' : '') + '</div>'
+          + '<div class="en-grupo-p">' + esc(pri.dataset.grupoP || def.p) + '</div>'
+          + (tipo === 'amrap' ? '<label class="en-rondas-l">Rondas hechas <input class="en-rondas" type="text" inputmode="numeric" placeholder="—" value="' + esc(pri.dataset.rondas || '') + '"' + (cliente ? '' : ' readonly') + '></label>' : '')
+          + '<details class="en-tec-i"><summary>¿Cómo se hace?</summary><p>' + esc(def.i) + '</p></details>';
+        cuerpo.insertBefore(h, pri);
+      });
+      items.forEach(function(it){
+        if (!it.dataset.grupo) { delete it.dataset.lbl; delete it.dataset.grupoT; it.classList.remove('en-en-grupo', 'en-g-ini', 'en-g-fin'); }
+        // línea de técnica del ejercicio
+        let l = it.querySelector('.en-tec'); if (l) l.remove();
+        const tec = EN_TEC[it.dataset.tec];
+        if (!tec && !it.dataset.lbl) return;
+        l = document.createElement('div'); l.className = 'en-tec';
+        l.innerHTML = (it.dataset.lbl ? '<span class="en-g-lbl">' + it.dataset.lbl + '</span>' : '')
+          + (tec ? '<span class="en-tec-b">' + tec.e + ' ' + tec.n + '</span><span class="en-tec-p">' + esc(it.dataset.tecP || tec.p) + '</span>'
+                 + '<details class="en-tec-i"><summary>¿Cómo se hace?</summary><p>' + esc(tec.i) + '</p></details>' : '');
+        const fila = it.querySelector('.ex-table-row');
+        it.insertBefore(l, fila ? fila.nextSibling : it.firstChild);
+      });
+    });
+    // botón ⚡ en las acciones de cada ejercicio (editando)
+    Array.prototype.forEach.call(contEnt().querySelectorAll('.en-ej-btns'), function(b){
+      if (b.querySelector('.en-tec-btn')) return;
+      const x = document.createElement('button');
+      x.type = 'button'; x.className = 'en-tec-btn'; x.textContent = '⚡ Técnica';
+      x.setAttribute('aria-label', 'Técnica avanzada o circuito'); if (typeof escActivo === 'function' && escActivo()) x.tabIndex = -1;
+      x.setAttribute('onclick', "enTecAbrir(this.closest('.ex-item'))");   // en el HTML: sobrevive a deshacer y a guardar
+      b.insertBefore(x, b.firstChild);
+    });
+  } finally { enTecOcupado = false; }
+}
+function enTecSoltar(it){ ['grupo', 'grupoT', 'grupoP', 'grupoMin', 'lbl', 'rondas'].forEach(function(k){ delete it.dataset[k]; }); it.classList.remove('en-en-grupo', 'en-g-ini', 'en-g-fin'); }
+/* ---------- hoja para elegir técnica ---------- */
+let enTecIt = null;
+function enTecAbrir(it){
+  if (!it || !it.classList.contains('ex-item')) return;
+  enTecIt = it;
+  const o = mjHoja('enTecHoja');
+  const cuerpo = it.parentNode, items = enTecItems(cuerpo), idx = items.indexOf(it);
+  // si está en un grupo, se edita el grupo desde su primer ejercicio
+  let pri = it;
+  if (it.dataset.grupo) { const g = items.filter(function(x){ return x.dataset.grupo === it.dataset.grupo; }); pri = g[0] || it; }
+  const enGrupo = !!it.dataset.grupo;
+  const despues = items.length - items.indexOf(pri) - 1;
+  const actual = enGrupo ? (pri.dataset.grupoT || 'ss') : (it.dataset.tec || '');
+  const nG = enGrupo ? items.filter(function(x){ return x.dataset.grupo === it.dataset.grupo; }).length - 1 : 1;
+  const chip = function(v, t, sel){ return '<button type="button" class="chip protein' + (sel ? ' selected' : '') + '" data-v="' + v + '" onclick="enTecElegir(this)">' + t + '</button>'; };
+  const tipos = [['', 'Ninguna'], ['myo', '🔥 Myo reps'], ['drop', '⬇️ Drop set'], ['rp', '⏸️ Rest-pause'], ['ss', '🔗 Superserie'], ['emom', '⏱️ EMOM'], ['amrap', '🔁 AMRAP'], ['tabata', '⚡ Tabata'], ['int', '⏲️ Intervalos']];
+  o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Técnica · ' + esc(enNombreEj(pri)) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'enTecHoja\')" aria-label="Cerrar">×</button></div>'
+    + '<div class="section-lbl">Técnica de este ejercicio o grupo</div><div class="chips" id="enTecTipos">' + tipos.map(function(t){ return chip(t[0], t[1], t[0] === actual); }).join('') + '</div>'
+    + '<div id="enTecGrupoOpc" hidden><div class="section-lbl">Ejercicios del grupo</div><div class="chips" id="enTecN">'
+    + (despues ? [1, 2, 3, 4, 5].filter(function(n){ return n <= despues; }).map(function(n){ return '<button type="button" class="chip protein' + (n === nG ? ' selected' : '') + '" data-n="' + n + '" onclick="enTecN(this)">Este + ' + n + (n === 1 ? ' siguiente' : ' siguientes') + '</button>'; }).join('') : '<span class="ajx-note">No hay ejercicios después de este en el día. Añade o mueve ejercicios para agruparlos.</span>')
+    + '</div><div class="field" id="enTecMinF"><label for="enTecMin">Minutos</label><input type="number" id="enTecMin" inputmode="numeric" min="1" max="90"></div></div>'
+    + '<div class="field" id="enTecPF"><label for="enTecP">Pauta (la verá el cliente)</label><textarea id="enTecP" rows="2" class="sg-text"></textarea></div>'
+    + '<p class="ajx-note" id="enTecInfo"></p>'
+    + '<div class="btn-row"><button class="btn-eq" onclick="mjCerrarHoja(\'enTecHoja\')">Cancelar</button><button class="btn-eq btn-eq-p" onclick="enTecAplicar()">Aplicar</button></div></div>';
+  o.dataset.pri = '1';
+  enTecPri = pri;
+  o.classList.add('show');
+  const p = document.getElementById('enTecP');
+  p.value = enGrupo ? (pri.dataset.grupoP || '') : (it.dataset.tecP || '');
+  document.getElementById('enTecMin').value = enGrupo ? (pri.dataset.grupoMin || '') : '';
+  enTecRefrescar(true);
+}
+let enTecPri = null;
+function enTecSel(){ const c = document.querySelector('#enTecTipos .chip.selected'); return c ? c.dataset.v : ''; }
+function enTecElegir(b){
+  Array.prototype.forEach.call(document.querySelectorAll('#enTecTipos .chip'), function(x){ x.classList.toggle('selected', x === b); });
+  document.getElementById('enTecP').value = '';
+  document.getElementById('enTecMin').value = '';
+  enTecRefrescar(false);
+}
+function enTecN(b){ Array.prototype.forEach.call(document.querySelectorAll('#enTecN .chip'), function(x){ x.classList.toggle('selected', x === b); }); }
+function enTecRefrescar(inicio){
+  const v = enTecSel(), g = EN_GRUPO[v], t = EN_TEC[v];
+  document.getElementById('enTecGrupoOpc').hidden = !g;
+  document.getElementById('enTecPF').hidden = !v;
+  const minF = document.getElementById('enTecMinF'); minF.hidden = !(g && g.min);
+  const p = document.getElementById('enTecP'), m = document.getElementById('enTecMin');
+  if (v && !p.value) p.value = (g || t).p;
+  if (g && g.min && !m.value) m.value = g.min;
+  if (g && !document.querySelector('#enTecN .chip.selected')) { const c = document.querySelector('#enTecN .chip'); if (c) c.classList.add('selected'); }
+  document.getElementById('enTecInfo').textContent = v ? 'Para el cliente: ' + (g || t).i : 'Sin técnica especial: series normales.';
+}
+function enTecAplicar(){
+  const it = enTecIt, pri = enTecPri || it; if (!it) return;
+  const v = enTecSel(), g = EN_GRUPO[v];
+  const cuerpo = it.parentNode, items = enTecItems(cuerpo);
+  const pauta = document.getElementById('enTecP').value.trim();
+  // deshacer el grupo anterior de este ejercicio
+  if (it.dataset.grupo) { const id = it.dataset.grupo; items.filter(function(x){ return x.dataset.grupo === id; }).forEach(enTecSoltar); }
+  if (!v) { delete it.dataset.tec; delete it.dataset.tecP; }
+  else if (EN_TEC[v]) { it.dataset.tec = v; if (pauta && pauta !== EN_TEC[v].p) it.dataset.tecP = pauta; else delete it.dataset.tecP; }
+  else if (g) {
+    const nb = document.querySelector('#enTecN .chip.selected');
+    if (!nb) { toast('Necesitas al menos otro ejercicio después de este en el día'); return; }
+    const n = +nb.dataset.n, ini = items.indexOf(pri);
+    const id = 'g' + Date.now().toString(36);
+    items.slice(ini, ini + n + 1).forEach(function(x){ enTecSoltar(x); x.dataset.grupo = id; x.dataset.grupoT = v; });
+    if (pauta && pauta !== g.p) pri.dataset.grupoP = pauta;
+    if (g.min) { const mn = parseInt(document.getElementById('enTecMin').value, 10); if (mn > 0) pri.dataset.grupoMin = mn; }
+  }
+  mjCerrarHoja('enTecHoja');
+  enTecSync(); programarGuardado();
+  toast(v ? 'Técnica aplicada' : 'Técnica quitada');
+}
+/* cuándo repintar */
+enPrepararEdicion = (function(orig){ return function(){ orig(); enTecSync(); }; })(enPrepararEdicion);
+enTodoSync = (function(orig){ return function(){ orig(); enTecSync(); }; })(enTodoSync);
+(function(){
+  let t = null;
+  const obs = new MutationObserver(function(muts){
+    if (enTecOcupado) return;
+    const rel = muts.some(function(m){ return Array.prototype.some.call(m.addedNodes, function(n){ return n.classList && (n.classList.contains('ex-item') || n.classList.contains('sesion-card')); })
+      || Array.prototype.some.call(m.removedNodes, function(n){ return n.classList && (n.classList.contains('ex-item') || n.classList.contains('sesion-card')); }); });
+    if (!rel) return;
+    clearTimeout(t); t = setTimeout(enTecSync, 30);
+  });
+  obs.observe(contEnt(), { childList: true, subtree: true });
+})();
+/* el cliente apunta las rondas del AMRAP: se guardan con el plan y se vacían al cambiar de semana */
+document.addEventListener('input', function(e){
+  if (e.target.classList && e.target.classList.contains('en-rondas')) {
+    const pri = e.target.closest('.en-grupo-h').nextElementSibling;
+    if (pri) pri.dataset.rondas = e.target.value;
+    e.target.setAttribute('value', e.target.value);
+    programarGuardado();
+  }
+});
+mjCambioDeSemana = (function(orig){
+  return function(k){
+    const r = orig.apply(this, arguments);
+    Array.prototype.forEach.call(contEnt().querySelectorAll('[data-rondas]'), function(x){ delete x.dataset.rondas; });
+    Array.prototype.forEach.call(contEnt().querySelectorAll('.en-rondas'), function(x){ x.value = ''; x.removeAttribute('value'); });
+    return r;
+  };
+})(mjCambioDeSemana);
+atrasDentroApp = (function(orig){ return function(){ if (capaVisible('enTecHoja')) { mjCerrarHoja('enTecHoja'); return true; } return orig(); }; })(atrasDentroApp);
+enTecSync();
