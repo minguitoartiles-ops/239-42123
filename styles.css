@@ -1334,3 +1334,109 @@
   .kc-nutri .kc-al{color:#C0473A;font-weight:700;}
   .kc-nutri .kc-pend{color:#B5561E;font-weight:600;}
   @media (max-width: 480px){ #coachBarLabel{display:none;} }
+
+/* ===== v0.58 · Entrenamiento: series, RIR, edición rápida, registro, planes y ficha ===== */
+:root{ --rir-r:#D9503F; --rir-a:#E3A659; --rir-v:#74BC8A; }
+/* RIR por colores */
+.sr-badge{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:44px;padding:4px 6px;border-radius:9px;font:700 12.5px var(--f-mono);color:var(--ink);background:var(--wash-soft);border:1.5px solid var(--line-strong);line-height:1.1;}
+.sr-badge small{font:600 8.5px var(--f-mono);letter-spacing:.04em;opacity:.85;}
+.sr-badge.rir-r,.sr-rir.rir-r,.rx-field.rir-r{border-color:var(--rir-r) !important;background:rgba(217,80,63,.16) !important;}
+.sr-badge.rir-a,.sr-rir.rir-a,.rx-field.rir-a{border-color:var(--rir-a) !important;background:rgba(227,166,89,.18) !important;}
+.sr-badge.rir-v,.sr-rir.rir-v,.rx-field.rir-v{border-color:var(--rir-v) !important;background:rgba(116,188,138,.18) !important;}
+.rx-field.rir-r,.rx-field.rir-a,.rx-field.rir-v{border-radius:8px;border-style:solid;border-width:1.5px;}
+.t-r{color:var(--rir-r);} .t-a{color:var(--rir-a);} .t-v{color:var(--rir-v);}
+/* filas de series: plan · peso · reps hechas */
+.sr-plan,.sr-hechas{display:flex;gap:6px;margin:0 0 6px;}
+.sr-hechas{margin:6px 0 0;}
+.sr-cel{flex:1;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.sr-cel .sr-badge{width:100%;}
+.sr-n{font:600 9px var(--f-mono);color:var(--dim-45);letter-spacing:.05em;}
+.sr-reps,.sr-rir,.sr-h{width:100%;min-width:0;height:30px;border-radius:9px;border:1px solid var(--line-strong);background:var(--wash-soft);text-align:center;font:600 12px var(--f-mono);color:var(--ink);padding:0 2px;}
+.sr-h{flex:1;min-width:52px;height:30px;}
+.sr-h[readonly]{opacity:.75;}
+.sr-reps:focus,.sr-rir:focus,.sr-h:focus{outline:1.5px solid var(--accent);}
+.sr-rir{height:26px;font-size:11px;}
+/* leyenda */
+.en-leyenda{margin:0 0 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+.en-leyenda summary{display:flex;align-items:center;gap:6px;flex-wrap:wrap;cursor:pointer;list-style:none;}
+.en-leyenda summary::-webkit-details-marker{display:none;}
+.en-leyenda summary .sr-badge{flex-direction:row;font-size:10.5px;min-width:0;padding:3px 8px;}
+.en-ley-q{margin-left:auto;font:600 11.5px var(--f-body);color:var(--accent);}
+.en-leyenda p{margin:8px 0 0;font:400 12.5px/1.5 var(--f-body);color:var(--dim-6);}
+/* controles que solo se ven editando */
+.en-herr,.en-ses-acts,.en-ej-acts{display:none;}
+.coach-edit .en-herr{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap;}
+.coach-edit .en-herr .btn-eq{flex:1;min-width:96px;}
+.coach-edit .en-ses-acts{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap;}
+.coach-edit .en-ej-acts{display:flex;flex-direction:column;gap:6px;margin:4px 0 9px;}
+.en-ses-acts button,.en-ej-btns button,.en-pautas button{height:30px;min-width:34px;padding:0 9px;border-radius:9px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);font:600 12px var(--f-body);cursor:pointer;}
+.en-pautas{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.en-pautas::-webkit-scrollbar{display:none;}
+.en-pautas button{flex:none;font:600 11px var(--f-mono);border-color:var(--accent-line);color:var(--accent);}
+.en-ej-btns{display:flex;gap:6px;justify-content:flex-end;}
+.en-ej-btns .en-del{color:var(--danger);border-color:rgba(217,80,63,.4);}
+.coach-edit .sesion-title[contenteditable]{border-bottom:1px dashed var(--accent-line);outline:none;cursor:text;min-width:40px;}
+.coach-edit .sesion-title[contenteditable]:focus{border-bottom-style:solid;border-color:var(--accent);}
+.coach-edit .sesion-title[contenteditable]::after{content:"\00a0✎";font-size:10px;color:var(--accent);}
+/* selector de varios ejercicios */
+.en-multi{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 2px;background:var(--card);border-top:1px solid var(--line);margin-top:8px;}
+.en-multi span{font:500 12.5px var(--f-body);color:var(--dim-6);}
+.en-multi .btn-primary{width:auto;padding:0 18px;height:40px;}
+.en-multi .btn-primary:disabled{opacity:.45;}
+.en-marcado{background:var(--accent-wash) !important;outline:1.5px solid var(--accent);border-radius:10px;}
+/* historial del ejercicio (cliente) */
+.en-hist{margin:8px 0 2px;font:500 12px var(--f-body);color:var(--dim-6);}
+.en-hist summary{cursor:pointer;color:var(--accent);font-weight:600;}
+.en-hist-f{display:flex;gap:10px;padding:4px 0;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:11.5px;}
+.en-hist-f span{color:var(--dim-45);flex:none;}
+.en-hist-f b{font-weight:600;color:var(--ink);}
+/* registro de pesos en la ficha */
+.en-reg-dia{font:700 12px var(--f-body);margin:12px 0 6px;color:var(--dim-6);text-transform:uppercase;letter-spacing:.05em;}
+.en-reg-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);}
+.en-reg{border-collapse:collapse;width:100%;font:500 11.5px var(--f-mono);}
+.en-reg th,.en-reg td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;}
+.en-reg th{font:600 10px var(--f-mono);color:var(--dim-45);text-transform:uppercase;}
+.en-reg td:first-child,.en-reg th:first-child{position:sticky;left:0;background:var(--card);font-family:var(--f-body);font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;}
+.en-reg .sube{color:var(--fat);}
+.en-reg .act{background:var(--accent-wash);}
+.en-ia-btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+.en-ia-btns > *{flex:1;min-width:120px;text-align:center;}
+/* pestaña Entrenos / Nutrición */
+.planes-lista{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.plan-fila{position:relative;display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line-strong);border-radius:14px;padding:12px 14px;color:var(--ink);font:inherit;cursor:pointer;}
+.plan-fila.vacio{border-left-color:var(--danger);}
+.plan-fila.revisar{border-left-color:var(--carb);}
+.plan-fila.ok{border-left-color:var(--fat);}
+.plan-fila-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.plan-fila-top b{font:700 15px var(--f-body);}
+.plan-est{font:600 10px var(--f-mono);padding:3px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;}
+.plan-est.vacio{background:rgba(217,80,63,.16);color:var(--danger);}
+.plan-est.revisar{background:rgba(227,166,89,.18);color:var(--carb);}
+.plan-est.ok{background:rgba(116,188,138,.18);color:var(--fat);}
+.plan-fila-sub{font:500 12px var(--f-body);color:var(--dim-6);margin-top:4px;}
+.plan-fila-est{font:400 12px var(--f-body);color:var(--dim-45);margin-top:2px;padding-right:80px;}
+.plan-fila-cta{position:absolute;right:14px;bottom:11px;font:600 12px var(--f-body);color:var(--accent);}
+/* ficha: accesos grandes y apartados */
+.ficha-accesos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px;}
+.acc-btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:66px;padding:8px 4px;border-radius:14px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);font:600 11.5px var(--f-body);cursor:pointer;}
+.acc-btn span{font-size:21px;line-height:1;}
+.acc-btn:first-child{background:var(--accent-wash);border-color:var(--accent-line);}
+.acc-btn.rojo{border-color:var(--danger);}
+.acc-n{position:absolute;top:5px;right:6px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--danger);color:#fff;font:700 10px/17px var(--f-mono);font-style:normal;text-align:center;}
+.ficha-secciones{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin:0 -2px 14px;padding:0 2px 4px;scrollbar-width:none;}
+.ficha-secciones::-webkit-scrollbar{display:none;}
+.ficha-secciones .chip{flex:none;}
+.sec-oculta{display:none !important;}
+.fe-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;margin-bottom:14px;}
+.fe-top{display:flex;justify-content:space-between;gap:8px;font:500 12px var(--f-body);color:var(--dim-6);margin-bottom:6px;}
+.fe-top .lnk{color:var(--accent);font-weight:600;flex:none;}
+.fe-dia{padding:8px 0;border-top:1px solid var(--line);}
+.fe-dia > b{display:block;font:700 13px var(--f-body);margin-bottom:5px;}
+.fe-ej{display:flex;align-items:center;gap:6px;font:500 12px var(--f-body);color:var(--dim-6);padding:2px 0;}
+.fe-ej small{font-family:var(--f-mono);color:var(--dim-45);}
+.fe-ej .sr-badge{flex-direction:row;min-width:0;padding:1px 6px;font-size:9.5px;margin-left:auto;}
+.kc-plan-btn{margin-left:auto;flex:none;height:30px;padding:0 10px;border-radius:9px;border:1px solid var(--accent-line);background:var(--accent-wash);color:var(--accent);font:600 11.5px var(--f-body);cursor:pointer;}
+@media (max-width:380px){ .ficha-accesos{gap:6px;} .acc-btn{font-size:10.5px;min-height:60px;} }
+.en-reg tbody th{font:600 12px var(--f-body);color:var(--ink);text-transform:none;position:sticky;left:0;background:var(--card);max-width:140px;overflow:hidden;text-overflow:ellipsis;}
+.en-reg td{font-family:var(--f-mono);}
+.ficha-chat-btn[hidden]{display:none !important;}
