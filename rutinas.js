@@ -26,11 +26,6 @@ pickExercise = (function(orig){
     if (it && nota != null) { const d = it.querySelector('.ex-desc'); if (d) d.textContent = /^Sin descripción/.test(nota) ? '' : nota; }   // cambiar de ejercicio conserva la nota
   };
 })(pickExercise);
-/* el asistente y la importación: una pauta por ejercicio (la de la primera serie) */
-enInsertarEjercicios = (function(orig){
-  return function(btn, lista){ return orig(btn, (lista || []).map(function(e){ const x = Object.assign({}, e); delete x.series; return x; })); };
-})(enInsertarEjercicios);
-
 /* ---------- 2 · paso al nuevo sistema de los planes ya hechos (una vez por ejercicio) ----------
    - Se borran todas las descripciones (pasan a ser notas vacías).
    - Si todas las series tienen las mismas reps y RIR, se quedan; si son distintas, se vacían
@@ -83,6 +78,7 @@ function ruPintar(){
     }
     const fs = it.querySelectorAll('.ex-table-row > span:not(.ex-name-cell):not(.ru-asa)');
     ['ru-se', 'ru-re', 'ru-ri'].forEach(function(c, i){ if (fs[i]) fs[i].classList.add('ru-f', c); });
+    if (ed && vistaActual === 'entreno') ruPanelSeries(it); else if (!ed) { const ss = it.querySelector('.ru-ss'); if (ss) { const c = ss.nextSibling; if (c && c.nodeType === 8) c.remove(); ss.remove(); } }
     const b = it.querySelector('.ex-link-btn');
     if (b) b.textContent = it.dataset.video ? '🎬 Vídeo de ejemplo ✓ · cambiar' : '🎬 Añadir vídeo de ejemplo';
     const v = it.querySelector('.ex-video');
@@ -138,14 +134,14 @@ document.addEventListener('click', function(e){
 enUndoFoto = (function(orig){
   return function(v){
     const r = orig(v);
-    if (r && r.huella) r.huella = r.huella.replace(/<div class="ru-video[\s\S]*?<\/div>/g, '').replace(/<span class="ru-asa"[^>]*>⠿<\/span>/g, '');
+    if (r && r.huella) r.huella = r.huella.replace(/<div class="ru-ss[\s\S]*?<!--\/ru-ss-->/g, '').replace(/<div class="ru-video[\s\S]*?<\/div>/g, '').replace(/<span class="ru-asa"[^>]*>⠿<\/span>/g, '');
     return r;
   };
 })(enUndoFoto);
 /* al guardar, no se guarda el vídeo abierto */
 guardarPlan = (function(orig){
   return function(){
-    const vs = Array.prototype.map.call(contEnt().querySelectorAll('.ru-video'), function(x){ const p = x.parentNode, n = x.nextSibling; x.remove(); return [x, p, n]; });
+    const vs = Array.prototype.map.call(contEnt().querySelectorAll('.ru-video, .ru-ss'), function(x){ const p = x.parentNode, n = x.nextSibling; x.remove(); return [x, p, n]; });
     const r = orig.apply(this, arguments);
     vs.forEach(function(v){ v[1].insertBefore(v[0], v[2]); });
     return r;
@@ -246,5 +242,91 @@ guardarPlan = (function(orig){
   document.addEventListener('click', function(e){ if (anularClic) { e.preventDefault(); e.stopPropagation(); anularClic = false; } }, true);
   document.addEventListener('contextmenu', function(e){ if ((drag || cand) && e.target.closest && e.target.closest('#sesionesCont .ex-item')) e.preventDefault(); });
 })();
+
+/* ---------- 5 · ajustar serie a serie (reps y RIR de cada serie, añadir y quitar series) ---------- */
+function ruValSerie(p, k){ const v = p.dataset[k]; return v == null ? '' : String(v); }
+function ruDistintas(it){
+  const p = enPesos(it); if (p.length < 2) return false;
+  return p.some(function(x){ return ruValSerie(x, 'reps') !== ruValSerie(p[0], 'reps') || ruValSerie(x, 'rir') !== ruValSerie(p[0], 'rir'); });
+}
+// la pauta de arriba: el valor si todas las series coinciden; si no, vacía con «varía»
+function ruCabecera(it){
+  const p = enPesos(it), f = it.querySelectorAll('.rx-field'); if (!p.length || f.length < 3) return;
+  [['reps', f[1]], ['rir', f[2]]].forEach(function(x){
+    const v0 = ruValSerie(p[0], x[0]), igual = p.every(function(q){ return ruValSerie(q, x[0]) === v0; });
+    if (document.activeElement !== x[1]) { x[1].value = igual ? v0 : ''; x[1].setAttribute('value', x[1].value); }
+    x[1].placeholder = igual ? '' : 'varía';
+    if (x[0] === 'rir') enRirPoner(x[1], igual ? v0 : '');
+  });
+  if (document.activeElement !== f[0]) { f[0].value = p.length; f[0].setAttribute('value', p.length); }
+}
+function ruPanelSeries(it){
+  const p = enPesos(it);
+  let ss = it.querySelector('.ru-ss');
+  if (it._ruAbierto == null) it._ruAbierto = ruDistintas(it);       // se abre solo si ya son distintas
+  if (!ss) {
+    ss = document.createElement('div'); ss.className = 'ru-ss';
+    const row = it.querySelector('.ex-table-row'); row.parentNode.insertBefore(ss, row.nextSibling);
+    ss.insertAdjacentHTML('afterend', '<!--/ru-ss-->');
+  }
+  const ab = !!it._ruAbierto, enfocado = ss.contains(document.activeElement) ? document.activeElement : null;
+  if (enfocado && enfocado.tagName === 'INPUT') return;               // no se repinta mientras se escribe
+  ss.classList.toggle('abierto', ab);
+  ss.innerHTML = '<button type="button" class="ru-ss-t" aria-expanded="' + ab + '">' + (ab ? '▴' : '▾') + ' Ajustar serie a serie'
+      + (ruDistintas(it) ? ' <small>' + p.map(function(x){ return esc(ruValSerie(x, 'reps') || '—'); }).join(' · ') + ' reps</small>' : '') + '</button>'
+    + (ab ? '<div class="ru-ss-l">' + p.map(function(x, i){
+        const r = ruValSerie(x, 'rir');
+        return '<div class="ru-ss-f" data-i="' + i + '"><span class="ru-ss-n">Serie ' + (i + 1) + '</span>'
+          + '<label><input type="text" inputmode="numeric" class="ru-ss-reps" value="' + esc(ruValSerie(x, 'reps')) + '" aria-label="Reps de la serie ' + (i + 1) + '"><span>reps</span></label>'
+          + '<label><span>RIR</span><input type="text" inputmode="numeric" class="ru-ss-rir ' + enRir(r) + '" value="' + esc(r) + '" aria-label="RIR de la serie ' + (i + 1) + '"></label>'
+          + '<button type="button" class="ru-ss-x" aria-label="Quitar la serie ' + (i + 1) + '"' + (p.length < 2 ? ' disabled' : '') + '>✕</button></div>';
+      }).join('') + '<button type="button" class="ru-ss-mas">+ Añadir serie</button></div>' : '');
+  ruCabecera(it);
+}
+function ruTrasCambio(it){
+  enSyncSeries(it); ruCabecera(it);
+  recalcTonelaje(); recalcEntreno(); programarGuardado();
+}
+document.addEventListener('click', function(e){
+  const t = e.target; if (!t.closest || !enEditando()) return;
+  const it = t.closest('#sesionesCont .ex-item'); if (!it) return;
+  if (t.closest('.ru-ss-t')) { it._ruAbierto = !it._ruAbierto; ruPanelSeries(it); return; }
+  if (t.closest('.ru-ss-mas')) {                                     // copia la última serie
+    const f = it.querySelectorAll('.rx-field'), n = enPesos(it).length;
+    if (n >= 10) { toast('Máximo 10 series'); return; }
+    f[0].value = n + 1; onPautaChange(f[0]); ruPanelSeries(it); ruTrasCambio(it);
+    const l = it.querySelectorAll('.ru-ss-reps'); if (l.length) l[l.length - 1].focus();
+    return;
+  }
+  const x = t.closest('.ru-ss-x');
+  if (x) {
+    const p = enPesos(it); if (p.length < 2) return;
+    const i = +x.closest('.ru-ss-f').dataset.i;
+    p[i].closest('.serie-in').remove();
+    const h = it.querySelectorAll('.sr-h'); if (h[i]) h[i].remove();
+    enPesos(it).forEach(function(q, k){ const s = q.closest('.serie-in').querySelector('span'); if (s) s.textContent = 'S' + (k + 1); });
+    ruPanelSeries(it); ruTrasCambio(it);
+  }
+});
+document.addEventListener('input', function(e){
+  const t = e.target; if (!t.classList) return;
+  if (t.classList.contains('ru-ss-reps') || t.classList.contains('ru-ss-rir')) {
+    const it = t.closest('.ex-item'), i = +t.closest('.ru-ss-f').dataset.i, p = enPesos(it)[i]; if (!p) return;
+    const v = t.value.replace(/[^0-9\-]/g, ''); if (v !== t.value) t.value = v;
+    t.setAttribute('value', v);
+    const k = t.classList.contains('ru-ss-reps') ? 'reps' : 'rir';
+    p.dataset[k] = v; p.setAttribute('data-' + k, v);
+    if (k === 'rir') enRirPoner(t, v);
+    ruTrasCambio(it);
+    const tt = it.querySelector('.ru-ss-t small'); if (tt) tt.textContent = enPesos(it).map(function(x){ return ruValSerie(x, 'reps') || '—'; }).join(' · ') + ' reps';
+    return;
+  }
+  // la pauta de arriba (series, reps o RIR) manda: se repinta la lista de series
+  if (t.classList.contains('rx-field')) { const it = t.closest('.ex-item'); if (it && enEditando()) setTimeout(function(){ ruPanelSeries(it); }, 0); }
+});
+document.addEventListener('focusout', function(e){
+  const t = e.target; if (!t.closest) return;
+  const ss = t.closest('.ru-ss'); if (ss && enEditando()) setTimeout(function(){ if (!ss.contains(document.activeElement)) ruPanelSeries(ss.closest('.ex-item')); }, 0);
+});
 
 ruPintar();
