@@ -3,8 +3,20 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.62 → 0.62.4 (actual)
-Cambios acumulados hacia la 0.63: **9 de 10**
+## Versión 0.63 → 0.63.4 (actual)
+Cambios acumulados hacia la 0.64: **8 de 10**
+
+### Hacia la 0.64
+1. 20/10/2026 18:10 · Editor de rutinas: cada ejercicio es una tarjeta con sus propias columnas «Series · Reps · RIR» (en el ordenador, en la misma fila que el nombre)
+2. 20/10/2026 18:10 · Las series del cliente se llaman «Serie 1, Serie 2, Serie 3…» en vez de S1, S2, S3 → **0.63.1**
+3. 20/10/2026 18:10 · Vídeo de ejemplo por ejercicio: Domingo pega el enlace (YouTube, Instagram, Vimeo o Google Drive) y el cliente lo ve dentro de la app con «▶ Ver vídeo de ejemplo»; otros enlaces se abren aparte
+4. 20/10/2026 18:10 · Fuera las descripciones automáticas de los ejercicios (también las de los planes ya hechos): ahora son «Notas» que escribe Domingo; si no hay nota, el cliente no ve nada → **0.63.2**
+5. 20/10/2026 18:10 · Domingo ya no ve el check de «sesión hecha» en los días (solo lo ve el cliente)
+6. 20/10/2026 18:10 · Mover ejercicios manteniendo pulsado (ratón o dedo) o arrastrando desde ⠿, dentro del día o a otro día (soltando sobre un día plegado); se puede deshacer → **0.63.3**
+7. 20/10/2026 18:10 · RIR con un tono por valor: 0 rojo muy oscuro, 1 rojo oscuro, 2 rojo claro, 3 naranja oscuro, 4 naranja claro, 5+ verde (antes 3-4 era amarillo)
+8. 20/10/2026 18:10 · Una sola pauta por ejercicio: Domingo pone series, reps y RIR una vez y se aplican a todas las series (fuera la edición serie a serie). En los planes ya hechos, si las series eran distintas se vacían reps y RIR para ponerlos a mano; el asistente y la importación usan la pauta de la primera serie → **0.63.4**
+
+## Versión 0.62 → 0.62.4
 
 ### Hacia la 0.63
 1. 20/10/2026 16:50 · Plan nutricional (profesionales, móvil): barra fija con el cuadre del día (kcal y macros frente al objetivo) y calculadora plegable que muestra en una línea el objetivo y el reparto
@@ -16,6 +28,7 @@ Cambios acumulados hacia la 0.63: **9 de 10**
 7. 20/10/2026 17:10 · Recompensas sin saturar: los logros que llegan a la vez (p. ej. semana completa + racha) salen en un único mensaje «¡N logros a la vez!» con la lista; «sesión hecha» no se muestra si hay un logro mayor
 8. 20/10/2026 17:10 · Recompensas: récord de repeticiones (más reps que nunca con ese peso o más, uno por ejercicio y día); los récords también comparan con las series ya hechas ese día → **0.62.4**
 9. 20/10/2026 17:10 · Entreno en móviles pequeños (iPhone SE y similares): el RIR solo se despliega en la serie que toca (o al tocar S1 o editar la serie); las demás muestran el RIR apuntado en una etiqueta de color. Un día de 6 ejercicios pasa de unas 5,5 a 4,2 pantallas
+10. 20/10/2026 18:10 · Rutinas: el nombre del día más grande (22 px) que el de cada ejercicio (16-17 px, numerado) para distinguirlos mejor, para Domingo y para el cliente → **sube a la 0.63**
 
 ## Versión 0.61.1 → 0.61.4
 

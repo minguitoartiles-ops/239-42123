@@ -36,8 +36,6 @@
 #app:not(.coach-edit) #view-entreno .ex-table-row > span:not(.ex-name-cell){display:none;}
 #app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 16px/1.25 var(--f-body);color:var(--ink);}
 #app:not(.coach-edit) #view-entreno .ex-name-cell::before{content:counter(ej, decimal-leading-zero);display:inline-block;min-width:26px;margin-right:6px;font:700 13px var(--f-mono);color:var(--dim-45);}
-#app:not(.coach-edit) #view-entreno .ex-item:not(.ver-tec) .ex-desc,
-#app:not(.coach-edit) #view-entreno .ex-item:not(.ver-tec) .ex-desc-restore{display:none;}
 .ex-tec-btn{border:none;background:none;padding:2px 0;color:var(--accent);font:600 12px var(--f-body);cursor:pointer;}
 /* ejercicio hecho: plegado con su resumen */
 #app:not(.coach-edit) .ex-item.ej-hecho:not(.ej-abrir) > :not(.ex-table-row):not(.ej-resumen){display:none !important;}
