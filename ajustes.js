@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.59.2';
+const APP_VERSION = '0.60';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -424,7 +424,8 @@ function htmlAjustes(rol){
   /* --- Notificaciones (cliente y profesional) --- */
   if (typeof htmlAjustesAvisos === 'function') h += htmlAjustesAvisos(rol);
 
-  /* --- Dispositivos --- */
+  /* --- Dispositivos (solo clientes) --- */
+  if (cliente) {
   h += '<div class="section-lbl">Dispositivos y apps de salud</div>';
   h += '<p class="ajx-note">' + (cliente
       ? 'Conecta tu reloj o app de salud para que tu equipo vea tus pasos, actividad, sueño y frecuencia cardiaca sin apuntarlos a mano. Solo se leerán los datos que tú autorices.'
@@ -436,6 +437,7 @@ function htmlAjustes(rol){
       + '<div class="ajx-detail">' + esc(x.texto) + '</div></div>';
   });
   h += '</div>';
+  }
 
   /* --- Copias de seguridad --- */
   h += '<div class="section-lbl">Copias de seguridad</div><div class="list-group">';
