@@ -546,11 +546,11 @@ const NU_REFS = [
   ['frutos secos', /frutos secos|almendra|nuez|nueces|anacardo|avellana|pistacho|cacahuete/i, /crema|harina|bebida/i, { p: [8, 32], c: [3, 30], f: [40, 75] }, 'P 15-25 · C 5-20 · G 50-65'],
   ['un chocolate', /chocolate|cacao/i, /puro en polvo|desgrasado|bebida/i, { p: [3, 15], c: [12, 65], f: [25, 55] }, 'P 7-10 · C 20-45 · G 35-45'],
   ['una proteína en polvo', /whey|prote[ií]na en polvo|aislado|prote[ií]na whey|case[ií]na/i, null, { p: [60, 95], c: [0, 15], f: [0, 10] }, 'P 75-90 · C 2-8 · G 1-6'],
-  ['un fiambre', /fiambre|pechuga de pavo loncha|jam[oó]n cocido|jam[oó]n york/i, null, { p: [10, 25], c: [0, 6], f: [0, 8] }, 'P 15-20 · C 1-3 · G 1-4'],
-  ['carne magra', /pollo|pavo|pechuga|ternera|solomillo|lomo/i, /fiambre|nugget|empanad|frito|\+/i, { p: [17, 33], c: [0, 3], f: [0, 15] }, 'P 21-25 · C 0 · G 1-8'],
+  ['un fiambre', /fiambre|lonchas?|jam[oó]n cocido|jam[oó]n york/i, null, { p: [10, 25], c: [0, 6], f: [0, 8] }, 'P 15-20 · C 1-3 · G 1-4'],
+  ['carne magra', /pollo|pavo|pechuga|ternera|solomillo|lomo/i, /fiambre|lonchas?|nugget|empanad|frito|\+/i, { p: [17, 33], c: [0, 3], f: [0, 15] }, 'P 21-25 · C 0 · G 1-8'],
   ['un pescado o marisco', /at[uú]n|bacalao|merluza|pescado|salm[oó]n|sardina|lubina|dorada|gamba|langostino|pulpo|calamar|sepia/i, /empanad|rebozad|surimi|\+/i, { p: [12, 32], c: [0, 3], f: [0, 16] }, 'P 18-25 · C 0 · G 1-12'],
   ['un queso', /queso/i, /crema de queso light/i, { p: [7, 40], c: [0, 7], f: [0, 40] }, 'P 10-30 · C 1-4 · G 5-35'],
-  ['un cereal o harina', /arroz|pasta|cous|quinoa|bulgur|avena|copos|ma[ií]z|pan\b|harina|tortita|cereal/i, /\+|integral con|leche/i, { p: [1.5, 18], c: [18, 88], f: [0, 10] }, 'cocido: P 3-5 · C 20-30 · G 1 · en crudo: P 7-14 · C 65-80 · G 1-7'],
+  ['un cereal o harina', /arroz|pasta|cous|quinoa|bulgur|avena|copos|ma[ií]z|pan\b|harina|tortita|cereal/i, /\+|integral con|leche|proteico/i, { p: [1.5, 18], c: [18, 88], f: [0, 10] }, 'cocido: P 3-5 · C 20-30 · G 1 · en crudo: P 7-14 · C 65-80 · G 1-7'],
   ['una legumbre', /legumbre|lenteja|garbanzo|alubia|jud[ií]a blanca|soja texturizada/i, /\+|harina/i, { p: [5, 52], c: [5, 62], f: [0, 20] }, 'cocida: P 7-9 · C 15-20 · G 1 · en seco: P 20-25 · C 45-60 · G 2-6']
 ];
 function nuRevisarMacros(nombre, p, c, f){
@@ -608,3 +608,89 @@ saveNewFood = (function(orig){
   ['newFoodName', 'newFoodP', 'newFoodC', 'newFoodF'].forEach(function(id){ const i = document.getElementById(id); if (i) i.addEventListener('input', pintar); });
   toggleNewFood = (function(orig){ return function(s){ orig(s); nuMacrosConfirmados = ''; pintar(); }; })(toggleNewFood);
 })();
+
+/* ---------- v0.60.4 · alimentos de supermercado (Mercadona, Lidl y Carrefour), por 100 g (bebidas por 100 ml) ----------
+   Fuente: fichas de FatSecret y Open Food Facts (datos de etiqueta), revisadas el 20/10/2026. */
+const NU_SUPER = [
+  // Mercadona (Hacendado)
+  ['Yogur +Proteínas natural (Mercadona Hacendado)', 11, 4.2, 0.2],
+  ['Queso fresco batido 0% (Mercadona Hacendado)', 8, 3.5, 0.1],
+  ['Queso fresco batido +Proteínas (Mercadona Hacendado)', 10, 3.1, 0.5],
+  ['Queso de Burgos 0% (Mercadona Hacendado)', 12.3, 4.4, 0.2],
+  ['Mozzarella fresca light (Mercadona Hacendado)', 17, 1, 9],
+  ['Pechuga de pavo finas lonchas (Mercadona Hacendado)', 17, 0.5, 0.5],
+  ['Claras de huevo pasteurizadas (Mercadona Hacendado)', 11, 0.5, 0.5],
+  ['Atún claro al natural (Mercadona Hacendado)', 23, 0.7, 0.6],
+  ['Leche semidesnatada (Mercadona Hacendado)', 3.1, 4.8, 1.6],
+  ['Bebida de avena (Mercadona Hacendado)', 1.6, 8.2, 0.7],
+  ['Copos de avena (Mercadona Hacendado)', 14, 58, 6.5],
+  ['Pan de molde 100% integral (Mercadona Hacendado)', 12, 37, 2.4],
+  ['Tortillas integrales de trigo (Mercadona Hacendado)', 9.3, 41, 5.8],
+  ['Arroz basmati en vasito, ya cocido (Mercadona Hacendado)', 3.2, 27.2, 2.7],
+  ['Gnocchi (Mercadona Hacendado)', 4.5, 37.6, 0.4],
+  ['Crema de cacahuete 100% (Mercadona Hacendado)', 30, 12, 47],
+  ['Chocolate negro 85% (Mercadona Hacendado)', 12, 20, 49],
+  ['Hummus clásico (Mercadona Hacendado)', 6.4, 8.7, 25.5],
+  // Lidl
+  ['Skyr natural (Lidl Milbona)', 8.9, 4.6, 0.2],
+  ['Queso fresco batido 0% (Lidl Milbona)', 7.2, 4.2, 0.3],
+  ['High Protein Pudding choco-caramelo (Lidl Milbona)', 10, 6.5, 1.6],
+  ['High Protein Drink vainilla (Lidl Milbona)', 10.5, 5.5, 0.2],
+  ['Pechuga de pavo finas lonchas (Lidl)', 16, 2, 2.5],
+  ['Claras de huevo pasteurizadas (Lidl)', 9.8, 0.9, 0],
+  ['Atún claro al natural (Lidl Nixe)', 16, 0, 0.3],
+  ['Copos de avena (Lidl Crownfield)', 12, 59.6, 6.9],
+  ['Pan de molde alto proteico (Lidl)', 26.8, 17.7, 9.6],
+  // Carrefour
+  ['Skyr desnatado natural (Carrefour)', 8, 4.1, 0.5],
+  ['Queso fresco batido 0% Proteína Plus (Carrefour)', 10, 4, 0.5],
+  ['Pechuga de pavo finas lonchas (Carrefour)', 17, 0.5, 0.5],
+  ['Clara de huevo pasteurizada (Carrefour)', 9.7, 0.7, 0.5],
+  ['Atún claro al natural (Carrefour)', 23, 0, 0.7],
+  ['Copos de avena (Carrefour)', 8.7, 66, 6.7],
+  ['Bebida de avena (Carrefour)', 1, 9.5, 0.7],
+  ['Tortitas de arroz integral (Carrefour)', 8, 83, 2.1]
+];
+/* cada alimento va a la fila del macronutriente del que más gramos tiene (proteína, carbohidrato o grasa) */
+function nuGrupoPorMacros(p, c, f){
+  const m = [['p', +p || 0], ['c', +c || 0], ['f', +f || 0]];
+  return m.reduce(function(a, b){ return b[1] > a[1] ? b : a; })[0];
+}
+NU_SUPER.forEach(function(x){
+  if (!foodInfo(x[0])) FOOD_CATALOG.push({ n: x[0], p: x[1], c: x[2], f: x[3], g: nuGrupoPorMacros(x[1], x[2], x[3]), super: true });
+});
+FOOD_CATALOG.forEach(function(o){ o.g = nuGrupoPorMacros(o.p, o.c, o.f); });
+/* los alimentos nuevos que creéis también van a su fila según sus macros */
+saveNewFood = (function(orig){
+  return function(){
+    const p = parseFloat(document.getElementById('newFoodP').value), c = parseFloat(document.getElementById('newFoodC').value), f = parseFloat(document.getElementById('newFoodF').value);
+    const sel = document.getElementById('newFoodGroup');
+    if (sel && [p, c, f].every(function(v){ return !isNaN(v) && v >= 0; }) && p + c + f > 0) {
+      const g = nuGrupoPorMacros(p, c, f);
+      if (!Array.prototype.some.call(sel.options, function(o){ return o.value === g; })) sel.insertAdjacentHTML('beforeend', '<option value="' + g + '">' + g + '</option>');
+      sel.value = g;
+    }
+    orig();
+  };
+})(saveNewFood);
+(function(){
+  const sel = document.getElementById('newFoodGroup'); if (!sel) return;
+  const f = sel.closest('.picker-newform');
+  const nota = document.createElement('div'); nota.className = 'nu-kcal100'; nota.id = 'newFoodFila';
+  sel.parentNode.insertBefore(nota, sel.nextSibling);
+  sel.style.display = 'none';                                   // la fila la decide la app según los macros
+  const pintar = function(){
+    const v = ['newFoodP', 'newFoodC', 'newFoodF'].map(function(id){ return parseFloat(document.getElementById(id).value) || 0; });
+    const g = nuGrupoPorMacros(v[0], v[1], v[2]);
+    nota.textContent = v[0] + v[1] + v[2] ? 'Irá en la fila de ' + ({ p: 'Proteína', c: 'Carbohidrato', f: 'Grasa' })[g] + ' (su macronutriente principal)' : 'Irá en la fila de su macronutriente principal';
+  };
+  ['newFoodP', 'newFoodC', 'newFoodF'].forEach(function(id){ const i = document.getElementById(id); if (i) i.addEventListener('input', pintar); });
+  toggleNewFood = (function(orig){ return function(s){ orig(s); pintar(); }; })(toggleNewFood);
+  pintar();
+})();
+/* alérgenos de los productos nuevos */
+NU_ALERGENOS.push(
+  [/mozzarella|leche|pudding|protein drink|burgos/i, ['leche', 'lactosa']],
+  [/trigo|gnocchi|tortillas/i, ['gluten', 'celiaquia', 'sgnc']],
+  [/hummus/i, ['sesamo', 'legumbres']]
+);
