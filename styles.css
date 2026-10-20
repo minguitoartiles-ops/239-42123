@@ -1299,3 +1299,38 @@
   .pm-t{min-width:0;}
   .cliente-card.de-baja{opacity:.6;}
   .btn-eq.danger{background:var(--danger);border-color:var(--danger);color:#fff;}
+
+  /* v0.57 · Nutrición: cálculo automático, plan rápido y resumen de un vistazo */
+  .calc-card > .btn-primary{display:none;}
+  .nu-rapido{width:100%;margin:4px 0 12px;height:42px;font-weight:700;}
+  .calc-row label{position:relative;}
+  .nu-g{display:block;font:600 10px var(--f-mono);color:var(--dim-55);margin-top:3px;text-transform:none;letter-spacing:0;}
+  .nu-rep-btn{margin:8px 0 2px;}
+  .nu-rep-btn[hidden]{display:none;}
+  .meal-summary b{color:var(--ink);}
+  .nu-dif{color:#C0473A;font-weight:600;}
+  .picker-item.nu-alerg{opacity:.75;}
+  .nu-alerg-tag{background:rgba(217,80,63,.12) !important;color:#C0473A !important;}
+  .nu-nav{border:none;background:transparent !important;color:var(--accent) !important;font:700 20px/1 Archivo !important;padding:0 6px !important;cursor:pointer;flex:none;}
+  .nu-vista{border-radius:18px;background:var(--card);border:1.5px solid var(--accent-line);padding:14px;margin:0 0 16px;cursor:pointer;}
+  .nu-vista-h{display:flex;justify-content:space-between;align-items:center;font:700 13px Archivo;font-family:var(--f-body);margin-bottom:10px;}
+  .nu-vista-h .lnk{font-size:12px;color:var(--accent);}
+  .nu-vista-top{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:6px;}
+  .nu-vista-top div{background:var(--wash-soft);border-radius:11px;padding:8px;text-align:center;}
+  .nu-vista-top b{display:block;font:800 15px Archivo;font-family:var(--f-body);}
+  .nu-vista-top span{font:600 9px var(--f-mono);text-transform:uppercase;color:var(--dim-55);}
+  .nu-vista-cuadre{margin-top:8px;font:600 11.5px var(--f-mono);color:#B5561E;}
+  .nu-vista-cuadre.ok{color:#2E7D4F;}
+  .nu-vista-comidas{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+  .nu-vc{font:400 12px/1.4 Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .nu-vc b{display:block;font:700 12.5px Archivo;font-family:var(--f-body);color:var(--ink);}
+  .nu-vc b small{font:600 10.5px var(--f-mono);color:var(--dim-55);margin-left:4px;}
+  .nu-vista-alerg{margin-top:10px;font:600 12px Archivo;font-family:var(--f-body);color:#C0473A;}
+  .nu-vista-alerg.gris{color:var(--dim-55);}
+  .nu-vista-extra{margin-top:6px;font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .nu-vista-vacio{font:500 12px Archivo;font-family:var(--f-body);color:var(--dim-55);margin-top:4px;}
+  .kc-nutri{margin-top:10px;padding:8px 10px;border-radius:11px;background:var(--wash-soft);font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);cursor:pointer;}
+  .kc-nutri b{color:var(--ink);}
+  .kc-nutri .kc-al{color:#C0473A;font-weight:700;}
+  .kc-nutri .kc-pend{color:#B5561E;font-weight:600;}
+  @media (max-width: 480px){ #coachBarLabel{display:none;} }
