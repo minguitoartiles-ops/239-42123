@@ -1145,7 +1145,7 @@ function enUndoFoto(v){
   // huella sin lo que no es un cambio real (días abiertos o plegados, gramos calculados, botones de edición)
   const t = document.createElement('div'); t.innerHTML = foto.html;
   Array.prototype.forEach.call(t.querySelectorAll('.chip-qty, .chip-x, .chip-add, .en-hist, .sr-plan, .en-ej-acts, .en-ses-acts, .meal-sum'), function(x){ x.remove(); });
-  Array.prototype.forEach.call(t.querySelectorAll('.sesion-body, .chip, .ex-desc'), function(x){ x.removeAttribute('style'); });
+  Array.prototype.forEach.call(t.querySelectorAll('[style], [title]'), function(x){ x.removeAttribute('style'); x.removeAttribute('title'); });   // mostrar u ocultar no es un cambio del plan
   Array.prototype.forEach.call(t.querySelectorAll('.sesion-card, .sesion-chevron, .meal-block'), function(x){ x.classList.remove('open'); });
   Array.prototype.forEach.call(t.querySelectorAll('[contenteditable], [data-edit-ready], [readonly], [tabindex]'), function(x){ x.removeAttribute('contenteditable'); x.removeAttribute('readonly'); x.removeAttribute('tabindex'); delete x.dataset.editReady; });
   foto.huella = t.innerHTML + '|' + (foto.calc || []).join(',');

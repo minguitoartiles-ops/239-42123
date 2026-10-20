@@ -128,22 +128,43 @@ function nuCalcularPlan(cont, obj, reparto, pintar){
     const titulo = ((b.querySelector('.meal-block-title') || {}).textContent || 'Comida ' + (i + 1)).trim();
     const com = { titulo: titulo, kcalObj: Math.round(t[0] * 4 + t[1] * 4 + t[2] * 9), p: 0, c: 0, f: 0, kcal: 0, refs: [], block: b };
     if (!refs.length) { out.faltan++; out.comidas.push(com); return; }
-    const g = nuResolver(refs.map(function(o){ return nuMacros(o.info); }), t);
-    refs.forEach(function(o, j){
-      const gr = nuRedondear(g[j]);
+    // v0.60.5 · cantidades fijadas a mano: se descuentan y el resto de la comida se recalcula con lo que falta
+    cols.forEach(function(col){ col.fijo = col.items.filter(function(o){ return mjNum(o.chip.dataset.fijo) > 0; })[0] || null; });
+    const vecFijo = function(col){ const gr = mjNum(col.fijo.chip.dataset.fijo); return [col.fijo.info.p * gr / 100, col.fijo.info.c * gr / 100, col.fijo.info.f * gr / 100]; };
+    let tl = t.slice();
+    cols.forEach(function(c){ if (c.fijo) { const v = vecFijo(c); tl = [tl[0] - v[0], tl[1] - v[1], tl[2] - v[2]]; } });
+    const tRest = tl.map(function(x){ return Math.max(0, x); });
+    const libres = cols.filter(function(c){ return c.ref && !c.fijo; });
+    // una alternativa de una fila fijada aporta lo mismo que el alimento fijado
+    // (intercambio: los mismos gramos del macronutriente principal del alimento fijado, como en las tablas de equivalencias)
+    const equivalente = function(o, col){
+      if (o === col.fijo) return Math.round(mjNum(o.chip.dataset.fijo));
+      const fi = col.fijo.info, m = nuGrupoPorMacros(fi.p, fi.c, fi.f);
+      const cuanto = fi[m] * mjNum(col.fijo.chip.dataset.fijo) / 100;
+      if (o.info[m] > 0.5) return nuRedondear(cuanto / o.info[m] * 100);
+      return nuRedondear(nuResolver([nuMacros(o.info)], vecFijo(col))[0]);
+    };
+    const gLib = nuResolver(libres.map(function(c){ return nuMacros(c.ref.info); }), tRest);
+    const grDe = new Map();
+    libres.forEach(function(c, j){ grDe.set(c.ref, nuRedondear(gLib[j])); });
+    cols.forEach(function(c){ if (c.fijo && c.ref) grDe.set(c.ref, equivalente(c.ref, c)); });
+    com.fijados = cols.filter(function(c){ return c.fijo; }).length;
+    refs.forEach(function(o){
+      const gr = grDe.get(o) || 0;
       com.p += o.info.p * gr / 100; com.c += o.info.c * gr / 100; com.f += o.info.f * gr / 100;
       com.refs.push({ nombre: o.nombre, g: gr });
-      if (pintar) setChipQty(o.chip, '· ' + gr + ' g');
+      if (pintar) nuQty(o.chip, gr);
     });
     com.kcal = Math.round(com.p * 4 + com.c * 4 + com.f * 9);
     if (pintar) {
-      // cada alternativa: lo que hay que comer de ella para que, con las otras columnas, la comida siga cuadrando
+      // cada alternativa: lo que hay que comer de ella para que, con las otras filas, la comida siga cuadrando
       cols.forEach(function(col, ci){
         col.items.forEach(function(o){
           if (o === col.ref) return;
-          const comb = cols.map(function(c2, cj){ return cj === ci ? o : c2.ref; }).filter(Boolean);
-          const g2 = nuResolver(comb.map(function(x){ return nuMacros(x.info); }), t);
-          setChipQty(o.chip, '· ' + nuRedondear(g2[comb.indexOf(o)]) + ' g');
+          if (col.fijo) { nuQty(o.chip, equivalente(o, col)); return; }
+          const comb = libres.map(function(c2){ return c2 === col ? o : c2.ref; });
+          const g2 = nuResolver(comb.map(function(x){ return nuMacros(x.info); }), tRest);
+          nuQty(o.chip, nuRedondear(g2[comb.indexOf(o)]));
         });
         Array.prototype.forEach.call(b.querySelectorAll('.macro-group')[ci].querySelectorAll('.chip'), function(ch){
           if (ch.classList.contains('chip-add')) return;
@@ -694,3 +715,60 @@ NU_ALERGENOS.push(
   [/trigo|gnocchi|tortillas/i, ['gluten', 'celiaquia', 'sgnc']],
   [/hummus/i, ['sesamo', 'legumbres']]
 );
+
+/* ---------- v0.60.5 · Fátima fija a mano la cantidad de un alimento ---------- */
+function nuQty(chip, gr){
+  setChipQty(chip, '· ' + gr + ' g');
+  const q = chip.querySelector('.chip-qty');
+  if (q && mjNum(chip.dataset.fijo) > 0) {
+    const pin = document.createElement('span');
+    pin.className = 'chip-pin'; pin.textContent = '📌'; pin.title = 'Cantidad fijada a mano · toca para soltarla';
+    pin.setAttribute('role', 'button'); pin.setAttribute('aria-label', 'Soltar la cantidad fijada');
+    q.appendChild(pin);
+  }
+  if (q) q.title = coachEditing ? 'Toca para fijar la cantidad a mano' : '';
+}
+function nuFijar(chip, gr){
+  const grupo = chip.closest('.macro-group');
+  if (grupo) Array.prototype.forEach.call(grupo.querySelectorAll('.chip'), function(x){
+    if (x !== chip) delete x.dataset.fijo;
+    x.classList.toggle('selected', x === chip);                     // lo fijado pasa a ser la opción de referencia de su fila
+  });
+  if (gr > 0) chip.dataset.fijo = Math.round(gr); else delete chip.dataset.fijo;
+  const mb = chip.closest('.meal-block'); if (mb && typeof updateMealSummary === 'function') updateMealSummary(mb);
+  calcularPlan();
+  programarGuardado();
+}
+function nuSoltar(chip){ delete chip.dataset.fijo; calcularPlan(); programarGuardado(); toast('Cantidad soltada: se vuelve a calcular sola'); }
+function nuEditarCantidad(chip){
+  const q = chip.querySelector('.chip-qty'); if (!q || q.querySelector('input')) return;
+  const actual = mjNum(chip.dataset.fijo) || mjNum((q.textContent.match(/[\d.,]+/) || [''])[0]) || '';
+  q.innerHTML = '· <input class="chip-qty-in" type="number" inputmode="numeric" min="0" max="2000" step="1" aria-label="Gramos de ' + esc(chipName(chip)) + '" value="' + actual + '"> g';
+  const i = q.querySelector('input');
+  let hecho = false;
+  const fin = function(guardar){
+    if (hecho) return; hecho = true;
+    const v = Math.round(mjNum(i.value) || 0);
+    if (guardar && v > 0) { nuFijar(chip, v); toast('📌 ' + chipName(chip) + ' fijado en ' + v + ' g: el resto de la comida se recalcula'); }
+    else if (guardar && !v && chip.dataset.fijo) nuSoltar(chip);
+    else calcularPlan();
+  };
+  i.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); fin(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); fin(false); }
+  });
+  i.addEventListener('blur', function(){ fin(true); });
+  setTimeout(function(){ i.focus(); i.select(); }, 20);
+}
+(function(){
+  const cont = document.getElementById('comidasCont'); if (!cont) return;
+  cont.addEventListener('click', function(e){
+    const q = e.target.closest && e.target.closest('.chip-qty'); if (!q) return;
+    const chip = q.closest('.chip'); if (!chip || chip.classList.contains('chip-add')) return;
+    if (!isCoachView() || !coachEditing) return;                     // el cliente y la vista sin editar: como siempre
+    e.stopPropagation(); e.preventDefault();
+    if (e.target.closest('.chip-pin')) { nuSoltar(chip); return; }
+    if (e.target.closest('input')) return;
+    nuEditarCantidad(chip);
+  }, true);
+})();
