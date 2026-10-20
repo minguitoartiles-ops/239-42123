@@ -214,3 +214,15 @@ html.esc-cliente .ex-logro,html.esc .ex-logro{max-width:420px;margin:0 auto;}
 /* A5 · etiquetas de al menos 11 px (la tipografía no cambia) */
 .week-flag,.segui-aviso-lbl,.plan-resumen-lbl,.macro-label,.tonelaje-label,.sesion-num,.srf-rir-l,.lbl,.sender,.sg-cat,.sens-animo small,#view-progreso .card span,#view-progreso .l,.ring-card .l{font-size:11px !important;}
 .bar-val,.bar-lbl,.menu-badge{font-size:10.5px !important;}
+
+/* Entreno en móviles pequeños: el RIR solo en la serie que toca (o al tocar S1/editar la serie) */
+.srf-rirb{display:none;}
+@media (max-width:380px){
+  #view-entreno .srf:not(.actual):not(:focus-within):not(:has(.srf-opc:not([hidden]))) .srf-l2{display:none;}
+  #view-entreno .srf:not(.actual) .srf-rirb{display:block;white-space:nowrap;margin-top:2px;padding:1px 3px;border-radius:6px;font:700 10px/1.2 var(--f-mono);}
+  #view-entreno .srf-rirb.rir-r{background:rgba(224,92,75,.16);color:#B23A2B;}
+  #view-entreno .srf-rirb.rir-a{background:rgba(217,178,63,.22);color:#8A6A10;}
+  #view-entreno .srf-rirb.rir-v{background:rgba(67,179,123,.18);color:#1F7A4D;}
+  #view-entreno .sr-filas{gap:6px;}
+}
+.exl-lista{list-style:none;margin:4px 0 4px;padding:0;display:flex;flex-direction:column;gap:2px;font:600 12.5px/1.3 var(--f-body);}
