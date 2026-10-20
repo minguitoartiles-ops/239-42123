@@ -3,12 +3,22 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.56.1 (actual)
-Cambios acumulados hacia la 0.57: **2 de 10** (0.56.1 tras el 2.º)
+## Versión 0.57 (actual)
+Cambios acumulados hacia la 0.58: **0 de 10**
+
+## Versión 0.56 → 0.56.4
 
 ### Hacia la 0.57
 1. 20/10/2026 02:00 · Corregido: los pesos que apuntaba el cliente se perdían si cerraba la app sin hacer nada más; ahora se guardan al escribir y al salir
 2. 20/10/2026 02:00 · Corregido: «Revisiones esta semana» pasa a «Seguimientos esta semana» y los textos de prueba de la ficha («1.040 kg», «Marta») ya no aparecen → **0.56.1**
+3. 20/10/2026 02:30 · Nutrición: cálculo automático. Cada opción de cada comida tiene ya sus gramos para que la comida cuadre con su parte de las kcal y de los macros, también al cambiar una opción por otra; el total del plan se compara con el objetivo
+4. 20/10/2026 02:30 · Nutrición: el reparto entre comidas se hace solo según el número de comidas (con sus kcal); si Fátima lo cambia a mano, botón «Repartir automáticamente» → **0.56.2**
+5. 20/10/2026 02:30 · Nutrición: «⚡ Plan rápido»: número de comidas, kcal sugeridas por peso y objetivo, macros por objetivo y opciones típicas en cada comida, evitando sus alergias
+6. 20/10/2026 02:30 · Nutrición: el selector de alimentos avisa de los que chocan con las alergias del cliente → **0.56.3**
+7. 20/10/2026 02:30 · Corregido: los alimentos propios se perdían al cerrar la app; ahora se guardan
+8. 20/10/2026 02:30 · Plan del cliente: flechas ‹ › junto al nombre para pasar al siguiente cliente sin salir del plan → **0.56.4**
+9. 20/10/2026 02:30 · Ficha (Fátima): «Nutrición de un vistazo» con kcal, macros, cuadre, comidas con cantidades, alergias, adherencia y última sensación
+10. 20/10/2026 02:30 · Tarjetas de clientes (Fátima): kcal, macros, nº de comidas y alergias; al tocarla se abre el plan → **sube a la 0.57**
 
 ## Versión 0.55 → 0.55.4
 
