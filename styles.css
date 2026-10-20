@@ -1195,3 +1195,107 @@
   .pasos-meta{position:absolute;left:0;right:0;border-top:1px dashed var(--dim-40);pointer-events:none;margin-bottom:17px;}
   .pasos-meta span{position:absolute;right:0;top:-14px;font:600 8.5px var(--f-mono);color:var(--dim-45);font-style:normal;}
   .pasos-pie{font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+
+  /* =====================================================
+     v0.53 · Correcciones y mejoras del análisis + tarifas y pagos
+     ===================================================== */
+  /* B9 · barra inferior: etiqueta corta en móviles estrechos */
+  .tl-corto{display:none;}
+  @media (max-width: 400px){ .tl-largo{display:none;} .tl-corto{display:inline;} }
+  /* D13 · letras de la barra inferior y etiquetas más legibles */
+  .tbi{font-size:9px;}
+  .kc-l{font-size:9.5px;}
+  .segui-lbl{font-size:9.5px;}
+  /* B9 · barra «Editando: nombre» del profesional sin aplastarse */
+  .coach-bar-left{overflow:hidden;}
+  #coachBarName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  @media (max-width: 400px){
+    #coachBarLabel{display:none;}
+    .coach-bar{padding:8px 12px;gap:8px;}
+    .coach-bar button{padding:7px 10px;}
+  }
+  /* B9 · nota de voz: el botón de velocidad siempre dentro de la burbuja */
+  .bubble .audio-b{min-width:0;max-width:100%;}
+  .audio-b .wave{min-width:0;overflow:hidden;}
+  @media (max-width: 400px){ .bubble .audio-b{gap:6px;} .audio-b .wave{gap:2px;} .audio-vel{min-width:30px;padding:0 5px;} }
+  /* B9 · ficha: nombre largo y botón de chat en móviles estrechos */
+  #view-coach-cliente .alta-top .h-title{overflow-wrap:anywhere;}
+  @media (max-width: 400px){
+    #view-coach-cliente .alta-top .h-title{font-size:19px !important;}
+    .ficha-chat-btn{padding:0 11px;font-size:12px;}
+  }
+  /* B9 · inicio: el mensaje de error no se monta sobre los accesos de profesionales */
+  #loginError:empty{display:none;}
+  #loginError{line-height:1.35;}
+  /* D4 · los días de Nutrición no cambiaban el plan: se quitan */
+  #view-plan .day-row{display:none;}
+  /* B13/D8 · avisos destacados en «Hoy» y en el panel */
+  .hoy-aviso{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1px solid var(--accent-line);background:var(--accent-wash, var(--wash-soft));color:var(--ink);font-family:var(--f-body);cursor:pointer;}
+  .hoy-aviso.amb{border-color:rgba(230,160,60,.55);background:rgba(230,160,60,.12);}
+  .hoy-aviso.roj{border-color:var(--danger);background:rgba(217,80,63,.08);}
+  .hoy-aviso.pago{cursor:default;}
+  .ha-ico{font-size:20px;flex:none;}
+  .ha-txt{flex:1;min-width:0;}
+  .ha-txt b{display:block;font:700 13.5px Archivo;font-family:var(--f-body);}
+  .ha-txt span{display:block;font:400 12px/1.4 Archivo;font-family:var(--f-body);color:var(--dim-6);margin-top:2px;}
+  .hoy-aviso .mini-btn{flex:none;text-decoration:none;}
+  /* D5 · adherencia sugerida */
+  .sg-sugerido{font:500 11.5px/1.45 Archivo;font-family:var(--f-body);color:var(--dim-6);margin:6px 0 4px;}
+  /* D10 · espacio usado */
+  .mj-espacio{margin:0 0 6px;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);}
+  .mj-esp-top{display:flex;justify-content:space-between;gap:10px;font:500 12.5px Archivo;font-family:var(--f-body);}
+  .mj-esp-top b{font:700 12px var(--f-mono);white-space:nowrap;}
+  .mj-esp-barra{height:8px;border-radius:99px;background:var(--wash-med);margin:9px 0 7px;overflow:hidden;}
+  .mj-esp-barra i{display:block;height:100%;border-radius:99px;background:var(--accent);}
+  .mj-esp-barra i.alto{background:var(--danger);}
+  .mj-espacio p{font:400 11.5px/1.4 Archivo;font-family:var(--f-body);color:var(--dim-55);margin:0;}
+  /* D12 · botón PDF */
+  .mj-pdf{margin:0 0 10px;}
+  /* alta: precio y primer pago */
+  .alta-precio{align-items:end;}
+  .alta-pagado{margin:0 0 12px;}
+  .mj-select{width:100%;height:42px;border-radius:12px;border:1px solid var(--line-strong);padding:0 12px;background:var(--wash-soft);color:var(--ink);font:400 14px Archivo;font-family:var(--f-body);}
+  .field input[type=date]{width:100%;height:42px;border-radius:12px;border:1px solid var(--line-strong);padding:0 12px;background:var(--wash-soft);color:var(--ink);font-family:var(--f-body);}
+  /* tarifas y pagos */
+  .kc-pago{margin-top:10px;font:700 10.5px var(--f-mono);letter-spacing:.03em;text-transform:uppercase;padding:5px 10px;border-radius:999px;display:inline-block;}
+  .kc-pago.amb,.pill.pg-amb{background:rgba(230,160,60,.18);color:#9A6214;}
+  .kc-pago.nar,.pill.pg-nar{background:rgba(232,137,74,.2);color:#B5561E;}
+  .kc-pago.roj,.pill.pg-roj{background:var(--danger);color:#fff;}
+  .pg-nota{padding:0 16px 10px;font:500 11.5px/1.45 Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .pg-acciones{gap:8px;}
+  .pg-btn{flex:1;margin:0;height:40px;font-size:13px;}
+  .mj-bloq{text-align:center;}
+  .mj-bloq-ico{font-size:34px;margin-bottom:6px;}
+  .mj-bloq .btn-row a{display:flex;align-items:center;justify-content:center;text-decoration:none;}
+  .alta-precio{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;}
+  .tbi[hidden]{display:none !important;}
+  .alta-precio{margin-top:12px;}
+  #altaTarifa{margin-bottom:4px;}
+
+  /* v0.53 · Pestaña «Pagos clientes» */
+  #view-coach-pagos{flex:1 1 auto;flex-direction:column;min-height:0;}
+  .pagos-stats .val{font-size:20px;}
+  .pagos-resumen{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;margin:10px 0 14px;font:500 12px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .pagos-resumen b{color:var(--ink);}
+  .pagos-filtros{margin-bottom:12px;flex-wrap:wrap;}
+  .pagos-lista{display:flex;flex-direction:column;gap:8px;}
+  .pago-fila{padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);cursor:pointer;}
+  .pago-fila.roj{border:1.5px solid var(--danger);background:rgba(217,80,63,.06);}
+  .pago-fila.nar{border-color:rgba(232,137,74,.7);}
+  .pago-fila.amb{border-color:rgba(230,160,60,.6);}
+  .pago-fila.gris{opacity:.7;}
+  .pago-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .pago-top b{font:700 14px Archivo;font-family:var(--f-body);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pago-est{flex:none;font:700 9.5px var(--f-mono);letter-spacing:.03em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:var(--wash-med);color:var(--dim-6);max-width:58%;text-align:right;}
+  .pago-est.ok{background:rgba(116,188,138,.2);color:#2E7D4F;}
+  .pago-est.amb{background:rgba(230,160,60,.18);color:#9A6214;}
+  .pago-est.nar{background:rgba(232,137,74,.2);color:#B5561E;}
+  .pago-est.roj{background:var(--danger);color:#fff;}
+  .pago-datos{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font:500 11.5px Archivo;font-family:var(--f-body);color:var(--dim-6);}
+  .pagos-movs{display:flex;flex-direction:column;border-radius:16px;background:var(--card);border:1px solid var(--line);overflow:hidden;margin-bottom:10px;}
+  .pago-mov{display:flex;gap:10px;align-items:baseline;padding:9px 13px;border-bottom:1px solid var(--line);font:500 12px Archivo;font-family:var(--f-body);}
+  .pago-mov:last-child{border-bottom:none;}
+  .pm-f{font:600 10.5px var(--f-mono);color:var(--dim-55);flex:none;}
+  .pm-t{min-width:0;}
+  .cliente-card.de-baja{opacity:.6;}
+  .btn-eq.danger{background:var(--danger);border-color:var(--danger);color:#fff;}

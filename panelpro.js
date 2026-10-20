@@ -630,8 +630,8 @@ htmlAjustes = (function(orig){
     if (rol !== 'cliente' || !d || !(d.consentSalud && d.consentSalud.fecha)) return h;
     const r = ciResumen(d);
     const filaCI = fila('Uso de tu imagen en redes', pill(r.txt, r.ok), 'abrirConsentImagen()');
-    const marca = fila('Retirar consentimiento', '', 'retirarConsentSalud()', 'danger');
-    return h.indexOf(marca) > -1 ? h.replace(marca, filaCI + marca) : h;
+    const marca = fila('Retirar consentimiento de salud', '', 'retirarConsentSalud()', 'danger');
+    return h.indexOf(marca) > -1 ? h.replace(marca, marca + filaCI) : h;
   };
 })(htmlAjustes);
 /* Ficha del cliente (profesionales): qué ha autorizado */

@@ -3,12 +3,52 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.52.1 (actual)
-Cambios acumulados hacia la 0.53: **2 de 10** (0.52.1 tras el 2.º)
+## Versión 0.55.3 (actual)
+Cambios acumulados hacia la 0.56: **6 de 10** (0.55.1 tras el 2.º · 0.55.2 tras el 4.º · 0.55.3 tras el 6.º)
+
+### Hacia la 0.56
+1. 20/10/2026 01:45 · Mejora: accesibilidad (interruptores con nombre y letras más grandes en la barra inferior)
+2. 20/10/2026 01:45 · Tarifas mensual, trimestral o anual desde el alta, con precio y primer pago; registro de pagos en la ficha → **0.55.1**
+3. 20/10/2026 01:45 · Recordatorios de pago al cliente (7, 3 y 1 días antes y el día del vencimiento) y periodo de gracia de 7 días con ventana una vez al día
+4. 20/10/2026 01:45 · Acceso: el profesional puede denegar o permitir el acceso; al acabar la gracia se pierde el acceso (se puede desactivar) y enlace de pago opcional → **0.55.2**
+5. 20/10/2026 01:45 · Pestaña «Pagos clientes»: estado de cada cliente, ingresos, pendientes, filtros y últimos movimientos
+6. 20/10/2026 01:45 · Bajas de clientes (con motivo) y reactivación, sin borrar datos → **0.55.3**
+
+### Hacia la 0.55
+1. 20/10/2026 01:45 · Mejora: editar los datos del cliente desde la ficha (objetivo, duración, fecha de alta, contacto)
+2. 20/10/2026 01:45 · Mejora: el objetivo nutricional muestra «pendiente» hasta que Fátima lo fija y cuándo se actualizó → **0.54.1**
+3. 20/10/2026 01:45 · Mejora: sesiones y comidas marcadas con su fecha; la adherencia del seguimiento se sugiere sola
+4. 20/10/2026 01:45 · Mejora: aviso en «Hoy» si faltan las alergias → **0.54.2**
+5. 20/10/2026 01:45 · Mejora: campana en todas las pestañas del profesional
+6. 20/10/2026 01:45 · Mejora: barra del cliente con 5 pestañas (Ajustes pasa al perfil) → **0.54.3**
+7. 20/10/2026 01:45 · Mejora: recordatorio semanal para descargar la copia de seguridad
+8. 20/10/2026 01:45 · Mejora: indicador del espacio usado en el móvil → **0.54.4**
+9. 20/10/2026 01:45 · Mejora: copiar el plan de un cliente a otro
+10. 20/10/2026 01:45 · Mejora: seguimientos en PDF → **sube a la 0.55**
+
+### Hacia la 0.54
+1. 20/10/2026 01:45 · Corregido: el tonelaje comparaba con una «semana pasada» que no existía; ahora hay cambio de semana real
+2. 20/10/2026 01:45 · Corregido: el cumplimiento contaba «0 de 0 comidas» como 0 % → **0.53.1**
+3. 20/10/2026 01:45 · Corregido: barras y botones que se montaban en móviles estrechos (iPhone SE)
+4. 20/10/2026 01:45 · Corregido: el mensaje de código erróneo iba dirigido al profesional → **0.53.2**
+5. 20/10/2026 01:45 · Corregido: «Mensajes sin leer» en rojo con 0
+6. 20/10/2026 01:45 · Corregido: textos «Has hecho las 1 sesiones» y «1 sesion» → **0.53.3**
+7. 20/10/2026 01:45 · Corregido: «Retirar consentimiento» ahora dice «…de salud» y va junto a su fila
+8. 20/10/2026 01:45 · Corregido: la copia de seguridad no guardaba las notificaciones y al restaurar no avisaba de volver a entrar → **0.53.4**
+9. 20/10/2026 01:45 · Corregido: no se podía borrar la última comida del plan
+10. 20/10/2026 01:45 · Mejora: las medidas del alta son el punto de partida (flechas y evolución desde el primer seguimiento) → **sube a la 0.54**
 
 ### Hacia la 0.53
 1. 20/10/2026 01:00 · Pasos medios semanales: deslizador en el seguimiento, puntuación 1–10 (menos de 2.000 = 1 · 10.000 o más = 10) que cuenta en la global (5 puntos; entreno pasa de 20 a 15), flechas por semana y gráfico con tendencia en la ficha
 2. 20/10/2026 01:00 · Atrás del móvil por niveles: subpantalla → su pestaña principal (paso a paso) → inicio → «¿Salir de la app?» → **0.52.1**
+3. 20/10/2026 01:45 · Corregido: el peso por serie no aceptaba la coma («22,5» se guardaba como 225)
+4. 20/10/2026 01:45 · Corregido: el alta guardaba solo el peso; ahora también altura, cintura, cadera, bíceps y muslo → **0.52.2**
+5. 20/10/2026 01:45 · Corregido: «Semana 1 de 12» no avanzaba; ahora se calcula con la fecha de alta y la duración elegida (4, 8, 12, 16, 24 semanas o 1 año)
+6. 20/10/2026 01:45 · Corregido: el objetivo del cliente no se podía cambiar después del alta → **0.52.3**
+7. 20/10/2026 01:45 · Corregido: el cliente veía textos para el profesional («…de este cliente») en Nutrición y Entrenamiento
+8. 20/10/2026 01:45 · Corregido: el objetivo diario era el mismo para todos y el cliente veía 2.000 kcal sin que Fátima lo fijara; ahora cada cliente tiene el suyo → **0.52.4**
+9. 20/10/2026 01:45 · Corregido: los días de Nutrición marcaban el miércoles y no hacían nada
+10. 20/10/2026 01:45 · Corregido: la tira de la semana marcaba las sesiones en el lunes en vez del día real → **sube a la 0.53**
 
 ## Versión 0.51 → 0.51.4
 
