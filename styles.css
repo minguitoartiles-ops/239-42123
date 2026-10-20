@@ -1473,3 +1473,23 @@
 #view-coach-cliente .alta-top > div > .eyebrow{flex-basis:100%;}
 .cd-edit-nom{flex:none;width:30px;height:30px;margin-bottom:2px;border-radius:50%;border:1px solid var(--accent-line);background:var(--accent-wash);color:var(--accent);font-size:14px;line-height:1;cursor:pointer;}
 #fichaPago .ajx-val,.esc-grupo .list-row .ajx-val{overflow-wrap:normal;word-break:normal;}
+/* v0.60.3 · técnicas avanzadas y circuitos */
+.en-tec{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:6px 0 8px;font:500 12px/1.4 var(--f-body);color:var(--dim-6);}
+.en-tec-b{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:rgba(227,166,89,.18);border:1px solid var(--carb);color:var(--ink);font:700 11.5px var(--f-body);}
+.en-tec-p{flex:1 1 180px;min-width:0;}
+.en-g-lbl{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;padding:0 6px;border-radius:7px;background:var(--accent);color:var(--on-accent);font:700 11px var(--f-mono);}
+.en-tec-i{flex-basis:100%;}
+.en-tec-i summary{cursor:pointer;color:var(--accent);font:600 11.5px var(--f-body);list-style:none;}
+.en-tec-i summary::-webkit-details-marker{display:none;}
+.en-tec-i p{margin:4px 0 0;font:400 12px/1.5 var(--f-body);color:var(--dim-6);}
+.en-grupo-h{margin:12px 0 0;padding:10px 12px;border-radius:14px 14px 0 0;background:var(--accent-wash);border:1px solid var(--accent-line);border-bottom:none;}
+.en-grupo-h.t-emom,.en-grupo-h.t-amrap,.en-grupo-h.t-tabata,.en-grupo-h.t-int{background:rgba(116,188,138,.14);border-color:var(--fat-line);}
+.en-grupo-tit{display:flex;align-items:center;justify-content:space-between;gap:8px;font:700 13px var(--f-body);color:var(--ink);}
+.en-grupo-p{font:500 12px/1.4 var(--f-body);color:var(--dim-6);margin-top:3px;}
+.en-rondas-l{display:flex;align-items:center;gap:8px;margin-top:8px;font:600 12px var(--f-body);color:var(--ink);}
+.en-rondas{width:70px;height:32px;border-radius:9px;border:1px solid var(--line-strong);background:var(--bg);text-align:center;font:600 13px var(--f-mono);color:var(--ink);}
+.ex-item.en-en-grupo{border-left:3px solid var(--accent);padding-left:10px;margin-left:0;}
+.ex-item.en-en-grupo.en-g-fin{margin-bottom:12px;}
+.en-tec-btn{font-weight:700 !important;color:var(--carb) !important;border-color:rgba(227,166,89,.5) !important;}
+#enTecHoja .chips{flex-wrap:wrap;}
+#enTecHoja textarea{width:100%;}
