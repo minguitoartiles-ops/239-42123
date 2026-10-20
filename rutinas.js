@@ -174,8 +174,10 @@ guardarPlan = (function(orig){
     drag.destino = null;
     const it = el.closest && el.closest('#sesionesCont .ex-item');
     if (it && it !== drag.it) {
-      const r = it.getBoundingClientRect(), antes = y < r.top + r.height / 2;
-      it.parentNode.insertBefore(drag.it, antes ? it : it.nextSibling);
+      // basta con entrar unos píxeles en el ejercicio vecino (los ejercicios son altos)
+      const r = it.getBoundingClientRect(), arriba = !!(drag.it.compareDocumentPosition(it) & Node.DOCUMENT_POSITION_PRECEDING);
+      if (arriba && y < r.bottom - 30) it.parentNode.insertBefore(drag.it, it);
+      else if (!arriba && y > r.top + 30) it.parentNode.insertBefore(drag.it, it.nextSibling);
       return;
     }
     const card = el.closest && el.closest('#sesionesCont .sesion-card');
@@ -243,7 +245,7 @@ guardarPlan = (function(orig){
   document.addEventListener('contextmenu', function(e){ if ((drag || cand) && e.target.closest && e.target.closest('#sesionesCont .ex-item')) e.preventDefault(); });
 })();
 
-/* ---------- 5 · ajustar serie a serie (reps y RIR de cada serie, añadir y quitar series) ---------- */
+/* ---------- 5 · la pauta se escribe serie a serie (reps y RIR de cada serie, añadir y quitar series) ---------- */
 function ruValSerie(p, k){ const v = p.dataset[k]; return v == null ? '' : String(v); }
 function ruDistintas(it){
   const p = enPesos(it); if (p.length < 2) return false;
@@ -263,24 +265,22 @@ function ruCabecera(it){
 function ruPanelSeries(it){
   const p = enPesos(it);
   let ss = it.querySelector('.ru-ss');
-  if (it._ruAbierto == null) it._ruAbierto = ruDistintas(it);       // se abre solo si ya son distintas
   if (!ss) {
-    ss = document.createElement('div'); ss.className = 'ru-ss';
+    ss = document.createElement('div'); ss.className = 'ru-ss abierto';
     const row = it.querySelector('.ex-table-row'); row.parentNode.insertBefore(ss, row.nextSibling);
     ss.insertAdjacentHTML('afterend', '<!--/ru-ss-->');
   }
-  const ab = !!it._ruAbierto, enfocado = ss.contains(document.activeElement) ? document.activeElement : null;
+  const enfocado = ss.contains(document.activeElement) ? document.activeElement : null;
   if (enfocado && enfocado.tagName === 'INPUT') return;               // no se repinta mientras se escribe
-  ss.classList.toggle('abierto', ab);
-  ss.innerHTML = '<button type="button" class="ru-ss-t" aria-expanded="' + ab + '">' + (ab ? '▴' : '▾') + ' Ajustar serie a serie'
-      + (ruDistintas(it) ? ' <small>' + p.map(function(x){ return esc(ruValSerie(x, 'reps') || '—'); }).join(' · ') + ' reps</small>' : '') + '</button>'
-    + (ab ? '<div class="ru-ss-l">' + p.map(function(x, i){
+  // tabla de series: es la forma normal de escribir la pauta (una fila por serie)
+  ss.innerHTML = '<div class="ru-ss-cab" aria-hidden="true"><span>Serie</span><span>Reps</span><span>RIR</span><span></span></div>'
+    + '<div class="ru-ss-l">' + p.map(function(x, i){
         const r = ruValSerie(x, 'rir');
         return '<div class="ru-ss-f" data-i="' + i + '"><span class="ru-ss-n">Serie ' + (i + 1) + '</span>'
-          + '<label><input type="text" inputmode="numeric" class="ru-ss-reps" value="' + esc(ruValSerie(x, 'reps')) + '" aria-label="Reps de la serie ' + (i + 1) + '"><span>reps</span></label>'
-          + '<label><span>RIR</span><input type="text" inputmode="numeric" class="ru-ss-rir ' + enRir(r) + '" value="' + esc(r) + '" aria-label="RIR de la serie ' + (i + 1) + '"></label>'
-          + '<button type="button" class="ru-ss-x" aria-label="Quitar la serie ' + (i + 1) + '"' + (p.length < 2 ? ' disabled' : '') + '>✕</button></div>';
-      }).join('') + '<button type="button" class="ru-ss-mas">+ Añadir serie</button></div>' : '');
+          + '<input type="text" inputmode="numeric" class="ru-ss-reps" value="' + esc(ruValSerie(x, 'reps')) + '" placeholder="—" aria-label="Reps de la serie ' + (i + 1) + '">'
+          + '<input type="text" inputmode="numeric" class="ru-ss-rir ' + enRir(r) + '" value="' + esc(r) + '" placeholder="—" aria-label="RIR de la serie ' + (i + 1) + '">'
+          + '<button type="button" class="ru-ss-x" tabindex="-1" aria-label="Quitar la serie ' + (i + 1) + '"' + (p.length < 2 ? ' disabled' : '') + '>✕</button></div>';
+      }).join('') + '</div><button type="button" class="ru-ss-mas">+ Añadir serie</button>';
   ruCabecera(it);
 }
 function ruTrasCambio(it){
@@ -290,7 +290,6 @@ function ruTrasCambio(it){
 document.addEventListener('click', function(e){
   const t = e.target; if (!t.closest || !enEditando()) return;
   const it = t.closest('#sesionesCont .ex-item'); if (!it) return;
-  if (t.closest('.ru-ss-t')) { it._ruAbierto = !it._ruAbierto; ruPanelSeries(it); return; }
   if (t.closest('.ru-ss-mas')) {                                     // copia la última serie
     const f = it.querySelectorAll('.rx-field'), n = enPesos(it).length;
     if (n >= 10) { toast('Máximo 10 series'); return; }
@@ -318,7 +317,6 @@ document.addEventListener('input', function(e){
     p.dataset[k] = v; p.setAttribute('data-' + k, v);
     if (k === 'rir') enRirPoner(t, v);
     ruTrasCambio(it);
-    const tt = it.querySelector('.ru-ss-t small'); if (tt) tt.textContent = enPesos(it).map(function(x){ return ruValSerie(x, 'reps') || '—'; }).join(' · ') + ' reps';
     return;
   }
   // la pauta de arriba (series, reps o RIR) manda: se repinta la lista de series
