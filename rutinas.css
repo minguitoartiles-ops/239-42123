@@ -139,3 +139,25 @@ html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:6px;} .ru-ss-n{font-size:12px;} }
 .srf-cab .srf-rir-v{padding:0 4px;border-radius:5px;}
 html.esc #app.coach-edit .ru-ss{max-width:520px;}
+
+/* ---------- botones de eliminar: más grandes y en rojo (toda la app) ---------- */
+:root{--del:#D93A2B;--del-wash:rgba(217,58,43,.10);--del-line:rgba(217,58,43,.45);}
+.ses-del,.meal-del,.en-ej-btns .en-del,.ru-ss-x{
+  align-items:center;justify-content:center;flex:none;width:38px;height:38px;padding:0 !important;border-radius:11px;
+  border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;
+  font:800 17px/1 Archivo,sans-serif !important;cursor:pointer;transition:background .12s,color .12s,transform .08s;}
+.coach-edit .ses-del,.coach-edit .meal-del{display:inline-flex;}
+.en-ej-btns .en-del,.ru-ss-x{display:inline-flex;}
+.ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;}
+.ses-del:active,.meal-del:active,.en-ej-btns .en-del:active,.ru-ss-x:not(:disabled):active{transform:scale(.94);}
+.ru-ss-x:disabled{opacity:.3;}
+.ru-ss-cab,.ru-ss-f{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 38px;}
+@media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) 36px;} .ru-ss-x,.en-ej-btns .en-del{width:36px;height:36px;} }
+/* la × de cada alimento en el editor de nutrición */
+.chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1 !important;
+  font:800 14px/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
+.chip-x::after{content:"";position:absolute;inset:-9px;}         /* zona de toque más grande */
+.chip-x:hover{background:#A9271B;}
+/* textos de borrar en rojo */
+.mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del) !important;border-color:var(--del-line) !important;}
+html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15px !important;}
