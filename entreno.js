@@ -231,9 +231,12 @@ function enPauta(btn, i){
 }
 function enMoverEj(btn, dir){
   const it = btn.closest('.ex-item');
-  const sib = dir < 0 ? it.previousElementSibling : it.nextElementSibling;
+  // los títulos de superseries y circuitos no cuentan: se salta al ejercicio de al lado
+  let sib = dir < 0 ? it.previousElementSibling : it.nextElementSibling;
+  while (sib && sib.classList.contains('en-grupo-h')) sib = dir < 0 ? sib.previousElementSibling : sib.nextElementSibling;
   if (!sib || !sib.classList.contains('ex-item')) return;
-  if (dir < 0) it.parentNode.insertBefore(it, sib); else it.parentNode.insertBefore(sib, it);
+  if (dir < 0) it.parentNode.insertBefore(it, sib); else it.parentNode.insertBefore(it, sib.nextSibling);
+  if (typeof enTecSync === 'function') enTecSync();
   programarGuardado();
 }
 function enDuplicarEj(btn){
@@ -1160,7 +1163,13 @@ function enUndoReiniciar(){
 }
 function enUndoRegistrar(){
   clearTimeout(enUndoT);
-  enUndoT = setTimeout(function(){
+  enUndoT = setTimeout(enUndoRegistrarYa, 450);
+}
+/* si hay un cambio pendiente de apuntar, se apunta ya (antes de la siguiente acción, para que cada acción sea un paso) */
+function enUndoPendiente(){ if (enUndoT) { clearTimeout(enUndoT); enUndoRegistrarYa(); } }
+function enUndoRegistrarYa(){
+  enUndoT = null;
+  (function(){
     const v = enUndoVista();
     if (!coachEditing || !v) return;
     const f = enUndoFoto(v);
@@ -1171,8 +1180,12 @@ function enUndoRegistrar(){
     if (enUndo[v].length > EN_UNDO_MAX) enUndo[v].shift();
     enUndoUlt[v] = f;
     enUndoPintar();
-  }, 450);
+  })();
 }
+document.addEventListener('pointerdown', function(e){
+  if (!coachEditing || (e.target.closest && e.target.closest('#enDeshacerBtn'))) return;
+  enUndoPendiente();
+}, true);
 function enDeshacer(){
   const v = enUndoVista();
   if (!coachEditing || !v) return;
@@ -1465,3 +1478,118 @@ mjCambioDeSemana = (function(orig){
 })(mjCambioDeSemana);
 atrasDentroApp = (function(orig){ return function(){ if (capaVisible('enTecHoja')) { mjCerrarHoja('enTecHoja'); return true; } return orig(); }; })(atrasDentroApp);
 enTecSync();
+
+/* =========================================================
+   88 · Apuntar las series como en la captura de Domingo:
+   S1 · reps × − peso + · ✓  /  RIR 0 1 2 3 4 5+ (con colores)  /  tipo de serie y nota
+   Las filas escriben en los mismos campos de siempre (peso en .serie-in, reps en .sr-h) para que
+   tonelaje, registro de pesos y cambio de semana sigan funcionando. Lo nuevo va en atributos del peso:
+   data-ok (serie hecha), data-rirh (RIR real), data-tipo, data-nota.
+   ========================================================= */
+const EN_TIPOS = [['', 'Efectiva'], ['aprox', 'Aprox.'], ['desc', 'Descarga'], ['drop', 'Drop'], ['rp', 'RP']];
+const EN_RIRS = ['0', '1', '2', '3', '4', '5'];
+function enRepsPlan(r){ const m = String(r || '').match(/\d+/); return m ? m[0] : ''; }
+function enFilaHTML(it, p, i, h, soloVer){
+  const reps = h ? h.value : '', peso = p.value, plan = p.dataset.reps || '', rirPlan = p.dataset.rir;
+  const prev = mjNum(p.dataset.prev) > 0 ? p.dataset.prev : '';
+  const ok = p.dataset.ok === '1', rirh = p.dataset.rirh, tipo = p.dataset.tipo || '', nota = p.dataset.nota || '';
+  const dis = soloVer ? ' disabled' : '', ro = soloVer ? ' readonly' : '';
+  const tipoTxt = (EN_TIPOS.filter(function(t){ return t[0] === tipo; })[0] || EN_TIPOS[0])[1];
+  return '<div class="srf' + (ok ? ' ok' : '') + '" data-i="' + i + '">'
+    + '<div class="srf-l1">'
+    + '<button type="button" class="srf-n" data-a="mas"' + (soloVer ? ' tabindex="-1"' : '') + ' aria-label="Opciones de la serie ' + (i + 1) + '">S' + (i + 1) + (tipo ? '<small>' + esc(tipoTxt) + '</small>' : '') + '</button>'
+    + '<label class="srf-reps"><input type="text" inputmode="numeric" data-a="reps" value="' + esc(reps) + '" placeholder="' + esc(enRepsPlan(plan) || '—') + '"' + ro + ' aria-label="Repeticiones hechas serie ' + (i + 1) + '"><span>reps</span></label>'
+    + '<span class="srf-x" aria-hidden="true">×</span>'
+    + '<div class="srf-peso"><button type="button" data-a="menos"' + dis + ' aria-label="Quitar 2,5 kg">−</button>'
+    + '<input type="text" inputmode="decimal" data-a="peso" value="' + esc(peso) + '" placeholder="' + esc(prev || 'kg') + '"' + ro + ' aria-label="Peso serie ' + (i + 1) + ' en kg">'
+    + '<button type="button" data-a="mas2"' + dis + ' aria-label="Añadir 2,5 kg">+</button></div>'
+    + '<button type="button" class="srf-ok" data-a="ok"' + dis + ' aria-pressed="' + ok + '" aria-label="Serie ' + (i + 1) + ' hecha">✓</button>'
+    + '</div>'
+    + '<div class="srf-l2"><div class="srf-rir" role="radiogroup" aria-label="RIR de la serie ' + (i + 1) + '">'
+    + '<span class="srf-rir-l">RIR<button type="button" class="srf-q" data-a="info" aria-label="¿Qué es el RIR?">?</button></span>'
+    + EN_RIRS.map(function(r){
+        const sel = rirh === r, obj = String(rirPlan) === r || (r === '5' && mjNum(rirPlan) >= 5);
+        return '<button type="button" role="radio" aria-checked="' + sel + '" data-a="rir" data-v="' + r + '" class="' + enRir(r) + (sel ? ' sel' : '') + (obj ? ' obj' : '') + '"' + dis + ' title="' + (obj ? 'Pauta: RIR ' + esc(rirPlan) + ' · ' : '') + enRirTxt(r) + '">' + (r === '5' ? '5+' : r) + '</button>';
+      }).join('')
+    + '</div><button type="button" class="srf-nota-b' + (nota ? ' con' : '') + '" data-a="mas"' + (soloVer ? ' tabindex="-1"' : '') + ' aria-label="Tipo de serie y nota">✎</button></div>'
+    + (nota ? '<div class="srf-nota-t">📝 ' + esc(nota) + '</div>' : '')
+    + '<div class="srf-opc" hidden>'
+    + '<div class="srf-tipos" role="radiogroup" aria-label="Tipo de serie">' + EN_TIPOS.map(function(t){ return '<button type="button" role="radio" aria-checked="' + (t[0] === tipo) + '" data-a="tipo" data-v="' + t[0] + '" class="' + (t[0] === tipo ? 'sel' : '') + '"' + dis + '>' + t[1] + '</button>'; }).join('') + '</div>'
+    + '<input type="text" class="srf-nota" data-a="nota" value="' + esc(nota) + '" placeholder="Nota (cómo ha ido, molestias…)"' + ro + ' aria-label="Nota de la serie ' + (i + 1) + '">'
+    + '</div></div>';
+}
+function enPintarFilas(it){
+  const cont = it.querySelector('.ex-series'); if (!cont) return;
+  let f = cont.querySelector('.sr-filas');
+  if (enEditando()) { if (f) f.remove(); cont.classList.remove('sr-nuevo'); return; }
+  const pesos = enPesos(it), hechas = it.querySelectorAll('.sr-h');
+  if (!pesos.length) return;
+  if (!f) { f = document.createElement('div'); f.className = 'sr-filas'; cont.appendChild(f); }
+  cont.classList.add('sr-nuevo');
+  const abiertas = Array.prototype.map.call(f.querySelectorAll('.srf-opc'), function(o){ return !o.hidden; });
+  // cabecera: pauta y referencia de la semana pasada
+  const p0 = pesos[0], reps = enRepsPlan(p0.dataset.reps), rir = p0.dataset.rir;
+  const d = clienteActual && clientesData[clienteActual];
+  const hist = d && d.registro && d.registro.ej && d.registro.ej[enNombreEj(it)];
+  const ult = hist && hist.length ? enMejorSerie(hist[hist.length - 1].s) : null;
+  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + ' × ' + esc(p0.dataset.reps || '—') + (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '') + '</span>'
+    + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + '</div>'
+    + pesos.map(function(p, i){ return enFilaHTML(it, p, i, hechas[i], isCoachView()); }).join('');
+  abiertas.forEach(function(a, i){ const o = f.querySelectorAll('.srf-opc')[i]; if (o && a) o.hidden = false; });
+}
+enSyncSeries = (function(orig){ return function(it){ orig(it); enPintarFilas(it); }; })(enSyncSeries);
+function enSrfDatos(el){
+  const fila = el.closest('.srf'), it = el.closest('.ex-item');
+  const i = +fila.dataset.i;
+  return { fila: fila, it: it, i: i, peso: enPesos(it)[i], reps: it.querySelectorAll('.sr-h')[i] };
+}
+function enDisparar(inp){ if (inp) inp.dispatchEvent(new Event('input', { bubbles: true })); }
+(function(){
+  const cont = contEnt(); if (!cont) return;
+  cont.addEventListener('click', function(e){
+    const b = e.target.closest && e.target.closest('.srf [data-a]'); if (!b || b.tagName === 'INPUT') return;
+    const a = b.dataset.a, x = enSrfDatos(b);
+    if (a === 'info') { const l = document.getElementById('enLeyenda'); if (l) { l.open = true; l.scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
+    if (a === 'mas') { const o = x.fila.querySelector('.srf-opc'); o.hidden = !o.hidden; return; }
+    if (isCoachView() || !x.peso) return;
+    if (a === 'menos' || a === 'mas2') {
+      const base = mjNum(x.peso.value) || mjNum(x.peso.dataset.prev) || 0;
+      const v = Math.max(0, base + (a === 'mas2' ? 2.5 : -2.5));
+      x.peso.value = fmtNum(v); enDisparar(x.peso);
+    } else if (a === 'rir') {
+      if (x.peso.dataset.rirh === b.dataset.v) delete x.peso.dataset.rirh; else x.peso.dataset.rirh = b.dataset.v;
+    } else if (a === 'tipo') {
+      if (b.dataset.v) x.peso.dataset.tipo = b.dataset.v; else delete x.peso.dataset.tipo;
+    } else if (a === 'ok') {
+      const ok = x.peso.dataset.ok !== '1';
+      if (ok) {
+        // al marcarla, si faltan datos se toman de la pauta y de la semana pasada
+        if (x.reps && !x.reps.value) { x.reps.value = enRepsPlan(x.peso.dataset.reps); enDisparar(x.reps); }
+        if (!x.peso.value && mjNum(x.peso.dataset.prev) > 0) { x.peso.value = x.peso.dataset.prev; enDisparar(x.peso); }
+        x.peso.dataset.ok = '1';
+      } else delete x.peso.dataset.ok;
+    } else return;
+    enPintarFilas(x.it);
+    programarGuardado();
+  });
+  cont.addEventListener('input', function(e){
+    const t = e.target; if (!t.closest || !t.closest('.srf') || !t.dataset.a) return;
+    const x = enSrfDatos(t);
+    if (t.dataset.a === 'reps' && x.reps) { x.reps.value = t.value; enDisparar(x.reps); }
+    else if (t.dataset.a === 'peso' && x.peso) { x.peso.value = t.value; enDisparar(x.peso); }
+    else if (t.dataset.a === 'nota' && x.peso) { if (t.value.trim()) x.peso.dataset.nota = t.value.trim(); else delete x.peso.dataset.nota; }
+    programarGuardado();
+  });
+  cont.addEventListener('change', function(e){ if (e.target.dataset && e.target.dataset.a === 'nota') enPintarFilas(e.target.closest('.ex-item')); });
+})();
+/* semana nueva: las series vuelven a estar sin marcar */
+mjCambioDeSemana = (function(orig){
+  return function(k){
+    const d = clientesData[k], antes = d && d.semanaRef;
+    const r = orig.apply(this, arguments);
+    if (d && antes && d.semanaRef !== antes) Array.prototype.forEach.call(contEnt().querySelectorAll('.serie-in input'), function(x){
+      ['ok', 'rirh', 'tipo', 'nota'].forEach(function(a){ delete x.dataset[a]; });
+    });
+    return r;
+  };
+})(mjCambioDeSemana);

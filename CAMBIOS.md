@@ -3,8 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.60.4 (actual)
-Cambios acumulados hacia la 0.61: **9 de 10**
+## Versión 0.61.1 (actual)
+Cambios acumulados hacia la 0.62: **2 de 10**
+
+### Hacia la 0.62
+1. 20/10/2026 13:10 · Corregido: no se podía mover un ejercicio por encima o por debajo del título de una superserie o circuito
+2. 20/10/2026 13:10 · Corregido: «Deshacer» juntaba en un solo paso dos acciones hechas muy seguidas; ahora cada acción es un paso → **0.61.1**
+
+## Versión 0.60 → 0.60.4
 
 ### Hacia la 0.61
 1. 20/10/2026 10:35 · Corregido: en un plan guardado, las opciones de cada comida no se podían tocar al volver a abrirlo; el cliente ya puede elegir su opción
@@ -16,6 +22,7 @@ Cambios acumulados hacia la 0.61: **9 de 10**
 7. 20/10/2026 11:25 · Nutrición: 35 productos de Mercadona (Hacendado), Lidl y Carrefour en el catálogo, con la marca en el nombre, sus macros de etiqueta y sus alérgenos
 8. 20/10/2026 11:25 · Nutrición: cada alimento va a la fila del macronutriente del que más gramos tiene (también los que creéis vosotros; al crearlo se indica la fila). Cambian «Legumbre + huevo» y «Semillas de chía», que pasan a Carbohidrato → **0.60.4**
 9. 20/10/2026 11:45 · Nutrición: Fátima puede fijar a mano los gramos de un alimento (tocando su cantidad en «Editar»); queda con 📌 y el resto de la comida se recalcula para cuadrar; las alternativas de esa fila salen equivalentes (mismos gramos de su macronutriente principal); tocando 📌 se suelta; si lo fijado se pasa, la comida lo avisa
+10. 20/10/2026 13:10 · Entreno: nueva forma de apuntar las series (como la captura de Domingo): una fila por serie con S1, reps, peso con − / + y ✓; RIR con botones 0 · 1 · 2 · 3 · 4 · 5+ con sus colores (0-2 rojo, 3-4 amarillo, 5+ verde) y la pauta marcada; tipo de serie (Efectiva, Aprox., Descarga, Drop, RP) y nota; cabecera con la pauta y la semana pasada. Al marcar ✓ sin datos se ponen las reps de la pauta y el peso anterior → **sube a la 0.61**
 
 ## Versión 0.59.1 → 0.59.4
 
