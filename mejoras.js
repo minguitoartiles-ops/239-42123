@@ -232,7 +232,7 @@ renderHoy = (function(orig){
 const NUT_DEF = { kcal: 2000, p: 30, c: 45, f: 25 };
 function mjPrepararCalculadora(key){
   const d = clientesData[key];
-  const o = (d && d.nutObj) || NUT_DEF;
+  const o = (d && d.nutObj && d.nutObj.kcal) ? d.nutObj : NUT_DEF;
   const set = function(id, v){ const el = document.getElementById(id); if (el) { el.value = v; el.setAttribute('value', v); } };
   set('calcKcal', o.kcal); set('calcP', o.p); set('calcC', o.c); set('calcF', o.f);
   const row = document.getElementById('calcMealRow');
@@ -268,7 +268,7 @@ function mjPintarObjetivoNut(){
   const d = clienteActual && clientesData[clienteActual];
   if (!d) return;
   const n = mealBlocks().length;
-  if (!d.nutObj && !isCoachView()) {
+  if (!(d.nutObj && d.nutObj.kcal) && !isCoachView()) {
     // el cliente no ve un objetivo inventado
     setTxt('resKcal', '—'); setTxt('resP', '—'); setTxt('resC', '—'); setTxt('resF', '—');
     setTxt('resNote', 'Fátima todavía no ha fijado tu objetivo diario');
@@ -278,7 +278,6 @@ function mjPintarObjetivoNut(){
   }
   let nota = n ? 'Reparto en ' + n + (n === 1 ? ' comida' : ' comidas') : (isCoachView() ? 'Objetivo fijado · aún sin comidas en el plan' : 'Tu plan de comidas está en preparación');
   if (d.nutObj && d.nutObj.fecha) nota += ' · actualizado el ' + fechaCorta(d.nutObj.fecha) + (d.nutObj.por ? ' por ' + d.nutObj.por : '');
-  else if (isCoachView()) nota += ' · sin guardar todavía';
   setTxt('resNote', nota);
 }
 /* el texto fijo «Ajustado por Fátima» pasa a decir cuándo se actualizó el plan */
