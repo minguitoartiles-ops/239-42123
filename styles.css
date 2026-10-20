@@ -1468,3 +1468,8 @@
   .coach-bar-volver .vb-chev{font-size:16px;}
   .coach-bar .nu-nav{padding:0 2px;}
 }
+/* v0.60.2 · lápiz para cambiar el nombre del cliente */
+#view-coach-cliente .alta-top > div:not(.ajx-acts){display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:8px;min-width:0;}
+#view-coach-cliente .alta-top > div > .eyebrow{flex-basis:100%;}
+.cd-edit-nom{flex:none;width:30px;height:30px;margin-bottom:2px;border-radius:50%;border:1px solid var(--accent-line);background:var(--accent-wash);color:var(--accent);font-size:14px;line-height:1;cursor:pointer;}
+#fichaPago .ajx-val,.esc-grupo .list-row .ajx-val{overflow-wrap:normal;word-break:normal;}

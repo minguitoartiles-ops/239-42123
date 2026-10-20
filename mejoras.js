@@ -554,7 +554,7 @@ function copiarPlan(){
   if (!grupo) return;
   const r1 = document.createElement('div');
   r1.className = 'list-row'; r1.id = 'fichaEditar'; r1.onclick = abrirEditarCliente;
-  r1.innerHTML = '<span>Editar datos del cliente</span><span class="ajx-acts"><span class="ajx-val">Objetivo, duración, contacto</span><span class="chev">›</span></span>';
+  r1.innerHTML = '<span>Editar datos del cliente</span><span class="ajx-acts"><span class="ajx-val">Nombre, objetivo, duración y contacto</span><span class="chev">›</span></span>';
   grupo.insertBefore(r1, grupo.firstChild);
   const del = Array.prototype.filter.call(grupo.querySelectorAll('.list-row'), function(r){ return /Eliminar cliente/.test(r.textContent); })[0];
   const r2 = document.createElement('div');
