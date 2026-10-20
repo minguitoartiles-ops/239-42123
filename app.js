@@ -2,10 +2,10 @@ function enterApp(){
   const cod=(document.getElementById('accessCode').value||'').trim().toUpperCase();
   const err=document.getElementById('loginError');
   const claves=Object.keys(clientesData);
-  if(!claves.length){ err.textContent='Todavía no hay ningún cliente dado de alta. Crea uno desde el panel de coach.'; return; }
   if(!cod){ err.textContent='Introduce tu código de acceso.'; return; }
+  if(!claves.length){ err.textContent='Ese código no funciona en este móvil. Revisa que esté bien escrito o pide a tu profesional que te lo vuelva a enviar.'; return; }
   const k=claves.filter(function(x){ return (clientesData[x].codigo||'').toUpperCase()===cod; })[0];
-  if(!k){ err.textContent='Ese código no corresponde a ningún cliente.'; return; }
+  if(!k){ err.textContent='Ese código no funciona en este móvil. Revisa que esté bien escrito o pide a tu profesional que te lo vuelva a enviar.'; return; }
   err.textContent='';
   guardarPlan();
   clienteActual=k;
@@ -86,16 +86,16 @@ function recalcEntreno(){
   hechas.forEach(function(s){ ton+=tonelajeDe(s); });
   const sub=document.getElementById('entSub');
   if(sub) sub.textContent = cards.length
-      ? cards.length+' sesion'+(cards.length===1?'':'es')+' esta semana · registra el peso al terminar cada una'
+      ? cards.length+(cards.length===1?' sesión':' sesiones')+' esta semana · registra el peso al terminar cada una'
       : 'Aún no hay sesiones en el plan.';
   setTxt('entTon',ton?fmtMil(ton)+' kg':'— kg');
   renderHoy();
   const nota=document.getElementById('entNota');
   if(nota){
     if(!cards.length) nota.textContent='';
-    else if(hechas.length===cards.length) nota.textContent='¡Semana completa! Has hecho las '+cards.length+' sesiones.';
+    else if(hechas.length===cards.length) nota.textContent=cards.length===1?'¡Semana completa! Has hecho tu sesión.':'¡Semana completa! Has hecho las '+cards.length+' sesiones.';
     else if(!ton) nota.textContent='Entrena los días que mejor te vengan. Registra los pesos para ver tu tonelaje.';
-    else nota.textContent='Te quedan '+(cards.length-hechas.length)+' sesiones esta semana.';
+    else nota.textContent=(cards.length-hechas.length)===1?'Te queda 1 sesión esta semana.':'Te quedan '+(cards.length-hechas.length)+' sesiones esta semana.';
   }
 }
 function onPautaChange(inp){
@@ -112,7 +112,7 @@ function onPautaChange(inp){
   for(let k=filas.length;k<nser;k++){
     const l=document.createElement('label');
     l.className='serie-in';
-    l.innerHTML='<span>S'+(k+1)+'</span><input type="number" step="0.5" placeholder="—" data-reps="'+nrep+'" data-prev="'+prev+'" oninput="onSerieInput(this)">';
+    l.innerHTML='<span>S'+(k+1)+'</span><input type="text" inputmode="decimal" placeholder="—" data-reps="'+nrep+'" data-prev="'+prev+'" oninput="onSerieInput(this)">';
     cont.appendChild(l);
     filas.push(l);
   }
@@ -367,7 +367,7 @@ function tituloSesionKey(ev,el){ if(ev.key==='Enter'){ ev.preventDefault(); el.b
 function filaEjercicio(nombre,mus,se,rep,rir){
   let ins='';
   for(let k=0;k<se;k++){
-    ins+='<label class="serie-in"><span>S'+(k+1)+'</span><input type="number" step="0.5" placeholder="—" data-reps="'+rep+'" data-prev="0" oninput="onSerieInput(this)"></label>';
+    ins+='<label class="serie-in"><span>S'+(k+1)+'</span><input type="text" inputmode="decimal" placeholder="—" data-reps="'+rep+'" data-prev="0" oninput="onSerieInput(this)"></label>';
   }
   return '<div class="ex-item">'
    +'<div class="ex-table-row"><span class="ex-name-cell" data-muscle="'+mus+'" onclick="openExercisePicker(this)">'+nombre+'</span>'
@@ -1293,7 +1293,6 @@ function addMeal(){
 }
 function removeMeal(ev,el){
   ev.stopPropagation();
-  if(mealBlocks().length<=1) return;
   el.closest('.meal-block').remove();
   if(!contNut().querySelectorAll('.meal-block').length) contNut().innerHTML=VACIO_NUT;
   renumberMeals();
