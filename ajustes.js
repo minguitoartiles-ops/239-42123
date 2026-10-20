@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.52.1';
+const APP_VERSION = '0.55.3';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -224,6 +224,7 @@ function descargarCopiaCompleta(){
   entregarArchivo('fitness-sin-dramas-copia-' + hoyISO() + '.json', {
     app: 'fitness-sin-dramas', tipo: 'completa', version: APP_VERSION, creada: new Date().toISOString(),
     datos: { v: 1, clientes: clientesData, seg: SEGUIMIENTOS, planes: PLANES, notis: notisCoach, sesion: null,
+             avisos: (function(){ try { return JSON.parse(localStorage.getItem('fsd_avisos') || 'null'); } catch(e){ return null; } })(),
              fotos: (typeof leerFotosCoach === 'function' ? leerFotosCoach() : {}) }
   });
 }
@@ -263,7 +264,9 @@ function restaurarCopia(inp){
         try {
           o.datos.sesion = null;
           if (o.datos.fotos) localStorage.setItem('fsd_fotos', JSON.stringify(o.datos.fotos));
-          delete o.datos.fotos;
+          if (o.datos.avisos) localStorage.setItem('fsd_avisos', JSON.stringify(o.datos.avisos));
+          delete o.datos.fotos; delete o.datos.avisos;
+          try { sessionStorage.setItem('fsd_restaurada', String(n)); } catch(e){}
           localStorage.setItem(DB_KEY, JSON.stringify(o.datos));
         } catch(e){
           fsdBloqueoGuardado = false;
@@ -458,7 +461,7 @@ function htmlAjustes(rol){
   if (cliente && d) {
     if (d.consentSalud && d.consentSalud.fecha) {
       h += fila('Consentimiento de datos de salud', pill('Dado el ' + fechaCorta(d.consentSalud.fecha), true));
-      h += fila('Retirar consentimiento', '', 'retirarConsentSalud()', 'danger');
+      h += fila('Retirar consentimiento de salud', '', 'retirarConsentSalud()', 'danger');
       h += '<div class="list-row"><span>Boletín, novedades y ofertas</span><div class="toggle' + (d.consentComercial ? ' on' : '') + '" onclick="toggleComercial(this)" role="switch" aria-checked="' + (d.consentComercial ? 'true' : 'false') + '"><div class="toggle-knob"></div></div></div>';
     } else {
       h += fila('Consentimiento de datos de salud', pill('Pendiente'), 'comprobarConsentSalud()');
