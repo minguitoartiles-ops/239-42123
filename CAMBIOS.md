@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.59.2 (actual)
-Cambios acumulados hacia la 0.60: **5 de 10**
+## Versión 0.60 (actual)
+Cambios acumulados hacia la 0.61: **1 de 10**
+
+### Hacia la 0.61
+1. 20/10/2026 10:35 · Corregido: en un plan guardado, las opciones de cada comida no se podían tocar al volver a abrirlo; el cliente ya puede elegir su opción
+
+## Versión 0.59.1 → 0.59.4
 
 ### Hacia la 0.60
 1. 20/10/2026 09:45 · Ordenador: los clientes solo pueden usar la app en el móvil o la tablet; en un ordenador ven un aviso con un código QR para abrirla en el móvil
@@ -12,6 +17,11 @@ Cambios acumulados hacia la 0.60: **5 de 10**
 3. 20/10/2026 09:40 · Entreno: al aplicar una plantilla los días salen plegados (solo el nombre de cada día) y se abre el que se quiera editar
 4. 20/10/2026 09:45 · Entreno: el plan del asistente y el importado desde Claude también salen con los días plegados → **0.59.2**
 5. 20/10/2026 10:05 · Nutrición: al crear un alimento propio se avisa si sus macros no son creíbles por 100 g (p. ej. una leche con 15 g de carbohidrato, copiada de un vaso), con «Corregir» o «Guardar igualmente»; se muestran las kcal por 100 g mientras se escriben
+6. 20/10/2026 10:35 · Ajustes de Fátima y Domingo: fuera «Dispositivos y apps de salud» (sigue en los Ajustes del cliente) → **0.59.3**
+7. 20/10/2026 10:35 · Plan nutricional (profesionales): fuera de «Editar», tocar una opción no la cambia ni recalcula cantidades; avisa «Pulsa Editar»
+8. 20/10/2026 10:35 · Plan nutricional: fuera el «Resumen rápido de cantidades» para todos (ya están en cada comida) → **0.59.4**
+9. 20/10/2026 10:35 · Ficha: el «Registro de pesos» va plegado dentro del bloque «Entrenamiento» (y sale de los apartados)
+10. 20/10/2026 10:35 · Ficha: «Gestión del cliente» sin «Seguimientos realizados», «Entrenamiento», «Plan nutricional» ni «Conversación» (están en los botones de arriba) → **sube a la 0.60**
 
 ## Versión 0.58.1 → 0.58.4
 

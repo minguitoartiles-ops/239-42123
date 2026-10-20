@@ -1447,3 +1447,12 @@
 #newFoodError .nu-aviso-macros{display:block;color:var(--ink);font:500 12.5px/1.45 var(--f-body);background:rgba(227,166,89,.16);border:1px solid var(--carb);border-radius:10px;padding:9px 11px;margin-top:6px;}
 #newFoodError .nu-aviso-acts{display:flex;gap:8px;margin-top:8px;}
 #newFoodError .nu-aviso-acts button{flex:1;}
+/* v0.59.3 · registro de pesos dentro del bloque Entrenamiento de la ficha */
+.fe-registro{margin:-4px 0 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;}
+.fe-registro > summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;font:700 13px var(--f-body);color:var(--ink);}
+.fe-registro > summary::-webkit-details-marker{display:none;}
+.fe-registro > summary small{font:500 11.5px var(--f-body);color:var(--dim-45);}
+.fe-registro > summary::after{content:"⌄";color:var(--accent);font-size:16px;line-height:1;margin-left:4px;transition:transform .2s;}
+.fe-registro[open] > summary::after{transform:rotate(180deg);}
+.fe-registro[open] > summary{margin-bottom:8px;}
+#app.coach-view:not(.coach-edit) #comidasCont .chip:not(.chip-add){cursor:default;}

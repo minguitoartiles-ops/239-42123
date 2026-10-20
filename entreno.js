@@ -566,16 +566,24 @@ function enHtmlRegistro(k){
   if (!h) return '<div class="picker-empty">Aún no tiene ejercicios en el plan.</div>';
   return (hay ? '' : '<p class="ajx-note">Todavía no ha apuntado pesos. Aquí verás la mejor serie de cada semana (peso × repeticiones).</p>') + h;
 }
+let enRegAbierto = false;
 function enPintarRegistroFicha(){
   const k = clienteActual, v = document.getElementById('view-coach-cliente');
   if (!k || !v) return;
+  // va dentro del bloque «Entrenamiento», plegado, para que la ficha se vea más limpia
+  const ent = document.getElementById('fichaEntrenoRes');
   let box = document.getElementById('fichaRegistro');
+  if (box && ent && box.parentNode !== ent) box.remove(), box = null;
   if (!box) {
-    box = document.createElement('div'); box.id = 'fichaRegistro';
-    const ref = document.getElementById('fichaPasos') || document.getElementById('fichaSens');
-    ref.parentNode.insertBefore(box, ref);
+    box = document.createElement('details'); box.id = 'fichaRegistro'; box.className = 'fe-registro';
+    if (ent) ent.appendChild(box);
+    else { const ref = document.getElementById('fichaPasos') || document.getElementById('fichaSens'); ref.parentNode.insertBefore(box, ref); }
   }
-  box.innerHTML = '<div class="alta-label">Registro de pesos</div>' + enHtmlRegistro(k);
+  if (!box.dataset.esc) { box.dataset.esc = '1'; box.addEventListener('toggle', function(){ enRegAbierto = box.open; }); }
+  const reg = clientesData[k] && clientesData[k].registro && clientesData[k].registro.ej;
+  const n = reg ? Object.keys(reg).length : 0;
+  box.innerHTML = '<summary><span>📈 Registro de pesos</span><small>' + (n ? n + (n === 1 ? ' ejercicio con historial' : ' ejercicios con historial') : 'Sin semanas guardadas') + '</small></summary>' + enHtmlRegistro(k);
+  box.open = enRegAbierto;
 }
 
 /* =========================================================
@@ -946,7 +954,7 @@ document.addEventListener('click', function(e){
   body.insertBefore(sec, meta ? meta.nextSibling : acc.nextSibling);
   const vb = document.getElementById('fichaChatBtn'); if (vb) vb.hidden = true;
 })();
-const EN_SECCIONES = [['todo', 'Todo'], ['datos', 'Datos y medidas'], ['segui', 'Seguimiento'], ['entreno', 'Entrenamiento'], ['registro', 'Registro de pesos'], ['nutri', 'Nutrición'], ['pago', 'Suscripción']];
+const EN_SECCIONES = [['todo', 'Todo'], ['datos', 'Datos y medidas'], ['segui', 'Seguimiento'], ['entreno', 'Entrenamiento'], ['nutri', 'Nutrición'], ['pago', 'Suscripción']];
 let enSeccion = 'todo';
 function enPintarAccesos(){
   const a = document.getElementById('fichaAccesos'); if (!a || !clienteActual) return;
@@ -985,7 +993,7 @@ function enSeccionDe(el){
   if (id === 'fichaAccesos' || id === 'fichaSecciones' || id === 'cd-meta') return 'siempre';
   if (id === 'fichaNutri') return 'nutri';
   if (id === 'fichaSens' || id === 'fichaPasos') return 'segui';
-  if (id === 'fichaRegistro') return 'registro';
+  if (id === 'fichaRegistro') return 'entreno';
   if (id === 'fichaPago') return 'pago';
   if (id === 'fichaEntrenoRes') return 'entreno';
   if (el.classList.contains('tonelaje-card')) return 'entreno';
@@ -1066,3 +1074,30 @@ pintarListaClientes = (function(orig){
   };
 })(pintarListaClientes);
 actualizarPanel();
+
+/* =========================================================
+   v0.59.3 · tareas pendientes
+   ========================================================= */
+/* 79 · Profesionales: fuera de «Editar», tocar una opción del plan nutricional no la cambia ni recalcula nada */
+pick = (function(orig){
+  return function(el){
+    if (isCoachView() && !coachEditing && el && el.closest && el.closest('#comidasCont')) {
+      toast('Pulsa «Editar» para cambiar las opciones del plan');
+      return;
+    }
+    orig(el);
+  };
+})(pick);
+/* 80 · Fuera el «Resumen rápido de cantidades»: las cantidades ya están en cada comida */
+pintarResumenGramos = function(){ const r = document.getElementById('resumenGramos'); if (r) r.remove(); };
+pintarResumenGramos();
+/* las opciones de un plan guardado pierden su «tocar para elegir» al volver a cargarse: un único oyente para todas */
+(function(){
+  const cont = document.getElementById('comidasCont'); if (!cont) return;
+  cont.addEventListener('click', function(e){
+    const ch = e.target.closest && e.target.closest('.chip');
+    if (!ch || ch.classList.contains('chip-add') || e.target.closest('.chip-x') || ch.onclick) return;
+    if (!ch.closest('.macro-group')) return;
+    pick(ch);
+  });
+})();
