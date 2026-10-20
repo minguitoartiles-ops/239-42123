@@ -174,6 +174,15 @@ enPintarFilas = (function(orig){
       cab.appendChild(b);
     }
     const p = enPesos(it);
+    // móviles pequeños: el RIR solo se despliega en la serie que toca; en las demás, una etiqueta con el RIR apuntado
+    let act = false;
+    Array.prototype.forEach.call(f.querySelectorAll('.srf'), function(fila){
+      const x = p[+fila.dataset.i]; if (!x) return;
+      const ok = x.dataset.ok === '1';
+      fila.classList.toggle('actual', !ok && !act); if (!ok) act = true;
+      const n = fila.querySelector('.srf-n'), r = x.dataset.rirh;
+      if (n && r != null && r !== '' && !n.querySelector('.srf-rirb')) n.insertAdjacentHTML('beforeend', '<small class="srf-rirb ' + enRir(r) + '">RIR ' + (r === '5' ? '5+' : esc(r)) + '</small>');
+    });
     const hecho = p.length > 0 && p.every(function(x){ return x.dataset.ok === '1'; });
     it.classList.toggle('ej-hecho', hecho);
     let r = it.querySelector('.ej-resumen');
@@ -584,9 +593,21 @@ function exLogro(id, ico, tit, tipo, guardar){
     if (L.lista.length > 120) L.lista = L.lista.slice(-120);
     programarGuardado();
   }
-  exCola.push({ ico: ico, tit: tit, txt: txt });
-  exSiguienteLogro();
+  exLote.push({ ico: ico, tit: tit, txt: txt, tipo: tipo });
+  clearTimeout(exLoteT); exLoteT = setTimeout(exSoltarLote, 450);
   return true;
+}
+// los logros que llegan a la vez (p. ej. sesión + semana + racha) salen en un único mensaje
+let exLote = [], exLoteT = null;
+const EX_PRIORIDAD = ['racha', 'pr', 'top', 'sem', 'nut', 'seg', 'ses'];
+function exSoltarLote(){
+  let l = exLote; exLote = [];
+  if (!l.length) return;
+  if (l.length > 1) l = l.filter(function(x){ return x.tipo !== 'ses'; });   // «sesión hecha» sobra si hay algo mayor
+  l.sort(function(a, b){ return EX_PRIORIDAD.indexOf(a.tipo) - EX_PRIORIDAD.indexOf(b.tipo); });
+  if (l.length === 1) exCola.push(l[0]);
+  else exCola.push({ ico: l[0].ico, tit: '¡' + l.length + ' logros a la vez!', txt: l[0].txt, lista: l.map(function(x){ return x.ico + ' ' + x.tit; }) });
+  exSiguienteLogro();
 }
 function exSiguienteLogro(){
   if (exMostrando || !exCola.length) return;
@@ -598,10 +619,12 @@ function exSiguienteLogro(){
     p.onclick = function(){ exCerrarLogro(); };
     document.getElementById('screenRoot').appendChild(p);
   }
-  p.innerHTML = '<span class="exl-ico" aria-hidden="true">' + x.ico + '</span><span class="exl-txt"><b>' + esc(x.tit) + '</b><span>' + esc(x.txt) + '</span></span>'
+  p.innerHTML = '<span class="exl-ico" aria-hidden="true">' + x.ico + '</span><span class="exl-txt"><b>' + esc(x.tit) + '</b>'
+    + (x.lista ? '<ul class="exl-lista">' + x.lista.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '')
+    + '<span>' + esc(x.txt) + '</span></span>'
     + '<span class="exl-chispas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>';
   p.classList.remove('show'); void p.offsetWidth; p.classList.add('show');
-  clearTimeout(p._t); p._t = setTimeout(exCerrarLogro, exCola.length ? 2600 : 4200);   // si hay más en cola, cada uno dura menos
+  clearTimeout(p._t); p._t = setTimeout(exCerrarLogro, x.lista ? 5200 : (exCola.length ? 2600 : 4200));
 }
 function exCerrarLogro(){
   const p = document.getElementById('exLogroPop'); if (p) p.classList.remove('show');
@@ -655,13 +678,20 @@ toggleSesionHecha = (function(orig){
   };
 })(toggleSesionHecha);
 /* ---------- 2 · marcas: récord al marcar una serie con más peso que nunca ---------- */
-function exMejorPeso(k, it){
-  let m = 0;
-  const d = clientesData[k], h = d && d.registro && d.registro.ej && d.registro.ej[enNombreEj(it)];
-  (h || []).forEach(function(w){ w.s.forEach(function(x){ if (x[0] > m) m = x[0]; }); });
-  enPesos(it).forEach(function(p){ const v = mjNum(p.dataset.prev); if (v > m) m = v; });
-  return m;
+// series de referencia: historial guardado + otras series ya marcadas hoy en ese ejercicio (no la que se marca)
+function exSeriesRef(k, it, salvo){
+  const out = [], d = clientesData[k], h = d && d.registro && d.registro.ej && d.registro.ej[enNombreEj(it)];
+  (h || []).forEach(function(w){ (w.s || []).forEach(function(x){ out.push([mjNum(x[0]) || 0, mjNum(x[1]) || 0]); }); });
+  const hechas = it.querySelectorAll('.sr-h');
+  enPesos(it).forEach(function(p, i){
+    const v = mjNum(p.dataset.prev); if (v > 0) out.push([v, 0]);
+    if (i !== salvo && p.dataset.ok === '1' && mjNum(p.value) > 0) out.push([mjNum(p.value), hechas[i] ? (mjNum(hechas[i].value) || 0) : 0]);
+  });
+  return out;
 }
+function exMejorPeso(k, it, salvo){ return exSeriesRef(k, it, salvo).reduce(function(m, x){ return x[0] > m ? x[0] : m; }, 0); }
+// más repeticiones nunca hechas con ese peso (o más)
+function exMejorReps(k, it, peso, salvo){ return exSeriesRef(k, it, salvo).reduce(function(m, x){ return x[0] >= peso && x[1] > m ? x[1] : m; }, 0); }
 (function(){
   const cont = contEnt(); if (!cont) return;
   let previo = null;
@@ -669,18 +699,24 @@ function exMejorPeso(k, it){
     const b = e.target.closest && e.target.closest('.srf [data-a="ok"]');
     if (!b || isCoachView()) { previo = null; return; }
     const it = b.closest('.ex-item'), i = +b.closest('.srf').dataset.i, p = enPesos(it)[i];
-    previo = { it: it, p: p, ok: p && p.dataset.ok === '1', mejor: exMejorPeso(clienteActual, it) };
+    previo = { it: it, i: i, p: p, h: it.querySelectorAll('.sr-h')[i], ok: p && p.dataset.ok === '1', ref: exSeriesRef(clienteActual, it, i) };
   }, true);
   cont.addEventListener('click', function(){
     if (!previo) return;
     const x = previo; previo = null;
     setTimeout(function(){
-      if (x.ok || !x.p || x.p.dataset.ok !== '1') return;
-      const v = mjNum(x.p.value);
-      if (v > 0 && x.mejor > 0 && v > x.mejor) {
-        const n = enNombreEj(x.it);
+      if (x.ok || !x.p || x.p.dataset.ok !== '1' || !x.ref.length) return;
+      const v = mjNum(x.p.value), r = x.h ? mjNum(x.h.value) : 0;
+      if (!(v > 0)) return;
+      const n = enNombreEj(x.it), hoy = mjISO(new Date());
+      const mejorPeso = x.ref.reduce(function(m, s){ return s[0] > m ? s[0] : m; }, 0);
+      if (mejorPeso > 0 && v > mejorPeso) {
         exLogro('pr-' + n + '-' + v, '🏆', '¡Nuevo récord en ' + n + ': ' + fmtNum(v) + ' kg!', 'pr');
+        return;
       }
+      const mejorReps = x.ref.reduce(function(m, s){ return s[0] >= v && s[1] > m ? s[1] : m; }, 0);
+      if (r > 0 && mejorReps > 0 && r > mejorReps)   // una sola vez por ejercicio y día para no saturar
+        exLogro('prr-' + n + '-' + hoy, '💥', '¡Récord de repeticiones en ' + n + ': ' + r + ' × ' + fmtNum(v) + ' kg!', 'pr');
     }, 60);
   });
 })();

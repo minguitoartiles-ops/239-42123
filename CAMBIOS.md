@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.62 → 0.62.3 (actual)
-Cambios acumulados hacia la 0.63: **6 de 10**
+## Versión 0.62 → 0.62.4 (actual)
+Cambios acumulados hacia la 0.63: **9 de 10**
 
 ### Hacia la 0.63
 1. 20/10/2026 16:50 · Plan nutricional (profesionales, móvil): barra fija con el cuadre del día (kcal y macros frente al objetivo) y calculadora plegable que muestra en una línea el objetivo y el reparto
@@ -13,6 +13,9 @@ Cambios acumulados hacia la 0.63: **6 de 10**
 4. 20/10/2026 16:50 · Ordenador: filas de clientes más compactas, seguimientos en rejilla, pestañas del cliente (Entrenamiento / Nutrición / Chat) en la barra del editor y atajos Ctrl+K (buscar cliente) y Alt+↑↓ (cliente anterior / siguiente) → **0.62.2**
 5. 20/10/2026 16:50 · Ajustes en apartados plegables (el primero abierto; recuerda cuáles dejaste abiertos)
 6. 20/10/2026 16:50 · Recompensas para el cliente: mensaje corto de motivación al completar una sesión, la semana de entrenos, un récord de peso en un ejercicio, el día de nutrición, enviar el seguimiento o tener una semana de nota (entreno y nutrición ≥ 8); rachas de semanas de entrenos, días de nutrición y semanas de seguimiento con hitos (2, 3, 4, 6, 8… semanas; 3, 5, 7, 10… días); tarjeta «🏅 Tus logros» en Progreso → **0.62.3**
+7. 20/10/2026 17:10 · Recompensas sin saturar: los logros que llegan a la vez (p. ej. semana completa + racha) salen en un único mensaje «¡N logros a la vez!» con la lista; «sesión hecha» no se muestra si hay un logro mayor
+8. 20/10/2026 17:10 · Recompensas: récord de repeticiones (más reps que nunca con ese peso o más, uno por ejercicio y día); los récords también comparan con las series ya hechas ese día → **0.62.4**
+9. 20/10/2026 17:10 · Entreno en móviles pequeños (iPhone SE y similares): el RIR solo se despliega en la serie que toca (o al tocar S1 o editar la serie); las demás muestran el RIR apuntado en una etiqueta de color. Un día de 6 ejercicios pasa de unas 5,5 a 4,2 pantallas
 
 ## Versión 0.61.1 → 0.61.4
 
