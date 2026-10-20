@@ -529,3 +529,82 @@ pintarListaClientes = (function(orig){
   };
 })(pintarListaClientes);
 actualizarPanel();
+
+/* ---------- alimentos propios: revisar que los macros sean creíbles para 100 g (v0.59.2) ---------- */
+// [nombre, patrón, excepción, rangos por 100 g {p,c,f:[mín, máx]}, valores típicos para el aviso]
+const NU_REFS = [
+  ['una leche', /\bleche\b/i, /polvo|coco|condensada/i, { p: [0.5, 4.5], c: [0, 7], f: [0, 4.5] }, 'P 3 · C 5 · G 0-4 por 100 ml'],
+  ['una bebida vegetal', /bebida (de )?(avena|soja|almendra|arroz)/i, null, { p: [0, 4], c: [0, 12], f: [0, 3.5] }, 'P 0-3 · C 0-10 · G 1-3 por 100 ml'],
+  ['un yogur o kéfir', /yogur|k[eé]fir|skyr/i, /polvo/i, { p: [2.5, 12], c: [0, 16], f: [0, 10] }, 'P 3-10 · C 3-12 · G 0-8'],
+  ['claras de huevo', /claras?/i, /polvo/i, { p: [9, 13], c: [0, 2], f: [0, 1] }, 'P 11 · C 1 · G 0'],
+  ['un huevo', /\bhuevos?\b/i, /claras?|polvo|\+/i, { p: [10, 15], c: [0, 2], f: [7, 13] }, 'P 13 · C 1 · G 10'],
+  ['una patata o boniato', /patata|boniato|batata/i, /frita|chips|copos|pur[eé] en polvo/i, { p: [0.5, 3], c: [12, 25], f: [0, 1.5] }, 'P 2 · C 17-20 · G 0'],
+  ['una fruta', /fruta|manzana|pl[aá]tano|naranja|fresa|pera|kiwi|mel[oó]n|sand[ií]a|uva|pi[nñ]a|mango|ar[aá]ndano/i, /deshidratad|seca|zumo|mermelada/i, { p: [0, 2], c: [3, 25], f: [0, 1] }, 'P 0-1 · C 8-20 · G 0'],
+  ['una verdura', /verdura|br[oó]coli|espinaca|lechuga|tomate|calabac|pimiento|jud[ií]a verde|zanahoria|pepino|coliflor|esp[aá]rrago|champi/i, /frit/i, { p: [0, 4.5], c: [0, 10], f: [0, 1] }, 'P 1-3 · C 2-7 · G 0'],
+  ['un aceite', /aceite/i, null, { p: [0, 1], c: [0, 1], f: [95, 100] }, 'G 99-100'],
+  ['una crema de frutos secos', /crema (100% )?de (cacahuete|almendra|anacardo|avellana)|crema 100% cacahuete|mantequilla de cacahuete/i, null, { p: [18, 33], c: [4, 25], f: [42, 62] }, 'P 25 · C 10-15 · G 50'],
+  ['frutos secos', /frutos secos|almendra|nuez|nueces|anacardo|avellana|pistacho|cacahuete/i, /crema|harina|bebida/i, { p: [8, 32], c: [3, 30], f: [40, 75] }, 'P 15-25 · C 5-20 · G 50-65'],
+  ['un chocolate', /chocolate|cacao/i, /puro en polvo|desgrasado|bebida/i, { p: [3, 15], c: [12, 65], f: [25, 55] }, 'P 7-10 · C 20-45 · G 35-45'],
+  ['una proteína en polvo', /whey|prote[ií]na en polvo|aislado|prote[ií]na whey|case[ií]na/i, null, { p: [60, 95], c: [0, 15], f: [0, 10] }, 'P 75-90 · C 2-8 · G 1-6'],
+  ['un fiambre', /fiambre|pechuga de pavo loncha|jam[oó]n cocido|jam[oó]n york/i, null, { p: [10, 25], c: [0, 6], f: [0, 8] }, 'P 15-20 · C 1-3 · G 1-4'],
+  ['carne magra', /pollo|pavo|pechuga|ternera|solomillo|lomo/i, /fiambre|nugget|empanad|frito|\+/i, { p: [17, 33], c: [0, 3], f: [0, 15] }, 'P 21-25 · C 0 · G 1-8'],
+  ['un pescado o marisco', /at[uú]n|bacalao|merluza|pescado|salm[oó]n|sardina|lubina|dorada|gamba|langostino|pulpo|calamar|sepia/i, /empanad|rebozad|surimi|\+/i, { p: [12, 32], c: [0, 3], f: [0, 16] }, 'P 18-25 · C 0 · G 1-12'],
+  ['un queso', /queso/i, /crema de queso light/i, { p: [7, 40], c: [0, 7], f: [0, 40] }, 'P 10-30 · C 1-4 · G 5-35'],
+  ['un cereal o harina', /arroz|pasta|cous|quinoa|bulgur|avena|copos|ma[ií]z|pan\b|harina|tortita|cereal/i, /\+|integral con|leche/i, { p: [1.5, 18], c: [18, 88], f: [0, 10] }, 'cocido: P 3-5 · C 20-30 · G 1 · en crudo: P 7-14 · C 65-80 · G 1-7'],
+  ['una legumbre', /legumbre|lenteja|garbanzo|alubia|jud[ií]a blanca|soja texturizada/i, /\+|harina/i, { p: [5, 52], c: [5, 62], f: [0, 20] }, 'cocida: P 7-9 · C 15-20 · G 1 · en seco: P 20-25 · C 45-60 · G 2-6']
+];
+function nuRevisarMacros(nombre, p, c, f){
+  const kcal = p * 4 + c * 4 + f * 9;
+  if (p + c + f === 0) return 'Has puesto 0 en los tres macros. Si el alimento tiene calorías, revisa la etiqueta (valores por 100 g).';
+  if (kcal > 905) return 'Con esos valores saldrían ' + Math.round(kcal) + ' kcal por 100 g, más que el aceite puro. Revisa que sean por 100 g.';
+  for (let i = 0; i < NU_REFS.length; i++) {
+    const r = NU_REFS[i];
+    if (!r[1].test(nombre) || (r[2] && r[2].test(nombre))) continue;
+    const fuera = [['p', p, 'proteína'], ['c', c, 'carbohidrato'], ['f', f, 'grasa']].filter(function(x){ const lim = r[3][x[0]]; return x[1] < lim[0] || x[1] > lim[1]; });
+    if (!fuera.length) return '';
+    const alto = fuera.some(function(x){ return x[1] > r[3][x[0]][1]; });
+    return 'Revisa los macros: para ' + r[0] + ' lo normal es ' + r[4] + (/ml/.test(r[4]) ? '' : ' por 100 g') + ', y has puesto P ' + fmtNum(p) + ' · C ' + fmtNum(c) + ' · G ' + fmtNum(f) + '. '
+      + (alto ? '¿Puede que los hayas copiado de una ración, un vaso o el envase entero? Tienen que ser por 100 g.' : 'Algún valor parece bajo; compruébalo en la etiqueta (por 100 g).');
+  }
+  return '';
+}
+let nuMacrosConfirmados = '';
+function nuGuardarIgualmente(){
+  nuMacrosConfirmados = nuHuellaNuevo();
+  saveNewFood();
+}
+function nuHuellaNuevo(){
+  return ['newFoodName', 'newFoodP', 'newFoodC', 'newFoodF'].map(function(id){ return (document.getElementById(id).value || '').trim().toLowerCase(); }).join('|');
+}
+saveNewFood = (function(orig){
+  return function(){
+    const err = document.getElementById('newFoodError');
+    const nombre = document.getElementById('newFoodName').value.trim();
+    const p = parseFloat(document.getElementById('newFoodP').value), c = parseFloat(document.getElementById('newFoodC').value), f = parseFloat(document.getElementById('newFoodF').value);
+    if (nombre && !foodInfo(nombre) && [p, c, f].every(function(v){ return !isNaN(v) && v >= 0; }) && p + c + f <= 100) {
+      const aviso = nuRevisarMacros(nombre, p, c, f);
+      if (aviso && nuMacrosConfirmados !== nuHuellaNuevo()) {
+        err.innerHTML = '<span class="nu-aviso-macros">⚠️ ' + esc(aviso) + '</span>'
+          + '<span class="nu-aviso-acts"><button type="button" class="picker-btn-ghost" onclick="document.getElementById(\'newFoodP\').focus()">Corregir</button>'
+          + '<button type="button" class="picker-btn-solid" onclick="nuGuardarIgualmente()">Guardar igualmente</button></span>';
+        return;
+      }
+    }
+    nuMacrosConfirmados = '';
+    orig();
+  };
+})(saveNewFood);
+/* kcal por 100 g mientras se escriben los macros, para ver de un vistazo si cuadran */
+(function(){
+  const row = document.querySelector('#foodNewForm .calc-row'); if (!row) return;
+  const k = document.createElement('div'); k.id = 'newFoodKcal'; k.className = 'nu-kcal100';
+  row.parentNode.insertBefore(k, row.nextSibling);
+  const pintar = function(){
+    const v = ['newFoodP', 'newFoodC', 'newFoodF'].map(function(id){ return parseFloat(document.getElementById(id).value) || 0; });
+    const kcal = v[0] * 4 + v[1] * 4 + v[2] * 9;
+    k.textContent = kcal ? '≈ ' + Math.round(kcal) + ' kcal por 100 g' : '';
+    const err = document.getElementById('newFoodError'); if (err && err.querySelector('.nu-aviso-macros')) err.textContent = '';
+  };
+  ['newFoodName', 'newFoodP', 'newFoodC', 'newFoodF'].forEach(function(id){ const i = document.getElementById(id); if (i) i.addEventListener('input', pintar); });
+  toggleNewFood = (function(orig){ return function(s){ orig(s); nuMacrosConfirmados = ''; pintar(); }; })(toggleNewFood);
+})();
