@@ -31,14 +31,66 @@ function escSoloMovil(conSesion){
     + '<img class="esc-sm-qr" src="assets/qr_app.png" alt="Código QR para abrir la app en el móvil" width="180" height="180">'
     + '<div class="esc-sm-url">minguitoartiles-ops.github.io/Fitnessindramas-APP</div>'
     + '<p class="esc-sm-nota">Usa el mismo código de acceso que te dio tu profesional. Desde el ordenador solo pueden entrar Fátima y Domingo.</p>'
-    + '<button type="button" class="btn-primary" onclick="escCerrarSoloMovil(' + (conSesion ? 'true' : 'false') + ')">Volver</button></div>';
+    + '<button type="button" class="btn-primary" onclick="escCerrarSoloMovil(' + (conSesion ? 'true' : 'false') + ')">Volver</button>'
+    + (conSesion ? '' : '<button type="button" class="esc-sm-equipo" onclick="escEquipoForm()">Soy del equipo: ver la app como este cliente</button>'
+      + '<div class="esc-sm-form" id="escSmForm" hidden><div class="esc-sm-quien" role="radiogroup" aria-label="Profesional">'
+      + '<button type="button" class="chip protein selected" data-u="Domingo" onclick="escEquipoQuien(this)">Domingo</button><button type="button" class="chip protein" data-u="Fátima" onclick="escEquipoQuien(this)">Fátima</button></div>'
+      + '<input type="password" id="escSmPass" placeholder="Tu contraseña" autocomplete="current-password" aria-label="Contraseña del profesional">'
+      + '<div class="esc-sm-err" id="escSmErr" role="alert"></div><button type="button" class="btn-eq btn-eq-p" onclick="escEquipoEntrar()">Entrar como cliente</button></div>')
+    + '</div>';
   o.classList.add('show');
 }
 function escCerrarSoloMovil(conSesion){
   const o = document.getElementById('escSoloMovil'); if (o) o.classList.remove('show');
   if (conSesion && window.fsdSesionCliente) cerrarSesionCliente();
 }
+let escEnterOrig = null;
+const ESC_EQUIPO_KEY = 'fsd_equipo_cliente';
+function escEsEquipo(){ try { return sessionStorage.getItem(ESC_EQUIPO_KEY) === '1'; } catch(e){ return false; } }
+function escEquipoForm(){
+  const f = document.getElementById('escSmForm'); if (!f) return;
+  f.hidden = false; setTimeout(function(){ const i = document.getElementById('escSmPass'); if (i) i.focus(); }, 30);
+}
+function escEquipoQuien(b){
+  Array.prototype.forEach.call(document.querySelectorAll('.esc-sm-quien .chip'), function(x){ x.classList.toggle('selected', x === b); });
+}
+function escEquipoEntrar(){
+  const sel = document.querySelector('.esc-sm-quien .chip.selected'), i = document.getElementById('escSmPass'), err = document.getElementById('escSmErr');
+  if (!i.value.trim()) { err.textContent = 'Escribe tu contraseña.'; i.focus(); return; }
+  if (!window.crypto || !crypto.subtle) { err.textContent = 'Abre la app desde su dirección segura (https).'; return; }
+  const u = sel ? sel.dataset.u : 'Domingo';
+  huellaPro(u, i.value).then(function(h){
+    if (h !== PRO_HASH[norm(u)]) { err.textContent = 'Contraseña incorrecta.'; i.select(); return; }
+    try { sessionStorage.setItem(ESC_EQUIPO_KEY, '1'); } catch(e){}
+    document.getElementById('escSoloMovil').classList.remove('show');
+    escEnterOrig();
+    escVistaCliente();
+  });
+}
+/* el equipo ve la app del cliente con el ancho de un móvil */
+function escVistaCliente(){
+  const on = !!(window.fsdSesionCliente && escEsOrdenador() && escEsEquipo());
+  document.documentElement.classList.toggle('esc-cliente', on);
+  let p = document.getElementById('escCliPill');
+  if (on && !p) {
+    p = document.createElement('div'); p.id = 'escCliPill'; p.className = 'esc-cli-pill';
+    document.body.appendChild(p);
+  }
+  if (p) {
+    p.hidden = !on;
+    const d = clienteActual && clientesData[clienteActual];
+    if (on) p.innerHTML = '<span>👀 Vista de cliente' + (d ? ': <b>' + esc(d.nombre) + '</b>' : '') + '</span><button type="button" onclick="cerrarSesionCliente()">Salir</button>';
+  }
+}
+cerrarSesionCliente = (function(orig){
+  return function(){
+    orig.apply(this, arguments);
+    try { sessionStorage.removeItem(ESC_EQUIPO_KEY); } catch(e){}
+    escVistaCliente();
+  };
+})(cerrarSesionCliente);
 enterApp = (function(orig){
+  escEnterOrig = orig;
   return function(){
     if (escEsOrdenador()) {
       const cod = (document.getElementById('accessCode').value || '').trim();
@@ -49,7 +101,7 @@ enterApp = (function(orig){
     orig();
   };
 })(enterApp);
-if (window.fsdSesionCliente && escEsOrdenador()) escSoloMovil(true);
+if (window.fsdSesionCliente && escEsOrdenador()) { if (escEsEquipo()) escVistaCliente(); else escSoloMovil(true); }
 
 /* ---------- 10 · fuera el texto del prototipo ---------- */
 (function(){ const c = document.querySelector('body > .caption'); if (c) c.remove(); })();
