@@ -225,3 +225,33 @@ html:not(.esc) .gr-chips .chip{flex:none;}
 .gr-tip b{font:700 14px var(--f-mono);}
 .gr-tabla-btn{display:block;margin:6px 0 0 auto;border:none;background:none;color:var(--accent);font:600 12.5px var(--f-body);cursor:pointer;padding:6px 4px;}
 .gr-tabla-btn[hidden],#seguiList .esc-tabla-wrap[hidden]{display:none !important;}
+
+/* #135 cada profesional en su área */
+html.esc #coachTabs #ctab-recetas.ar-fuera,#ctab-recetas.ar-fuera{display:none !important;}
+.ar-solo-ver{cursor:default !important;}
+.ar-solo-ver .lnk{color:var(--dim-6) !important;font-weight:500;}
+/* Fátima: el registro de pesos y el tonelaje son cosa del entreno */
+html.ar-dietista #fichaEntrenoRes .fe-registro,html.ar-dietista #fichaRegistro,html.ar-dietista #view-coach-cliente .tonelaje-card{display:none !important;}
+
+/* #134 Planes de nutrición (Fátima): buscador, fotos, lista y resumen */
+.pl-busca input{width:100%;height:44px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);padding:0 14px;font:500 15px var(--f-body);margin:4px 0 10px;}
+.pl-busca input:focus{outline:none;border-color:var(--accent);}
+.plan-fila{position:relative;padding-left:64px !important;text-align:left;}
+.plan-fila .pl-av{position:absolute;left:12px;top:12px;}
+.pl-av{width:40px;height:40px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font:700 16px Archivo,sans-serif;background-size:cover;background-position:center;}
+.plan-fila.pl-sel{outline:2px solid var(--accent);outline-offset:-2px;}
+.plan-fila[hidden]{display:none !important;}
+.pl-prev-movil{margin:-4px 0 12px;padding:12px;border:1px solid var(--accent-line, var(--line));border-top:none;border-radius:0 0 16px 16px;background:var(--card);}
+.pl-prev-h{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.pl-prev-h b{display:block;font:700 16px var(--f-body);color:var(--ink);}
+.pl-prev-h span{font:500 12.5px var(--f-body);color:var(--dim-6);}
+.pl-nu{cursor:default;margin-bottom:12px;}
+.pl-abrir{width:100%;}
+.pl-prev-vacio{display:flex;flex-direction:column;align-items:center;gap:6px;padding:60px 20px;text-align:center;color:var(--dim-6);font:500 13px var(--f-body);}
+.pl-prev-vacio span:first-child{font-size:28px;}
+.pl-prev-vacio b{color:var(--ink);font-size:15px;}
+.pl-der{display:none;}
+html.esc .pl-split{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:20px;align-items:start;}
+html.esc .pl-der{display:block;position:sticky;top:12px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card);}
+html.esc .pl-izq{min-width:0;}
+.pl-prev-movil .pl-prev-h{display:none;}
