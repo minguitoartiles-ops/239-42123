@@ -1390,11 +1390,11 @@ function enTecAbrir(it){
   const actual = enGrupo ? (pri.dataset.grupoT || 'ss') : (it.dataset.tec || '');
   const nG = enGrupo ? items.filter(function(x){ return x.dataset.grupo === it.dataset.grupo; }).length - 1 : 1;
   const chip = function(v, t, sel){ return '<button type="button" class="chip protein' + (sel ? ' selected' : '') + '" data-v="' + v + '" onclick="enTecElegir(this)">' + t + '</button>'; };
-  const tipos = [['', 'Ninguna'], ['myo', '🔥 Myo reps'], ['drop', '⬇️ Drop set'], ['rp', '⏸️ Rest-pause'], ['ss', '🔗 Superserie'], ['emom', '⏱️ EMOM'], ['amrap', '🔁 AMRAP'], ['tabata', '⚡ Tabata'], ['int', '⏲️ Intervalos']];
+  const tipos = [['', 'Ninguna'], ['myo', '🔥 Myo reps'], ['drop', '⬇️ Drop set'], ['rp', '⏸️ Rest-pause'], ['ss', '🔗 Superserie'], ['circ', '🔄 Circuito'], ['emom', '⏱️ EMOM'], ['amrap', '🔁 AMRAP'], ['tabata', '⚡ Tabata'], ['int', '⏲️ Intervalos']];
   o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Técnica · ' + esc(enNombreEj(pri)) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'enTecHoja\')" aria-label="Cerrar">×</button></div>'
     + '<div class="section-lbl">Técnica de este ejercicio o grupo</div><div class="chips" id="enTecTipos">' + tipos.map(function(t){ return chip(t[0], t[1], t[0] === actual); }).join('') + '</div>'
     + '<div id="enTecGrupoOpc" hidden><div class="section-lbl">Ejercicios del grupo</div><div class="chips" id="enTecN">'
-    + (despues ? [1, 2, 3, 4, 5].filter(function(n){ return n <= despues; }).map(function(n){ return '<button type="button" class="chip protein' + (n === nG ? ' selected' : '') + '" data-n="' + n + '" onclick="enTecN(this)">Este + ' + n + (n === 1 ? ' siguiente' : ' siguientes') + '</button>'; }).join('') : '<span class="ajx-note">No hay ejercicios después de este en el día. Añade o mueve ejercicios para agruparlos.</span>')
+    + (despues ? [1, 2, 3, 4, 5, 6, 7].filter(function(n){ return n <= despues; }).map(function(n){ return '<button type="button" class="chip protein' + (n === nG ? ' selected' : '') + '" data-n="' + n + '" onclick="enTecN(this)">Este + ' + n + (n === 1 ? ' siguiente' : ' siguientes') + '</button>'; }).join('') : '<span class="ajx-note">No hay ejercicios después de este en el día. Añade o mueve ejercicios para agruparlos.</span>')
     + '</div><div class="field" id="enTecMinF"><label for="enTecMin">Minutos</label><input type="number" id="enTecMin" inputmode="numeric" min="1" max="90"></div></div>'
     + '<div class="field" id="enTecPF"><label for="enTecP">Pauta (la verá el cliente)</label><textarea id="enTecP" rows="2" class="sg-text"></textarea></div>'
     + '<p class="ajx-note" id="enTecInfo"></p>'
