@@ -878,3 +878,37 @@ pintarAyudaInstalar = (function(orig){
   };
 })(pintarAyudaInstalar);
 pintarAyudaInstalar();
+
+/* ---------- 21/10 · El cliente nunca ve el modo edición (ni «+ Añadir comida» ni la calculadora) ----------
+   Si el modo edición de un profesional se quedaba activo en el mismo dispositivo, el cliente lo heredaba. */
+function clSinEdicion(){
+  if (!window.fsdSesionCliente || isCoachView() || !coachEditing) return;
+  coachEditing = false;
+  document.querySelectorAll('.rx-field').forEach(function(f){ f.setAttribute('readonly', 'readonly'); });
+  document.querySelectorAll('.meal-block-title').forEach(function(t){ t.removeAttribute('contenteditable'); });
+  document.querySelectorAll('.chip-x').forEach(function(el){ el.style.display = 'none'; });
+  document.querySelectorAll('.chip-add').forEach(function(el){ el.style.display = 'none'; });
+  document.getElementById('app').classList.remove('coach-edit');
+  try { closeExercisePicker(); closeFoodPicker(); cerrarVideoModal(); } catch(e){}
+}
+goTo = (function(orig){ return function(){ clSinEdicion(); return orig.apply(this, arguments); }; })(goTo);
+enterApp = (function(orig){ return function(){ const r = orig.apply(this, arguments); clSinEdicion(); return r; }; })(enterApp);
+
+/* ---------- 21/10 · El cliente nunca ve las herramientas de montaje del plan ----------
+   Si se entra como cliente con el modo edición de un profesional aún activo (mismo dispositivo),
+   se apaga sin guardar nada; y por CSS, fuera de la vista profesional no salen calculadora,
+   «Plan rápido», «+ Añadir comida», «+ Añadir sesión» ni los controles de edición. */
+function clSinEdicion(){
+  const app = document.getElementById('app'); if (!app || isCoachView()) return;
+  if (!coachEditing && !app.classList.contains('coach-edit')) return;
+  coachEditing = false;
+  document.querySelectorAll('.rx-field').forEach(function(f){ f.setAttribute('readonly', 'readonly'); });
+  document.querySelectorAll('.meal-block-title,[contenteditable]').forEach(function(t){ t.removeAttribute('contenteditable'); });
+  document.querySelectorAll('.chip-x').forEach(function(el){ el.style.display = 'none'; });
+  document.querySelectorAll('.chip-add').forEach(function(el){ el.style.display = 'none'; });
+  app.classList.remove('coach-edit');
+  try { closeExercisePicker(); closeFoodPicker(); cerrarVideoModal(); } catch(e){}
+  try { ruPlegableActualizar && ruPlegableActualizar(); } catch(e){}
+}
+enterApp = (function(orig){ return function(){ clSinEdicion(); const r = orig.apply(this, arguments); clSinEdicion(); return r; }; })(enterApp);
+goTo = (function(orig){ return function(){ if (window.fsdSesionCliente) clSinEdicion(); return orig.apply(this, arguments); }; })(goTo);
