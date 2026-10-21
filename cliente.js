@@ -463,11 +463,11 @@ function pgSeparar(){
 }
 
 /* =========================================================
-   #126 Sonidos: «campanita» al llegar un aviso a la campana y «mensaje enviado» al enviar en el chat.
+   #126 Sonidos: «campanita» al llegar un aviso a la campana y «mensaje enviado» al RECIBIR un mensaje del chat.
    Se pueden quitar en Ajustes → Notificaciones (se guarda en este dispositivo).
    ========================================================= */
 const SND_KEY = 'fsd_sonidos';
-const SND = { campanita: 'sonidos/campanita.mp3', enviado: 'sonidos/mensaje_enviado.mp3' };
+const SND = { campanita: 'sonidos/campanita.mp3', mensaje: 'sonidos/mensaje_enviado.mp3' };
 const sndCache = {};
 function sndActivos(){ try { return localStorage.getItem(SND_KEY) !== '0'; } catch(e){ return true; } }
 function sndSonar(n){
@@ -489,7 +489,7 @@ crearAviso = (function(orig){
   return function(dest){
     const antes = dest ? noLeidos(dest) : 0;
     const r = orig.apply(this, arguments);
-    try { if (dest && dest === destinatarioActual() && noLeidos(dest) > antes) sndSonar('campanita'); } catch(e){}
+    try { if (dest && dest === destinatarioActual() && noLeidos(dest) > antes) sndSonar(arguments[1] === 'mensajes' ? 'mensaje' : 'campanita'); } catch(e){}
     return r;
   };
 })(crearAviso);
@@ -498,26 +498,23 @@ let sndUlt = null;
 function sndContar(){ try { const d = destinatarioActual(); return d ? noLeidos(d) : 0; } catch(e){ return 0; } }
 window.addEventListener('storage', function(e){
   if (e.key !== AVISOS_KEY) return;
-  setTimeout(function(){ const n = sndContar(); if (sndUlt != null && n > sndUlt) sndSonar('campanita'); sndUlt = n; }, 0);
+  setTimeout(function(){
+    const n = sndContar();
+    if (sndUlt != null && n > sndUlt) {
+      let tipo = ''; try { const l = leerAvisos().lista[destinatarioActual()] || []; tipo = (l[0] || {}).tipo; } catch(e2){}
+      sndSonar(tipo === 'mensajes' ? 'mensaje' : 'campanita');
+    }
+    sndUlt = n;
+  }, 0);
 });
 setTimeout(function(){ sndUlt = sndContar(); }, 0);
-sendMsg = (function(orig){
-  return function(){
-    const t = (document.getElementById('chatInput').value || '').trim();
-    const r = orig.apply(this, arguments);
-    if (t) sndSonar('enviado');
-    return r;
-  };
-})(sendMsg);
-meterEnChat = (function(orig){
-  return function(){ const r = orig.apply(this, arguments); sndSonar('enviado'); return r; };
-})(meterEnChat);
+/* 21/10 14:38: sin sonido al enviar; el sonido de mensaje suena al RECIBIR uno */
 htmlAjustesAvisos = (function(orig){
   return function(rol){
     const h = orig.apply(this, arguments);
     if (!h) return h;
     const on = sndActivos();
-    return h + '<div class="list-group"><div class="list-row aviso-row"><span class="aviso-l"><span>🔔 Sonidos</span><small>Campanita al llegar un aviso y sonido al enviar un mensaje</small></span>'
+    return h + '<div class="list-group"><div class="list-row aviso-row"><span class="aviso-l"><span>🔔 Sonidos</span><small>Campanita al llegar un aviso y sonido al recibir un mensaje</small></span>'
       + '<div class="toggle' + (on ? ' on' : '') + '" role="switch" aria-label="Sonidos" aria-checked="' + on + '" onclick="sndCambiar(this)"><div class="toggle-knob"></div></div></div></div>';
   };
 })(htmlAjustesAvisos);
@@ -603,3 +600,71 @@ estadoPago = (function(orig){
     return r;
   };
 })(estadoPago);
+
+/* =========================================================
+   #111 Ordenador en multitarea (ventanas a media pantalla) y #122 barra para ajustar los paneles
+   - El modo ordenador se activa desde 900 px (antes 1100).
+   - Por debajo de 1280 px el menú lateral se queda en iconos para dejar sitio al trabajo.
+   - Entre la lista y el panel derecho hay una barra vertical que se arrastra (o con ← →);
+     doble clic la deja como estaba. El ancho se recuerda para cada profesional.
+   ========================================================= */
+const ESC_LISTA_KEY = 'fsd_esc_lista';
+function escListaGuardada(){
+  try { const o = JSON.parse(localStorage.getItem(ESC_LISTA_KEY) || '{}'); return coachActivo ? o[norm(coachActivo.u)] : null; } catch(e){ return null; }
+}
+function escListaGuardar(px){
+  try { const o = JSON.parse(localStorage.getItem(ESC_LISTA_KEY) || '{}'); if (coachActivo) { if (px) o[norm(coachActivo.u)] = px; else delete o[norm(coachActivo.u)]; } localStorage.setItem(ESC_LISTA_KEY, JSON.stringify(o)); } catch(e){}
+}
+function escListaLimites(){
+  const menu = document.documentElement.classList.contains('esc-mini') ? 72 : 232;
+  const libre = window.innerWidth - menu;
+  return { min: 260, max: Math.max(300, Math.round(libre - 380)) };   // a la derecha siempre quedan ≥ 380 px
+}
+function escListaPoner(px){
+  const r = document.documentElement.style;
+  if (!px) { r.removeProperty('--esc-lista'); return; }
+  const l = escListaLimites();
+  r.setProperty('--esc-lista', Math.min(l.max, Math.max(l.min, Math.round(px))) + 'px');
+}
+function escMini(){
+  document.documentElement.classList.toggle('esc-mini', escActivo() && window.innerWidth < 1280);
+  escListaPoner(escListaGuardada());
+  escDivisor();
+}
+function escDivisor(){
+  let d = document.getElementById('escDivisor');
+  const root = document.getElementById('screenRoot');
+  const on = escActivo() && root && root.classList.contains('esc-dual');
+  if (!d) {
+    d = document.createElement('div'); d.id = 'escDivisor'; d.className = 'esc-divisor';
+    d.setAttribute('role', 'separator'); d.setAttribute('aria-orientation', 'vertical'); d.tabIndex = 0;
+    d.title = 'Arrastra para cambiar el ancho de la lista · doble clic: ancho normal';
+    d.setAttribute('aria-label', 'Ancho de la lista');
+    document.body.appendChild(d);
+    let x0 = 0, w0 = 0, arr = false;
+    const ancho = function(){ const izq = document.querySelector('.screen.esc-dual > .esc-izq'); return izq ? izq.getBoundingClientRect().width : 360; };
+    d.addEventListener('pointerdown', function(e){
+      arr = true; x0 = e.clientX; w0 = ancho(); d.setPointerCapture(e.pointerId);
+      document.documentElement.classList.add('esc-arrastrando'); e.preventDefault();
+    });
+    d.addEventListener('pointermove', function(e){ if (arr) escListaPoner(w0 + e.clientX - x0); });
+    const fin = function(){ if (!arr) return; arr = false; document.documentElement.classList.remove('esc-arrastrando'); escListaGuardar(Math.round(ancho())); window.dispatchEvent(new Event('resize')); };
+    d.addEventListener('pointerup', fin); d.addEventListener('pointercancel', fin);
+    d.addEventListener('dblclick', function(){ escListaGuardar(null); escListaPoner(null); window.dispatchEvent(new Event('resize')); });
+    d.addEventListener('keydown', function(e){
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); escListaPoner(ancho() + (e.key === 'ArrowRight' ? 24 : -24)); escListaGuardar(Math.round(ancho()));
+    });
+  }
+  d.hidden = !on;
+}
+if (typeof escLayout === 'function') escLayout = (function(orig){ return function(){ const r = orig.apply(this, arguments); escMini(); return r; }; })(escLayout);
+window.addEventListener('resize', function(){ if (!document.documentElement.classList.contains('esc-arrastrando')) escMini(); });
+if (typeof entrarAlPanel === 'function') entrarAlPanel = (function(orig){ return function(){ const r = orig.apply(this, arguments); escMini(); return r; }; })(entrarAlPanel);
+/* nombres al pasar el ratón por el menú en iconos */
+(function(){
+  Array.prototype.forEach.call(document.querySelectorAll('#coachTabs .tbi'), function(b){
+    if (!b.title) b.title = (b.getAttribute('aria-label') || b.textContent || '').replace(/\d+$/, '').trim();
+  });
+})();
+escMini();
