@@ -3,8 +3,15 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.67 (actual)
-Cambios acumulados hacia la 0.68: **0 de 10**
+## Versión 0.67 → 0.67.2 (actual)
+Cambios acumulados hacia la 0.68: **5 de 10**
+
+### Hacia la 0.68
+1. 21/10/2026 16:00 · Creador de rutinas compacto en el ordenador: los días salen en columnas, uno al lado del otro y todos abiertos; cada ejercicio es una línea con su pauta (3 × 10 · RIR 2, con su color) y al tocarlo se abre su editor (tabla serie a serie, notas, vídeo) sin plegar nada más; los ejercicios nuevos se abren solos. Botón «Vista detallada / Vista compacta» (se recuerda)
+2. 21/10/2026 16:00 · Tarjetas de clientes: el periodo de gracia ya no sale dos veces → **0.67.1**
+3. 21/10/2026 16:00 · Ficha: el apartado del filtro elegido se abre, pero se puede plegar; Domingo vuelve a ver «Nutrición de un vistazo» (salía vacío al filtrar por Nutrición)
+4. 21/10/2026 16:00 · Ordenador: al abrir un cliente desde Pagos, Chats, avisos o Seguimientos, queda marcado en la lista de Clientes de la izquierda y la lista se desplaza hasta él → **0.67.2**
+5. 21/10/2026 16:00 · Todos los contadores de notificaciones en el mismo rojo
 
 ## Versión 0.66 → 0.66.4
 

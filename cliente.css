@@ -4,7 +4,7 @@
 /* #108 mensajes sin leer en «Chat» */
 .tb .tbi{position:relative;}
 .tb-badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;
-  background:#d93025;color:#fff;font:700 10.5px/18px var(--f-mono);text-align:center;box-shadow:0 0 0 2px var(--bg, #fff);pointer-events:none;}
+  background:var(--danger,#d93025);color:#fff;font:700 10.5px/18px var(--f-mono);text-align:center;box-shadow:0 0 0 2px var(--bg, #fff);pointer-events:none;}
 .tb-badge.hide{display:none;}
 
 /* #106 apartados plegables de la ficha del cliente */
@@ -181,3 +181,9 @@ html.esc .screen.esc-dual > .esc-izq{container-type:inline-size;}
 }
 /* 21/10 14:35: el peso ya sale en su casilla; fuera el repetido arriba a la derecha */
 .segui-card:has(.segui-med) .segui-head .segui-peso{display:none;}
+/* #130 Domingo también ve «Nutrición de un vistazo» en la ficha (una regla antigua lo ocultaba) */
+.esp-entreno #view-coach-cliente #fichaNutri .nu-vista:not(.fp-oculto),.esp-nutri #view-coach-cliente #fichaEntrenoRes .fe-card:not(.fp-oculto){display:block !important;}
+
+/* 21/10 15:00 · Todas las notificaciones en el mismo rojo */
+.tab-badge,.bell-badge,.mj-bell-badge,.tb-badge,.acc-n,.chat-fila-n,#coachTabs .tab-badge{background:var(--danger,#d93025) !important;color:#fff !important;}
+.tb-badge{background:var(--danger,#d93025) !important;}

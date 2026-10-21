@@ -83,7 +83,7 @@ clPintarChat();
    Mientras se trabaja con el mismo cliente (ir al plan y volver) se respeta lo abierto.
    ========================================================= */
 const FP_PLEGABLES = { 'gestión del cliente': 'gestion', 'suscripción': 'pago', 'entrenamiento': 'entreno' };
-let fpAbiertos = {}, fpCliente = null;
+let fpAbiertos = {}, fpCliente = null, fpUltFiltro = null;
 function fpContenido(lbl){
   const r = []; let x = lbl.nextElementSibling;
   while (x && !x.classList.contains('alta-label') && !x.querySelector('.alta-label') && (!x.id || x.id === 'fichaRegistro')
@@ -106,6 +106,9 @@ function fpResumen(id, cont){
 function fpAplicar(){
   const v = document.getElementById('view-coach-cliente'); if (!v || !coachActivo) return;
   const filtro = typeof enSeccion === 'string' && enSeccion !== 'todo';
+  /* al elegir un filtro, su apartado se abre (y después se puede plegar) */
+  if (filtro && fpUltFiltro !== enSeccion) { const m = { entreno: 'entreno', pago: 'pago', datos: 'gestion' }[enSeccion]; if (m) fpAbiertos[m] = true; }
+  fpUltFiltro = filtro ? enSeccion : null;
   Array.prototype.forEach.call(v.querySelectorAll('.alta-label'), function(lbl){
     const txt = (lbl.getAttribute('data-fp-txt') || lbl.textContent).trim();
     const id = FP_PLEGABLES[txt.toLowerCase()];
@@ -117,7 +120,7 @@ function fpAplicar(){
       lbl.addEventListener('click', function(){ fpAbiertos[id] = !fpAbiertos[id]; fpAplicar(); });
       lbl.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lbl.click(); } });
     }
-    const abierto = filtro || !!fpAbiertos[id];
+    const abierto = !!fpAbiertos[id];
     const cont = fpContenido(lbl);
     lbl.classList.add('fp-lbl');
     lbl.classList.toggle('fp-abierto', abierto);
@@ -128,7 +131,10 @@ function fpAplicar(){
   /* ordenador: fuera las tarjetas que se quedan sin nada visible */
   Array.prototype.forEach.call(v.querySelectorAll('.esc-grupo'), function(g){
     g.classList.remove('fp-vacio');
-    const algo = Array.prototype.some.call(g.children, function(c){ return c.offsetHeight > 2; });
+    const algo = Array.prototype.some.call(g.children, function(c){
+      if (c.hidden || c.classList.contains('sec-oculta') || c.classList.contains('fp-oculto')) return false;
+      return getComputedStyle(c).display !== 'none' && (c.offsetHeight > 2 || c.textContent.trim() !== '');
+    });
     g.classList.toggle('fp-vacio', !algo);
   });
 }
@@ -668,3 +674,37 @@ if (typeof entrarAlPanel === 'function') entrarAlPanel = (function(orig){ return
   });
 })();
 escMini();
+
+/* 21/10 14:45 · Tarjeta del cliente: el estado del pago ya tiene su etiqueta abajo; fuera el «💳 …» repetido de los motivos */
+if (typeof exPintarFiltros === 'function') exPintarFiltros = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card){
+      const a = card.querySelector('.kc-motivos'); if (!a || !card.querySelector('.kc-pago')) return;
+      const t = a.textContent.split(' · ').filter(function(x){ return x.indexOf('💳') !== 0; }).join(' · ');
+      if (t) a.textContent = t; else a.remove();
+    });
+    return r;
+  };
+})(exPintarFiltros);
+
+/* =========================================================
+   #131 Ordenador: al abrir un cliente desde cualquier sitio (Pagos, Chats, avisos, Seguimientos…)
+   queda marcado en la lista de Clientes de la izquierda y la lista se desplaza hasta él.
+   ========================================================= */
+function clMarcarEnLista(){
+  if (!(typeof escActivo === 'function' && escActivo()) || !clienteActual) return;
+  const claves = Object.keys(clientesData), i = claves.indexOf(clienteActual);
+  const cards = document.querySelectorAll('#listaClientes .cliente-card');
+  let card = cards[i];
+  if (!card) return;
+  if (!card.offsetParent && typeof exFiltrar === 'function') { exFiltrar('todos'); card = document.querySelectorAll('#listaClientes .cliente-card')[i]; }
+  Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card.esc-sel'), function(c){ if (c !== card) c.classList.remove('esc-sel'); });
+  if (card) {
+    card.classList.add('esc-sel');
+    const sc = card.closest('.alta-body') || card.parentElement;
+    const r = card.getBoundingClientRect(), rs = sc.getBoundingClientRect();
+    if (r.top < rs.top + 8 || r.bottom > rs.bottom - 8) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+goToCliente = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(clMarcarEnLista, 30); return r; }; })(goToCliente);
