@@ -321,3 +321,94 @@ pintarSegsResumen = (function(orig){
   });
   if (cambio) try { guardarTodo(); } catch(e){}
 })();
+
+/* =========================================================
+   #107 Barra del cliente: Hoy · Nutrición · Entreno · Chat · ⚙️ Ajustes
+   - Fuera la pestaña «Progreso»: el progreso se ve de un vistazo al final de «Hoy»
+     (y «Ver todo mi progreso» abre la pantalla completa, con Volver).
+   - «Cerrar sesión» pasa al panel de la foto de perfil, con acceso directo a Ajustes.
+   ========================================================= */
+(function(){
+  const tp = document.getElementById('tab-progreso'); if (tp) tp.hidden = true;
+  const ta = document.getElementById('tab-ajustes');
+  if (ta) { ta.hidden = false; ta.setAttribute('onclick', 'clIrAjustes()'); }
+  let i = tabs.indexOf('progreso'); if (i > -1) tabs.splice(i, 1);
+  if (tabs.indexOf('ajustes') < 0) tabs.push('ajustes');
+  i = TABS_CLIENTE.indexOf('progreso'); if (i > -1) TABS_CLIENTE.splice(i, 1);
+  if (TABS_CLIENTE.indexOf('ajustes') < 0) TABS_CLIENTE.push('ajustes');
+})();
+function clIrAjustes(){ navHist.length = 0; goTo('ajustes', true); }
+goTo = (function(orig){
+  return function(n, s){
+    const prev = vistaActual, hist = navHist.slice();
+    const r = orig.apply(this, arguments);
+    /* desde el perfil, «Ajustes» es una subpantalla: Volver regresa al perfil */
+    if (!isCoachView() && n === 'ajustes' && prev === 'perfil' && !s) { navHist.length = 0; Array.prototype.push.apply(navHist, hist.concat(['perfil'])); pintarAtras(); }
+    if (!isCoachView()) {
+      const ta = document.getElementById('tab-ajustes');
+      if (ta) ta.classList.toggle('active', n === 'ajustes');
+      if (n === 'hoy') clPintarProgresoHoy();
+      if (n === 'ajustes') clQuitarSalirAjustes();
+      if (n === 'perfil') clPintarPerfil();
+    }
+    return r;
+  };
+})(goTo);
+
+/* --- progreso de un vistazo al final de «Hoy» --- */
+function clPintarProgresoHoy(){
+  const v = document.getElementById('view-hoy'); const k = clienteActual;
+  if (!v || !k || !clientesData[k] || isCoachView()) return;
+  try { if (typeof pintarProgreso === 'function') pintarProgreso(); } catch(e){}
+  let c = document.getElementById('hoyProgreso');
+  if (!c) { c = document.createElement('div'); c.id = 'hoyProgreso'; c.className = 'card hoy-prog'; }
+  v.appendChild(c);
+  const t = function(id){ const e = document.getElementById(id); return e ? e.textContent.trim() : ''; };
+  const ms = String(clientesData[k].semana || '').match(/(\d+)\D+(\d+)/);
+  const sem = ms ? +ms[1] : (parseInt(t('pgSemNum'), 10) || 0), tot = ms ? +ms[2] : (parseInt(t('pgSemTot'), 10) || 0);
+  const pct = tot ? Math.min(100, Math.round(sem / tot * 100)) : 0;
+  const n = function(f){ try { return typeof f === 'function' ? f(k) : 0; } catch(e){ return 0; } };
+  const re = n(window.exRachaEntreno), rn = n(window.exRachaNutri), rs = n(window.exRachaSegs);
+  const L = typeof exLogros === 'function' ? exLogros(k) : null, nl = L ? L.lista.length : 0;
+  const mp = t('pgPesoDelta').match(/^[+\-−]?\s*[\d.,]+\s*kg/);
+  const peso = mp ? mp[0] : '', segs = t('pgNumSeg');
+  c.innerHTML = '<div class="card-head"><b>📈 Tu progreso</b><span>' + (tot ? 'Semana ' + sem + ' de ' + tot : '') + '</span></div>'
+    + (tot ? '<div class="hp-barra" role="progressbar" aria-valuemin="0" aria-valuemax="' + tot + '" aria-valuenow="' + sem + '"><i style="width:' + pct + '%"></i></div>' : '')
+    + '<div class="hp-datos">'
+    + '<div><b>' + esc(peso || '—') + '</b><span>peso desde el inicio</span></div>'
+    + '<div><b>' + esc(segs || '0') + '</b><span>seguimientos</span></div>'
+    + '<div><b>' + nl + '</b><span>' + (nl === 1 ? 'logro' : 'logros') + '</span></div></div>'
+    + '<div class="hp-rachas"><span>🔥 ' + re + ' ' + (re === 1 ? 'semana' : 'semanas') + ' de entrenos</span><span>🥗 ' + rn + ' ' + (rn === 1 ? 'día' : 'días') + ' de nutrición</span><span>📋 ' + rs + ' ' + (rs === 1 ? 'semana' : 'semanas') + ' de seguimiento</span></div>'
+    + '<button type="button" class="btn-eq hp-ver" onclick="goTo(\'progreso\')">Ver todo mi progreso ›</button>';
+}
+if (typeof pintarCliente === 'function') pintarCliente = (function(orig){ return function(){ const r = orig.apply(this, arguments); clPintarProgresoHoy(); return r; }; })(pintarCliente);
+
+/* --- «Cerrar sesión» y acceso a Ajustes en el panel de la foto --- */
+function clPintarPerfil(){
+  const v = document.getElementById('view-perfil'); if (!v || isCoachView()) return;
+  if (!document.getElementById('perfAcciones')) {
+    const g = document.createElement('div'); g.id = 'perfAcciones'; g.className = 'list-group';
+    g.innerHTML = '<div class="list-row" onclick="goTo(\'ajustes\')"><span>⚙️ Ajustes</span><span class="chev">›</span></div>'
+      + '<div class="list-row danger" onclick="confirmarSalidaCliente()"><span>Cerrar sesión</span></div>';
+    v.appendChild(g);
+    /* la fila antigua «Ajustes y privacidad» queda dentro del nuevo bloque */
+    Array.prototype.forEach.call(v.querySelectorAll('.list-group'), function(lg){
+      if (lg !== g && lg.children.length === 1 && /Ajustes y privacidad/.test(lg.textContent)) lg.remove();
+    });
+  }
+}
+function clQuitarSalirAjustes(){
+  const a = document.getElementById('ajustesCliente'); if (!a) return;
+  Array.prototype.forEach.call(a.querySelectorAll('.list-group'), function(lg){
+    if (lg.children.length === 1 && /Cerrar sesión/.test(lg.textContent)) lg.hidden = true;
+  });
+}
+if (typeof refrescarAjustes === 'function') refrescarAjustes = (function(orig){ return function(){ const r = orig.apply(this, arguments); clQuitarSalirAjustes(); return r; }; })(refrescarAjustes);
+clPintarPerfil();
+/* atrás del móvil: Ajustes abierto desde el perfil vuelve al perfil */
+atrasPorNiveles = (function(orig){
+  return function(){
+    if (!coachActivo && vistaActual === 'ajustes' && navHist.length) { volverAtras(); return; }
+    return orig.apply(this, arguments);
+  };
+})(atrasPorNiveles);
