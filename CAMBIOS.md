@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.67 → 0.67.4 (actual)
-Cambios acumulados hacia la 0.68: **8 de 10**
+## Versión 0.68 (actual)
+Cambios acumulados hacia la 0.69: **0 de 10**
+
+## Versión 0.67 → 0.67.4
 
 ### Hacia la 0.68
 1. 21/10/2026 16:00 · Creador de rutinas compacto en el ordenador: los días salen en columnas, uno al lado del otro y todos abiertos; cada ejercicio es una línea con su pauta (3 × 10 · RIR 2, con su color) y al tocarlo se abre su editor (tabla serie a serie, notas, vídeo) sin plegar nada más; los ejercicios nuevos se abren solos. Botón «Vista detallada / Vista compacta» (se recuerda)
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.68: **8 de 10**
 6. 21/10/2026 16:30 · Tiempo con la rutina actual: la ficha muestra «Con esta rutina desde el dd/mm · N semanas» (ámbar a partir de 6 semanas, rojo a partir de 8) y las tarjetas de la lista de Domingo «🏋️ Rutina: N sem»; la cuenta empieza de nuevo solo cuando cambian los ejercicios o los días, no al ajustar reps o RIR
 7. 21/10/2026 16:30 · Seguimientos de un cliente: gráfico de evolución arriba con filtros Peso · Cintura · Cadera · Bíceps · Muslo · Entreno · Nutrición · Motivación · Estrés · Pasos/día · Tonelaje semanal; muestra el último valor y el cambio desde el inicio, y al pasar el ratón o el dedo cada semana. La tabla sigue en «Ver tabla» → **0.67.3**
 8. 21/10/2026 16:50 · Creador de rutinas compacto: series, reps y RIR se cambian directamente en la línea de cada ejercicio (se aplican a todas sus series; Intro para confirmar, ↑ ↓ para subir o bajar) sin abrirlo; ✎ o un clic en la línea abre el editor completo (serie a serie, notas, vídeo, técnica) y Esc lo cierra → **0.67.4**
+9. 21/10/2026 17:20 · Cada profesional en su área: Domingo ya no abre ni edita el plan nutricional ni las recetas (ve «Nutrición de un vistazo» en la ficha, como resumen) y Fátima no abre ni edita el entrenamiento ni ve el registro de pesos ni el tonelaje (ve el resumen de sesiones); en la ficha solo aparecen los accesos de cada uno. Chat, seguimientos, ficha y pagos siguen compartidos
+10. 21/10/2026 17:20 · Fátima · Planes de nutrición: buscador de clientes, foto (o inicial) de cada uno y lista; al elegir un cliente su resumen nutricional sale a la derecha en el ordenador (debajo en el móvil) con «Abrir plan» → **sube a la 0.68**
 
 ## Versión 0.66 → 0.66.4
 
