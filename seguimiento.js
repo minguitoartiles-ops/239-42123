@@ -231,3 +231,37 @@ function sgFotoAmpliar(id, n){
   o.innerHTML = '<img alt="' + esc(n) + '"><span>' + esc(n) + ' · toca para cerrar</span>';
   sgFotoSrc(o.querySelector('img'), id); o.classList.add('show');
 }
+
+/* ---------- Mejora 5 (21/10) · Ficha: fotos «Antes / Ahora» ----------
+   Para cada posición (frente, perfil, espalda) la primera foto que envió y la última, lado a lado. */
+function sgAntesAhora(k){
+  const l = (SEGUIMIENTOS[k] || []).slice().sort(function(a, b){ return (a.fecha || '') < (b.fecha || '') ? -1 : 1; });
+  return SG_FOTO_POS.map(function(p){
+    const con = l.filter(function(r){ return (r.fotos || []).some(function(f){ return f.pos === p[0]; }); });
+    if (!con.length) return null;
+    const f = function(r){ return r.fotos.filter(function(x){ return x.pos === p[0]; })[0]; };
+    return { pos: p[0], n: p[1], a: { r: con[0], f: f(con[0]) }, z: con.length > 1 ? { r: con[con.length - 1], f: f(con[con.length - 1]) } : null };
+  }).filter(Boolean);
+}
+function sgPintarFotosFicha(){
+  const v = document.getElementById('view-coach-cliente'), k = clienteActual; if (!v || !k || !coachActivo) return;
+  let c = document.getElementById('fichaFotos');
+  const d = sgAntesAhora(k);
+  if (!d.length) { if (c) c.remove(); return; }
+  if (!c) {
+    c = document.createElement('div'); c.id = 'fichaFotos';
+    const ref = document.getElementById('fichaPasos') || document.getElementById('fichaSens');
+    if (ref && ref.parentNode) ref.parentNode.insertBefore(c, ref.nextSibling); else v.querySelector('.alta-body').appendChild(c);
+  }
+  const celda = function(x, lbl){
+    if (!x) return '<div class="ff-c"><div class="ff-vacio">Aún sin foto nueva</div><small>' + lbl + '</small></div>';
+    const peso = x.r.med && x.r.med.peso != null ? ' · ' + fmtNum(x.r.med.peso) + ' kg' : '';
+    return '<button type="button" class="ff-c" onclick="sgFotoAmpliar(\'' + x.f.id + '\',\'' + lbl + ' · ' + fechaCorta(x.r.fecha) + '\')"><img alt="" data-foto="' + x.f.id + '"><small>' + lbl + ' · ' + fechaCorta(x.r.fecha) + esc(peso) + '</small></button>';
+  };
+  c.innerHTML = '<div class="alta-label">📸 Antes / Ahora</div><div class="ff-lista">' + d.map(function(x){
+    return '<div class="ff-pos"><b>' + x.n + '</b><div class="ff-par">' + celda(x.a, 'Antes') + celda(x.z, 'Ahora') + '</div></div>';
+  }).join('') + '</div>';
+  sgFotosCargar();
+}
+enSeccionDe = (function(orig){ return function(el){ return el.id === 'fichaFotos' ? 'segui' : orig.apply(this, arguments); }; })(enSeccionDe);
+enPintarFicha = (function(orig){ return function(){ sgPintarFotosFicha(); return orig.apply(this, arguments); }; })(enPintarFicha);

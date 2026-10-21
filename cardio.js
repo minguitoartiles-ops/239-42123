@@ -90,7 +90,7 @@ function cdHecho(btn){
   if (it.dataset.cdOk === '1') delete it.dataset.cdOk; else it.dataset.cdOk = '1';
   cdSync();
   try { guardarPlan(); guardarTodo(); } catch(e){}
-  try { if (typeof exPintarBarraSesion === 'function') exPintarBarraSesion(); } catch(e){}
+  try { exBarraEntreno(); } catch(e){}
 }
 function cdCampo(it, k, lbl, ph, num){
   return '<label class="cd-f"><span>' + lbl + '</span><input type="' + (num ? 'number' : 'text') + '"' + (num ? ' inputmode="numeric" min="0"' : '') + ' data-cd="' + k + '" value="' + esc(it.dataset[k] || '') + '" placeholder="' + ph + '"></label>';
@@ -176,3 +176,124 @@ if (typeof ruPintarCompacta === 'function') ruPintarCompacta = (function(orig){ 
 EN_GRUPO.circ = { n: 'Circuito', e: '🔄', p: '3 vueltas · sin descanso entre ejercicios · 90 s de descanso entre vueltas', min: false,
   i: 'Haz los ejercicios del circuito seguidos, uno detrás de otro, con el tiempo o las repeticiones de cada uno. Al terminar descansa lo indicado y repite las vueltas.' };
 cdSync();
+
+/* =========================================================
+   Mejora 4 (21/10) · El cliente registra su cardio real
+   Al marcarlo como hecho apunta minutos y distancia (por tiempo) o rondas (intervalos);
+   se guarda en su registro semanal (registro.cardio) y suma «minutos de cardio» en
+   el seguimiento, en el gráfico de evolución y en la ficha / Entrenamientos.
+   ========================================================= */
+function cdId(it){ if (!it.dataset.cdId) it.dataset.cdId = 'cd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); return it.dataset.cdId; }
+function cdMinPauta(it){
+  const d = it.dataset;
+  if (d.cardio === 'tiempo') return +d.cdMin || 0;
+  if (d.cardio === 'int') return Math.round((+d.cdRondas || 0) * ((+d.cdTrab || 0) + (+d.cdDesc || 0)) / 60);
+  return 0;
+}
+function cdMinReal(it){
+  const d = it.dataset;
+  if (d.cardio === 'int') { const r = d.cdRealRondas !== undefined && d.cdRealRondas !== '' ? +d.cdRealRondas : (+d.cdRondas || 0); return Math.round(r * ((+d.cdTrab || 0) + (+d.cdDesc || 0)) / 60); }
+  return d.cdRealMin !== undefined && d.cdRealMin !== '' ? +d.cdRealMin : cdMinPauta(it);
+}
+function cdRealTxt(it){
+  const d = it.dataset, p = [];
+  if (d.cardio === 'int') p.push((d.cdRealRondas || d.cdRondas || '—') + ' rondas');
+  else p.push(cdMinReal(it) + ' min');
+  if (d.cdRealKm) p.push(fmtNum(+String(d.cdRealKm).replace(',', '.')) + ' km');
+  return p.join(' · ');
+}
+function cdRegistro(k){ const r = mjRegistro(k); if (!r) return []; r.cardio = r.cardio || []; return r.cardio; }
+function cdMinSemana(k, lunes){
+  lunes = lunes || mjISO(mjLunes());
+  return cdRegistro(k).filter(function(x){ return x.sem === lunes; }).reduce(function(a, x){ return a + (+x.min || 0); }, 0);
+}
+function cdApuntar(it, hecho){
+  const k = clienteActual; if (!k) return;
+  const l = cdRegistro(k), lunes = mjISO(mjLunes()), id = cdId(it);
+  for (let i = l.length - 1; i >= 0; i--) if (l[i].id === id && l[i].sem === lunes) l.splice(i, 1);
+  if (hecho) l.push({ id: id, sem: lunes, f: mjISO(new Date()), ej: enNombreEj(it), min: cdMinReal(it), km: it.dataset.cdRealKm ? +String(it.dataset.cdRealKm).replace(',', '.') : null });
+  if (l.length > 400) l.splice(0, l.length - 400);
+}
+/* formulario del cliente */
+cdHtml = (function(orig){
+  return function(it){
+    const m = it.dataset.cardio;
+    if (enEditando() || isCoachView() || m === 'series' || !m) return orig.apply(this, arguments);
+    const d = it.dataset, ok = d.cdOk === '1', abierto = it.classList.contains('cd-abierto');
+    let h = '<span class="cd-ico" aria-hidden="true">' + (m === 'int' ? '⏲️' : '🫀') + '</span><span class="cd-txt">' + esc(cdTexto(it))
+      + (ok ? '<small class="cd-hecho">✓ Hecho: ' + esc(cdRealTxt(it)) + '</small>' : '') + '</span>';
+    if (!abierto) return h + '<button type="button" class="cd-ok' + (ok ? ' on' : '') + '" onclick="cdAbrirReg(this)">' + (ok ? 'Cambiar' : 'Marcar hecho') + '</button>';
+    const campo = function(k, lbl, val, ph){ return '<label class="cd-f"><span>' + lbl + '</span><input type="text" inputmode="decimal" data-cdr="' + k + '" value="' + esc(val || '') + '" placeholder="' + ph + '"></label>'; };
+    h += '<div class="cd-reg">' + (m === 'int'
+        ? campo('cdRealRondas', 'Rondas hechas', d.cdRealRondas || d.cdRondas, d.cdRondas || '8')
+        : campo('cdRealMin', 'Minutos hechos', d.cdRealMin || d.cdMin, d.cdMin || '20') + campo('cdRealKm', 'Distancia (km, opcional)', d.cdRealKm, '—'))
+      + '<div class="cd-reg-btns">' + (ok ? '<button type="button" class="cd-chip" onclick="cdDesmarcar(this)">Quitar «hecho»</button>' : '')
+      + '<button type="button" class="cd-ok on" onclick="cdGuardarReg(this)">Guardar ✓</button></div></div>';
+    return h;
+  };
+})(cdHtml);
+function cdAbrirReg(btn){ const it = btn.closest('.ex-item'); if (!it) return; it.classList.add('cd-abierto'); cdSync(); const i = it.querySelector('[data-cdr]'); if (i) { i.focus(); try { i.select(); } catch(e){} } }
+function cdGuardarReg(btn){
+  const it = btn.closest('.ex-item'); if (!it) return;
+  it.querySelectorAll('[data-cdr]').forEach(function(i){ const v = i.value.trim().replace(',', '.'); if (v && !isNaN(+v)) it.dataset[i.dataset.cdr] = v; else delete it.dataset[i.dataset.cdr]; });
+  it.dataset.cdOk = '1'; it.classList.remove('cd-abierto');
+  cdApuntar(it, true); cdSync(); try { exBarraEntreno(); } catch(e){}
+  try { guardarPlan(); guardarTodo(); } catch(e){}
+  toast('Cardio apuntado: ' + cdRealTxt(it));
+}
+function cdDesmarcar(btn){
+  const it = btn.closest('.ex-item'); if (!it) return;
+  ['cdOk', 'cdRealMin', 'cdRealKm', 'cdRealRondas'].forEach(function(k){ delete it.dataset[k]; });
+  it.classList.remove('cd-abierto'); cdApuntar(it, false); cdSync(); try { exBarraEntreno(); } catch(e){}
+  try { guardarPlan(); guardarTodo(); } catch(e){}
+}
+cdHecho = function(btn){ cdAbrirReg(btn); };
+/* semana nueva: también fuera lo apuntado */
+mjCambioDeSemana = (function(orig){
+  return function(k){
+    const d = clientesData[k], antes = d && d.semanaRef;
+    const r = orig.apply(this, arguments);
+    if (d && antes && d.semanaRef !== antes) contEnt().querySelectorAll('.ex-item[data-cd-real-min],.ex-item[data-cd-real-km],.ex-item[data-cd-real-rondas]').forEach(function(it){ ['cdRealMin', 'cdRealKm', 'cdRealRondas'].forEach(function(x){ delete it.dataset[x]; }); });
+    return r;
+  };
+})(mjCambioDeSemana);
+/* seguimiento: guarda los minutos de cardio de la semana y los enseña en la tarjeta */
+guardarSeguimiento = (function(orig){
+  return function(){
+    const k = clienteActual, l0 = k && (SEGUIMIENTOS[k] || [])[0];
+    const r = orig.apply(this, arguments);
+    const n = k && (SEGUIMIENTOS[k] || [])[0];
+    if (n && n !== l0) { const m = cdMinSemana(k); if (m) n.cardio = m; else if (n.cardio == null) delete n.cardio; try { guardarTodo(); } catch(e){} }
+    return r;
+  };
+})(guardarSeguimiento);
+tarjetaSeguimiento = (function(orig){
+  return function(r){
+    let h = orig.apply(this, arguments);
+    if (r && r.cardio) h = h.replace('<div class="segui-stats">', '<div class="segui-stats"><div><span class="segui-lbl">Cardio</span><span class="segui-val">' + fmtMil(+r.cardio) + ' min</span></div>');
+    return h;
+  };
+})(tarjetaSeguimiento);
+/* gráfico: «Cardio» en minutos por semana */
+if (typeof GR_METRICAS !== 'undefined') {
+  GR_METRICAS.push(['cardio', 'Cardio', 'min']);
+  grSerie = (function(orig){
+    return function(k, met){
+      if (met !== 'cardio') return orig.apply(this, arguments);
+      const reg = clientesData[k] && clientesData[k].registro && clientesData[k].registro.cardio; if (!reg) return [];
+      const sem = {}; reg.forEach(function(x){ sem[x.sem] = (sem[x.sem] || 0) + (+x.min || 0); });
+      return Object.keys(sem).sort().map(function(f){ return { f: f, v: sem[f], l: 'Semana del ' + fechaCorta(f) }; });
+    };
+  })(grSerie);
+  grFmt = (function(orig){ return function(v, met){ return met === 'cardio' ? fmtMil(Math.round(v)) : orig.apply(this, arguments); }; })(grFmt);
+}
+/* Entrenamientos (Domingo): minutos de cardio de la semana junto al tonelaje */
+if (typeof entResumenHtml === 'function') entResumenHtml = (function(orig){
+  return function(k){
+    const h = orig.apply(this, arguments), m = cdMinSemana(k);
+    return m ? h.replace('</div></div><div class="fe-card', '</div><div><small>Cardio esta semana</small><b>' + fmtMil(m) + ' min</b></div></div><div class="fe-card') : h;
+  };
+})(entResumenHtml);
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && e.target.dataset && e.target.dataset.cdr) { e.preventDefault(); const b = e.target.closest('.cd-box').querySelector('.cd-reg .cd-ok'); if (b) b.click(); }
+});
