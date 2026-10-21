@@ -343,3 +343,13 @@ html.esc #escInstalar{color:var(--accent);font-weight:700;}
 .sg-foto-grande span{color:#fff;font:500 13px var(--f-body);}
 #app.coach-edit:not(.coach-view) .add-meal-btn,#app.coach-edit:not(.coach-view) .calc-card{display:none !important;}
 #app:not(.coach-view) #enHerr,#app:not(.coach-view) .ses-del,#app:not(.coach-view) .ru-cambiar,#app:not(.coach-view) .ru-ren,#app:not(.coach-view) .calc-card,#app:not(.coach-view) .add-meal-btn,#app:not(.coach-view) .nu-rapido,#app:not(.coach-view) .add-sesion-btn,#app:not(.coach-view) .add-ej-btn,#app:not(.coach-view) .chip-add,#app:not(.coach-view) .chip-x,#app:not(.coach-view) .ex-del,#app:not(.coach-view) .meal-del{display:none !important;}
+/* #163 Entrenamientos de Domingo: lista + entreno a la derecha */
+.ent-lista{display:flex !important;flex-direction:column;gap:8px;}
+.ent-lista .plan-fila{margin:0 !important;}
+.ent-prev-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px;}
+.ent-prev-stats > div{padding:10px 12px;border-radius:14px;background:var(--card-hi, var(--wash-soft));border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;}
+.ent-prev-stats small{font:600 10px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
+.ent-prev-stats b{font:700 20px var(--f-body);color:var(--ink);}
+.ent-prev-stats span{font:500 11px var(--f-body);color:var(--dim-6);}
+.ent-prev-card{cursor:default;margin-bottom:12px;}
+html.esc .ent-split .pl-der{max-height:calc(100vh - 140px);overflow:auto;}
