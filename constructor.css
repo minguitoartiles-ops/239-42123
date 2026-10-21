@@ -77,3 +77,14 @@ html.ru-plegable #sesionesCont .ex-table-row .ru-cambiar{margin-left:auto;}
 html.ru-plegable:not(.ru-compacto) .ru-res{padding-left:34px;}
 html.ru-plegable #sesionesCont .sesion-head > div:first-child{display:flex;flex-wrap:wrap;align-items:center;column-gap:2px;}
 html.ru-plegable #sesionesCont .sesion-head .sesion-num{flex-basis:100%;}
+/* #146 más de 3 días: cada columna con ancho cómodo y desplazamiento lateral */
+html.ru-compacto #sesionesCont{grid-auto-columns:minmax(380px,1fr);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;padding-bottom:14px;}
+html.ru-compacto #sesionesCont .sesion-card{scroll-snap-align:start;}
+html.ru-compacto #sesionesCont::-webkit-scrollbar{height:10px;}
+html.ru-compacto #sesionesCont::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:6px;}
+/* nombre completo en su línea y la pauta debajo (no se corta el nombre) */
+html.ru-compacto #sesionesCont{grid-auto-columns:minmax(340px,1fr);}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco){grid-template-columns:minmax(0,1fr) !important;row-gap:2px;padding:6px 8px 6px 4px !important;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ex-name-cell{white-space:normal !important;overflow:visible;text-overflow:clip;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res{padding:0 0 0 46px;justify-content:flex-start;}
+html.ru-compacto .ru-cambiar{min-height:26px;padding:0 8px;font-size:11.5px;}

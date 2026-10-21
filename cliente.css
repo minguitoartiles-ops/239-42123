@@ -258,3 +258,12 @@ html.esc .pl-izq{min-width:0;}
 
 /* #139 Chat: fuera el panel de emojis propio; se usan los del teclado del móvil (y Win + . / Ctrl + Cmd + Espacio en el ordenador) */
 #emojiBtn,#emojiPanel{display:none !important;}
+
+/* #144 un seguimiento por semana */
+.sg-hecho{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin:4px 0 16px;padding:16px;border-radius:18px;background:rgba(116,188,138,.14);border:1.5px solid rgba(116,188,138,.5);font:500 13.5px/1.45 var(--f-body);color:var(--ink);}
+.sg-hecho[hidden]{display:none;}
+.sg-hecho b{font:700 16px var(--f-body);}
+.sg-hecho-ico{font-size:26px;}
+.sg-hecho .btn-primary,.sg-hecho .btn-eq{width:100%;margin:4px 0 0;}
+#view-seguimiento.sg-editando .sg-hecho{background:var(--accent-wash, rgba(120,170,230,.12));border-color:var(--accent-line, var(--accent));}
+#view-seguimiento.sg-ya > :not(.view-top):not(#sgHecho):not(.section-lbl):not(#historialSegui):not(.mj-pdf){display:none !important;}
