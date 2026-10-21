@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.70.0 (actual)
-Cambios acumulados hacia la 0.71: **1 de 10**
+## Versión 0.70 → 0.70.1 (actual)
+Cambios acumulados hacia la 0.71: **2 de 10**
 
 ### Hacia la 0.71
 1. 21/10/2026 21:00 · Seguimiento → Datos biométricos: apartado «Fotos de progreso» con tres huecos (Frente · Perfil · Espalda), opcional; se puede quitar o cambiar cada foto y, al editar el seguimiento de la semana, salen las que ya envió. Fátima y Domingo las ven en la tarjeta del seguimiento y se amplían al tocarlas. Fuera el «+ Añadir fotos» que no hacía nada. Se guardan reducidas en el propio dispositivo (pendiente de Supabase, punto 6)
+2. 21/10/2026 21:15 · El cliente solo ve lo que pautan los profesionales: en Nutrición fuera la calculadora «Objetivo y reparto», «Plan rápido», «+ Añadir comida» y los controles de opciones; en Entrenamiento fuera Asistente, Plantillas, «+ Día», la ✕ de cada sesión y «+ Añadir sesión». Si un profesional deja el modo edición abierto y entra un cliente en el mismo dispositivo, se apaga solo (sin guardar nada) → **0.70.1**
 
 ## Versión 0.69 → 0.69.4
 
