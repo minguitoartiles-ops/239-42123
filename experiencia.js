@@ -146,10 +146,7 @@ goTo = (function(orig){
     const r = orig.apply(this, arguments);
     if (name === 'hoy') exPintarHoyToca();
     if (name === 'entreno' && exCliente()) {
-      // si no hay ninguna sesión abierta, se abre la que toca
-      const abiertas = sesionCards().filter(function(c){ const b = c.querySelector('.sesion-body'); return b && b.style.display !== 'none'; });
-      const s = exSesionQueToca();
-      if (!abiertas.length && s && s.card) exAbrirSesion(s.card, true);
+      // 22/10: el cliente ve sus sesiones plegadas y despliega la que quiera (ver cliente.js)
       exBarraEntreno();
     }
     if (name === 'plan' && exCliente()) exPlegarComidas(exComidaAhora());
@@ -185,6 +182,15 @@ enPintarFilas = (function(orig){
     });
     const hecho = p.length > 0 && p.every(function(x){ return x.dataset.ok === '1'; });
     it.classList.toggle('ej-hecho', hecho);
+    // 22/10 · progreso del ejercicio junto al nombre: «1/3» con un punto por serie
+    const cabEj = it.querySelector('.ex-table-row');
+    if (cabEj && p.length) {
+      let pr = cabEj.querySelector('.ej-prog');
+      if (!pr) { pr = document.createElement('em'); pr.className = 'ej-prog'; cabEj.appendChild(pr); }
+      const nOk = p.filter(function(x){ return x.dataset.ok === '1'; }).length;
+      pr.innerHTML = '<span class="ej-prog-n">' + nOk + '/' + p.length + '</span>' + (p.length <= 8 ? p.map(function(x){ return '<i' + (x.dataset.ok === '1' ? ' class="si"' : '') + '></i>'; }).join('') : '');
+      pr.setAttribute('aria-label', nOk + ' de ' + p.length + ' series hechas');
+    }
     let r = it.querySelector('.ej-resumen');
     if (hecho) {
       const s = enLeerSeries(it), m = s.length ? enMejorSerie(s) : null;

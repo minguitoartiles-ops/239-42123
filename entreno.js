@@ -1541,7 +1541,11 @@ function enPintarFilas(it){
   const rDist = vr.some(function(v){ return v !== vr[0]; }), iDist = vi.some(function(v){ return v !== vi[0]; });
   const txtRir = iDist ? ' · RIR ' + vi.map(function(v){ return v !== '' ? '<b class="srf-rir-v ' + enRir(v) + '">' + esc(v) + '</b>' : '—'; }).join(' / ')
     : (rir !== undefined && rir !== '' ? ' · <b class="' + enRir(rir) + '">RIR ' + esc(rir) + '</b>' : '');
-  f.innerHTML = '<div class="srf-cab"><span>' + pesos.length + (pesos.length === 1 ? ' serie' : ' series') + (rDist ? ' · ' + vr.map(esc).join(' / ') : ' × ' + esc(p0.dataset.reps || '—')) + ' reps' + txtRir + '</span>'
+  // 22/10 · pauta en etiquetas: «3 series» destacada, reps y RIR al lado
+  const chipRir = iDist ? '<span class="srf-chip srf-chip-rir">' + txtRir.replace(' · ', '') + '</span>'
+    : (rir !== undefined && rir !== '' ? '<span class="srf-chip srf-chip-rir ' + enRir(rir) + '">RIR <b>' + esc(rir) + '</b></span>' : '');
+  f.innerHTML = '<div class="srf-cab"><div class="srf-pauta"><span class="srf-chip srf-chip-s"><b>' + pesos.length + '</b> ' + (pesos.length === 1 ? 'serie' : 'series') + '</span>'
+    + '<span class="srf-chip srf-chip-r"><b>' + (rDist ? vr.map(esc).join(' / ') : esc(p0.dataset.reps || '—')) + '</b> reps</span>' + chipRir + '</div>'
     + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + '</div>'
     + pesos.map(function(p, i){ return enFilaHTML(it, p, i, hechas[i], isCoachView()); }).join('');
   abiertas.forEach(function(a, i){ const o = f.querySelectorAll('.srf-opc')[i]; if (o && a) o.hidden = false; });

@@ -489,3 +489,50 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 .emo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:2px;}
 .emo-b{height:38px;border:none;border-radius:10px;background:none;font-size:22px;line-height:1;cursor:pointer;}
 .emo-b:hover{background:var(--wash-med);}
+.pr-sin{display:block;margin:10px auto 0;border:none;background:none;color:var(--dim-6);font:500 12px var(--f-body);text-decoration:underline;cursor:pointer;}
+
+/* =========================================================
+   22/10 · Sesión del cliente más legible: cada ejercicio en su tarjeta,
+   la pauta en etiquetas («3 series» destacada) y series más ligeras
+   ========================================================= */
+#app:not(.coach-edit) #view-entreno .sesion-body .ex-item{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:12px 12px 10px;margin-top:12px;box-shadow:0 1px 3px rgba(18,21,26,.05);}
+#app:not(.coach-edit) #view-entreno .sesion-body .ex-item.en-en-grupo{border-left:3px solid var(--accent);padding-left:12px;}
+#app:not(.coach-edit) #view-entreno .sesion-body .ex-item.ej-hecho{border-color:rgba(116,188,138,.55);}
+#app:not(.coach-edit) #view-entreno .ex-table-row{gap:10px;padding:0 0 10px;}
+#app:not(.coach-edit) #view-entreno .ex-name-cell{flex:1 1 auto;min-width:0;display:flex;align-items:center;font:700 16.5px/1.25 var(--f-body);}
+#app:not(.coach-edit) #view-entreno .ex-name-cell::before{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:0;margin-right:10px;border-radius:9px;background:var(--accent-wash);color:var(--accent);font:700 12px var(--f-mono);}
+#app:not(.coach-edit) #view-entreno .ex-item.ej-hecho .ex-name-cell::before{background:rgba(116,188,138,.2);color:#3E8F57;}
+/* progreso del ejercicio */
+.ej-prog{display:none;}
+#app:not(.coach-edit) #view-entreno .ej-prog{flex:none;display:flex;align-items:center;gap:4px;font-style:normal;}
+.ex-table-row .ej-prog .ej-prog-n{flex:none;margin-right:3px;font:600 11.5px var(--f-mono);color:var(--dim-6);}
+.ej-prog i{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--accent-line);}
+.ej-prog i.si{background:var(--accent);border-color:var(--accent);}
+.ex-item.ej-hecho .ej-prog i.si{background:#4FA86A;border-color:#4FA86A;}
+/* pauta en etiquetas */
+.srf-cab{flex-direction:column;align-items:flex-start;gap:6px;}
+.srf-pauta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+.srf-chip{display:inline-flex;align-items:baseline;gap:4px;height:28px;align-items:center;padding:0 10px;border-radius:99px;border:1.5px solid var(--line-strong);background:var(--bg);color:var(--dim-6);font:500 12.5px var(--f-mono);white-space:nowrap;}
+.srf-cab .srf-chip b{padding:0;border:none;border-radius:0;font:700 14px var(--f-mono);color:var(--ink);}
+.srf-chip-s{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.srf-cab .srf-chip-s b{color:var(--on-accent);font-size:15px;}
+.srf-chip-rir.rir-n{border-color:var(--rc);background:color-mix(in srgb, var(--rc) 12%, transparent);color:color-mix(in srgb, var(--rc) 85%, #000);}
+.srf-cab .srf-chip-rir.rir-n b{color:inherit;}
+.srf-ref{font:500 12px var(--f-mono);color:var(--dim-6);}
+/* series: filas ligeras; la que toca, resaltada */
+#app:not(.coach-edit) #view-entreno .sr-filas{gap:7px;margin-top:0;}
+#app:not(.coach-edit) #view-entreno .ex-video-row:not(:has(.ex-video.on)):not(:has(.ru-video)){display:none;}
+#app:not(.coach-edit) #view-entreno .ex-item > .ex-series{margin-bottom:6px;}
+#app:not(.coach-edit) #view-entreno .srf{background:none;border:1px solid var(--line);border-radius:14px;padding:6px;}
+#app:not(.coach-edit) #view-entreno .srf.actual{border:1.5px solid var(--accent);background:var(--accent-wash);}
+#app:not(.coach-edit) #view-entreno .srf.ok{background:rgba(116,188,138,.1);border-color:rgba(116,188,138,.45);}
+#app:not(.coach-edit) #view-entreno .srf .srf-n{height:40px;border:none;background:var(--wash-soft);}
+#app:not(.coach-edit) #view-entreno .srf.actual .srf-n{background:var(--bg);}
+#app:not(.coach-edit) #view-entreno .srf-reps,#app:not(.coach-edit) #view-entreno .srf-peso,#app:not(.coach-edit) #view-entreno .srf-ok{height:40px;}
+#app:not(.coach-edit) #view-entreno .srf.ok .srf-ok{background:#4FA86A;border-color:#4FA86A;color:#fff;}
+#app:not(.coach-edit) #view-entreno .srf-l2{margin-top:6px;}
+#app:not(.coach-edit) #view-entreno .srf-rir,#app:not(.coach-edit) #view-entreno .srf-nota-b{height:32px;}
+/* el RIR solo se despliega en la serie que toca (o al tocar otra); en las demás, su etiqueta */
+#app:not(.coach-edit) #view-entreno .srf:not(.actual):not(:focus-within):not(:has(.srf-opc:not([hidden]))) .srf-l2{display:none;}
+#app:not(.coach-edit) #view-entreno .srf:not(.actual) .srf-rirb{display:block;white-space:nowrap;margin-top:2px;padding:1px 4px;border-radius:6px;font:700 10px/1.2 var(--f-mono);}
+@media (min-width:700px){ #app:not(.coach-edit) #view-entreno .sr-filas{max-width:620px;} }
