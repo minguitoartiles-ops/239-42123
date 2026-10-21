@@ -942,32 +942,5 @@ enPintarTabRol = (function(orig){
     return r;
   };
 })(enPintarTabRol);
-let enBuscaEnt = '';
-function enFiltrarEnt(v){
-  enBuscaEnt = v; const q = norm(v || ''); let n = 0;
-  document.querySelectorAll('#planesPro .plan-fila').forEach(function(f){ const ok = !q || norm(f.dataset.nom || '').indexOf(q) > -1; f.hidden = !ok; if (ok) n++; });
-  const vac = document.getElementById('entVacio'); if (vac) vac.hidden = n > 0;
-}
-enPintarPlanes = (function(orig){
-  return function(){
-    const r = orig.apply(this, arguments);
-    if (!coachActivo || coachActivo.rol === 'dietista') return r;
-    const cont = document.getElementById('planesPro'), lista = cont && cont.querySelector('.planes-lista'); if (!lista) return r;
-    lista.querySelectorAll('.plan-fila').forEach(function(f){
-      const m = (f.getAttribute('onclick') || '').match(/'([^']+)'/); if (!m) return;
-      const k = m[1]; f.dataset.nom = (clientesData[k] || {}).nombre || '';
-      if (typeof plFoto === 'function') f.insertAdjacentHTML('afterbegin', plFoto(k));
-      f.classList.add('ent-fila');
-      const rd = typeof rutDatos === 'function' ? rutDatos(k) : null;
-      if (rd) { const s = f.querySelector('.plan-fila-sub'); if (s) s.insertAdjacentHTML('beforeend', ' · <span class="rut-tag ' + rd.nivel + '">🏋️ ' + esc(rd.corto) + ' con esta rutina</span>'); }
-      const cta = f.querySelector('.plan-fila-cta'); if (cta && !/Crear/.test(cta.textContent)) cta.textContent = 'Abrir entreno ›';
-    });
-    const busca = document.createElement('div'); busca.className = 'pl-busca';
-    busca.innerHTML = '<input type="search" id="entBuscar" placeholder="Buscar cliente…" aria-label="Buscar cliente" autocomplete="off" value="' + esc(enBuscaEnt) + '" oninput="enFiltrarEnt(this.value)"><div id="entVacio" class="picker-empty" hidden>Ningún cliente coincide con la búsqueda.</div>';
-    lista.parentNode.insertBefore(busca, lista);
-    enFiltrarEnt(enBuscaEnt);
-    return r;
-  };
-})(enPintarPlanes);
 setTimeout(function(){ try { if (coachActivo) { enPintarTabRol(); pintarTabsPro(); } } catch(e){} }, 0);
 window.addEventListener('resize', function(){ try { if (coachActivo) enPintarTabRol(); } catch(e){} });
