@@ -381,3 +381,4 @@ html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) .cd-box.cd-edit .cd-mini{d
 /* 21/10 · Tarjetas de Clientes sin la casilla «Mensajes» (ya se ven en Chats) */
 .kc-grid > .kc-msgs{display:none !important;}
 .kc-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+.ex-filtros{flex-wrap:wrap;overflow:visible;}
