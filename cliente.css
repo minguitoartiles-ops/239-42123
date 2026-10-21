@@ -145,3 +145,5 @@ html.esc .pagos-lista.pg-tabla{gap:8px;}
 /* #113 aviso de borrado en la ficha */
 .pg-borrado{margin:8px 2px 4px;padding:10px 12px;border-radius:12px;background:rgba(217,80,63,.08);border:1px solid rgba(217,80,63,.3);font:500 13px/1.45 var(--f-body);color:var(--ink);}
 .pg-borrado b{color:var(--danger);}
+/* #114 términos en el consentimiento */
+.cs-terminos{margin:4px 0 12px;font:500 12.5px/1.45 var(--f-body);color:var(--dim-6);}
