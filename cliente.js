@@ -951,3 +951,14 @@ window.addEventListener('resize', function(){ try { if (coachActivo) enPintarTab
   const b = document.querySelector('#coachBar [onclick="backToCliente()"]');
   if (b) b.setAttribute('onclick', 'atrasPorNiveles()');
 })();
+
+/* ---------- 21/10 · Orden del menú: Clientes · Seguimientos · Entrenamientos · Chats · Pagos · Ajustes (· Más) ---------- */
+function clOrdenMenu(){
+  const nav = document.getElementById('coachTabs'); if (!nav) return;
+  const pie = document.getElementById('escPie');
+  ['ctab-clientes', 'ctab-segs', 'ctab-planes', 'ctab-recetas', 'ctab-chats', 'ctab-pagos', 'ctab-ajustes', 'ctab-mas'].forEach(function(id){
+    const b = document.getElementById(id); if (b) nav.insertBefore(b, pie && pie.parentNode === nav ? pie : null);
+  });
+}
+clOrdenMenu();
+entrarAlPanel = (function(orig){ return function(){ const r = orig.apply(this, arguments); clOrdenMenu(); return r; }; })(entrarAlPanel);
