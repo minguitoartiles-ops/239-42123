@@ -776,3 +776,43 @@ exPintarFiltros = (function(orig){
     return r;
   };
 })(exPintarFiltros);
+
+/* ---------- #156 «¿Cómo renovar?» ----------
+   Cuando la suscripción está a punto de vencer, ha vencido, está en gracia o el acceso está pausado,
+   el cliente ve cómo pagar: Bizum o transferencia, con el concepto ya escrito con su nombre y su tarifa. */
+const RN_BIZUM = ['+34 620 273 866', '+34 609 47 81 70'];
+const RN_IBAN = 'ES80 3076 0180 5210 1751 0718', RN_TITULAR = 'Fátima Toledo', RN_BANCO = 'Cajasiete';
+function rnConcepto(){
+  const d = clientesData[clienteActual] || {}, p = String(d.nombre || '').trim().split(/\s+/);
+  const t = d.tarifa && MJ_TARIFAS[d.tarifa.tipo] ? MJ_TARIFAS[d.tarifa.tipo].n.toLowerCase() : '';
+  return 'Asesoría ' + p.slice(0, 2).join(' ') + (t ? ' ' + t : '');
+}
+function rnCopiar(btn, txt){
+  const fin = function(){ const o = btn.textContent; btn.textContent = 'Copiado ✓'; setTimeout(function(){ btn.textContent = o; }, 1400); };
+  try { navigator.clipboard.writeText(txt).then(fin, function(){ toast(txt); }); } catch(e){ toast(txt); }
+}
+function rnFila(lbl, val, copia){ return '<div class="rn-fila"><span><small>' + lbl + '</small><b>' + esc(val) + '</b></span><button type="button" class="rn-cp" onclick="rnCopiar(this,\'' + (copia || val).replace(/'/g, "\\'") + '\')">Copiar</button></div>'; }
+function rnHtml(abierto){
+  const c = rnConcepto();
+  return '<details class="rn-box"' + (abierto ? ' open' : '') + '><summary>¿Cómo renovar?</summary><div class="rn-cuerpo">'
+    + '<p class="rn-t">1 · Bizum</p>' + RN_BIZUM.map(function(n){ return rnFila('Número', n, n.replace(/\s/g, '')); }).join('')
+    + '<p class="rn-t">2 · Transferencia bancaria</p>' + rnFila('IBAN · ' + RN_TITULAR + ', ' + RN_BANCO, RN_IBAN, RN_IBAN.replace(/\s/g, ''))
+    + '<p class="rn-t">Concepto (en los dos casos)</p>' + rnFila('Escríbelo así', c)
+    + '<p class="rn-nota">Cuando lo hayas hecho, avisa a Fátima o Domingo por el chat para que lo registren.</p></div></details>';
+}
+mjBannerPago = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const c = document.getElementById('hoyPago');
+    if (c && !c.querySelector('.rn-box')) { c.classList.add('rn-con'); c.insertAdjacentHTML('beforeend', rnHtml(false)); }
+    return r;
+  };
+})(mjBannerPago);
+mjBloqueoCliente = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const s = document.querySelector('#mjBloqueo .mj-bloq');
+    if (r && s && !s.querySelector('.rn-box')) { const row = s.querySelector('.btn-row'); row.insertAdjacentHTML('beforebegin', rnHtml(true)); }
+    return r;
+  };
+})(mjBloqueoCliente);

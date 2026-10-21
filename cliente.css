@@ -287,3 +287,38 @@ html.esc .pl-izq{min-width:0;}
 .kc-info{margin:4px 0 0;font:500 12px/1.35 var(--f-body);color:var(--dim-6);}
 /* la semana anterior en agujetas: borde discontinuo de su propio color, sin tapar el tono */
 .esc-row.sg-agujetas .esc-btn.esc-ant:not(.on){border-style:dashed;border-width:2px;border-color:var(--tono);box-shadow:none;color:var(--tono);background:color-mix(in srgb, var(--tono) 10%, var(--card, #fff));}
+
+/* ---------- #142 protocolos en PDF ---------- */
+.pr-ficha{margin:12px 0 16px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--card-hi, var(--wash-soft));}
+.pr-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;font:600 13px var(--f-body);color:var(--ink);}
+.pr-subir{font:600 12px var(--f-body);color:var(--accent);cursor:pointer;padding:6px 10px;border-radius:10px;background:var(--accent-wash);}
+.pr-nota{font:500 11px var(--f-body);color:var(--dim-55);}
+.pr-vacio{margin:8px 0 0;font:500 12px/1.4 var(--f-body);color:var(--dim-6);}
+.pr-lista{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.pr-cliente{margin:18px 0;}
+.pr-cliente .pr-lista{margin-top:0;}
+.pr-it{display:flex;align-items:center;gap:6px;}
+.pr-abrir{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card, #fff);text-align:left;cursor:pointer;color:var(--ink);}
+.pr-abrir:hover{border-color:var(--accent-line, var(--accent));}
+.pr-ico{font-size:20px;}
+.pr-t{flex:1;min-width:0;display:flex;flex-direction:column;}
+.pr-t b{font:600 14px var(--f-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pr-t small{font:500 11px var(--f-mono);color:var(--dim-55);}
+.pr-desc{font:600 12px var(--f-body);color:var(--accent);}
+.pr-x{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--dim-6);cursor:pointer;}
+
+/* ---------- #156 ¿Cómo renovar? ---------- */
+#hoyPago.rn-con{flex-wrap:wrap;}
+.rn-box{flex:1 1 100%;margin-top:10px;border-top:1px solid var(--line);padding-top:8px;text-align:left;}
+.rn-box summary{cursor:pointer;font:700 14px var(--f-body);color:var(--ink);list-style:none;display:flex;align-items:center;gap:6px;}
+.rn-box summary::-webkit-details-marker{display:none;}
+.rn-box summary::after{content:"▾";font-size:12px;color:var(--dim-55);}
+.rn-box[open] summary::after{content:"▴";}
+.rn-cuerpo{margin-top:6px;}
+.rn-t{margin:10px 0 4px;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-6);}
+.rn-fila{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;margin-bottom:5px;border-radius:12px;background:var(--card, #fff);border:1px solid var(--line);}
+.rn-fila span{display:flex;flex-direction:column;min-width:0;}
+.rn-fila small{font:500 11px var(--f-body);color:var(--dim-55);}
+.rn-fila b{font:600 14px var(--f-mono);color:var(--ink);overflow-wrap:anywhere;}
+.rn-cp{flex:none;padding:6px 10px;border-radius:10px;border:none;background:var(--accent-wash);color:var(--accent);font:600 12px var(--f-body);cursor:pointer;}
+.rn-nota{margin:8px 0 0;font:500 12px/1.4 var(--f-body);color:var(--dim-6);}
