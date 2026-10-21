@@ -944,3 +944,10 @@ enPintarTabRol = (function(orig){
 })(enPintarTabRol);
 setTimeout(function(){ try { if (coachActivo) { enPintarTabRol(); pintarTabsPro(); } } catch(e){} }, 0);
 window.addEventListener('resize', function(){ try { if (coachActivo) enPintarTabRol(); } catch(e){} });
+
+/* ---------- 21/10 · «Volver» de la barra del plan vuelve a donde estabas ----------
+   (Entrenamientos, Nutrición, Chats o la ficha del cliente), igual que el botón atrás. */
+(function(){
+  const b = document.querySelector('#coachBar [onclick="backToCliente()"]');
+  if (b) b.setAttribute('onclick', 'atrasPorNiveles()');
+})();
