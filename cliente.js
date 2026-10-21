@@ -912,3 +912,18 @@ function clSinEdicion(){
 }
 enterApp = (function(orig){ return function(){ clSinEdicion(); const r = orig.apply(this, arguments); clSinEdicion(); return r; }; })(enterApp);
 goTo = (function(orig){ return function(){ if (window.fsdSesionCliente) clSinEdicion(); return orig.apply(this, arguments); }; })(goTo);
+
+/* ---------- 21/10 · Entrar al plan desde el chat = igual que desde el cliente ----------
+   En la vista del profesional, al cambiar con las pestañas (Chat → Entrenamiento o Nutrición) a SU área,
+   se abre como desde la ficha: directamente en modo edición, con el mismo formato (columnas, líneas plegadas…). */
+goTo = (function(orig){
+  return function(n){
+    const r = orig.apply(this, arguments);
+    try {
+      if (!isCoachView() || coachEditing || !coachActivo || !clienteActual) return r;
+      const mia = coachActivo.rol === 'dietista' ? 'plan' : 'entreno';
+      if (n === mia && document.getElementById('app').style.display !== 'none') editarPlan();
+    } catch(e){}
+    return r;
+  };
+})(goTo);
