@@ -4,7 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.70.0 (actual)
-Cambios acumulados hacia la 0.71: **0 de 10**
+Cambios acumulados hacia la 0.71: **1 de 10**
+
+### Hacia la 0.71
+1. 21/10/2026 21:00 · Seguimiento → Datos biométricos: apartado «Fotos de progreso» con tres huecos (Frente · Perfil · Espalda), opcional; se puede quitar o cambiar cada foto y, al editar el seguimiento de la semana, salen las que ya envió. Fátima y Domingo las ven en la tarjeta del seguimiento y se amplían al tocarlas. Fuera el «+ Añadir fotos» que no hacía nada. Se guardan reducidas en el propio dispositivo (pendiente de Supabase, punto 6)
 
 ## Versión 0.69 → 0.69.4
 
