@@ -187,3 +187,41 @@ html.esc .screen.esc-dual > .esc-izq{container-type:inline-size;}
 /* 21/10 15:00 · Todas las notificaciones en el mismo rojo */
 .tab-badge,.bell-badge,.mj-bell-badge,.tb-badge,.acc-n,.chat-fila-n,#coachTabs .tab-badge{background:var(--danger,#d93025) !important;color:#fff !important;}
 .tb-badge{background:var(--danger,#d93025) !important;}
+
+/* #120 tiempo con la rutina actual */
+.rut-ficha{margin:6px 0 10px;padding:7px 10px;border-radius:10px;font:500 12.5px/1.4 var(--f-body);color:var(--ink);background:var(--wash-soft);}
+.rut-ficha.amb{background:rgba(230,160,60,.16);color:#7A4E0F;}
+.rut-ficha.roj{background:rgba(217,80,63,.12);color:#9B2C1F;}
+.rut-tag{font:600 11px var(--f-body);padding:2px 8px;border-radius:99px;background:var(--wash-med);color:var(--dim-6);white-space:nowrap;}
+.rut-tag.amb{background:rgba(230,160,60,.2);color:#8A5A12;}
+.rut-tag.roj{background:rgba(217,80,63,.15);color:#B03A2E;}
+
+/* #127 gráfico de evolución en Seguimientos */
+.gr-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 10px;margin:0 0 14px;}
+.gr-chips{margin:0 0 10px;}
+html:not(.esc) .gr-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+html:not(.esc) .gr-chips .chip{flex:none;}
+.gr-chips .chip[disabled]{opacity:.4;cursor:default;}
+.gr-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:2px 4px 6px;}
+.gr-tit{display:block;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-6);}
+.gr-val{font:800 26px/1.1 Archivo,sans-serif;color:var(--ink);}
+.gr-val small{font:600 13px var(--f-body);color:var(--dim-6);}
+.gr-dif{font:600 13px var(--f-body);color:var(--dim-6);text-align:right;}
+.gr-vacio{padding:24px 8px;text-align:center;font:500 13px var(--f-body);color:var(--dim-6);}
+.gr-plot{position:relative;}
+.gr-plot svg{display:block;overflow:visible;}
+.gr-grid{stroke:var(--line);stroke-width:1;}
+.gr-ax{fill:var(--dim-55, #888);font:500 11px var(--f-mono);}
+.gr-linea{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
+.gr-area{fill:var(--accent);opacity:.08;}
+.gr-pt{fill:var(--accent);stroke:var(--card, #fff);stroke-width:2;}
+.gr-pt.ult{r:5;}
+.gr-cruz{stroke:var(--dim-45, #999);stroke-width:1;stroke-dasharray:3 3;}
+.gr-hl{fill:var(--card, #fff);stroke:var(--accent);stroke-width:3;}
+.gr-hit{fill:transparent;cursor:crosshair;}
+.gr-tip{position:absolute;transform:translateX(-50%);pointer-events:none;background:var(--ink);color:var(--bg);border-radius:10px;padding:6px 10px;display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.18);}
+.gr-tip[hidden]{display:none;}
+.gr-tip span{font:500 11px var(--f-body);opacity:.8;}
+.gr-tip b{font:700 14px var(--f-mono);}
+.gr-tabla-btn{display:block;margin:6px 0 0 auto;border:none;background:none;color:var(--accent);font:600 12.5px var(--f-body);cursor:pointer;padding:6px 4px;}
+.gr-tabla-btn[hidden],#seguiList .esc-tabla-wrap[hidden]{display:none !important;}
