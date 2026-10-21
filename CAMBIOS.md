@@ -3,12 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.71 → 0.71.1 (actual)
-Cambios acumulados hacia la 0.72: **2 de 10**
+## Versión 0.71 → 0.71.2 (actual)
+Cambios acumulados hacia la 0.72: **4 de 10**
 
 ### Hacia la 0.72
 1. 21/10/2026 23:20 · Ficha del cliente (sección Seguimiento): «📸 Antes / Ahora» con la primera y la última foto de cada posición (frente, perfil, espalda), con fecha y peso; se amplían al tocarlas
 2. 21/10/2026 23:40 · Detalles: en ventanas de ordenador estrechas (hasta 1180 px) la barra del plan deja el nombre del cliente entero («Editando:» se oculta, «Deshacer» queda como ↶ y el botón dice «Guardar y notificar»); la calculadora dice «Kcal objetivo»; los logros se leen mejor en móviles pequeños; Entrenamientos tiene filtros rápidos Todos · ⚠️ Toca revisar · Sin plan · Al día (se combinan con el buscador) → **0.71.1**
+3. 21/10/2026 23:59 · Limpieza interna (sin cambios visibles): las tareas que se hacen «después de» abrir pantallas, guardar o pintar el plan se registran como ganchos que se instalan una sola vez al final y corren aislados (si uno falla, los demás siguen); fuera código duplicado (el apagado del modo edición en el cliente estaba dos veces) y envolturas repetidas; goTo pasa de 30 a 24 capas
+4. 21/10/2026 23:59 · Mapa muscular semanal. Domingo, en Entrenamientos: figura de frente y espalda + lista con las series semanales por músculo, para ver de un vistazo cómo reparte el volumen; por defecto lo «Pautado en la rutina» y con un toque lo «Hecho esta semana»; tocando un músculo salen los ejercicios de los que salen sus series. Cliente: tarjeta «💪 Tu semana muscular» en su entreno con el mapa y el tonelaje de la semana; se abre sola al completar un día. Escala por series efectivas por músculo y semana según la evidencia en hipertrofia: 1-3 mantenimiento · 4-9 mínimo eficaz · 10-20 óptimo · +20 alto; los músculos que ayudan cuentan media serie → **0.71.2**
 
 ## Versión 0.70 → 0.70.4
 
