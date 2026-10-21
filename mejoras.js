@@ -1053,7 +1053,7 @@ function mjVentanaGracia(){
     titulo: 'Tu suscripción ha vencido',
     texto: 'Tu tarifa ' + MJ_TARIFAS[e.tipo].n.toLowerCase() + ' venció el ' + mjFecha(e.hasta) + '. Estás en el periodo de gracia: '
       + (e.quedan === 0 ? 'hoy es el último día.' : 'te ' + (e.quedan === 1 ? 'queda 1 día.' : 'quedan ' + e.quedan + ' días.'))
-      + '\n\nSi no pagas antes del ' + mjFecha(e.finGracia) + ', perderás el acceso a la app. Tus datos no se borran.',
+      + '\n\nSi no pagas antes del ' + mjFecha(e.finGracia) + ', perderás el acceso a la app. Después guardaremos tus datos 15 días; si sigues sin pagar, tu perfil se borrará.',
     ok: enlace ? 'Pagar ahora' : 'Entendido', cancel: 'Más tarde', soloOk: !enlace,
     onOk: function(){ if (enlace) window.open(enlace, '_blank', 'noopener'); }
   });
@@ -1065,7 +1065,7 @@ function mjBloqueoCliente(){
   const e = estadoPago(d), enlace = mjCfgPagos().enlace;
   o.innerHTML = '<div class="fsd-sheet dlg mj-bloq"><div class="mj-bloq-ico" aria-hidden="true">🔒</div><h3>Acceso pausado</h3>'
     + '<p>' + (d.tarifa.acceso === 'denegado' ? 'Tu equipo ha pausado tu acceso.' : 'Tu suscripción venció el ' + mjFecha(e.hasta) + ' y el periodo de gracia terminó el ' + mjFecha(e.finGracia) + '.')
-    + ' Renueva tu tarifa o habla con Domingo o Fátima para reactivarla. Tus datos no se han borrado.</p>'
+    + ' Renueva tu tarifa o habla con Domingo o Fátima para reactivarla. ' + (typeof pgBorrado === 'function' && pgBorrado(d) ? 'Guardamos tus datos hasta el ' + mjFecha(pgBorrado(d).fecha) + '; si para entonces no has pagado, tu perfil se borrará.' : 'Tus datos no se han borrado.') + '</p>'
     + '<div class="btn-row">' + (enlace ? '<a class="btn-eq btn-eq-p" href="' + esc(enlace) + '" target="_blank" rel="noopener">Pagar ahora</a>' : '')
     + '<button class="btn-eq" onclick="mjSalirBloqueo()">Cerrar sesión</button></div></div>';
   o.classList.add('show');
