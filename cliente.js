@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Barra del cliente (21/10/2026)
+   Fitnessindramas — Barra del cliente (21/10/2026)
    - #108 Número de mensajes sin leer en el botón «Chat» del cliente.
    Se carga antes de datos.js.
    ========================================================= */

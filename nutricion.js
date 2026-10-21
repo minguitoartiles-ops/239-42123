@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Nutrición: cálculo automático, plan rápido y resumen de un vistazo
+   Fitnessindramas — Nutrición: cálculo automático, plan rápido y resumen de un vistazo
    Se carga después de mejoras.js.
    - Las cantidades de cada opción se calculan para que la comida cuadre con su parte de las kcal
      y de los macros del día (también al cambiar de opción).

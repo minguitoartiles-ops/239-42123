@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Entrenamiento para Domingo (estructura del Excel «Planificación»)
+   Fitnessindramas — Entrenamiento para Domingo (estructura del Excel «Planificación»)
    - Sesiones «Día 1, Día 2…» con nombre editable.
    - Cada serie con sus repeticiones, RIR y peso (y repeticiones hechas por el cliente).
    - RIR por colores: 0-2 rojo (alta) · 3-4 naranja (media) · 5+ verde (baja), con un tono por cada valor.

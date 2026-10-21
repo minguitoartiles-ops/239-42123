@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Notificaciones (sin servidor)
+   Fitnessindramas — Notificaciones (sin servidor)
    Los avisos se generan con lo que ocurre en este móvil y se guardan aquí.
    Avisos entre móviles distintos y con la app cerrada: pendiente de servidor
    (ver PENDIENTE_SUPABASE.md).

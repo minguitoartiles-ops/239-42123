@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Correcciones y mejoras del análisis del 20/10/2026
+   Fitnessindramas — Correcciones y mejoras del análisis del 20/10/2026
    y sistema de tarifas, recordatorios de pago y acceso.
    Se carga el último (después de panelpro.js).
    ========================================================= */
@@ -753,7 +753,7 @@ function exportarSeguimientosPDF(k){
     + '.n{margin:0 0 10px;page-break-inside:avoid}.n p{margin:2px 0}footer{margin-top:24px;color:#777;font-size:10px}</style></head><body>'
     + '<h1>Seguimientos · ' + esc(d.nombre) + '</h1><div class="m">' + esc(d.objetivo || '') + ' · Semana ' + esc(d.semana || '') + ' · alta el ' + fechaCorta(d.fechaAlta) + '</div>'
     + t + (notas ? '<h2>Notas</h2>' + notas : '')
-    + '<footer>Fitness sin Dramas · generado el ' + fechaCorta(new Date().toISOString()) + '. Contiene datos de salud: guárdalo en un lugar seguro.</footer></body></html>';
+    + '<footer>Fitnessindramas · generado el ' + fechaCorta(new Date().toISOString()) + '. Contiene datos de salud: guárdalo en un lugar seguro.</footer></body></html>';
   let f = document.getElementById('mjPrint');
   if (f) f.remove();
   f = document.createElement('iframe');
@@ -1200,7 +1200,7 @@ function mjPrecioMensual(t){
 function pintarPagosPro(){
   const cont = document.getElementById('pagosPro');
   if (!cont) return;
-  setTxt('pagosWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  setTxt('pagosWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitnessindramas');
   const hoy = mjISO(new Date()), mes = hoy.slice(0, 7);
   const claves = Object.keys(clientesData);
   const datos = claves.map(function(k){ const d = clientesData[k]; return { k: k, d: d, e: estadoPago(d), t: d.tarifa }; });
@@ -1423,7 +1423,7 @@ function mjPintarFichaSemana(){
 goToCliente = (function(orig){ return function(k){ orig(k); mjPintarFichaSemana(); }; })(goToCliente);
 (function(){
   const sh = showScreen;
-  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') mjPintarFichaSemana(); if (id === 'view-coach-ajustes') setTxt('ajustesWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas'); };
+  showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') mjPintarFichaSemana(); if (id === 'view-coach-ajustes') setTxt('ajustesWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitnessindramas'); };
 })();
 
 /* Los pesos y textos del plan se guardan al escribir y al salir de la app

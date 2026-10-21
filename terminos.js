@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Términos y condiciones del servicio (21/10/2026)
+   Fitnessindramas — Términos y condiciones del servicio (21/10/2026)
    Texto de Domingo («Condiciones_servicio_Fitnessindrama.pdf») adaptado a la app:
    el chat y el seguimiento son de la app (antes Telegram y Google Drive), 7 días de gracia,
    borrado del perfil a los 15 días sin pagar y solo mayores de 18 años.

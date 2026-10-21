@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Pestaña «Entrenamientos» de Domingo (21/10/2026)
+   Fitnessindramas — Pestaña «Entrenamientos» de Domingo (21/10/2026)
    Se carga después de area.js (usa plResumen, plFoto, plAplicar).
    ========================================================= */
 /* #163 lista a la izquierda y, al tocar un cliente, su entreno a la derecha (en el móvil, debajo de la fila):

@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — #121 Creador de rutinas compacto en el ordenador (21/10/2026)
+   Fitnessindramas — #121 Creador de rutinas compacto en el ordenador (21/10/2026)
    Para Domingo en el ordenador, editando el entrenamiento de un cliente:
    - Los días salen en columnas, uno al lado del otro, todos abiertos.
    - Cada ejercicio ocupa una línea: nombre · series × reps · RIR (con su color).

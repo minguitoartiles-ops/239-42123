@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Mapa muscular semanal (21/10/2026)
+   Fitnessindramas — Mapa muscular semanal (21/10/2026)
    Volumen semanal por grupo muscular a partir de las series HECHAS esa semana
    (serie marcada ✓ y que no sea de aproximación ni de descarga).
    Conteo fraccional: el músculo principal del ejercicio suma 1 serie y los que ayudan, 0,5
