@@ -267,3 +267,5 @@ html.esc .pl-izq{min-width:0;}
 .sg-hecho .btn-primary,.sg-hecho .btn-eq{width:100%;margin:4px 0 0;}
 #view-seguimiento.sg-editando .sg-hecho{background:var(--accent-wash, rgba(120,170,230,.12));border-color:var(--accent-line, var(--accent));}
 #view-seguimiento.sg-ya > :not(.view-top):not(#sgHecho):not(.section-lbl):not(#historialSegui):not(.mj-pdf){display:none !important;}
+/* aviso de versión nueva (app instalada) */
+.fsd-nueva-version{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;padding:12px 18px;border:none;border-radius:999px;background:var(--ink);color:var(--bg);font:700 14px var(--f-body);box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;}
