@@ -67,11 +67,11 @@ function ruPintarCompacta(){
     const nomc = it.querySelector('.ex-name-cell'); if (nomc) { nomc.setAttribute('role', 'button'); nomc.setAttribute('aria-expanded', foco ? 'true' : 'false'); }
     b.innerHTML = foco ? ''
       : '<span class="ru-q" title="Cambia aquí series, reps y RIR de todas las series">'
-      + '<input class="ru-q-s" inputmode="numeric" aria-label="Series" value="' + (ruNuevos.has(it) ? '' : v.n) + '" placeholder="—">'
+      + '<input class="ru-q-s" inputmode="numeric" aria-label="Series" value="' + (ruNuevos.has(it) && !v.repsTxt.replace(/\//g, '') && !v.rirTxt ? '' : v.n) + '" placeholder="—">'
       + '<span class="ru-q-x">×</span>'
-      + '<input class="ru-q-r" inputmode="numeric" aria-label="Repeticiones" value="' + esc(v.reps != null ? v.reps : '') + '" placeholder="' + esc(v.reps == null ? v.repsTxt : '') + '">'
+      + '<input class="ru-q-r" inputmode="numeric" aria-label="Repeticiones" value="' + esc(v.reps != null ? v.reps : v.repsTxt) + '" size="' + Math.max(2, String(v.reps != null ? v.reps : v.repsTxt).length) + '" placeholder="—" title="' + (v.reps == null ? 'Reps distintas por serie: escribe un número para ponerlo en todas' : '') + '">'
       + '<span class="ru-q-l">RIR</span>'
-      + '<input class="ru-q-i ' + cls + '" inputmode="numeric" aria-label="RIR" value="' + esc(v.rir != null ? v.rir : '') + '" placeholder="' + esc(v.rir == null ? v.rirTxt : '') + '">'
+      + '<input class="ru-q-i ' + cls + '" inputmode="numeric" aria-label="RIR" value="' + esc(v.rir != null ? v.rir : v.rirTxt) + '" size="' + Math.max(2, String(v.rir != null ? v.rir : v.rirTxt).length) + '" placeholder="—">'
       + '</span><span class="ru-desp" aria-hidden="true">▾</span>';
   });
 }
@@ -81,6 +81,7 @@ function ruAplicarRapido(inp){
   if (inp.classList.contains('ru-q-s')) ruNuevos.delete(it);
   const f = it.querySelectorAll('.rx-field'); if (f.length < 3) return;
   const i = inp.classList.contains('ru-q-s') ? 0 : (inp.classList.contains('ru-q-r') ? 1 : 2);
+  if (/\//.test(inp.value || '')) return;                // «8/6/6»: se cambia serie a serie en el editor
   const v = String(inp.value || '').replace(/[^0-9]/g, '');
   if (v === '' && i === 0) return;
   f[i].value = v; f[i].setAttribute('value', v); onPautaChange(f[i]);
@@ -168,11 +169,11 @@ const ruVistos = new WeakSet(), ruNuevos = new WeakSet();
 /* al escribir en la tabla serie a serie se actualiza el resumen */
 let ruT = null;
 document.addEventListener('input', function(e){
-  if (!document.documentElement.classList.contains('ru-compacto') || !e.target.closest || !e.target.closest('#sesionesCont')) return;
+  if (!document.documentElement.classList.contains('ru-plegable') || !e.target.closest || !e.target.closest('#sesionesCont')) return;
   clearTimeout(ruT); ruT = setTimeout(ruPintarCompacta, 120);
 }, true);
 document.addEventListener('change', function(e){
-  if (!document.documentElement.classList.contains('ru-compacto') || !e.target.closest || !e.target.closest('#sesionesCont')) return;
+  if (!document.documentElement.classList.contains('ru-plegable') || !e.target.closest || !e.target.closest('#sesionesCont')) return;
   clearTimeout(ruT); ruT = setTimeout(ruPintarCompacta, 60);
 }, true);
 /* cualquier repintado del plan o cambio de pantalla vuelve a aplicar la vista */
@@ -222,3 +223,8 @@ if (typeof enUndoFoto === 'function') enUndoFoto = (function(orig){
   return function(){ const r = orig.apply(this, arguments); if (r && r.huella) r.huella = ruLimpiarHtml(r.huella); return r; };
 })(enUndoFoto);
 window.addEventListener('resize', function(){ ruPintarCompacta(); });
+/* añadir o quitar series en el editor también actualiza la línea resumen */
+document.addEventListener('click', function(e){
+  if (!document.documentElement.classList.contains('ru-plegable') || !e.target.closest || !e.target.closest('#sesionesCont .ex-item.ru-foco')) return;
+  clearTimeout(ruT); ruT = setTimeout(ruPintarCompacta, 80);
+});
