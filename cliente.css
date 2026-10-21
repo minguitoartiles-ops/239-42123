@@ -285,3 +285,5 @@ html.esc .pl-izq{min-width:0;}
 #view-hoy .entreno-hoy,#view-hoy .nutri-hoy{cursor:pointer;transition:transform .12s ease;}
 #view-hoy .entreno-hoy:active,#view-hoy .nutri-hoy:active{transform:scale(.985);}
 .kc-info{margin:4px 0 0;font:500 12px/1.35 var(--f-body);color:var(--dim-6);}
+/* la semana anterior en agujetas: borde discontinuo de su propio color, sin tapar el tono */
+.esc-row.sg-agujetas .esc-btn.esc-ant:not(.on){border-style:dashed;border-width:2px;border-color:var(--tono);box-shadow:none;color:var(--tono);background:color-mix(in srgb, var(--tono) 10%, var(--card, #fff));}

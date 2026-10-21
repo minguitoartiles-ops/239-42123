@@ -493,15 +493,15 @@ function sndCambiar(el){
 }
 crearAviso = (function(orig){
   return function(dest){
-    const antes = dest ? noLeidos(dest) : 0;
+    const antes = dest ? noLeidosTodos(dest) : 0;
     const r = orig.apply(this, arguments);
-    try { if (dest && dest === destinatarioActual() && noLeidos(dest) > antes) sndSonar(arguments[1] === 'mensajes' ? 'mensaje' : 'campanita'); } catch(e){}
+    try { if (dest && dest === destinatarioActual() && noLeidosTodos(dest) > antes) sndSonar(arguments[1] === 'mensajes' ? 'mensaje' : 'campanita'); } catch(e){}
     return r;
   };
 })(crearAviso);
 /* avisos que llegan desde otra pestaña o ventana */
 let sndUlt = null;
-function sndContar(){ try { const d = destinatarioActual(); return d ? noLeidos(d) : 0; } catch(e){ return 0; } }
+function sndContar(){ try { const d = destinatarioActual(); return d ? noLeidosTodos(d) : 0; } catch(e){ return 0; } }
 window.addEventListener('storage', function(e){
   if (e.key !== AVISOS_KEY) return;
   setTimeout(function(){
