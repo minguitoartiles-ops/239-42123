@@ -78,4 +78,4 @@ function entPintarFiltros(){
   }).join('');
   filas.forEach(function(f){ f.classList.toggle('ent-fuera', entFiltro !== 'todos' && !f.classList.contains(entFiltro)); });
 }
-enPintarPlanes = (function(orig){ return function(){ const r = orig.apply(this, arguments); entPintarFiltros(); return r; }; })(enPintarPlanes);
+fsdTras('enPintarPlanes', function(){ entPintarFiltros(); });
