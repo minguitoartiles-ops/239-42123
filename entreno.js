@@ -1276,7 +1276,7 @@ enUndoPintar();
    en móviles «Guardar y notificar» y en pantallas muy estrechas «Guardar», para que quepa el nombre del cliente */
 function enTextoGuardar(){
   const b = document.getElementById('editarBtn'); if (!b) return;
-  if (coachEditing) b.textContent = window.innerWidth <= 360 ? 'Guardar' : window.innerWidth <= 560 ? 'Guardar y notificar' : 'Guardar cambios y notificar';
+  if (coachEditing) b.textContent = window.innerWidth <= 360 ? 'Guardar' : (window.innerWidth <= 560 || (window.innerWidth <= 1180 && typeof escActivo === 'function' && escActivo())) ? 'Guardar y notificar' : 'Guardar cambios y notificar';
 }
 editarPlan = (function(orig){ return function(){ orig(); enTextoGuardar(); }; })(editarPlan);
 window.addEventListener('resize', enTextoGuardar);
