@@ -259,3 +259,90 @@ function sgPintarFotosFicha(){
 }
 enSeccionDe = (function(orig){ return function(el){ return el.id === 'fichaFotos' ? 'segui' : orig.apply(this, arguments); }; })(enSeccionDe);
 enPintarFicha = (function(orig){ return function(){ sgPintarFotosFicha(); return orig.apply(this, arguments); }; })(enPintarFicha);
+
+/* =========================================================
+   #174 (21/10) · «Completar seguimiento» en la pestaña Seguimientos
+   - En cada cliente con un seguimiento sin revisar por ESTE profesional: botón «✓ Completar seguimiento»
+     y un cuadro de comentario opcional. El comentario llega al chat del cliente como mención
+     («📋 Revisión de tu seguimiento») con su aviso.
+   - Una vez completado, el panel desaparece de la pestaña de ese profesional (tarea hecha).
+     Es independiente: lo que revisa Domingo no se le quita a Fátima, y al revés.
+   - «✓ Revisados» los vuelve a enseñar (con «Deshacer»). Si el cliente corrige su seguimiento, vuelve a salir.
+   Se guarda en el propio seguimiento: r.rev = { domingo: { f, c }, fatima: { f, c } }.
+   ========================================================= */
+let sgVerRevisados = false;
+function sgYo(){ return coachActivo ? norm(coachActivo.u) : ''; }
+function sgRevisado(k){ const r = (SEGUIMIENTOS[k] || [])[0]; return !!(r && r.rev && r.rev[sgYo()]); }
+function sgRevAbrir(btn){ const f = btn.closest('.sg-rev'); f.classList.add('abierto'); const t = f.querySelector('textarea'); if (t) t.focus(); }
+function sgRevCancelar(btn){ const f = btn.closest('.sg-rev'); f.classList.remove('abierto'); }
+function sgMencionChat(k, texto){
+  const d = clientesData[k]; if (!d || !texto) return;
+  const html = '<div class="bubble in mencion"><div class="sender">' + esc(coachActivo.u) + '</div><span class="mencion-tag">📋 Revisión de tu seguimiento</span>' + esc(texto).replace(/\n/g, '<br>') + '</div>';
+  PLANES[k] = PLANES[k] || {};
+  const vac = /chatVacio/.test(PLANES[k].chat || '');
+  PLANES[k].chat = (vac ? '' : (PLANES[k].chat || '')) + html;
+  if (clienteActual === k) { const l = document.getElementById('chatList'); if (l) { const v = document.getElementById('chatVacio'); if (v) v.remove(); l.insertAdjacentHTML('beforeend', html); } }
+  if (typeof crearAviso === 'function') crearAviso(claveCliente(k), 'mensajes', coachActivo.u + ' ha revisado tu seguimiento', texto.length > 90 ? texto.slice(0, 89) + '…' : texto, { vista: 'chat' });
+}
+function sgRevCompletar(btn, k){
+  const r = (SEGUIMIENTOS[k] || [])[0]; if (!r || !coachActivo) return;
+  const f = btn.closest('.sg-rev'), t = f && f.querySelector('textarea'), c = t ? t.value.trim() : '';
+  r.rev = r.rev || {}; r.rev[sgYo()] = { f: new Date().toISOString(), c: c };
+  if (c) sgMencionChat(k, c);
+  try { guardarTodo(); } catch(e){}
+  const bl = btn.closest('.sg-bloque');
+  const nom = (clientesData[k] || {}).nombre || 'el cliente';
+  if (bl && !sgVerRevisados) { bl.classList.add('sg-saliendo'); setTimeout(function(){ pintarSegsResumen(); }, 350); } else pintarSegsResumen();
+  toast('Seguimiento de ' + nom.split(' ')[0] + ' completado' + (c ? ' · tu comentario le llega al chat' : ''));
+}
+function sgRevDeshacer(k){
+  const r = (SEGUIMIENTOS[k] || [])[0]; if (!r || !r.rev) return;
+  delete r.rev[sgYo()]; try { guardarTodo(); } catch(e){}
+  pintarSegsResumen();
+}
+function sgVerRev(){ sgVerRevisados = !sgVerRevisados; pintarSegsResumen(); }
+pintarSegsResumen = (function(orig){
+  return function(){
+    const res = orig.apply(this, arguments);
+    const cont = document.getElementById('segsResumen'); if (!cont || !coachActivo) return res;
+    let nRev = 0, nPor = 0;
+    cont.querySelectorAll(':scope > .sg-bloque').forEach(function(bl){
+      const cab = bl.querySelector('.sg-cab'), m = cab && (cab.getAttribute('onclick') || '').match(/abrirSegsCliente\('([^']+)'/);
+      const k = m && m[1], r = k && (SEGUIMIENTOS[k] || [])[0]; if (!r) return;
+      const mio = r.rev && r.rev[sgYo()], otros = r.rev ? Object.keys(r.rev).filter(function(x){ return x !== sgYo(); }) : [];
+      let f = bl.querySelector('.sg-rev'); if (f) f.remove();
+      f = document.createElement('div'); f.className = 'sg-rev';
+      const nom = esc(((clientesData[k] || {}).nombre || '').split(' ')[0]);
+      if (mio) {
+        nRev++;
+        bl.classList.add('sg-revisado');
+        if (!sgVerRevisados) bl.hidden = true;
+        f.innerHTML = '<span class="sg-rev-ok">✓ Revisado el ' + fechaCorta(mio.f) + (mio.c ? ' · «' + esc(mio.c.length > 60 ? mio.c.slice(0, 59) + '…' : mio.c) + '»' : '') + '</span><button type="button" class="mini-btn" onclick="sgRevDeshacer(\'' + k + '\')">Deshacer</button>';
+      } else {
+        nPor++;
+        f.innerHTML = '<button type="button" class="btn-primary sg-rev-btn" onclick="sgRevAbrir(this)">✓ Completar seguimiento</button>'
+          + (otros.length ? '<span class="sg-rev-otro">Ya lo revisó ' + otros.map(function(x){ return x.charAt(0).toUpperCase() + x.slice(1); }).join(' y ') + '</span>' : '')
+          + '<div class="sg-rev-form"><label for="sgc' + k + '">Comentario para ' + nom + ' (opcional · le llegará al chat)</label>'
+          + '<textarea id="sgc' + k + '" rows="3" class="sg-text" placeholder="¡Buena semana! Esta semana subimos un poco el peso en…"></textarea>'
+          + '<div class="sg-rev-acts"><button type="button" class="btn-eq" onclick="sgRevCancelar(this)">Cancelar</button><button type="button" class="btn-primary" onclick="sgRevCompletar(this,\'' + k + '\')">Completar' + '</button></div></div>';
+      }
+      bl.appendChild(f);
+    });
+    const fil = document.getElementById('sgFiltros');
+    if (fil) {
+      let b = document.getElementById('sgRevChip');
+      if (!b) { b = document.createElement('button'); b.type = 'button'; b.id = 'sgRevChip'; b.className = 'chip protein'; b.onclick = sgVerRev; }
+      fil.appendChild(b);
+      b.classList.toggle('selected', sgVerRevisados);
+      b.innerHTML = '✓ Revisados <span class="sg-fn">' + nRev + '</span>';
+      let p = document.getElementById('sgPorRev');
+      if (!p) { p = document.createElement('div'); p.id = 'sgPorRev'; p.className = 'sg-por-rev'; fil.parentNode.insertBefore(p, fil); }
+      p.innerHTML = nPor ? '<b>' + nPor + '</b> ' + (nPor === 1 ? 'seguimiento por revisar' : 'seguimientos por revisar') : '✓ Todo revisado. ¡Al día!';
+    }
+    const vis = cont.querySelectorAll(':scope > .sg-bloque:not([hidden])').length;
+    let vac = document.getElementById('sgVacio');
+    if (!vis) { if (!vac) { vac = document.createElement('div'); vac.id = 'sgVacio'; vac.className = 'picker-empty'; cont.appendChild(vac); } vac.textContent = nRev && !sgVerRevisados ? 'Todo revisado en este apartado. Pulsa «✓ Revisados» para verlos.' : 'No hay clientes en este apartado.'; }
+    else if (vac) vac.remove();
+    return res;
+  };
+})(pintarSegsResumen);
