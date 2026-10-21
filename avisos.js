@@ -200,7 +200,7 @@ let fotoPlanAntes = null;
 function huellaPlan(cont){
   const c = cont.cloneNode(true);
   try { if (typeof FSD_SOBRA_ENT === 'string') c.querySelectorAll(FSD_SOBRA_ENT).forEach(function(x){ x.remove(); }); } catch(e){}
-  c.querySelectorAll('button, .chip-x, .chip-add, .ses-del, .srf-x, .add-ej-btn, .en-del, .meal-del').forEach(function(x){ x.remove(); });
+  c.querySelectorAll('button, .chip-x, .chip-add, .ses-del, .srf-x, .add-ej-btn, .en-del, .meal-del, .ru-res').forEach(function(x){ x.remove(); });
   c.querySelectorAll('*').forEach(function(el){
     Array.prototype.slice.call(el.attributes).forEach(function(a){
       const n = a.name;
