@@ -147,3 +147,37 @@ html.esc .pagos-lista.pg-tabla{gap:8px;}
 .pg-borrado b{color:var(--danger);}
 /* #114 términos en el consentimiento */
 .cs-terminos{margin:4px 0 12px;font:500 12.5px/1.45 var(--f-body);color:var(--dim-6);}
+
+/* #111 ordenador en ventanas más estrechas: menú lateral en iconos */
+html.esc.esc-mini{--esc-menu:72px;}
+html.esc.esc-mini #coachTabs{padding:14px 8px;align-items:center;}
+html.esc.esc-mini #coachTabs .tbi{position:relative;justify-content:center;width:52px;padding:8px 0;font-size:0;gap:0;}
+html.esc.esc-mini #coachTabs .tbi .tl-largo,html.esc.esc-mini #coachTabs .tbi .tl-corto{display:none !important;}
+html.esc.esc-mini #coachTabs .tbi-emo{font-size:20px;}
+html.esc.esc-mini #coachTabs .tab-badge{position:absolute;top:2px;right:2px;margin:0;font-size:10px;}
+html.esc.esc-mini .esc-logo{padding:2px 0 14px;justify-content:center;}
+html.esc.esc-mini .esc-logo > div,html.esc.esc-mini .esc-logo b,html.esc.esc-mini .esc-logo span{display:none;}
+html.esc.esc-mini .esc-pie{align-items:center;}
+html.esc.esc-mini .esc-pie-btn{justify-content:center;width:52px;font-size:0;padding:8px 0;}
+html.esc.esc-mini .esc-pie-btn > span:first-child,html.esc.esc-mini .esc-pie-btn > svg{font-size:18px;}
+html.esc.esc-mini .esc-pie-btn .bell-badge{position:absolute;top:2px;right:2px;margin:0;}
+html.esc.esc-mini .esc-pie > :not(.esc-pie-btn){display:none;}
+@media (max-width:1099px){ :root{--esc-lista:300px;} }
+html.esc .alta-top,html.esc .alta-body{padding-left:max(20px, calc((100% - 1120px) / 2));padding-right:max(20px, calc((100% - 1120px) / 2));}
+/* #122 barra vertical para ajustar el ancho de la lista */
+.esc-divisor{display:none;}
+html.esc .esc-divisor:not([hidden]){display:block;position:fixed;top:0;bottom:0;left:calc(var(--esc-menu) + var(--esc-lista) - 5px);width:10px;cursor:col-resize;z-index:40;touch-action:none;}
+html.esc .esc-divisor::after{content:"";position:absolute;top:0;bottom:0;left:4px;width:2px;background:transparent;transition:background .15s;}
+html.esc .esc-divisor:hover::after,html.esc .esc-divisor:focus-visible::after,html.esc.esc-arrastrando .esc-divisor::after{background:var(--accent);}
+html.esc .esc-divisor::before{content:"";position:absolute;top:50%;left:1px;width:8px;height:42px;margin-top:-21px;border-radius:5px;background:var(--line-strong);opacity:.0;transition:opacity .15s;}
+html.esc .esc-divisor:hover::before,html.esc.esc-arrastrando .esc-divisor::before{opacity:1;background:var(--accent);}
+html.esc.esc-arrastrando,html.esc.esc-arrastrando *{cursor:col-resize !important;user-select:none !important;}
+/* lista estrecha (ventana pequeña o barra movida): las cifras de cada cliente en 2 × 2 */
+html.esc .screen.esc-dual > .esc-izq{container-type:inline-size;}
+@container (max-width:350px){
+  #listaClientes .kcard .kc-grid{flex-wrap:wrap;}
+  #listaClientes .kcard .kc-grid > .kc{flex:1 1 calc(50% - 4px);min-width:0;}
+  .panel-stats .panel-stat .lbl{font-size:9.5px;}
+}
+/* 21/10 14:35: el peso ya sale en su casilla; fuera el repetido arriba a la derecha */
+.segui-card:has(.segui-med) .segui-head .segui-peso{display:none;}
