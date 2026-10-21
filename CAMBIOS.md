@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.69 → 0.69.4 (actual)
-Cambios acumulados hacia la 0.70: **8 de 10**
+## Versión 0.70.0 (actual)
+Cambios acumulados hacia la 0.71: **0 de 10**
+
+## Versión 0.69 → 0.69.4
 
 ### Hacia la 0.70
 1. 21/10/2026 19:40 · Seguimiento semanal más visual: agujetas de 1 verde a 4 rojo; motivación con caras (1 😞 → 5 😄); cumplimiento nutricional coloreado de 1 rojo a 10 verde; estrés con una cara que cambia al deslizar (1 😌 tranquilo → 10 😫 muy estresado). Los valores que se guardan no cambian
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.70: **8 de 10**
 6. 21/10/2026 20:15 · Seguimiento: en Agujetas, el número de la semana anterior ya no sale con un aro gris que tapaba el color; se marca con un borde discontinuo de su propio color → **0.69.3**
 7. 21/10/2026 20:30 · Protocolos en PDF: Fátima sube PDF (hasta 10 MB) en la ficha de cada cliente, dentro de Nutrición («Protocolos en PDF» · «+ Subir PDF», ✕ para quitar). El cliente recibe un aviso y los ve en Nutrición («Protocolos de Fátima») para descargarlos; Domingo los ve en la ficha sin poder subir ni quitar. Los archivos se guardan en el propio dispositivo (pendiente de Supabase para que lleguen a otros móviles)
 8. 21/10/2026 20:30 · Cliente: cuadro «¿Cómo renovar?» en el aviso de suscripción (a punto de vencer, vencida o en gracia) y en la pantalla de acceso pausado: Bizum a los dos números o transferencia (IBAN de Fátima Toledo, Cajasiete), con el concepto ya escrito con su nombre y tarifa y botón «Copiar» en cada dato → **0.69.4**
+9. 21/10/2026 20:45 · Mensajes de ánimo al cliente (campana, justo después de seguimiento y pago): felicitación si lleva 3 o más semanas seguidas cumpliendo los entrenos o 2 seguimientos seguidos de 80 o más; ánimo si lleva 2 seguimientos seguidos con puntuación baja o 2 semanas sin entrenar. Como mucho uno por semana; se puede desactivar en Ajustes → Notificaciones
+10. 21/10/2026 20:45 · Ordenador (Chrome o Edge): botón «Instalar en este ordenador» en el pie del menú lateral mientras la app no esté instalada; la tarjeta de instalar de la entrada se adapta al ordenador → **0.70.0**
 
 ## Versión 0.69.0
 
