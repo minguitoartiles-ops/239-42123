@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.66 → 0.66.3 (actual)
-Cambios acumulados hacia la 0.67: **6 de 10**
+## Versión 0.66 → 0.66.5 (actual)
+Cambios acumulados hacia la 0.67: **10 de 10** (la próxima publicación sube a la 0.67)
 
 ### Hacia la 0.67
 1. 21/10/2026 14:35 · Plan nutricional (profesionales, editando): volver a tocar un alimento elegido lo deselecciona (se puede deshacer)
@@ -13,6 +13,10 @@ Cambios acumulados hacia la 0.67: **6 de 10**
 4. 21/10/2026 14:55 · Clientes sin pago: cuando se acaba el periodo de gracia y el cliente se queda sin acceso, su ficha se guarda 15 días; si sigue sin pagar, la app borra su perfil al abrirla un profesional (no afecta a bajas ni a quien tenga el acceso permitido a mano). 3 días antes se avisa a Domingo y Fátima; la ficha muestra «Su perfil se borrará el dd/mm» con «Descargar sus datos», Pagos indica «se borra en N días» y el cliente bloqueado ve hasta cuándo se guardan sus datos → **0.66.2**
 5. 21/10/2026 15:10 · Términos y condiciones del servicio dentro de la app (Ajustes → Privacidad, en la pantalla de inicio y en el consentimiento del primer acceso), con el texto de Domingo adaptado a la app: dudas por el chat de la app (antes Telegram), seguimiento desde la app (antes Google Drive), 7 días de gracia (antes 5), borrado del perfil a los 15 días sin pagar, solo mayores de 18 años (antes desde 16 con autorización) y «Brain4gainzz» corregido a Fitnessindramas
 6. 21/10/2026 15:10 · Política de privacidad actualizada: qué pasa con los datos si no pagas (gracia de 7 días, 15 días guardados y borrado) y si te das de baja; pagos por transferencia o Stripe → **0.66.3**
+7. 21/10/2026 15:30 · Ordenador en multitarea: el modo ordenador funciona ya desde 900 px de ancho (media pantalla); por debajo de 1280 px el menú lateral se queda en iconos (con su nombre al pasar el ratón) y, si la lista se estrecha, las cifras de cada cliente pasan a 2 × 2
+8. 21/10/2026 15:30 · Barra vertical entre la lista y el panel derecho: se arrastra para dar más o menos ancho a cada lado (también con ← →), todo se recoloca solo, se recuerda para cada profesional y con doble clic vuelve al ancho normal → **0.66.4**
+9. 21/10/2026 15:30 · Seguimientos: fuera el peso repetido arriba a la derecha de cada semana (ya está en su casilla)
+10. 21/10/2026 15:30 · Sonidos: ya no suena nada al enviar un mensaje; el sonido «mensaje enviado» suena ahora al RECIBIR un mensaje, y la campanita con el resto de avisos → **0.66.5**
 
 ## Versión 0.65 → 0.65.4
 

@@ -1,9 +1,9 @@
 /* =========================================================
    Fitness sin Dramas · MODO ORDENADOR (v0.59)
-   Solo para Fátima y Domingo en pantallas anchas (≥ 1100 px).
+   Solo para Fátima y Domingo en pantallas anchas (≥ 900 px; antes 1100).
    En el móvil no cambia nada. Los clientes solo pueden usar la app en el móvil o la tablet.
    ========================================================= */
-const ESC_MIN = 1100;
+const ESC_MIN = 900;    // 21/10: también en ventanas a media pantalla (multitarea)
 const ESC_MQ = window.matchMedia('(min-width: ' + ESC_MIN + 'px)');
 function escActivo(){ return document.documentElement.classList.contains('esc'); }
 function escDebe(){ return !!(ESC_MQ.matches && coachActivo); }
