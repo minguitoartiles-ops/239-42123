@@ -1500,7 +1500,7 @@ function editarPlan(){
   Array.prototype.forEach.call(document.querySelectorAll('.chip-add'),function(el){ el.style.display=coachEditing?'inline-flex':'none'; });
   document.getElementById('app').classList.toggle('coach-edit',coachEditing);
   if(!coachEditing){ closeExercisePicker(); closeFoodPicker(); cerrarVideoModal(); }
-  document.getElementById('editarBtn').textContent=coachEditing?'Guardar cambios':'Editar';
+  document.getElementById('editarBtn').textContent=coachEditing?'Guardar cambios y notificar':'Editar';
 }
 function macroOfGroup(group){
   const mg=group.closest('.macro-group');
