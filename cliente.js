@@ -731,3 +731,9 @@ if (typeof toggleEmojis === 'function') toggleEmojis = function(){ const i = doc
     const t = e.target; if (esTel(t) && /^\+34\s*$/.test(t.value)) t.value = '';
   });
 })();
+
+/* ---------- #143 Hoy sin «HOY TOCA» ----------
+   Fuera las tarjetas «Hoy toca» y «Ahora · comida»: las de Entrenamiento (sesiones de la semana y completadas)
+   y Plan nutricional (kcal, comidas y macros) ya hacen de acceso directo a la rutina y al plan. */
+exPintarHoyToca = function(){ const c = document.getElementById('hoyToca'); if (c) { c.innerHTML = ''; c.hidden = true; } };
+exPintarHoyToca();

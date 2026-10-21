@@ -83,3 +83,33 @@ goTo = (function(orig){
   };
 })(goTo);
 sgPintarEstado();
+
+/* ---------- #140 Formulario más visual ----------
+   Agujetas 1 verde → 4 rojo · Motivación con caras (1 triste → 5 feliz)
+   Cumplimiento nutricional 1 rojo → 10 verde · Estrés con caras (1 tranquilo → 10 estresado).
+   Los números siguen siendo el valor que se guarda (las caras van por CSS). */
+function sgTono(v, min, max, alReves){ let t = (v - min) / (max - min); if (alReves) t = 1 - t; return 'hsl(' + Math.round(t * 120) + ',62%,44%)'; }
+const SG_CARAS_ESTRES = ['😌','😌','🙂','🙂','😐','😐','😟','😣','😫','😫'];
+function sgVisual(){
+  const v = document.getElementById('view-seguimiento'); if (!v) return;
+  const filas = v.querySelectorAll('.esc-row');
+  if (filas[0]) { filas[0].classList.add('sg-agujetas'); filas[0].querySelectorAll('.esc-btn').forEach(function(b, i){ b.style.setProperty('--tono', sgTono(i + 1, 1, 4, true)); }); }
+  if (filas[1]) filas[1].classList.add('sg-motiv');
+  const nut = document.getElementById('rNutri'), es = document.getElementById('rEstres');
+  if (nut) {
+    const inp = nut.parentElement.querySelector('input[type=range]'); nut.parentElement.classList.add('sg-nutri');
+    const pinta = function(){ const c = sgTono(+inp.value, 1, 10); inp.style.accentColor = c; nut.style.color = c; };
+    if (!inp.dataset.sgVis) { inp.dataset.sgVis = 1; inp.addEventListener('input', pinta); }
+    pinta();
+  }
+  if (es) {
+    const inp = es.parentElement.querySelector('input[type=range]'); es.parentElement.classList.add('sg-estres');
+    let cara = es.parentElement.querySelector('.sg-cara');
+    if (!cara) { cara = document.createElement('span'); cara.className = 'sg-cara'; cara.setAttribute('aria-hidden', 'true'); es.parentElement.insertBefore(cara, es); }
+    const pinta = function(){ const n = +inp.value; cara.textContent = SG_CARAS_ESTRES[n - 1] || '😐'; const c = sgTono(n, 1, 10, true); inp.style.accentColor = c; es.style.color = c; };
+    if (!inp.dataset.sgVis) { inp.dataset.sgVis = 1; inp.addEventListener('input', pinta); }
+    pinta();
+  }
+}
+sgVisual();
+goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'seguimiento') sgVisual(); return r; }; })(goTo);
