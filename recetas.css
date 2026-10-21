@@ -68,3 +68,6 @@ html.esc .rc-volver{display:none;}
 .rc-card-h{flex-direction:column;align-items:flex-start;gap:6px;}
 .rc-estado{white-space:normal;}
 html.esc #view-coach-recetas .alta-body{max-width:880px;}
+/* 21/10: nada se encoge en la pantalla de recetas aunque la lista sea larga o la ventana baja */
+#view-coach-recetas .alta-body > *, #rcLista > *, .rc-sheet > *{flex-shrink:0;}
+.rc-it .rc-badge{align-self:flex-start;margin-left:0;}
