@@ -947,3 +947,51 @@ function clOrdenMenu(){
 }
 clOrdenMenu();
 entrarAlPanel = (function(orig){ return function(){ const r = orig.apply(this, arguments); clOrdenMenu(); return r; }; })(entrarAlPanel);
+
+/* ---------- #148 (21/10) · Emojis en el chat del ordenador ----------
+   En el móvil se usan los del teclado. En la app de escritorio vuelve el botón 😊 con un panel
+   por categorías (Recientes, Caras, Gestos, Deporte, Comida, Símbolos); se inserta donde está el cursor,
+   el panel sigue abierto para poner varios y se cierra con Esc o al hacer clic fuera. */
+const EMO_CAT = [
+  ['rec', '🕘', 'Recientes', []],
+  ['car', '😀', 'Caras', '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 😉 😌 😍 🥰 😘 😋 😎 🤩 🥳 😏 🤔 🤨 😐 😶 🙄 😬 😮 😲 😳 🥺 😢 😭 😤 😠 🤯 😱 😓 😩 😫 🥱 😴 🤒 🤕 🤢 🥵 🥶 🤗 🤫 🤭'.split(' ')],
+  ['ges', '👍', 'Gestos', '👍 👎 👌 ✌️ 🤞 🤟 🤘 👏 🙌 👐 🤝 🙏 💪 🦵 👊 ✊ 👋 🫶 ❤️ 🧡 💛 💚 💙 💜 🤍 🖤 💔 💯'.split(' ')],
+  ['dep', '🏋️', 'Deporte', '🏋️ 🏋️‍♀️ 🤸 🏃 🏃‍♀️ 🚴 🚴‍♀️ 🧘 🧘‍♀️ 🏊 ⛹️ 🧗 🥊 🏆 🥇 🥈 🥉 🎯 ⏱️ ⏰ 📈 📉 🔥 ⚡ 💧 🫀 🦾 👟'.split(' ')],
+  ['com', '🥗', 'Comida', '🥗 🍎 🍌 🍓 🫐 🍊 🥑 🥦 🥕 🍅 🥚 🍳 🥩 🍗 🐟 🍤 🍚 🍝 🍞 🥐 🥜 🧀 🥛 ☕ 🍵 🍫 🍪 🍕 🍔 🍟 🌮 🍣 🥤 💊'.split(' ')],
+  ['sim', '✅', 'Símbolos', '✅ ❌ ⚠️ ❓ ❗ 💡 📅 📸 🎉 🎊 ✨ ⭐ 🌟 💤 🚀 📝 📌 🔔 💬 👀 ➡️ ⬆️ ⬇️ 🔝'.split(' ')]
+];
+let emoCat = 'car';
+function emoRecientes(){ try { return JSON.parse(localStorage.getItem('fsd_emo_rec') || '[]'); } catch(e){ return []; } }
+function emoPintar(){
+  const p = document.getElementById('emojiPanel'); if (!p) return;
+  const rec = emoRecientes();
+  if (emoCat === 'rec' && !rec.length) emoCat = 'car';
+  const cat = EMO_CAT.filter(function(c){ return c[0] === emoCat; })[0];
+  const lista = emoCat === 'rec' ? rec : cat[3];
+  p.innerHTML = '<div class="emo-tabs" role="tablist">' + EMO_CAT.map(function(c){
+      if (c[0] === 'rec' && !rec.length) return '';
+      return '<button type="button" role="tab" aria-selected="' + (c[0] === emoCat) + '" class="emo-tab' + (c[0] === emoCat ? ' on' : '') + '" title="' + c[2] + '" onclick="emoElegirCat(\'' + c[0] + '\')">' + c[1] + '</button>';
+    }).join('') + '</div><div class="emo-tit">' + cat[2] + '</div><div class="emo-grid">'
+    + lista.map(function(e){ return '<button type="button" class="emo-b" aria-label="' + e + '" onclick="emoPoner(\'' + e + '\')">' + e + '</button>'; }).join('') + '</div>';
+}
+function emoElegirCat(c){ emoCat = c; emoPintar(); }
+function emoPoner(e){
+  insertarEmoji(e);
+  let r = emoRecientes().filter(function(x){ return x !== e; }); r.unshift(e); r = r.slice(0, 24);
+  try { localStorage.setItem('fsd_emo_rec', JSON.stringify(r)); } catch(err){}
+  const i = document.getElementById('chatInput'); if (i) { i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); }
+}
+toggleEmojis = function(){
+  const i = document.getElementById('chatInput');
+  if (!(typeof escActivo === 'function' && escActivo())) { if (i) i.focus(); return; }
+  const p = document.getElementById('emojiPanel'), b = document.getElementById('emojiBtn'); if (!p) return;
+  if (p.hidden) emoPintar();
+  p.hidden = !p.hidden;
+  if (b) { b.setAttribute('aria-expanded', String(!p.hidden)); b.classList.toggle('on', !p.hidden); }
+  if (i) i.focus();
+};
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { const p = document.getElementById('emojiPanel'); if (p && !p.hidden) { cerrarEmojis(); e.stopPropagation(); } } }, true);
+document.addEventListener('mousedown', function(e){
+  const p = document.getElementById('emojiPanel'); if (!p || p.hidden || !e.target.closest) return;
+  if (!e.target.closest('#emojiPanel') && !e.target.closest('#emojiBtn')) cerrarEmojis();
+});

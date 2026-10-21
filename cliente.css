@@ -471,3 +471,15 @@ i.n0{background:var(--mu0);} i.n1{background:var(--mu1);} i.n2{background:var(--
 .sg-por-rev b{color:var(--ink);font-family:var(--f-mono);}
 .bubble.mencion{border-left:3px solid var(--accent);}
 .mencion-tag{display:block;font:700 11px var(--f-mono);letter-spacing:.04em;color:var(--accent);margin:2px 0 4px;}
+
+/* #148 emojis en el ordenador */
+html.esc #emojiBtn{display:inline-flex !important;}
+html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;padding:6px 8px 8px;overflow-y:auto;border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+.emo-tabs{display:flex;gap:2px;position:sticky;top:-6px;background:var(--card);padding:4px 0;z-index:1;border-bottom:1px solid var(--line);}
+.emo-tab{width:38px;height:34px;border:none;border-radius:10px;background:none;font-size:19px;cursor:pointer;opacity:.6;}
+.emo-tab.on{opacity:1;background:var(--accent-wash);}
+.emo-tab:hover{opacity:1;}
+.emo-tit{font:600 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim-55);margin:6px 2px 2px;}
+.emo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:2px;}
+.emo-b{height:38px;border:none;border-radius:10px;background:none;font-size:22px;line-height:1;cursor:pointer;}
+.emo-b:hover{background:var(--wash-med);}
