@@ -819,7 +819,9 @@ TIPOS_CLIENTE.push({ id: 'pago', ico: '💳', nombre: 'Tu suscripción', desc: '
 TIPOS_PRO.push({ id: 'pagos', ico: '💳', nombre: 'Pagos de clientes', desc: 'Cuando una tarifa vence, entra en periodo de gracia o se queda sin acceso' });
 function mjCfgPagos(){
   let c = null; try { c = JSON.parse(localStorage.getItem(MJ_CFG_KEY) || 'null'); } catch(e){}
-  return Object.assign({ auto: true, enlace: '' }, c || {});
+  const r = Object.assign({ auto: true, enlace: '' }, c || {});
+  if (r.enlace && !/^https:\/\/[^\s"'<>]+$/i.test(r.enlace)) r.enlace = '';     // seguridad: solo enlaces https
+  return r;
 }
 function mjGuardarCfgPagos(c){ try { localStorage.setItem(MJ_CFG_KEY, JSON.stringify(c)); } catch(e){} }
 function mjPonerTarifa(d, tipo, precio, pagado, inicio){

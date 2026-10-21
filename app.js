@@ -281,7 +281,8 @@ function cargarTodo(){
   if(!d||!d.clientes) return null;
   Object.keys(d.clientes).forEach(function(k){ clientesData[k]=d.clientes[k]; });
   Object.keys(d.seg||{}).forEach(function(k){ SEGUIMIENTOS[k]=d.seg[k]; });
-  Object.keys(d.planes||{}).forEach(function(k){ PLANES[k]=d.planes[k]; });
+  Object.keys(d.planes||{}).forEach(function(k){ PLANES[k]=(typeof fsdLimpiarPlan==='function')?fsdLimpiarPlan(d.planes[k]):d.planes[k]; });   // seguridad.js: sin código colado
+  Object.keys(clientesData).forEach(function(k){ const c=clientesData[k]; if(c&&c.foto&&typeof fsdFotoSegura==='function'&&!fsdFotoSegura(c.foto)) delete c.foto; });
   notisCoach=d.notis||[];
   return d.sesion||null;
 }
@@ -370,11 +371,11 @@ function filaEjercicio(nombre,mus,se,rep,rir){
     ins+='<label class="serie-in"><span>S'+(k+1)+'</span><input type="text" inputmode="decimal" placeholder="—" data-reps="'+rep+'" data-prev="0" oninput="onSerieInput(this)"></label>';
   }
   return '<div class="ex-item">'
-   +'<div class="ex-table-row"><span class="ex-name-cell" data-muscle="'+mus+'" onclick="openExercisePicker(this)">'+nombre+'</span>'
+   +'<div class="ex-table-row"><span class="ex-name-cell" data-muscle="'+fsdEsc(mus)+'" onclick="openExercisePicker(this)">'+fsdEsc(nombre)+'</span>'
    +'<span><input class="rx-field" type="number" value="'+se+'" readonly oninput="onPautaChange(this)"></span>'
    +'<span><input class="rx-field" type="number" value="'+rep+'" readonly oninput="onPautaChange(this)"></span>'
    +'<span><input class="rx-field" type="number" value="'+rir+'" readonly></span></div>'
-   +'<div class="ex-desc" oninput="descEditada(this)" onblur="descBlur(this)">'+(descDe(nombre)||'Sin descripción.')+'</div>'
+   +'<div class="ex-desc" oninput="descEditada(this)" onblur="descBlur(this)">'+fsdEsc(descDe(nombre)||'Sin descripción.')+'</div>'
    +'<span class="ex-desc-restore" onclick="restaurarDesc(this)">Restaurar descripción original</span>'
    +'<div class="ex-video-row"><a class="ex-video" target="_blank" rel="noopener">▶ Ver técnica</a><button class="ex-link-btn" onclick="abrirVideoModal(this)">🔗 Enlace</button></div>'
    +'<div class="ex-series"><div class="ex-series-top"><span class="ex-weight-lbl">Peso por serie (kg)</span><span class="ex-trophy" title="¡Más carga que la semana pasada!">🏆</span></div>'
@@ -662,8 +663,8 @@ function renderFoodList(){
   items.forEach(function(it){
     if(it.s!==lastS){ html+='<div class="picker-group">'+(it.s===0?MACRO_LABEL[foodTargetMacro]:'Otros grupos')+'</div>'; lastS=it.s; }
     const o=it.o;
-    html+='<div class="picker-item'+(it.dup?' current':'')+'" onclick="pickFood(this)" data-name="'+o.n+'" data-g="'+o.g+'">'
-       +'<span><span class="picker-item-name">'+o.n+'</span>'
+    html+='<div class="picker-item'+(it.dup?' current':'')+'" onclick="pickFood(this)" data-name="'+fsdEsc(o.n)+'" data-g="'+fsdEsc(o.g)+'">'
+       +'<span><span class="picker-item-name">'+fsdEsc(o.n)+'</span>'
        +'<span class="food-macros">'+foodKcal(o)+' kcal · P '+o.p+' · C '+o.c+' · G '+o.f+' /100 g</span></span>'
        +(it.dup?'<span class="picker-item-eq">Ya está</span>':(o.custom?'<span class="picker-item-eq custom">Propio</span>':''))
        +'</div>';
@@ -828,7 +829,7 @@ function calcularPlan(){
     });
     let html='';
     infos.forEach(function(o,k){
-      html+='<div class="meal-calc-row"><span>'+o.n+'</span><b>'+grams[k]+' g</b></div>';
+      html+='<div class="meal-calc-row"><span>'+fsdEsc(o.n)+'</span><b>'+grams[k]+' g</b></div>';
     });
     const mKcal=Math.round(mp*4+mc*4+mf*9), tKcal=Math.round(t[0]*4+t[1]*4+t[2]*9);
     html+='<div class="meal-calc-tot">'+mKcal+' kcal · P '+Math.round(mp)+' · C '+Math.round(mc)+' · G '+Math.round(mf)+'</div>';
@@ -899,8 +900,8 @@ function renderPickerList(){
   let html='',lastS=-1;
   items.forEach(function(e){
     if(e.s!==lastS){ html+='<div class="picker-group">'+titles[e.s]+'</div>'; lastS=e.s; }
-    html+='<div class="picker-item'+(e.n===cur?' current':'')+'" onclick="pickExercise(this)" data-name="'+e.n+'" data-mus="'+e.m+'">'
-        +'<span class="picker-item-name">'+e.n+'</span><span class="picker-item-tags">'
+    html+='<div class="picker-item'+(e.n===cur?' current':'')+'" onclick="pickExercise(this)" data-name="'+fsdEsc(e.n)+'" data-mus="'+fsdEsc(e.m)+'">'
+        +'<span class="picker-item-name">'+fsdEsc(e.n)+'</span><span class="picker-item-tags">'
         +(e.custom?'<span class="picker-item-eq custom">Propio</span>':'')
         +'<span class="picker-item-eq">'+(EQ_LABEL[e.eq]||e.eq)+'</span>'
         +'<span class="picker-item-mus">'+(MUS_LABEL[e.m]||e.m)+'</span></span></div>';
@@ -1539,7 +1540,8 @@ function enableNutricionEdit(){
 function generateCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
-  for(let i=0;i<8;i++){ code += chars[Math.floor(Math.random()*chars.length)]; }
+  const rnd=new Uint8Array(8); try{ crypto.getRandomValues(rnd); }catch(e){ for(let i=0;i<8;i++) rnd[i]=Math.floor(Math.random()*256); }   // seguridad: aleatorio criptográfico
+  for(let i=0;i<8;i++){ code += chars[rnd[i]%chars.length]; }
   code = code.slice(0,4)+'-'+code.slice(4);
   document.getElementById('generatedCode').textContent = code;
 }

@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com https://drive.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script>/* seguridad: la app no se deja meter dentro de otra web (clickjacking) */ if (window.top !== window.self) { document.documentElement.style.display = 'none'; try { window.top.location = window.self.location.href; } catch (e) {} }</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
@@ -169,7 +172,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.71.4</div>
+      <div class="app-version">Versión 0.72.0</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -847,6 +850,7 @@ if ('serviceWorker' in navigator) {
 
 <script src="lz-string.min.js" defer></script>
 <script src="almacen.js" defer></script>
+<script src="seguridad.js" defer></script>
 <script src="app.js" defer></script>
 <script src="ganchos.js" defer></script>
 <script src="ajustes.js" defer></script>

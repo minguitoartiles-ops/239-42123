@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.71 → 0.71.4 (actual)
-Cambios acumulados hacia la 0.72: **8 de 10**
+## Versión 0.72.0 (actual)
+Cambios acumulados hacia la 0.73: **0 de 10**
+
+## Versión 0.71 → 0.71.4
 
 ### Hacia la 0.72
 1. 21/10/2026 23:20 · Ficha del cliente (sección Seguimiento): «📸 Antes / Ahora» con la primera y la última foto de cada posición (frente, perfil, espalda), con fecha y peso; se amplían al tocarlas
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.72: **8 de 10**
 6. 22/10/2026 00:25 · Chat en la app de escritorio: vuelve el botón 😊 con un panel por categorías (Recientes, Caras, Gestos, Deporte, Comida, Símbolos); inserta donde está el cursor, deja poner varios seguidos y se cierra con Esc o al hacer clic fuera. En el móvil se siguen usando los emojis del teclado → **0.71.3**
 7. 22/10/2026 00:45 · Nombre corregido en toda la app: «Fitnessindramas», todo junto (título de la ventana y de la app instalada, menú, textos legales, consentimientos, avisos…)
 8. 22/10/2026 01:00 · Mapa muscular con figura anatómica nueva (react-native-body-highlighter, licencia MIT): músculos separados de frente y de espalda, en versión hombre o mujer según el cliente («Figura del mapa muscular» en sus datos). Nueva fila «Créditos y licencias» en Ajustes → Privacidad → **0.71.4**
+9. 22/10/2026 01:30 · Seguridad (auditoría): al cargar, los planes y el chat se limpian de código colado (etiquetas y atributos peligrosos, enlaces que no sean http/https/mailto/tel); las funciones de limpieza ya no cargan el HTML que limpian; solo se aceptan fotos reales; los nombres propios de ejercicios y alimentos se escapan
+10. 22/10/2026 01:30 · Seguridad (auditoría): política de seguridad de contenidos (la app solo conecta consigo misma, las fuentes y los vídeos incrustados), la app no se muestra si otra web la mete dentro, enlace de pago solo https y códigos de acceso con azar criptográfico → **0.72.0**
 
 ## Versión 0.70 → 0.70.4
 
