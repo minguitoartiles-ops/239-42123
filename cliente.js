@@ -816,3 +816,65 @@ mjBloqueoCliente = (function(orig){
     return r;
   };
 })(mjBloqueoCliente);
+
+/* ---------- #157 Avisos de apoyo (ánimo) al cliente ----------
+   Una vez por semana como mucho, al abrir la app o enviar el seguimiento:
+   · racha buena: 3 o más semanas seguidas completando los entrenos, o 2 seguimientos seguidos con 80 o más → felicitación
+   · racha mala: 2 seguimientos seguidos con puntuación baja (menos de 55) o 2 semanas sin entrenar → mensaje de ánimo
+   En la campana van justo después de seguimiento y pago. */
+TIPOS_CLIENTE.push({ id: 'apoyo', ico: '💪', nombre: 'Mensajes de ánimo', desc: 'Cuando llevas una racha muy buena o una semana difícil' });
+AV_PRIORIDAD.apoyo = 3; AV_PRIORIDAD.plan = 4; AV_PRIORIDAD.revisado = 5;
+function apSemanasSinEntreno(k){
+  const d = clientesData[k], reg = typeof mjRegistro === 'function' ? mjRegistro(k) : null;
+  if (!d || !reg || !PLANES[k] || !PLANES[k].ent || PLANES[k].ent.indexOf('ex-item') < 0) return 0;
+  if (d.fechaAlta && Date.now() - new Date(d.fechaAlta).getTime() < 21 * 864e5) return 0;
+  const sem = {}; (reg.ses || []).forEach(function(f){ sem[mjISO(mjLunes(new Date(f + 'T12:00:00')))] = 1; });
+  let l = mjSumarDias(mjISO(mjLunes()), -7), n = 0;
+  while (!sem[l] && n < 8) { n++; l = mjSumarDias(l, -7); }
+  return n;
+}
+function apAltas(k){
+  const l = SEGUIMIENTOS[k] || []; let n = 0;
+  for (let i = 0; i < l.length; i++) { const p = puntuacionCliente(k, i); if (p && p.total != null && p.total >= 80) n++; else break; }
+  return n;
+}
+function apRevisar(){
+  const k = clienteActual; if (!k || !window.fsdSesionCliente || isCoachView() || !clientesData[k]) return;
+  const dest = claveCliente(k), lunes = mjISO(mjLunes()), nom = String(clientesData[k].nombre || '').split(' ')[0];
+  let racha = 0; try { racha = exRachaEntreno(k); } catch(e){}
+  const altas = apAltas(k), bajas = atBajas(k), sinEnt = apSemanasSinEntreno(k);
+  if ((racha >= 3 || altas >= 2) && tocaAvisarUnaVez('apoyo-bien-' + k + '-' + lunes)) {
+    crearAviso(dest, 'apoyo', '🔥 ¡Vas on fire, ' + nom + '!',
+      racha >= 3 ? 'Llevas ' + racha + ' semanas seguidas cumpliendo todos tus entrenos. Así se consiguen los resultados: sigue así.'
+        : 'Tus últimos ' + altas + ' seguimientos han sido de nota. Estamos muy orgullosos de cómo lo estás haciendo.', { vista: 'progreso' });
+  } else if ((bajas >= 2 || sinEnt >= 2) && tocaAvisarUnaVez('apoyo-mal-' + k + '-' + lunes)) {
+    crearAviso(dest, 'apoyo', '💙 Ánimo, ' + nom + ': estamos contigo',
+      (sinEnt >= 2 ? 'Llevas ' + sinEnt + ' semanas sin registrar entrenos.' : 'Las últimas semanas se han hecho cuesta arriba.')
+        + ' Es normal tener rachas así; lo importante es retomar con algo pequeño. Escríbenos y lo ajustamos juntos.', { vista: 'chat' });
+  }
+}
+enterApp = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { apRevisar(); pintarListas(); } catch(e){} }, 400); return r; }; })(enterApp);
+guardarSeguimiento = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { apRevisar(); pintarListas(); } catch(e){} }, 1600); return r; }; })(guardarSeguimiento);
+setTimeout(function(){ try { apRevisar(); pintarListas(); } catch(e){} }, 1500);
+
+/* ---------- #150 Instalar en este ordenador ----------
+   En el ordenador (Chrome o Edge), si la app aún no está instalada: botón «Instalar en este ordenador»
+   en el pie del menú lateral y la tarjeta de instalar adaptada al ordenador. */
+pintarAyudaInstalar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const pc = typeof escEsOrdenador === 'function' && escEsOrdenador(), puede = pc && !!promptInstalar && !esInstalada();
+    const c = document.getElementById('instalarCard');
+    if (c && puede) { const b = c.querySelector('b'); if (b) b.textContent = 'Instala la app en este ordenador'; const s = c.querySelector('span'); if (s) s.textContent = 'Tendrás su icono en el escritorio y la barra de tareas, y se abrirá en su propia ventana.'; }
+    const pie = document.getElementById('escPie');
+    let bt = document.getElementById('escInstalar');
+    if (pie && puede && !bt) {
+      bt = document.createElement('button'); bt.type = 'button'; bt.id = 'escInstalar'; bt.className = 'esc-pie-btn esc-instalar';
+      bt.innerHTML = '<span aria-hidden="true">⬇</span><span>Instalar en este ordenador</span>';
+      bt.onclick = instalarApp; pie.insertBefore(bt, pie.firstChild);
+    }
+    if (bt) bt.style.display = puede ? '' : 'none';
+    return r;
+  };
+})(pintarAyudaInstalar);
+pintarAyudaInstalar();
