@@ -166,6 +166,15 @@ guardarPlan = (function(orig){
     mover(x, y);
     raf = requestAnimationFrame(autoScroll);
   }
+  // el ejercicio no se mueve mientras se arrastra: una línea marca dónde quedará al soltarlo
+  function linea(r, arriba){
+    let l = document.getElementById('ruLinea');
+    if (!r) { if (l) l.hidden = true; return; }
+    if (!l) { l = document.createElement('div'); l.id = 'ruLinea'; l.className = 'ru-linea'; document.body.appendChild(l); }
+    l.hidden = false;
+    l.style.left = Math.round(r.left) + 'px'; l.style.width = Math.round(r.width) + 'px';
+    l.style.top = Math.round(arriba ? r.top - 6 : r.bottom + 2) + 'px';
+  }
   function mover(x, y){
     ultX = x; ultY = y;
     drag.g.style.transform = 'translate(' + Math.round(x + 12) + 'px,' + Math.round(y - 18) + 'px)';
@@ -173,18 +182,27 @@ guardarPlan = (function(orig){
     Array.prototype.forEach.call(document.querySelectorAll('.ru-soltar'), function(h){ h.classList.remove('ru-soltar'); });
     drag.destino = null;
     const it = el.closest && el.closest('#sesionesCont .ex-item');
-    if (it && it !== drag.it) {
-      // basta con entrar unos píxeles en el ejercicio vecino (los ejercicios son altos)
-      const r = it.getBoundingClientRect(), arriba = !!(drag.it.compareDocumentPosition(it) & Node.DOCUMENT_POSITION_PRECEDING);
-      if (arriba && y < r.bottom - 30) it.parentNode.insertBefore(drag.it, it);
-      else if (!arriba && y > r.top + 30) it.parentNode.insertBefore(drag.it, it.nextSibling);
+    if (it) {
+      if (it === drag.it) { drag.ref = null; linea(null); return; }
+      const r = it.getBoundingClientRect(), arriba = y < r.top + r.height / 2;
+      const ref = arriba ? it : (it.nextElementSibling || null);
+      if (ref === drag.it || (arriba && it.previousElementSibling === drag.it) ) { drag.ref = null; linea(null); return; }   // mismo sitio
+      drag.ref = { body: it.parentNode, antes: ref };
+      linea(r, arriba);
       return;
     }
     const card = el.closest && el.closest('#sesionesCont .sesion-card');
-    if (!card) return;
+    if (!card) { drag.ref = null; linea(null); return; }
     const body = card.querySelector('.sesion-body'), add = card.querySelector('.add-ej-btn');
     const abierta = body && body.style.display !== 'none' && card.classList.contains('open');
-    if (abierta && add && (el.closest('.add-ej-btn') || y > add.getBoundingClientRect().top - 8)) { if (drag.it.nextElementSibling !== add) body.insertBefore(drag.it, add); return; }
+    if (abierta && add && (el.closest('.add-ej-btn') || y > add.getBoundingClientRect().top - 8)) {
+      const ult = Array.prototype.filter.call(body.children, function(x){ return x.classList.contains('ex-item'); }).pop();
+      if (ult === drag.it) { drag.ref = null; linea(null); return; }
+      drag.ref = { body: body, antes: add };
+      linea(ult ? ult.getBoundingClientRect() : add.getBoundingClientRect(), !ult);
+      return;
+    }
+    drag.ref = null; linea(null);
     if (!abierta && el.closest('.sesion-head')) { card.querySelector('.sesion-head').classList.add('ru-soltar'); drag.destino = card; }
   }
   function autoScroll(){
@@ -201,7 +219,9 @@ guardarPlan = (function(orig){
     const d = drag; drag = null;
     Array.prototype.forEach.call(document.querySelectorAll('.ru-soltar'), function(h){ h.classList.remove('ru-soltar'); });
     d.g.remove(); d.it.classList.remove('ru-arrastrando'); document.documentElement.classList.remove('ru-drag');
-    if (cancelar) { d.origen.insertBefore(d.it, d.sig); return; }
+    linea(null);
+    if (cancelar) return;
+    if (d.ref && !d.destino) d.ref.body.insertBefore(d.it, d.ref.antes);
     if (d.destino) {
       const add = d.destino.querySelector('.add-ej-btn'), body = d.destino.querySelector('.sesion-body');
       if (add) body.insertBefore(d.it, add);
