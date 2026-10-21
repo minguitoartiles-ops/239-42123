@@ -67,7 +67,7 @@ function ruPintarCompacta(){
     const nomc = it.querySelector('.ex-name-cell'); if (nomc) { nomc.setAttribute('role', 'button'); nomc.setAttribute('aria-expanded', foco ? 'true' : 'false'); }
     b.innerHTML = foco ? ''
       : '<span class="ru-q" title="Cambia aquí series, reps y RIR de todas las series">'
-      + '<input class="ru-q-s" inputmode="numeric" aria-label="Series" value="' + v.n + '">'
+      + '<input class="ru-q-s" inputmode="numeric" aria-label="Series" value="' + (ruNuevos.has(it) ? '' : v.n) + '" placeholder="—">'
       + '<span class="ru-q-x">×</span>'
       + '<input class="ru-q-r" inputmode="numeric" aria-label="Repeticiones" value="' + esc(v.reps != null ? v.reps : '') + '" placeholder="' + esc(v.reps == null ? v.repsTxt : '') + '">'
       + '<span class="ru-q-l">RIR</span>'
@@ -78,6 +78,7 @@ function ruPintarCompacta(){
 /* cambiar series, reps o RIR desde la línea compacta: se aplica a todas las series */
 function ruAplicarRapido(inp){
   const it = inp.closest('.ex-item'); if (!it) return;
+  if (inp.classList.contains('ru-q-s')) ruNuevos.delete(it);
   const f = it.querySelectorAll('.rx-field'); if (f.length < 3) return;
   const i = inp.classList.contains('ru-q-s') ? 0 : (inp.classList.contains('ru-q-r') ? 1 : 2);
   const v = String(inp.value || '').replace(/[^0-9]/g, '');
@@ -163,7 +164,7 @@ function ruCabeceras(cont, compacta){
     if (compacta && !ruVistos.has(c)) { ruVistos.add(c); const body = c.querySelector('.sesion-body'); if (body && body.style.display !== 'block' && head) toggleSesion(head); }
   });
 }
-const ruVistos = new WeakSet();
+const ruVistos = new WeakSet(), ruNuevos = new WeakSet();
 /* al escribir en la tabla serie a serie se actualiza el resumen */
 let ruT = null;
 document.addEventListener('input', function(e){
@@ -184,9 +185,9 @@ document.addEventListener('change', function(e){
 if (typeof addEjercicio === 'function') addEjercicio = (function(orig){
   return function(btn){
     if (!document.documentElement.classList.contains('ru-plegable') || !btn || !btn.closest || !btn.closest('#sesionesCont')) return orig.apply(this, arguments);
-    enInsertarEjercicios(btn, [{ n: '', m: 'pecho' }]);
+    enInsertarEjercicios(btn, [{ n: '', m: 'pecho', pauta: [1, '', ''] }]);   // sin series, reps ni RIR por defecto
     const it = btn.previousElementSibling;
-    if (it && it.classList.contains('ex-item')) { it.classList.add('ru-foco'); }
+    if (it && it.classList.contains('ex-item')) { ruNuevos.add(it); enPesos(it).forEach(function(x){ x.dataset.reps = ''; x.dataset.rir = ''; x.removeAttribute('data-rir'); x.setAttribute('data-reps', ''); }); }
     try { if (typeof enUndoRegistrar === 'function') enUndoRegistrar(); } catch(e){}
     setTimeout(function(){ ruPintarCompacta(); const c = it && it.querySelector('.ru-cambiar'); if (c) c.focus(); }, 0);
   };
