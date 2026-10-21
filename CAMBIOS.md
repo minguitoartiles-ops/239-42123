@@ -3,8 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.68 (actual)
-Cambios acumulados hacia la 0.69: **0 de 10**
+## Versión 0.68 → 0.68.1 (actual)
+Cambios acumulados hacia la 0.69: **2 de 10**
+
+### Hacia la 0.69
+1. 21/10/2026 18:00 · Creador de rutinas (móvil y ordenador): los días se abren y cierran tocando su cabecera o su nombre (el ✎ de al lado sirve para renombrarlos); cada ejercicio sale plegado en una línea (series × reps · RIR editables) y se despliega o pliega tocando su nombre; el botón «Cambiar» abre la lista para elegir otro ejercicio; «Añadir ejercicio» añade una fila vacía sin abrir la lista (se elige con «Cambiar»; si se queda sin elegir, se quita al guardar); fuera las sugerencias 3×10, 4×8…
+2. 21/10/2026 18:00 · Chat: fuera el panel de emojis de la app; se usan los del teclado del móvil (Android e iOS) → **0.68.1**
 
 ## Versión 0.67 → 0.67.4
 

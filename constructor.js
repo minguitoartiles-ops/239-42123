@@ -12,6 +12,7 @@ function ruCompactaPref(){ try { return localStorage.getItem(RU_VISTA_KEY) !== '
 function ruCompactaOn(){
   return !!(typeof escActivo === 'function' && escActivo() && coachEditing && isCoachView() && vistaActual === 'entreno' && ruCompactaPref());
 }
+function ruPlegableOn(){ return !!(coachEditing && isCoachView() && vistaActual === 'entreno'); }
 function ruResumen(it){
   const p = typeof enPesos === 'function' ? enPesos(it) : [];
   if (!p.length) return '<span class="ru-res-v">sin series</span>';
@@ -36,11 +37,13 @@ function ruValores(it){
   return { n: p.length, reps: igual(reps) ? reps[0] : null, rir: igual(rir) ? rir[0] : null, repsTxt: reps.join('/'), rirTxt: rir.filter(Boolean).join('/') };
 }
 function ruPintarCompacta(){
-  const root = document.documentElement, on = ruCompactaOn();
+  const root = document.documentElement, on = ruCompactaOn(), pl = ruPlegableOn();
   root.classList.toggle('ru-compacto', on);
+  root.classList.toggle('ru-plegable', pl);
   ruBotonVista();
-  if (!on) return;
+  if (!pl) return;
   const cont = document.getElementById('sesionesCont'); if (!cont) return;
+  ruCabeceras(cont, on);
   const act = document.activeElement;
   Array.prototype.forEach.call(cont.querySelectorAll('.ex-item'), function(it){
     let b = it.querySelector(':scope > .ru-res');
@@ -54,14 +57,22 @@ function ruPintarCompacta(){
     const v = ruValores(it), foco = it.classList.contains('ru-foco');
     const rirN = v.rir != null && v.rir !== '' ? Number(v.rir) : NaN;
     const cls = typeof enRir === 'function' && !isNaN(rirN) ? enRir(rirN) : '';
-    b.innerHTML = foco ? '<span class="ru-q-txt">Editando</span><button type="button" class="ru-abrir" aria-label="Cerrar el editor del ejercicio">Cerrar ▴</button>'
+    /* botón «Cambiar» junto al nombre (el nombre pliega y despliega) */
+    const fila = it.querySelector('.ex-table-row');
+    if (fila && !fila.querySelector('.ru-cambiar')) {
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'ru-cambiar'; c.textContent = 'Cambiar';
+      c.setAttribute('aria-label', 'Cambiar el ejercicio');
+      const nom = fila.querySelector('.ex-name-cell'); fila.insertBefore(c, nom ? nom.nextSibling : null);
+    }
+    const nomc = it.querySelector('.ex-name-cell'); if (nomc) { nomc.setAttribute('role', 'button'); nomc.setAttribute('aria-expanded', foco ? 'true' : 'false'); }
+    b.innerHTML = foco ? ''
       : '<span class="ru-q" title="Cambia aquí series, reps y RIR de todas las series">'
       + '<input class="ru-q-s" inputmode="numeric" aria-label="Series" value="' + v.n + '">'
       + '<span class="ru-q-x">×</span>'
       + '<input class="ru-q-r" inputmode="numeric" aria-label="Repeticiones" value="' + esc(v.reps != null ? v.reps : '') + '" placeholder="' + esc(v.reps == null ? v.repsTxt : '') + '">'
       + '<span class="ru-q-l">RIR</span>'
       + '<input class="ru-q-i ' + cls + '" inputmode="numeric" aria-label="RIR" value="' + esc(v.rir != null ? v.rir : '') + '" placeholder="' + esc(v.rir == null ? v.rirTxt : '') + '">'
-      + '</span><button type="button" class="ru-abrir" aria-label="Abrir el editor completo del ejercicio" title="Serie a serie, notas, vídeo y técnica">✎</button>';
+      + '</span><span class="ru-desp" aria-hidden="true">▾</span>';
   });
 }
 /* cambiar series, reps o RIR desde la línea compacta: se aplica a todas las series */
@@ -89,7 +100,7 @@ document.addEventListener('keydown', function(e){
 }, true);
 document.addEventListener('focusin', function(e){ const t = e.target; if (t.closest && t.closest('#sesionesCont .ru-q')) setTimeout(function(){ try { t.select(); } catch(x){} }, 0); }, true);
 document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape' && document.documentElement.classList.contains('ru-compacto') && document.querySelector('#sesionesCont .ex-item.ru-foco') && !document.querySelector('.fsd-sheet.show, .show > .fsd-sheet')) { ruQuitarFoco(); ruPintarCompacta(); }
+  if (e.key === 'Escape' && document.documentElement.classList.contains('ru-plegable') && document.querySelector('#sesionesCont .ex-item.ru-foco') && !document.querySelector('.show > .fsd-sheet, .fsd-sheet.show') && !(document.activeElement && document.activeElement.isContentEditable)) { ruQuitarFoco(); ruPintarCompacta(); }
 });
 function ruBotonVista(){
   const acts = document.querySelector('#view-entreno .en-herr') || null;
@@ -112,15 +123,47 @@ function ruFoco(it){
   if (!ya) it.classList.add('ru-foco');
   ruPintarCompacta();
 }
-/* tocar la línea del ejercicio abre o cierra su editor */
+/* el nombre del ejercicio lo pliega o despliega; «Cambiar» abre la lista para elegir otro */
+function ruToggleEj(it){ it.classList.toggle('ru-foco'); ruPintarCompacta(); }
 document.addEventListener('click', function(e){
-  if (!document.documentElement.classList.contains('ru-compacto') || !e.target.closest) return;
-  const b = e.target.closest('#sesionesCont .ru-abrir');
-  if (b) { e.preventDefault(); e.stopPropagation(); ruFoco(b.closest('.ex-item')); return; }
-  /* un clic en la parte libre de la línea (no en el nombre ni en las casillas) también la abre */
+  if (!document.documentElement.classList.contains('ru-plegable') || !e.target.closest) return;
+  const cam = e.target.closest('#sesionesCont .ru-cambiar');
+  if (cam) { e.preventDefault(); e.stopPropagation(); const n = cam.closest('.ex-item').querySelector('.ex-name-cell'); if (n) openExercisePicker(n); return; }
+  const nom = e.target.closest('#sesionesCont .ex-name-cell');
+  if (nom) { e.preventDefault(); e.stopPropagation(); ruToggleEj(nom.closest('.ex-item')); return; }
   const it = e.target.closest('#sesionesCont .ex-item:not(.ru-foco)');
-  if (it && (e.target === it || e.target.classList.contains('ru-res') || e.target.classList.contains('ex-table-row'))) { ruFoco(it); }
+  if (it && (e.target === it || e.target.classList.contains('ru-res') || e.target.classList.contains('ru-desp') || e.target.classList.contains('ex-table-row'))) { ruToggleEj(it); return; }
+  /* días: tocar la cabecera (también el nombre) los abre o cierra; el lápiz ✎ cambia el nombre */
+  const ren = e.target.closest('#sesionesCont .ru-ren');
+  if (ren) { e.preventDefault(); e.stopPropagation(); ruRenombrar(ren.closest('.sesion-card')); return; }
+  const tit = e.target.closest('#sesionesCont .sesion-title');
+  if (tit && !tit.classList.contains('ru-renombrando')) { e.preventDefault(); e.stopPropagation(); toggleSesion(tit.closest('.sesion-head')); }
 }, true);
+document.addEventListener('mousedown', function(e){
+  if (!document.documentElement.classList.contains('ru-plegable') || !e.target.closest) return;
+  const tit = e.target.closest('#sesionesCont .sesion-title');
+  if (tit && !tit.classList.contains('ru-renombrando')) e.preventDefault();      // sin cursor de escritura al plegar
+}, true);
+function ruRenombrar(card){
+  const t = card && card.querySelector('.sesion-title'); if (!t) return;
+  t.classList.add('ru-renombrando'); t.setAttribute('contenteditable', 'true'); t.focus();
+  try { const r = document.createRange(); r.selectNodeContents(t); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch(e){}
+  t.addEventListener('blur', function fin(){ t.classList.remove('ru-renombrando'); t.removeEventListener('blur', fin); }, { once: true });
+}
+function ruCabeceras(cont, compacta){
+  Array.prototype.forEach.call(cont.querySelectorAll('.sesion-card'), function(c){
+    const head = c.querySelector('.sesion-head'), tit = c.querySelector('.sesion-title');
+    if (tit && !c.querySelector('.ru-ren')) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'ru-ren'; b.textContent = '✎';
+      b.setAttribute('aria-label', 'Cambiar el nombre del día'); b.title = 'Cambiar el nombre';
+      tit.parentNode.insertBefore(b, tit.nextSibling);
+    }
+    if (head) head.setAttribute('aria-expanded', c.classList.contains('open') ? 'true' : 'false');
+    /* en la vista compacta los días empiezan abiertos (después se pliegan a mano) */
+    if (compacta && !ruVistos.has(c)) { ruVistos.add(c); const body = c.querySelector('.sesion-body'); if (body && body.style.display !== 'block' && head) toggleSesion(head); }
+  });
+}
+const ruVistos = new WeakSet();
 /* al escribir en la tabla serie a serie se actualiza el resumen */
 let ruT = null;
 document.addEventListener('input', function(e){
@@ -137,22 +180,33 @@ document.addEventListener('change', function(e){
   const o = window[n];
   window[n] = function(){ const r = o.apply(this, arguments); setTimeout(ruPintarCompacta, 0); return r; };
 });
-/* un ejercicio nuevo se abre solo para rellenarlo */
+/* «Añadir ejercicio» añade una fila vacía (sin abrir la lista); se elige con «Cambiar» */
 if (typeof addEjercicio === 'function') addEjercicio = (function(orig){
   return function(btn){
-    const r = orig.apply(this, arguments);
-    setTimeout(function(){
-      if (!document.documentElement.classList.contains('ru-compacto')) return;
-      const body = btn && btn.closest && btn.closest('.sesion-body'); const its = body ? body.querySelectorAll('.ex-item') : [];
-      if (its.length) { ruQuitarFoco(); its[its.length - 1].classList.add('ru-foco'); ruPintarCompacta(); }
-    }, 0);
-    return r;
+    if (!document.documentElement.classList.contains('ru-plegable') || !btn || !btn.closest || !btn.closest('#sesionesCont')) return orig.apply(this, arguments);
+    enInsertarEjercicios(btn, [{ n: '', m: 'pecho' }]);
+    const it = btn.previousElementSibling;
+    if (it && it.classList.contains('ex-item')) { it.classList.add('ru-foco'); }
+    try { if (typeof enUndoRegistrar === 'function') enUndoRegistrar(); } catch(e){}
+    setTimeout(function(){ ruPintarCompacta(); const c = it && it.querySelector('.ru-cambiar'); if (c) c.focus(); }, 0);
   };
 })(addEjercicio);
+/* al guardar, fuera los ejercicios que se quedaron sin elegir */
+editarPlan = (function(orig){
+  return function(){
+    if (coachEditing && isCoachView() && vistaActual === 'entreno') {
+      const vac = Array.prototype.filter.call(document.querySelectorAll('#sesionesCont .ex-item'), function(it){ return !enNombreEj(it); });
+      if (vac.length) { vac.forEach(function(it){ it.remove(); }); toast(vac.length === 1 ? 'Se ha quitado un ejercicio sin elegir' : 'Se han quitado ' + vac.length + ' ejercicios sin elegir'); }
+    }
+    return orig.apply(this, arguments);
+  };
+})(editarPlan);
 /* nada de esto se guarda ni cuenta como cambio */
 function ruLimpiarHtml(h){
   const t = document.createElement('template'); t.innerHTML = String(h || '');
-  t.content.querySelectorAll('.ru-res').forEach(function(x){ x.remove(); });
+  t.content.querySelectorAll('.ru-res, .ru-cambiar, .ru-ren').forEach(function(x){ x.remove(); });
+  t.content.querySelectorAll('.ex-name-cell[role], .ex-name-cell[aria-expanded]').forEach(function(x){ x.removeAttribute('role'); x.removeAttribute('aria-expanded'); });
+  t.content.querySelectorAll('.sesion-title.ru-renombrando').forEach(function(x){ x.classList.remove('ru-renombrando'); });
   t.content.querySelectorAll('.ru-foco').forEach(function(x){ x.classList.remove('ru-foco'); });
   const d = document.createElement('div'); d.appendChild(t.content); return d.innerHTML;
 }

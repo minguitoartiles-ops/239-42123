@@ -255,3 +255,6 @@ html.esc .pl-split{display:grid;grid-template-columns:minmax(300px,420px) minmax
 html.esc .pl-der{display:block;position:sticky;top:12px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card);}
 html.esc .pl-izq{min-width:0;}
 .pl-prev-movil .pl-prev-h{display:none;}
+
+/* #139 Chat: fuera el panel de emojis propio; se usan los del teclado del móvil (y Win + . / Ctrl + Cmd + Espacio en el ordenador) */
+#emojiBtn,#emojiPanel{display:none !important;}
