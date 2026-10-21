@@ -241,3 +241,83 @@ pintarPagosPro = (function(orig){
 mjAbrirFichaPago = (function(orig){
   return function(k){ const r = orig.apply(this, arguments); fpAbiertos.pago = true; fpAplicar(); return r; };
 })(mjAbrirFichaPago);
+
+/* =========================================================
+   #118 Pestaña Seguimientos (profesionales): nota más grande, «Ver resumen» como botón
+   y filtros Todos · Al día · Pendientes de rellenar · Mejor puntuación · Peor puntuación
+   ========================================================= */
+let sgFiltro = 'todos';
+const SG_FILTROS = [['todos', 'Todos'], ['aldia', 'Al día'], ['pend', 'Pendientes de rellenar'], ['mejor', 'Mejor puntuación'], ['peor', 'Peor puntuación']];
+function sgFiltrar(f){ sgFiltro = f; pintarSegsResumen(); }
+pintarSegsResumen = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const cont = document.getElementById('segsResumen'); if (!cont) return r;
+    const bloques = Array.prototype.slice.call(cont.querySelectorAll(':scope > .sg-bloque'));
+    if (!bloques.length) return r;
+    const datos = bloques.map(function(bl, i){
+      const cab = bl.querySelector('.sg-cab');
+      const m = cab && (cab.getAttribute('onclick') || '').match(/abrirSegsCliente\('([^']+)'/);
+      const g = bl.querySelector('.sg-glob');
+      const p = g ? parseInt(g.textContent, 10) : null;
+      const tiene = !!bl.querySelector('.segui-card');
+      /* nota grande: número y /100 */
+      if (g && !g.classList.contains('sg-nota-g')) {
+        g.classList.add('sg-nota-g');
+        g.innerHTML = '<b>' + p + '</b><small>/100</small>';
+        g.setAttribute('aria-label', 'Puntuación ' + p + ' de 100');
+      }
+      /* línea de la última semana sin cortar la fecha + botón «Ver resumen» cómodo */
+      const lin = bl.querySelector('.sg-linea');
+      const k = m && m[1];
+      if (lin && k && (SEGUIMIENTOS[k] || [])[0]) {
+        const s0 = SEGUIMIENTOS[k][0];
+        const wk = bl.querySelector('.segui-week');
+        let sem = '';
+        if (wk) sem = Array.prototype.filter.call(wk.childNodes, function(n){ return !(n.classList && n.classList.contains('sem-badge')); }).map(function(n){ return n.textContent; }).join('').trim();
+        const peso = (bl.querySelector('.segui-peso') || {}).textContent || '';
+        const sp = lin.querySelector('span'); if (sp) sp.textContent = (sem || ('Último · ' + fechaCorta(s0.fecha))) + (peso ? ' · ' + peso.trim() : '');
+      }
+      const v = bl.querySelector('.sg-ver');
+      if (v && !v.classList.contains('sg-ver-btn')) v.classList.add('sg-ver-btn');
+      return { bl: bl, i: i, p: isNaN(p) ? null : p, pend: bl.classList.contains('pend'), tiene: tiene };
+    });
+    /* filtros */
+    let fil = document.getElementById('sgFiltros');
+    if (!fil) {
+      fil = document.createElement('div'); fil.id = 'sgFiltros'; fil.className = 'chips sg-filtros'; fil.setAttribute('role', 'tablist');
+      const ley = cont.querySelector('.segui-leyenda');
+      cont.insertBefore(fil, ley || bloques[0]);
+    }
+    const n = { todos: datos.length, aldia: datos.filter(function(x){ return !x.pend; }).length, pend: datos.filter(function(x){ return x.pend; }).length };
+    fil.innerHTML = SG_FILTROS.map(function(f){
+      const c = n[f[0]] != null ? ' <span class="sg-fn">' + n[f[0]] + '</span>' : '';
+      return '<button type="button" role="tab" aria-selected="' + (sgFiltro === f[0]) + '" class="chip protein' + (sgFiltro === f[0] ? ' selected' : '') + '" onclick="sgFiltrar(\'' + f[0] + '\')">' + f[1] + c + '</button>';
+    }).join('');
+    let vis = datos.filter(function(x){
+      if (sgFiltro === 'aldia') return !x.pend;
+      if (sgFiltro === 'pend') return x.pend;
+      if (sgFiltro === 'mejor' || sgFiltro === 'peor') return x.p != null;
+      return true;
+    });
+    if (sgFiltro === 'mejor') vis.sort(function(a, b){ return b.p - a.p || a.i - b.i; });
+    if (sgFiltro === 'peor') vis.sort(function(a, b){ return a.p - b.p || a.i - b.i; });
+    datos.forEach(function(x){ x.bl.hidden = vis.indexOf(x) < 0; });
+    vis.forEach(function(x){ cont.appendChild(x.bl); });
+    let vac = document.getElementById('sgVacio');
+    if (!vis.length) { if (!vac) { vac = document.createElement('div'); vac.id = 'sgVacio'; vac.className = 'picker-empty'; } vac.textContent = 'No hay clientes en este apartado.'; cont.appendChild(vac); }
+    else if (vac) vac.remove();
+    return r;
+  };
+})(pintarSegsResumen);
+
+/* Seguimientos siempre del más reciente al más antiguo (por si una copia restaurada los trae al revés) */
+(function(){
+  let cambio = false;
+  Object.keys(SEGUIMIENTOS || {}).forEach(function(k){
+    const l = SEGUIMIENTOS[k]; if (!Array.isArray(l) || l.length < 2) return;
+    const ok = l.every(function(r, i){ return i === 0 || !r.fecha || !l[i - 1].fecha || l[i - 1].fecha >= r.fecha; });
+    if (!ok) { l.sort(function(a, b){ return (b.fecha || '') > (a.fecha || '') ? 1 : -1; }); cambio = true; }
+  });
+  if (cambio) try { guardarTodo(); } catch(e){}
+})();
