@@ -163,3 +163,8 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15px !important;}
 /* Fátima no marca comidas como tomadas: el check solo lo ve el cliente */
 #app.coach-view .meal-eat{display:none !important;}
+
+.ru-linea{position:fixed;z-index:9998;height:4px;border-radius:4px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);pointer-events:none;}
+.ru-linea[hidden]{display:none;}
+.ru-linea::before,.ru-linea::after{content:"";position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--accent);}
+.ru-linea::before{left:-6px;} .ru-linea::after{right:-6px;}
