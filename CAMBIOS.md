@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.66 → 0.66.5 (actual)
-Cambios acumulados hacia la 0.67: **10 de 10** (la próxima publicación sube a la 0.67)
+## Versión 0.67 (actual)
+Cambios acumulados hacia la 0.68: **0 de 10**
+
+## Versión 0.66 → 0.66.4
 
 ### Hacia la 0.67
 1. 21/10/2026 14:35 · Plan nutricional (profesionales, editando): volver a tocar un alimento elegido lo deselecciona (se puede deshacer)
@@ -16,7 +18,7 @@ Cambios acumulados hacia la 0.67: **10 de 10** (la próxima publicación sube a 
 7. 21/10/2026 15:30 · Ordenador en multitarea: el modo ordenador funciona ya desde 900 px de ancho (media pantalla); por debajo de 1280 px el menú lateral se queda en iconos (con su nombre al pasar el ratón) y, si la lista se estrecha, las cifras de cada cliente pasan a 2 × 2
 8. 21/10/2026 15:30 · Barra vertical entre la lista y el panel derecho: se arrastra para dar más o menos ancho a cada lado (también con ← →), todo se recoloca solo, se recuerda para cada profesional y con doble clic vuelve al ancho normal → **0.66.4**
 9. 21/10/2026 15:30 · Seguimientos: fuera el peso repetido arriba a la derecha de cada semana (ya está en su casilla)
-10. 21/10/2026 15:30 · Sonidos: ya no suena nada al enviar un mensaje; el sonido «mensaje enviado» suena ahora al RECIBIR un mensaje, y la campanita con el resto de avisos → **0.66.5**
+10. 21/10/2026 15:30 · Sonidos: ya no suena nada al enviar un mensaje; el sonido «mensaje enviado» suena ahora al RECIBIR un mensaje, y la campanita con el resto de avisos → **sube a la 0.67**
 
 ## Versión 0.65 → 0.65.4
 
