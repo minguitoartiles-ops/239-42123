@@ -323,3 +323,21 @@ html.esc .pl-izq{min-width:0;}
 .rn-cp{flex:none;padding:6px 10px;border-radius:10px;border:none;background:var(--accent-wash);color:var(--accent);font:600 12px var(--f-body);cursor:pointer;}
 .rn-nota{margin:8px 0 0;font:500 12px/1.4 var(--f-body);color:var(--dim-6);}
 html.esc #escInstalar{color:var(--accent);font-weight:700;}
+
+/* ---------- #157 fotos de progreso en el seguimiento ---------- */
+.sg-fotos{margin-top:14px;}
+.sg-fotos-fila{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;}
+.sg-foto-hueco{position:relative;aspect-ratio:3/4;border-radius:14px;border:1.5px dashed var(--accent-line, var(--accent));background:var(--wash-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;overflow:hidden;color:var(--accent);}
+.sg-foto-hueco.con{border-style:solid;}
+.sg-foto-hueco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.sg-foto-mas{font-size:24px;line-height:1;}
+.sg-foto-lbl{font:600 12px var(--f-body);position:relative;z-index:1;}
+.sg-foto-hueco.con .sg-foto-lbl{position:absolute;left:6px;bottom:6px;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;}
+.sg-foto-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:12px;cursor:pointer;z-index:2;}
+.sg-fotos-res{display:flex;gap:8px;margin-top:10px;}
+.sg-fr{flex:0 0 72px;padding:0;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;gap:3px;font:500 11px var(--f-body);color:var(--dim-6);}
+.sg-fr img{width:72px;height:96px;object-fit:cover;border-radius:10px;background:var(--wash-med);}
+.sg-foto-grande{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;}
+.sg-foto-grande.show{display:flex;}
+.sg-foto-grande img{max-width:100%;max-height:85vh;border-radius:12px;}
+.sg-foto-grande span{color:#fff;font:500 13px var(--f-body);}
