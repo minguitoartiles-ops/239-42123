@@ -5,7 +5,7 @@
    - Aviso cuando la memoria del dispositivo pasa del 80 %.
    Se carga la última.
    ========================================================= */
-const FSD_SOBRA_ENT = '.sr-filas, .sr-plan, .en-ej-acts, .en-ses-acts, .ru-ss, .en-hist, .ej-resumen, .ru-asa, .ru-video, .ex-tec-btn';
+const FSD_SOBRA_ENT = '.cd-box, .sr-filas, .sr-plan, .en-ej-acts, .en-ses-acts, .ru-ss, .en-hist, .ej-resumen, .ru-asa, .ru-video, .ex-tec-btn';
 function fsdLimpiarEnt(html){
   if (!html || typeof html !== 'string' || html.length < 200) return html;
   const t = document.createElement('template'); t.innerHTML = html;
