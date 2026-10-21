@@ -708,3 +708,5 @@ function clMarcarEnLista(){
   }
 }
 goToCliente = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(clMarcarEnLista, 30); return r; }; })(goToCliente);
+/* #139 emojis: los del teclado del dispositivo */
+if (typeof toggleEmojis === 'function') toggleEmojis = function(){ const i = document.getElementById('chatInput'); if (i) i.focus(); };
