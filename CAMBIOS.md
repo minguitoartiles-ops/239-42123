@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.65 → 0.65.4 (actual)
-Cambios acumulados hacia la 0.66: **8 de 10**
+## Versión 0.66 (actual)
+Cambios acumulados hacia la 0.67: **0 de 10**
+
+## Versión 0.65 → 0.65.4
 
 ### Hacia la 0.66
 1. 21/10/2026 13:25 · Seguimientos de un cliente (profesionales): en lista de una sola columna, del más reciente (arriba) al más antiguo (abajo), también en el ordenador; en el móvil el botón «Descargar en PDF» ya no ocupa todo el ancho
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.66: **8 de 10**
 6. 21/10/2026 14:05 · Tarjetas de la lista de clientes: el nombre ya no se parte en tres líneas; la etiqueta de estado baja a la línea de abajo si no cabe. Filtros de clientes sin cortarse en el ordenador y casillas de la calculadora alineadas. Revisadas todas las pantallas con 40 clientes en móvil (360 y 412 px), tablet y ordenador (1100 a 2560 px) → **0.65.3**
 7. 21/10/2026 14:20 · Pestaña Seguimientos (profesionales): la puntuación sale grande («66 /100») con su color, «Ver resumen» es un botón cómodo de pulsar y hay filtros Todos · Al día · Pendientes de rellenar · Mejor puntuación · Peor puntuación (con el número de clientes en cada uno); la línea de la última semana ya no corta la fecha
 8. 21/10/2026 14:20 · Seguimientos siempre ordenados del más reciente al más antiguo aunque una copia restaurada los traiga al revés (la copia de prueba de 40 clientes los traía así y marcaba días de retraso que no eran) → **0.65.4**
+9. 21/10/2026 14:15 · Cliente: barra de abajo Hoy · Nutrición · Entreno · Chat · ⚙️ Ajustes. Fuera la pestaña «Progreso»: al final de «Hoy» sale «Tu progreso» (semana del plan, peso desde el inicio, seguimientos, logros y rachas) con «Ver todo mi progreso». «Cerrar sesión» pasa al panel de la foto de perfil, con acceso directo a Ajustes
+10. 21/10/2026 14:15 · Seguimientos en el ordenador: números y medidas más grandes y repartidos por todo el ancho de la tarjeta (notas en casillas de 24 px, medidas en tres columnas) → **sube a la 0.66**
 
 ## Versión 0.64 → 0.64.4
 
