@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.71 → 0.71.3 (actual)
-Cambios acumulados hacia la 0.72: **7 de 10**
+## Versión 0.71 → 0.71.4 (actual)
+Cambios acumulados hacia la 0.72: **8 de 10**
 
 ### Hacia la 0.72
 1. 21/10/2026 23:20 · Ficha del cliente (sección Seguimiento): «📸 Antes / Ahora» con la primera y la última foto de cada posición (frente, perfil, espalda), con fecha y peso; se amplían al tocarlas
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.72: **7 de 10**
 5. 22/10/2026 00:10 · Seguimientos: botón «✓ Completar seguimiento» en cada cliente con un seguimiento sin revisar, con comentario opcional que le llega al chat como mención («📋 Revisión de tu seguimiento») y con aviso. Al completarlo desaparece de tu pestaña (independiente para Domingo y Fátima; el otro ve «Ya lo revisó …»). Contador «N seguimientos por revisar» y chip «✓ Revisados» para verlos y «Deshacer». Si el cliente corrige su seguimiento, vuelve a salir para revisar
 6. 22/10/2026 00:25 · Chat en la app de escritorio: vuelve el botón 😊 con un panel por categorías (Recientes, Caras, Gestos, Deporte, Comida, Símbolos); inserta donde está el cursor, deja poner varios seguidos y se cierra con Esc o al hacer clic fuera. En el móvil se siguen usando los emojis del teclado → **0.71.3**
 7. 22/10/2026 00:45 · Nombre corregido en toda la app: «Fitnessindramas», todo junto (título de la ventana y de la app instalada, menú, textos legales, consentimientos, avisos…)
+8. 22/10/2026 01:00 · Mapa muscular con figura anatómica nueva (react-native-body-highlighter, licencia MIT): músculos separados de frente y de espalda, en versión hombre o mujer según el cliente («Figura del mapa muscular» en sus datos). Nueva fila «Créditos y licencias» en Ajustes → Privacidad → **0.71.4**
 
 ## Versión 0.70 → 0.70.4
 
