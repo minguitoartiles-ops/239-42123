@@ -3,14 +3,16 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.65 → 0.65.2 (actual)
-Cambios acumulados hacia la 0.66: **4 de 10**
+## Versión 0.65 → 0.65.3 (actual)
+Cambios acumulados hacia la 0.66: **6 de 10**
 
 ### Hacia la 0.66
 1. 21/10/2026 13:25 · Seguimientos de un cliente (profesionales): en lista de una sola columna, del más reciente (arriba) al más antiguo (abajo), también en el ordenador; en el móvil el botón «Descargar en PDF» ya no ocupa todo el ancho
 2. 21/10/2026 13:45 · Chat: cada mensaje lleva la foto (o la inicial) de quien lo escribe a la izquierda de la burbuja, también los tuyos, para Domingo, Fátima y el cliente → **0.65.1**
 3. 21/10/2026 13:45 · Recetas: la pantalla ya no se puede aplastar con listas largas o ventanas bajas; la etiqueta «Esta semana» del recetario del cliente ya no se estira
 4. 21/10/2026 13:45 · Pagos (móvil y ordenador): lista en columnas Nombre · Tarifa · Alta · Estado del pago, con los mismos colores (rojo sin acceso o vencido, naranja periodo de gracia, ámbar vence pronto, verde al día); al tocar un cliente se abre su ficha con «Suscripción» desplegada → **0.65.2**
+5. 21/10/2026 14:05 · Ordenador con pantalla grande: el historial de seguimientos de un cliente y la pantalla de Recetas ya no salen aplastados en una columna estrechísima (era el «achatado» de Recetas)
+6. 21/10/2026 14:05 · Tarjetas de la lista de clientes: el nombre ya no se parte en tres líneas; la etiqueta de estado baja a la línea de abajo si no cabe. Filtros de clientes sin cortarse en el ordenador y casillas de la calculadora alineadas. Revisadas todas las pantallas con 40 clientes en móvil (360 y 412 px), tablet y ordenador (1100 a 2560 px) → **0.65.3**
 
 ## Versión 0.64 → 0.64.4
 
