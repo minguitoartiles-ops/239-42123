@@ -234,6 +234,7 @@ pintarPagosPro = (function(orig){
     }).join('');
     l.classList.add('pg-tabla'); l.setAttribute('role', 'table');
     l.innerHTML = '<div class="pg-cab" role="row"><span role="columnheader">Nombre</span><span role="columnheader">Tarifa</span><span role="columnheader">Alta</span><span role="columnheader">Estado del pago</span></div>' + h;
+    pgSeparar();
     return r;
   };
 })(pintarPagosPro);
@@ -412,3 +413,111 @@ atrasPorNiveles = (function(orig){
     return orig.apply(this, arguments);
   };
 })(atrasPorNiveles);
+
+/* =========================================================
+   #124 Plan nutricional (profesionales, editando): volver a tocar un alimento elegido lo deselecciona
+   ========================================================= */
+pick = (function(orig){
+  return function(el){
+    if (el && el.classList && el.classList.contains('selected') && isCoachView() && coachEditing && el.closest && el.closest('#comidasCont')) {
+      el.classList.remove('selected');
+      const mb = el.closest('.meal-block');
+      try { if (mb) updateMealSummary(mb); } catch(e){}
+      try { calcularPlan(); } catch(e){}
+      try { if (typeof exResumenComidas === 'function') exResumenComidas(); } catch(e){}
+      try { if (typeof enUndoRegistrar === 'function') enUndoRegistrar(); } catch(e){}
+      return;
+    }
+    return orig.apply(this, arguments);
+  };
+})(pick);
+
+/* #125 «Últimos movimientos» en su propio apartado dentro de Pagos */
+let pgVista = 'clientes';
+function pgVer(v){ pgVista = v; pgSeparar(); const bd = document.querySelector('#view-coach-pagos .alta-body'); if (bd) bd.scrollTop = 0; }
+function pgSeparar(){
+  const cont = document.getElementById('pagosPro'); if (!cont) return;
+  const movs = cont.querySelector('.pagos-movs');
+  const lbl = Array.prototype.filter.call(cont.querySelectorAll('.alta-label'), function(x){ return /movimientos/i.test(x.textContent); })[0];
+  let caja = document.getElementById('pgMovsCaja');
+  if (!caja) {
+    caja = document.createElement('div'); caja.id = 'pgMovsCaja';
+    if (lbl) { lbl.parentNode.insertBefore(caja, lbl); caja.appendChild(lbl); }
+    let x = caja.nextSibling;
+    while (x && !(x.classList && x.classList.contains('ajx-note'))) { const sig = x.nextSibling; caja.appendChild(x); x = sig; }
+    if (lbl) lbl.hidden = true;
+  }
+  const n = movs ? movs.children.length : 0;
+  let seg = document.getElementById('pgSeg');
+  if (!seg) {
+    seg = document.createElement('div'); seg.id = 'pgSeg'; seg.className = 'pg-seg'; seg.setAttribute('role', 'tablist');
+    const ref = cont.querySelector('.pagos-resumen') || cont.firstChild;
+    ref.parentNode.insertBefore(seg, ref.nextSibling);
+  }
+  seg.innerHTML = '<button type="button" role="tab" aria-selected="' + (pgVista === 'clientes') + '" class="' + (pgVista === 'clientes' ? 'on' : '') + '" onclick="pgVer(\'clientes\')">👥 Clientes</button>'
+    + '<button type="button" role="tab" aria-selected="' + (pgVista === 'movs') + '" class="' + (pgVista === 'movs' ? 'on' : '') + '" onclick="pgVer(\'movs\')">🧾 Últimos movimientos' + (n ? ' <span class="sg-fn">' + n + '</span>' : '') + '</button>';
+  const verMovs = pgVista === 'movs';
+  caja.hidden = !verMovs;
+  ['.pagos-filtros', '.pagos-lista'].forEach(function(sel){ const e = cont.querySelector(sel); if (e) e.hidden = verMovs; });
+  Array.prototype.forEach.call(cont.querySelectorAll(':scope > .picker-empty'), function(e){ if (!caja.contains(e)) e.hidden = verMovs; });
+}
+
+/* =========================================================
+   #126 Sonidos: «campanita» al llegar un aviso a la campana y «mensaje enviado» al enviar en el chat.
+   Se pueden quitar en Ajustes → Notificaciones (se guarda en este dispositivo).
+   ========================================================= */
+const SND_KEY = 'fsd_sonidos';
+const SND = { campanita: 'sonidos/campanita.mp3', enviado: 'sonidos/mensaje_enviado.mp3' };
+const sndCache = {};
+function sndActivos(){ try { return localStorage.getItem(SND_KEY) !== '0'; } catch(e){ return true; } }
+function sndSonar(n){
+  if (!sndActivos() || !SND[n]) return;
+  try {
+    let a = sndCache[n];
+    if (!a) { a = sndCache[n] = new Audio(SND[n]); a.preload = 'auto'; a.volume = 0.6; }
+    a.currentTime = 0;
+    const pr = a.play(); if (pr && pr.catch) pr.catch(function(){});   // el navegador puede bloquearlo hasta el primer toque
+  } catch(e){}
+}
+function sndCambiar(el){
+  const on = !el.classList.contains('on');
+  try { localStorage.setItem(SND_KEY, on ? '1' : '0'); } catch(e){}
+  el.classList.toggle('on', on); el.setAttribute('aria-checked', String(on));
+  if (on) sndSonar('campanita');
+}
+crearAviso = (function(orig){
+  return function(dest){
+    const antes = dest ? noLeidos(dest) : 0;
+    const r = orig.apply(this, arguments);
+    try { if (dest && dest === destinatarioActual() && noLeidos(dest) > antes) sndSonar('campanita'); } catch(e){}
+    return r;
+  };
+})(crearAviso);
+/* avisos que llegan desde otra pestaña o ventana */
+let sndUlt = null;
+function sndContar(){ try { const d = destinatarioActual(); return d ? noLeidos(d) : 0; } catch(e){ return 0; } }
+window.addEventListener('storage', function(e){
+  if (e.key !== AVISOS_KEY) return;
+  setTimeout(function(){ const n = sndContar(); if (sndUlt != null && n > sndUlt) sndSonar('campanita'); sndUlt = n; }, 0);
+});
+setTimeout(function(){ sndUlt = sndContar(); }, 0);
+sendMsg = (function(orig){
+  return function(){
+    const t = (document.getElementById('chatInput').value || '').trim();
+    const r = orig.apply(this, arguments);
+    if (t) sndSonar('enviado');
+    return r;
+  };
+})(sendMsg);
+meterEnChat = (function(orig){
+  return function(){ const r = orig.apply(this, arguments); sndSonar('enviado'); return r; };
+})(meterEnChat);
+htmlAjustesAvisos = (function(orig){
+  return function(rol){
+    const h = orig.apply(this, arguments);
+    if (!h) return h;
+    const on = sndActivos();
+    return h + '<div class="list-group"><div class="list-row aviso-row"><span class="aviso-l"><span>🔔 Sonidos</span><small>Campanita al llegar un aviso y sonido al enviar un mensaje</small></span>'
+      + '<div class="toggle' + (on ? ' on' : '') + '" role="switch" aria-label="Sonidos" aria-checked="' + on + '" onclick="sndCambiar(this)"><div class="toggle-knob"></div></div></div></div>';
+  };
+})(htmlAjustesAvisos);

@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.66';
+const APP_VERSION = '0.66.1';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -565,6 +565,7 @@ const LEGAL_COOKIES =
 + '<tr><td>fsd_fotos</td><td>Técnica</td><td>Guardar la foto de perfil de los profesionales</td><td>Hasta que la quites</td></tr>'
 + '<tr><td>fsd_dispositivos_confianza</td><td>Técnica</td><td>Recordar dispositivos de confianza de los profesionales</td><td>30 días</td></tr>'
 + '<tr><td>fsd_avisos</td><td>Técnica</td><td>Guardar tus notificaciones y qué tipos quieres recibir</td><td>Hasta que borres los datos</td></tr>'
++ '<tr><td>fsd_sonidos</td><td>Preferencia</td><td>Recordar si quieres los sonidos de avisos y mensajes</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
 + '<tr><td>fsd_tema</td><td>Preferencias</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
