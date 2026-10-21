@@ -63,3 +63,19 @@ enPintarPlanes = (function(orig){
     return r;
   };
 })(enPintarPlanes);
+
+/* Mejora 7 (21/10) · filtro rápido: Todos · Toca revisar · Sin plan · Al día */
+let entFiltro = 'todos';
+function entFiltrar(f){ entFiltro = f; entPintarFiltros(); }
+function entPintarFiltros(){
+  const cont = document.getElementById('planesPro'); if (!cont || !coachActivo || coachActivo.rol === 'dietista') return;
+  const filas = Array.prototype.slice.call(cont.querySelectorAll('.plan-fila'));
+  const n = function(c){ return filas.filter(function(f){ return c === 'todos' || f.classList.contains(c); }).length; };
+  let bx = document.getElementById('entFiltros');
+  if (!bx) { bx = document.createElement('div'); bx.id = 'entFiltros'; bx.className = 'ent-filtros'; bx.setAttribute('role', 'tablist'); const b = cont.querySelector('.pl-busca'); if (b) b.parentNode.insertBefore(bx, b.nextSibling); }
+  bx.innerHTML = [['todos', 'Todos'], ['revisar', '⚠️ Toca revisar'], ['vacio', 'Sin plan'], ['ok', 'Al día']].map(function(o){
+    return '<button type="button" role="tab" aria-selected="' + (entFiltro === o[0]) + '" class="' + (entFiltro === o[0] ? 'sel' : '') + '" onclick="entFiltrar(\'' + o[0] + '\')">' + o[1] + ' <b>' + n(o[0]) + '</b></button>';
+  }).join('');
+  filas.forEach(function(f){ f.classList.toggle('ent-fuera', entFiltro !== 'todos' && !f.classList.contains(entFiltro)); });
+}
+enPintarPlanes = (function(orig){ return function(){ const r = orig.apply(this, arguments); entPintarFiltros(); return r; }; })(enPintarPlanes);

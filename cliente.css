@@ -395,3 +395,12 @@ html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) .cd-box.cd-edit .cd-mini{d
 .ff-c img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;background:var(--wash-med);}
 .ff-c small{font:500 11px var(--f-mono);color:var(--dim-6);}
 .ff-vacio{display:flex;aspect-ratio:3/4;align-items:center;justify-content:center;border:1.5px dashed var(--line-strong);border-radius:12px;color:var(--dim-55);font:500 12px var(--f-body);text-align:center;}
+
+/* Mejora 7 · detalles */
+@media (max-width:1180px){ html.esc #coachBarLabel{display:none;} html.esc #coachBarName{min-width:120px;} html.esc .en-deshacer-txt{display:none;} }
+@media (max-width:400px){ .exg-rachas span{font-size:11px !important;line-height:1.25;} .exg-rachas > div{padding-left:6px !important;padding-right:6px !important;} }
+.ent-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+.ent-filtros button{height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line-strong);background:var(--bg);color:var(--dim-6);font:600 12.5px var(--f-body);cursor:pointer;}
+.ent-filtros button.sel{background:var(--accent);border-color:var(--accent);color:var(--on-accent,#fff);}
+.ent-filtros button b{font-family:var(--f-mono);margin-left:3px;}
+.plan-fila.ent-fuera{display:none !important;}

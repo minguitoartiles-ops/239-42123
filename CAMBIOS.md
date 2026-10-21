@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.71.0 (actual)
-Cambios acumulados hacia la 0.72: **1 de 10**
+## Versión 0.71 → 0.71.1 (actual)
+Cambios acumulados hacia la 0.72: **2 de 10**
 
 ### Hacia la 0.72
 1. 21/10/2026 23:20 · Ficha del cliente (sección Seguimiento): «📸 Antes / Ahora» con la primera y la última foto de cada posición (frente, perfil, espalda), con fecha y peso; se amplían al tocarlas
+2. 21/10/2026 23:40 · Detalles: en ventanas de ordenador estrechas (hasta 1180 px) la barra del plan deja el nombre del cliente entero («Editando:» se oculta, «Deshacer» queda como ↶ y el botón dice «Guardar y notificar»); la calculadora dice «Kcal objetivo»; los logros se leen mejor en móviles pequeños; Entrenamientos tiene filtros rápidos Todos · ⚠️ Toca revisar · Sin plan · Al día (se combinan con el buscador) → **0.71.1**
 
 ## Versión 0.70 → 0.70.4
 
