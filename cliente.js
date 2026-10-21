@@ -780,8 +780,9 @@ exPintarFiltros = (function(orig){
 /* ---------- #156 «¿Cómo renovar?» ----------
    Cuando la suscripción está a punto de vencer, ha vencido, está en gracia o el acceso está pausado,
    el cliente ve cómo pagar: Bizum o transferencia, con el concepto ya escrito con su nombre y su tarifa. */
-const RN_BIZUM = ['+34 620 273 866', '+34 609 47 81 70'];
-const RN_IBAN = 'ES80 3076 0180 5210 1751 0718', RN_TITULAR = 'Fátima Toledo', RN_BANCO = 'Cajasiete';
+/* Los datos de pago ya no van en el código (repositorio público): se configuran en Ajustes → Pagos de clientes
+   → «Bizum y transferencia» y se guardan con la configuración de pagos (ver proteccion.js). */
+function rnDatos(){ const c = typeof mjCfgPagos === 'function' ? mjCfgPagos() : {}; return { bizum: [c.bizum1, c.bizum2].filter(Boolean), iban: c.iban || '', titular: c.titular || '', banco: c.banco || '' }; }
 function rnConcepto(){
   const d = clientesData[clienteActual] || {}, p = String(d.nombre || '').trim().split(/\s+/);
   const t = d.tarifa && MJ_TARIFAS[d.tarifa.tipo] ? MJ_TARIFAS[d.tarifa.tipo].n.toLowerCase() : '';
@@ -791,14 +792,16 @@ function rnCopiar(btn, txt){
   const fin = function(){ const o = btn.textContent; btn.textContent = 'Copiado ✓'; setTimeout(function(){ btn.textContent = o; }, 1400); };
   try { navigator.clipboard.writeText(txt).then(fin, function(){ toast(txt); }); } catch(e){ toast(txt); }
 }
-function rnFila(lbl, val, copia){ return '<div class="rn-fila"><span><small>' + lbl + '</small><b>' + esc(val) + '</b></span><button type="button" class="rn-cp" onclick="rnCopiar(this,\'' + (copia || val).replace(/'/g, "\\'") + '\')">Copiar</button></div>'; }
+function rnFila(lbl, val, copia){ return '<div class="rn-fila"><span><small>' + esc(lbl) + '</small><b>' + esc(val) + '</b></span><button type="button" class="rn-cp" data-copiar="' + esc(copia || val) + '" onclick="rnCopiar(this, this.dataset.copiar)">Copiar</button></div>'; }
 function rnHtml(abierto){
-  const c = rnConcepto();
-  return '<details class="rn-box"' + (abierto ? ' open' : '') + '><summary>¿Cómo renovar?</summary><div class="rn-cuerpo">'
-    + '<p class="rn-t">1 · Bizum</p>' + RN_BIZUM.map(function(n){ return rnFila('Número', n, n.replace(/\s/g, '')); }).join('')
-    + '<p class="rn-t">2 · Transferencia bancaria</p>' + rnFila('IBAN · ' + RN_TITULAR + ', ' + RN_BANCO, RN_IBAN, RN_IBAN.replace(/\s/g, ''))
-    + '<p class="rn-t">Concepto (en los dos casos)</p>' + rnFila('Escríbelo así', c)
-    + '<p class="rn-nota">Cuando lo hayas hecho, avisa a Fátima o Domingo por el chat para que lo registren.</p></div></details>';
+  const c = rnConcepto(), d = rnDatos();
+  let h = '', n = 0;
+  if (d.bizum.length) h += '<p class="rn-t">' + (++n) + ' · Bizum</p>' + d.bizum.map(function(x){ return rnFila('Número', x, x.replace(/\s/g, '')); }).join('');
+  if (d.iban) h += '<p class="rn-t">' + (++n) + ' · Transferencia bancaria</p>' + rnFila('IBAN' + (d.titular || d.banco ? ' · ' + [d.titular, d.banco].filter(Boolean).join(', ') : ''), d.iban, d.iban.replace(/\s/g, ''));
+  if (n) h += '<p class="rn-t">Concepto' + (n > 1 ? ' (en los dos casos)' : '') + '</p>' + rnFila('Escríbelo así', c);
+  else h += '<p class="rn-nota">Escribe a Fátima o Domingo por el chat y te dirán cómo pagar.</p>';
+  return '<details class="rn-box"' + (abierto ? ' open' : '') + '><summary>¿Cómo renovar?</summary><div class="rn-cuerpo">' + h
+    + (n ? '<p class="rn-nota">Cuando lo hayas hecho, avisa a Fátima o Domingo por el chat para que lo registren.</p>' : '') + '</div></details>';
 }
 mjBannerPago = (function(orig){
   return function(){
@@ -995,3 +998,15 @@ document.addEventListener('mousedown', function(e){
   const p = document.getElementById('emojiPanel'); if (!p || p.hidden || !e.target.closest) return;
   if (!e.target.closest('#emojiPanel') && !e.target.closest('#emojiBtn')) cerrarEmojis();
 });
+
+/* ---------- 22/10 · Cliente: al entrar en Entrenamiento, todas las sesiones plegadas ----------
+   Aspecto más limpio: el cliente despliega la que le interese tocando su cabecera. */
+function clPlegarSesiones(){
+  if (!window.fsdSesionCliente || isCoachView()) return;
+  sesionCards().forEach(function(c){
+    const b = c.querySelector('.sesion-body'), h = c.querySelector('.sesion-head');
+    if (b && h && b.style.display !== 'none') toggleSesion(h);
+    if (b && !b.style.display) { b.style.display = 'none'; c.classList.remove('open'); const ch = h && h.querySelector('.sesion-chevron'); if (ch) ch.classList.remove('open'); }
+  });
+}
+fsdTras('goTo', function(r, n){ if (n === 'entreno') { clPlegarSesiones(); try { exBarraEntreno(); } catch(e){} } });
