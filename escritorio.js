@@ -380,3 +380,6 @@ sendMsg = (function(orig){
 entrarAlPanel = (function(orig){ return function(){ orig(); escLayout(); }; })(entrarAlPanel);
 coachLogout = (function(orig){ return function(){ orig.apply(this, arguments); escLayout(); }; })(coachLogout);
 escLayout();
+
+/* ---------- #154 franja superior de la app de escritorio (solo con la barra de título oculta) ---------- */
+(function(){ if (document.getElementById('escBarra')) return; const b = document.createElement('div'); b.id = 'escBarra'; b.setAttribute('aria-hidden', 'true'); document.body.appendChild(b); })();
