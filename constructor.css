@@ -34,3 +34,17 @@ html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res .ru-res-e{margin-l
 html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-asa{width:22px;}
 html.ru-compacto #sesionesCont .en-ses-acts{display:flex;gap:6px;}
 html.ru-compacto #sesionesCont .en-ses-acts button{min-height:28px;padding:0 8px;font-size:12px;}
+/* #133 edición rápida en la línea: series × reps · RIR sin abrir el ejercicio */
+html.ru-compacto .ru-res{cursor:default;gap:6px;}
+html.ru-compacto .ru-q{display:inline-flex;align-items:center;gap:4px;}
+html.ru-compacto .ru-q input{width:34px;height:28px;padding:0;border:1.5px solid var(--line-strong);border-radius:8px;background:var(--wash-soft);color:var(--ink);text-align:center;font:700 13px var(--f-mono);}
+html.ru-compacto .ru-q input.ru-q-s{width:28px;}
+html.ru-compacto .ru-q input:focus{outline:none;border-color:var(--accent);background:var(--card);}
+html.ru-compacto .ru-q input::placeholder{font-size:9.5px;color:var(--dim-45);}
+html.ru-compacto .ru-q-x{font:600 12px var(--f-mono);color:var(--dim-6);}
+html.ru-compacto .ru-q-l{font:700 10px var(--f-mono);color:var(--dim-6);margin-left:4px;}
+html.ru-compacto .ru-abrir{flex:none;min-width:30px;height:28px;border:none;border-radius:8px;background:none;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;}
+html.ru-compacto .ru-abrir:hover{background:var(--wash-med);}
+html.ru-compacto .ru-q-txt{font:600 11px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.05em;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco){cursor:pointer;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res{padding:2px 0;}
