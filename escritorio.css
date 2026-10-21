@@ -158,3 +158,15 @@ html.esc-cliente .phone{width:430px;max-width:100%;box-shadow:0 0 0 1px rgba(0,0
 .esc-cli-pill{position:fixed;top:14px;left:14px;z-index:300;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:99px;background:#12151A;color:#fff;font:500 12.5px Archivo,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.18);}
 .esc-cli-pill[hidden]{display:none;}
 .esc-cli-pill button{border:none;border-radius:99px;padding:5px 12px;background:#88B9E6;color:#0E1013;font:700 12px Archivo,sans-serif;cursor:pointer;}
+
+/* ---------- #154 App de escritorio sin barra de título con texto ----------
+   La ventana instalada usa «window-controls-overlay»: desaparece el texto de la barra de título
+   y en su lugar queda una franja fina y limpia (se puede arrastrar para mover la ventana)
+   separada del contenido por una línea suave. */
+#escBarra{display:none;}
+@media (display-mode: window-controls-overlay){
+  :root{ --wco:env(titlebar-area-height, 0px); }
+  #escBarra{display:block;position:fixed;top:0;left:0;right:0;height:var(--wco);background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 1px 6px rgba(0,0,0,.04);-webkit-app-region:drag;app-region:drag;z-index:60;}
+  .phone{margin-top:var(--wco) !important;height:calc(100dvh - var(--wco)) !important;}
+  html.esc #coachTabs,html.esc #coachTabs[hidden]{top:var(--wco);}
+}

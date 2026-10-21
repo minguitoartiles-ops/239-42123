@@ -710,3 +710,24 @@ function clMarcarEnLista(){
 goToCliente = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(clMarcarEnLista, 30); return r; }; })(goToCliente);
 /* #139 emojis: los del teclado del dispositivo */
 if (typeof toggleEmojis === 'function') toggleEmojis = function(){ const i = document.getElementById('chatInput'); if (i) i.focus(); };
+
+/* ---------- #151 Teléfono: el +34 se queda escrito ----------
+   Al entrar en cualquier campo de teléfono vacío aparece «+34 » ya escrito (se puede borrar para otro país);
+   si se vuelve a teclear +34 no sale duplicado y si se deja solo el prefijo, el campo queda vacío. */
+(function(){
+  const PRE = '+34 ';
+  const esTel = function(t){ return t && t.tagName === 'INPUT' && t.type === 'tel'; };
+  document.addEventListener('focusin', function(e){
+    const t = e.target; if (!esTel(t) || t.value.trim()) return;
+    t.value = PRE;
+    try { t.setSelectionRange(PRE.length, PRE.length); } catch(_){}
+  });
+  document.addEventListener('input', function(e){
+    const t = e.target; if (!esTel(t)) return;
+    const v = t.value.replace(/^\+34\s*(\+34|0034)\s*/, PRE).replace(/^\+34\s{2,}/, PRE);
+    if (v !== t.value) t.value = v;
+  });
+  document.addEventListener('focusout', function(e){
+    const t = e.target; if (esTel(t) && /^\+34\s*$/.test(t.value)) t.value = '';
+  });
+})();
