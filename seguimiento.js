@@ -113,3 +113,121 @@ function sgVisual(){
 }
 sgVisual();
 goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'seguimiento') sgVisual(); return r; }; })(goTo);
+
+/* ---------- #157 Fotos de progreso en «Datos biométricos» ----------
+   Tres huecos (Frente · Perfil · Espalda), opcionales. Se reducen a 1280 px y se guardan en este
+   dispositivo (IndexedDB, como los protocolos); el seguimiento guarda solo sus referencias.
+   Fátima y Domingo las ven en la tarjeta del seguimiento; tocar una la amplía. */
+const SG_FOTO_POS = [['frente', 'Frente'], ['perfil', 'Perfil'], ['espalda', 'Espalda']];
+let sgFotosNuevas = {}, sgFotosPrevias = null;
+function sgFotoReducir(f){
+  return new Promise(function(ok){
+    const url = URL.createObjectURL(f), img = new Image();
+    img.onload = function(){
+      const m = 1280, k = Math.min(1, m / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(function(b){ ok(b || f); }, 'image/jpeg', 0.82);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); ok(f); };
+    img.src = url;
+  });
+}
+function sgFotosPintar(){
+  const v = document.getElementById('view-seguimiento'); if (!v) return;
+  const viejo = v.querySelector('.sg-foto'); if (viejo) { const f = viejo.closest('.field'); if (f) f.remove(); }
+  let box = document.getElementById('sgFotos');
+  if (!box) {
+    box = document.createElement('div'); box.id = 'sgFotos'; box.className = 'sg-fotos';
+    const bl = Array.prototype.filter.call(v.querySelectorAll('.sg-block'), function(b){ return /biom/i.test((b.querySelector('.sg-cat') || {}).textContent || ''); })[0];
+    if (!bl) return; bl.appendChild(box);
+  }
+  box.innerHTML = '<div class="sg-q"><label>Fotos de progreso</label><span class="sg-help">Opcional. Con la misma luz y postura cada semana se ve mejor el cambio. Solo las verán Fátima y Domingo.</span></div>'
+    + '<div class="sg-fotos-fila">' + SG_FOTO_POS.map(function(p){
+      const tiene = sgFotosNuevas[p[0]] || (sgFotosPrevias && sgFotosPrevias[p[0]]);
+      return '<label class="sg-foto-hueco' + (tiene ? ' con' : '') + '" data-pos="' + p[0] + '">'
+        + '<input type="file" accept="image/*" hidden onchange="sgFotoElegir(this,\'' + p[0] + '\')">'
+        + (tiene ? '<img alt="' + p[1] + '" data-pos-img="' + p[0] + '">' : '<span class="sg-foto-mas" aria-hidden="true">＋</span>')
+        + '<span class="sg-foto-lbl">' + p[1] + '</span>'
+        + (tiene ? '<button type="button" class="sg-foto-x" aria-label="Quitar la foto de ' + p[1].toLowerCase() + '" onclick="sgFotoQuitar(event,\'' + p[0] + '\')">✕</button>' : '') + '</label>';
+    }).join('') + '</div>';
+  SG_FOTO_POS.forEach(function(p){
+    const im = box.querySelector('img[data-pos-img="' + p[0] + '"]'); if (!im) return;
+    if (sgFotosNuevas[p[0]]) im.src = URL.createObjectURL(sgFotosNuevas[p[0]]);
+    else if (sgFotosPrevias && sgFotosPrevias[p[0]]) sgFotoSrc(im, sgFotosPrevias[p[0]]);
+  });
+}
+function sgFotoSrc(im, id){ prOp('readonly', function(st){ return st.get(id); }).then(function(b){ if (b) im.src = URL.createObjectURL(b); }).catch(function(){}); }
+function sgFotoElegir(inp, pos){
+  const f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+  if (!/^image\//.test(f.type)) { toast('Elige una imagen'); return; }
+  sgFotoReducir(f).then(function(b){ sgFotosNuevas[pos] = b; sgFotosPintar(); });
+}
+function sgFotoQuitar(ev, pos){
+  ev.preventDefault(); ev.stopPropagation();
+  delete sgFotosNuevas[pos]; if (sgFotosPrevias) delete sgFotosPrevias[pos];
+  sgFotosPintar();
+}
+guardarSeguimiento = (function(orig){
+  return function(){
+    const k = clienteActual, l0 = k && (SEGUIMIENTOS[k] || [])[0];
+    const previas = sgFotosPrevias ? Object.assign({}, sgFotosPrevias) : {};
+    const r = orig.apply(this, arguments);
+    const nuevo = k && (SEGUIMIENTOS[k] || [])[0];
+    if (!nuevo || nuevo === l0) return r;                                   // no se guardó nada
+    const fotos = Object.keys(previas).map(function(pos){ return { pos: pos, id: previas[pos] }; });
+    const blobs = sgFotosNuevas, pend = Object.keys(blobs);
+    sgFotosNuevas = {}; sgFotosPrevias = null;
+    Promise.all(pend.map(function(pos, i){
+      const id = 'sf' + Date.now().toString(36) + i + Math.random().toString(36).slice(2, 5);
+      return prOp('readwrite', function(st){ return st.put(blobs[pos], id); }).then(function(){
+        const j = fotos.findIndex(function(f){ return f.pos === pos; }); if (j > -1) fotos.splice(j, 1);
+        fotos.push({ pos: pos, id: id });
+      });
+    })).then(function(){
+      fotos.sort(function(a, b){ return SG_FOTO_POS.map(function(p){ return p[0]; }).indexOf(a.pos) - SG_FOTO_POS.map(function(p){ return p[0]; }).indexOf(b.pos); });
+      if (fotos.length) nuevo.fotos = fotos; else delete nuevo.fotos;
+      try { guardarTodo(); pintarHistorialCliente(); } catch(e){}
+      sgFotosPintar();
+    }).catch(function(){ toast('No se han podido guardar las fotos en este dispositivo'); });
+    return r;
+  };
+})(guardarSeguimiento);
+
+/* al editar el de esta semana, sus fotos salen en los huecos */
+sgRellenar = (function(orig){
+  return function(r){
+    orig.apply(this, arguments);
+    sgFotosNuevas = {}; sgFotosPrevias = {};
+    ((r && r.fotos) || []).forEach(function(f){ sgFotosPrevias[f.pos] = f.id; });
+    sgFotosPintar();
+  };
+})(sgRellenar);
+sgCancelarEdicion = (function(orig){ return function(){ sgFotosNuevas = {}; sgFotosPrevias = null; orig(); sgFotosPintar(); }; })(sgCancelarEdicion);
+goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'seguimiento') sgFotosPintar(); return r; }; })(goTo);
+sgFotosPintar();
+
+/* en la tarjeta de cada seguimiento (cliente y profesionales) */
+tarjetaSeguimiento = (function(orig){
+  return function(r){
+    let h = orig.apply(this, arguments);
+    if (r && r.fotos && r.fotos.length) {
+      const f = '<div class="sg-fotos-res">' + r.fotos.map(function(x){
+        const n = (SG_FOTO_POS.filter(function(p){ return p[0] === x.pos; })[0] || [0, 'Foto'])[1];
+        return '<button type="button" class="sg-fr" onclick="sgFotoAmpliar(\'' + x.id + '\',\'' + n + '\')"><img alt="' + n + '" data-foto="' + x.id + '"><span>' + n + '</span></button>';
+      }).join('') + '</div>';
+      h = h.replace(/<\/div>$/, f + '</div>');
+      setTimeout(sgFotosCargar, 0);
+    }
+    return h;
+  };
+})(tarjetaSeguimiento);
+function sgFotosCargar(){
+  Array.prototype.forEach.call(document.querySelectorAll('img[data-foto]:not([src])'), function(im){ im.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; sgFotoSrc(im, im.dataset.foto); });
+}
+function sgFotoAmpliar(id, n){
+  let o = document.getElementById('sgFotoGrande');
+  if (!o) { o = document.createElement('div'); o.id = 'sgFotoGrande'; o.className = 'sg-foto-grande'; o.onclick = function(){ o.classList.remove('show'); }; document.body.appendChild(o); }
+  o.innerHTML = '<img alt="' + esc(n) + '"><span>' + esc(n) + ' · toca para cerrar</span>';
+  sgFotoSrc(o.querySelector('img'), id); o.classList.add('show');
+}
