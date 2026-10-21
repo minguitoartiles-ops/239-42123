@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.66.2';
+const APP_VERSION = '0.66.3';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -505,7 +505,7 @@ const TITULAR = {
   marca: 'Fitnessindramas (Fitness sin Dramas)'
 };
 const LEGAL_PRIVACIDAD =
-  '<p class="legal-meta">Última actualización: 19 de octubre de 2026</p>'
+  '<p class="legal-meta">Última actualización: 21 de octubre de 2026</p>'
 + '<p class="legal-aviso">Versión de prueba: por ahora los datos se guardan solo en este dispositivo y no se envían a ningún servidor.</p>'
 + '<h4>1. Responsable del tratamiento</h4>'
 + '<p><b>' + TITULAR.nombre + '</b>, profesional autónomo, NIF ' + TITULAR.nif + ', con domicilio en ' + TITULAR.direccion + '. Nombre comercial: ' + TITULAR.marca + '. Contacto: <b>' + TITULAR.correo + '</b>.</p>'
@@ -517,7 +517,7 @@ const LEGAL_PRIVACIDAD =
 + '<li><b>Mensajes</b> que intercambias con tu equipo en el chat, incluidas fotos y notas de voz.</li>'
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
 + '<li><b>Compras de productos propios y merchandising:</b> nombre, dirección de envío, teléfono y datos del pedido.</li>'
-+ '<li><b>Pago:</b> lo gestiona Stripe. No guardamos los datos de tu tarjeta.</li></ul>'
++ '<li><b>Pago:</b> fecha, importe y tarifa de cada pago. Se paga por transferencia bancaria o, cuando esté disponible, con Stripe; no guardamos los datos de tu tarjeta.</li></ul>'
 + '<h4>3. Para qué los usamos</h4>'
 + '<ul><li>Prestarte el asesoramiento de entrenamiento y nutrición: planes, seguimiento y ajustes.</li>'
 + '<li>Comunicarnos contigo a través de la app.</li>'
@@ -536,7 +536,7 @@ const LEGAL_PRIVACIDAD =
 + '<li><b>Interés legítimo</b> (art. 6.1.f RGPD): seguridad de la app y prevención de accesos indebidos.</li></ul>'
 + '<p>Puedes retirar cualquier consentimiento en Ajustes → Privacidad o escribiendo a ' + TITULAR.correo + '.</p>'
 + '<h4>5. Cuánto tiempo los guardamos</h4>'
-+ '<p>Mientras tu asesoría esté activa. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
++ '<p>Mientras tu asesoría esté activa. <b>Si no pagas</b>: tras el periodo de gracia de 7 días pierdes el acceso y guardamos tus datos 15 días más; si sigues sin pagar, borramos tu perfil (plan, seguimientos, conversación y fotos). <b>Si te das de baja</b>, dejas de tener acceso y tu ficha se conserva sin acceso para poder reactivarla si vuelves; puedes pedirnos que la borremos cuando quieras. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
 + '<h4>6. Con quién los compartimos</h4>'
 + '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta:</p>'
 + '<ul><li>GitHub, Inc.: alojamiento de la app.</li>'
