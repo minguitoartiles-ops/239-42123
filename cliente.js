@@ -178,3 +178,66 @@ function sgOrdenarLista(){
 goToSeguimientos = (function(orig){
   return function(){ const r = orig.apply(this, arguments); sgOrdenarLista(); return r; };
 })(goToSeguimientos);
+
+/* =========================================================
+   #112 Chat: también los mensajes propios llevan la foto (o inicial) de quien escribe,
+   a la izquierda de la burbuja, en el último mensaje de cada racha (como los de los demás)
+   ========================================================= */
+decorarChat = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const list = document.getElementById('chatList'); if (!list) return r;
+    const bs = Array.prototype.slice.call(list.querySelectorAll('.bubble'));
+    bs.forEach(function(b, i){
+      if (!b.classList.contains('msg-mio')) return;
+      const sig = bs[i + 1];
+      if (sig && sig.classList.contains('msg-mio')) { b.classList.add('sin-av'); return; }
+      const a = autorBurbuja(b);
+      const av = document.createElement('span');
+      av.className = 'msg-av2 msg-av-mio ' + colorAutor(a);
+      av.setAttribute('aria-hidden', 'true');
+      const url = fotoAutor(a);
+      if (url) { av.style.backgroundImage = 'url("' + url + '")'; av.classList.add('con-foto'); }
+      else av.textContent = (a.nombre || '?').trim().charAt(0).toUpperCase();
+      b.appendChild(av);
+    });
+    return r;
+  };
+})(decorarChat);
+
+/* =========================================================
+   #116 Pagos (profesionales): tabla por columnas
+   Nombre · Tarifa · Fecha de alta · Estado del pago, con los mismos colores de siempre
+   ========================================================= */
+function pgFilaCls(e){
+  return !e.acceso && !e.baja ? 'roj' : ({ vencido: 'roj', gracia: 'nar', vence: 'amb', ok: 'ok', sin: '', baja: 'gris' }[e.cod] || '');
+}
+pintarPagosPro = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const l = document.querySelector('#pagosPro .pagos-lista'); if (!l) return r;
+    const filas = Array.prototype.slice.call(l.querySelectorAll('.pago-fila'));
+    if (!filas.length) return r;
+    const h = filas.map(function(f){
+      const m = (f.getAttribute('onclick') || '').match(/mjAbrirFichaPago\('([^']+)'\)/);
+      const k = m && m[1], d = k && clientesData[k]; if (!d) return '';
+      const t = d.tarifa, e = estadoPago(d), cls = pgFilaCls(e);
+      const tn = t && MJ_TARIFAS[t.tipo] ? MJ_TARIFAS[t.tipo].n : 'Sin tarifa';
+      const tp = t && MJ_TARIFAS[t.tipo] && t.precio != null ? mjEuros(t.precio) : '';
+      const partes = String(e.txt || '').split(' · ');
+      return '<div class="pg-fila pago-fila ' + cls + '" role="row" tabindex="0" onclick="mjAbrirFichaPago(\'' + k + '\')" onkeydown="if(event.key===\'Enter\')this.click()">'
+        + '<span class="pg-c pg-nom" role="cell"><b>' + esc(d.nombre) + '</b>' + (t && t.pagos && t.pagos.length ? '<small>' + t.pagos.length + (t.pagos.length === 1 ? ' pago' : ' pagos') + '</small>' : '') + '</span>'
+        + '<span class="pg-c pg-tar" role="cell">' + esc(tn) + (tp ? '<small>' + esc(tp) + '</small>' : '') + '</span>'
+        + '<span class="pg-c pg-alta" role="cell">' + (d.fechaAlta ? '<span class="pg-f-l">' + mjFecha(d.fechaAlta.slice(0, 10)) + '</span><span class="pg-f-c">' + mjFecha(d.fechaAlta.slice(0, 10)).replace(/\/(\d{2})(\d{2})$/, '/$2') + '</span>' : '—') + '</span>'
+        + '<span class="pg-c pg-est" role="cell"><span class="pago-est ' + cls + '">' + esc(partes[0]) + '</span>' + (partes[1] ? '<small>' + esc(partes.slice(1).join(' · ')) + '</small>' : '') + '</span>'
+        + '</div>';
+    }).join('');
+    l.classList.add('pg-tabla'); l.setAttribute('role', 'table');
+    l.innerHTML = '<div class="pg-cab" role="row"><span role="columnheader">Nombre</span><span role="columnheader">Tarifa</span><span role="columnheader">Alta</span><span role="columnheader">Estado del pago</span></div>' + h;
+    return r;
+  };
+})(pintarPagosPro);
+/* desde Pagos se abre la ficha con «Suscripción» desplegada */
+mjAbrirFichaPago = (function(orig){
+  return function(k){ const r = orig.apply(this, arguments); fpAbiertos.pago = true; fpAplicar(); return r; };
+})(mjAbrirFichaPago);
