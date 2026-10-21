@@ -1,0 +1,36 @@
+/* =========================================================
+   #121 Creador de rutinas compacto (ordenador)
+   ========================================================= */
+.ru-res{display:none;}
+.ru-vista-btn{margin:0 0 12px;min-height:38px;padding:0 14px;}
+.ru-vista-btn[hidden]{display:none !important;}
+html.ru-compacto #app .sc{padding-left:20px !important;padding-right:20px !important;}
+html.ru-compacto #sesionesCont{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,1fr);gap:14px;align-items:start;overflow-x:auto;padding-bottom:10px;}
+html.ru-compacto #sesionesCont .sesion-card{margin:0;min-width:0;}
+html.ru-compacto #sesionesCont .sesion-body{display:block !important;max-height:none !important;}
+html.ru-compacto #sesionesCont .sesion-chevron{display:none;}
+html.ru-compacto #sesionesCont .sesion-head{padding:10px 12px;}
+html.ru-compacto #sesionesCont .sesion-title{font-size:17px;}
+html.ru-compacto #sesionesCont .en-ses-acts{margin-bottom:6px;}
+html.ru-compacto #sesionesCont .ex-item{padding:6px 8px 6px;margin-bottom:6px;border-radius:12px;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) > :not(.ex-table-row):not(.ru-res){display:none !important;}
+html.ru-compacto #sesionesCont .ex-item .ex-table-row{min-height:0;}
+html.ru-compacto #sesionesCont .ex-item .ex-name-cell{font-size:14px;}
+html.ru-compacto .ru-res{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 0;padding:4px 6px 4px 34px;border:none;background:none;border-radius:8px;cursor:pointer;text-align:left;color:var(--ink);font:600 12.5px var(--f-mono);}
+html.ru-compacto .ru-res:hover{background:var(--wash-med, rgba(0,0,0,.05));}
+html.ru-compacto .ru-res .ru-res-v{white-space:nowrap;}
+html.ru-compacto .ru-res .sr-badge{font-size:10.5px;}
+html.ru-compacto .ru-res .ru-res-t{font:600 10.5px var(--f-body);color:var(--dim-6);}
+html.ru-compacto .ru-res .ru-res-e{margin-left:auto;color:var(--accent);font-size:13px;}
+html.ru-compacto #sesionesCont .ex-item.ru-foco{box-shadow:0 0 0 2px var(--accent);background:var(--card);}
+html.ru-compacto #sesionesCont .ex-item.ru-foco .ru-ss{max-width:none;}
+html.ru-compacto #sesionesCont .add-ej-btn{margin-top:4px;}
+/* una línea por ejercicio: nombre a la izquierda, pauta a la derecha */
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco){display:grid !important;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;padding:4px 8px 4px 4px !important;margin:0 0 4px !important;min-height:0 !important;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ex-table-row{margin:0 !important;padding:0 !important;min-height:34px;gap:4px;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ex-name-cell{font-size:13.5px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res{width:auto;margin:0;padding:4px 6px;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res .ru-res-e{margin-left:4px;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-asa{width:22px;}
+html.ru-compacto #sesionesCont .en-ses-acts{display:flex;gap:6px;}
+html.ru-compacto #sesionesCont .en-ses-acts button{min-height:28px;padding:0 8px;font-size:12px;}
