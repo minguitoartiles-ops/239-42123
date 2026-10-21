@@ -155,22 +155,10 @@ exSeriesDe = (function(orig){
     return r;
   };
 })(exSeriesDe);
-/* semana nueva: el cardio vuelve a quedar sin marcar */
-mjCambioDeSemana = (function(orig){
-  return function(k){
-    const d = clientesData[k], antes = d && d.semanaRef;
-    const r = orig.apply(this, arguments);
-    if (d && antes && d.semanaRef !== antes) contEnt().querySelectorAll('.ex-item[data-cd-ok]').forEach(function(it){ delete it.dataset.cdOk; });
-    return r;
-  };
-})(mjCambioDeSemana);
 /* cuándo se repinta */
-enTecSync = (function(orig){ return function(){ const r = orig.apply(this, arguments); cdSync(); return r; }; })(enTecSync);
-pickExercise = (function(orig){ return function(){ const r = orig.apply(this, arguments); setTimeout(cdSync, 0); return r; }; })(pickExercise);
-editarPlan = (function(orig){ return function(){ const r = orig.apply(this, arguments); cdSync(); return r; }; })(editarPlan);
-goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'entreno') cdSync(); return r; }; })(goTo);
-cargarPlan = (function(orig){ return function(){ const r = orig.apply(this, arguments); cdSync(); return r; }; })(cargarPlan);
-if (typeof ruPintarCompacta === 'function') ruPintarCompacta = (function(orig){ return function(){ const r = orig.apply(this, arguments); cdSync(); return r; }; })(ruPintarCompacta);
+['enTecSync', 'editarPlan', 'cargarPlan', 'ruPintarCompacta'].forEach(function(n){ fsdTras(n, function(){ cdSync(); }); });
+fsdTras('pickExercise', function(){ setTimeout(cdSync, 0); });
+fsdTras('goTo', function(r, n){ if (n === 'entreno') cdSync(); });
 
 /* ---------- circuito de fuerza + cardio (grupo en «⚡ Técnica») ---------- */
 EN_GRUPO.circ = { n: 'Circuito', e: '🔄', p: '3 vueltas · sin descanso entre ejercicios · 90 s de descanso entre vueltas', min: false,
@@ -248,12 +236,12 @@ function cdDesmarcar(btn){
   try { guardarPlan(); guardarTodo(); } catch(e){}
 }
 cdHecho = function(btn){ cdAbrirReg(btn); };
-/* semana nueva: también fuera lo apuntado */
+/* semana nueva: el cardio vuelve a quedar sin marcar y sin lo apuntado */
 mjCambioDeSemana = (function(orig){
   return function(k){
     const d = clientesData[k], antes = d && d.semanaRef;
     const r = orig.apply(this, arguments);
-    if (d && antes && d.semanaRef !== antes) contEnt().querySelectorAll('.ex-item[data-cd-real-min],.ex-item[data-cd-real-km],.ex-item[data-cd-real-rondas]').forEach(function(it){ ['cdRealMin', 'cdRealKm', 'cdRealRondas'].forEach(function(x){ delete it.dataset[x]; }); });
+    if (d && antes && d.semanaRef !== antes) contEnt().querySelectorAll('.ex-item[data-cd-ok],.ex-item[data-cd-real-min],.ex-item[data-cd-real-km],.ex-item[data-cd-real-rondas]').forEach(function(it){ ['cdOk', 'cdRealMin', 'cdRealKm', 'cdRealRondas'].forEach(function(x){ delete it.dataset[x]; }); });
     return r;
   };
 })(mjCambioDeSemana);

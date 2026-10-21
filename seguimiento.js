@@ -75,13 +75,7 @@ guardarSeguimiento = (function(orig){
     return r;
   };
 })(guardarSeguimiento);
-goTo = (function(orig){
-  return function(n){
-    const r = orig.apply(this, arguments);
-    if (n === 'seguimiento') { if (!sgDeEstaSemana(clienteActual)) sgEditando = false; sgPintarEstado(); }
-    return r;
-  };
-})(goTo);
+fsdTras('goTo', function(r, n){ if (n === 'seguimiento') { if (!sgDeEstaSemana(clienteActual)) sgEditando = false; sgPintarEstado(); } });
 sgPintarEstado();
 
 /* ---------- #140 Formulario más visual ----------
@@ -112,7 +106,7 @@ function sgVisual(){
   }
 }
 sgVisual();
-goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'seguimiento') sgVisual(); return r; }; })(goTo);
+fsdTras('goTo', function(r, n){ if (n === 'seguimiento') sgVisual(); });
 
 /* ---------- #157 Fotos de progreso en «Datos biométricos» ----------
    Tres huecos (Frente · Perfil · Espalda), opcionales. Se reducen a 1280 px y se guardan en este
@@ -204,7 +198,7 @@ sgRellenar = (function(orig){
   };
 })(sgRellenar);
 sgCancelarEdicion = (function(orig){ return function(){ sgFotosNuevas = {}; sgFotosPrevias = null; orig(); sgFotosPintar(); }; })(sgCancelarEdicion);
-goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'seguimiento') sgFotosPintar(); return r; }; })(goTo);
+fsdTras('goTo', function(r, n){ if (n === 'seguimiento') sgFotosPintar(); });
 sgFotosPintar();
 
 /* en la tarjeta de cada seguimiento (cliente y profesionales) */

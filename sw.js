@@ -7,6 +7,7 @@ const SHELL = [
   './index.html',
   './styles.css',
   './app.js',
+  './ganchos.js',
   './ajustes.js',
   './ux.js',
   './avisos.js',

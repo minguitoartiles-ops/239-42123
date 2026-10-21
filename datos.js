@@ -66,3 +66,6 @@ function fsdAvisoMemoria(){
   toast('⚠️ La memoria de la app va por el ' + pct + ' %. Descarga una copia en Ajustes y borra fotos o audios antiguos del chat.');
 }
 entrarAlPanel = (function(orig){ return function(){ orig.apply(this, arguments); setTimeout(fsdAvisoMemoria, 800); }; })(entrarAlPanel);
+
+/* limpieza interna 21/10: los ganchos «después de…» se instalan al final de la carga */
+fsdInstalarGanchos();
