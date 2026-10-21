@@ -3,13 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.66 → 0.66.1 (actual)
-Cambios acumulados hacia la 0.67: **3 de 10**
+## Versión 0.66 → 0.66.2 (actual)
+Cambios acumulados hacia la 0.67: **4 de 10**
 
 ### Hacia la 0.67
 1. 21/10/2026 14:35 · Plan nutricional (profesionales, editando): volver a tocar un alimento elegido lo deselecciona (se puede deshacer)
 2. 21/10/2026 14:35 · Pagos: «Clientes» y «Últimos movimientos» en dos apartados (selector arriba); filas con una franja de color a la izquierda (rojo sin acceso, naranja gracia, ámbar vence pronto, verde al día), texto más grande y columnas Nombre · Tarifa · Alta · Estado mejor alineadas → **0.66.1**
 3. 21/10/2026 14:35 · Sonidos: «campanita» cuando llega un aviso a la campana y «mensaje enviado» al enviar un mensaje, foto o audio en el chat; se pueden quitar en Ajustes → Notificaciones → Sonidos
+4. 21/10/2026 14:55 · Clientes sin pago: cuando se acaba el periodo de gracia y el cliente se queda sin acceso, su ficha se guarda 15 días; si sigue sin pagar, la app borra su perfil al abrirla un profesional (no afecta a bajas ni a quien tenga el acceso permitido a mano). 3 días antes se avisa a Domingo y Fátima; la ficha muestra «Su perfil se borrará el dd/mm» con «Descargar sus datos», Pagos indica «se borra en N días» y el cliente bloqueado ve hasta cuándo se guardan sus datos → **0.66.2**
 
 ## Versión 0.65 → 0.65.4
 

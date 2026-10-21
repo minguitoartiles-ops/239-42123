@@ -521,3 +521,85 @@ htmlAjustesAvisos = (function(orig){
       + '<div class="toggle' + (on ? ' on' : '') + '" role="switch" aria-label="Sonidos" aria-checked="' + on + '" onclick="sndCambiar(this)"><div class="toggle-knob"></div></div></div></div>';
   };
 })(htmlAjustesAvisos);
+
+/* =========================================================
+   #113 Clientes sin pago: tras el periodo de gracia y sin acceso, la ficha se guarda 15 días;
+   si sigue sin pagar, el perfil se borra (lo hace la app al abrirla un profesional).
+   - Solo cuando la tarifa está vencida (gracia terminada) y el cliente no tiene acceso.
+   - No afecta a clientes de baja ni a los que tienen el acceso permitido a mano.
+   - 3 días antes se avisa a los profesionales; en la ficha y en Pagos se ve la fecha de borrado.
+   ========================================================= */
+const PG_RETENCION = 15;
+function pgBorrado(d){
+  if (!d || !d.tarifa || (typeof mjEsBaja === 'function' && mjEsBaja(d))) return null;
+  const e = estadoPago(d);
+  if (e.cod !== 'vencido' || e.acceso || !e.finGracia) return null;
+  const fecha = mjSumarDias(e.finGracia, PG_RETENCION);
+  return { fecha: fecha, dias: mjDias(mjISO(new Date()), fecha) };
+}
+function pgBorrarCliente(k){
+  const d = clientesData[k]; if (!d) return;
+  const nombre = d.nombre;
+  delete clientesData[k]; delete SEGUIMIENTOS[k]; delete PLANES[k];
+  try {
+    const a = leerAvisos();
+    delete a.lista[claveCliente(k)]; delete (a.pref || {})[claveCliente(k)];
+    Object.keys(a.sinLeer || {}).forEach(function(p){ if (a.sinLeer[p]) delete a.sinLeer[p][k]; });
+    delete (a.sinLeer || {})[claveCliente(k)];
+    guardarAvisos();
+  } catch(e){}
+  if (clienteActual === k) clienteActual = null;
+  return nombre;
+}
+function pgRevisarBorrados(){
+  if (!coachActivo) return;
+  let borrados = [];
+  Object.keys(clientesData).forEach(function(k){
+    const b = pgBorrado(clientesData[k]); if (!b) return;
+    if (b.dias <= 0) { borrados.push(pgBorrarCliente(k)); return; }
+    if (b.dias <= 3 && typeof tocaAvisar === 'function' && tocaAvisar('borrado|' + k))
+      avisarPros('pendientes', clientesData[k].nombre + ': su perfil se borrará el ' + mjFecha(b.fecha), 'Lleva sin pagar desde el ' + mjFecha(clientesData[k].tarifa.hasta) + '. Registra el pago o descarga sus datos antes.', { cliente: k, vista: 'ficha' });
+  });
+  borrados = borrados.filter(Boolean);
+  if (borrados.length) {
+    guardarTodo();
+    borrados.forEach(function(n){ avisarPros('pendientes', 'Perfil borrado: ' + n, 'Llevaba ' + PG_RETENCION + ' días sin acceso por falta de pago.', null); });
+    try { actualizarPanel(); } catch(e){}
+    toast(borrados.length === 1 ? 'Se ha borrado el perfil de ' + borrados[0] + ' (15 días sin pagar)' : 'Se han borrado ' + borrados.length + ' perfiles (15 días sin pagar)');
+  }
+}
+entrarAlPanel = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { pgRevisarBorrados(); } catch(e){} return r; }; })(entrarAlPanel);
+/* ficha: fecha de borrado y descarga de sus datos */
+function pgDescargarCliente(){
+  const k = clienteActual; if (!k || !clientesData[k]) return;
+  guardarTodo();
+  entregarArchivo('fitness-sin-dramas-' + norm(clientesData[k].nombre).replace(/[^a-z0-9]+/g, '-') + '-' + hoyISO() + '.json', {
+    app: 'fitness-sin-dramas', tipo: 'cliente', version: APP_VERSION, creada: new Date().toISOString(),
+    datos: { cliente: clientesData[k], plan: PLANES[k] || null, seguimientos: SEGUIMIENTOS[k] || [] }
+  });
+}
+pintarSuscripcionFicha = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const d = clientesData[clienteActual], b = pgBorrado(d), box = document.getElementById('fichaPago');
+    if (b && box) {
+      const lg = box.querySelector('.list-group');
+      const n = document.createElement('div'); n.className = 'pg-borrado';
+      n.innerHTML = '🗑️ <b>Su perfil se borrará el ' + mjFecha(b.fecha) + '</b> (' + (b.dias === 1 ? 'mañana' : 'en ' + b.dias + ' días') + ') si no paga. <a href="#" class="lnk" onclick="pgDescargarCliente();return false;">Descargar sus datos</a>';
+      if (lg) lg.parentNode.insertBefore(n, lg.nextSibling);
+    }
+    try { fpAplicar(); } catch(e){}
+    return r;
+  };
+})(pintarSuscripcionFicha);
+/* Pagos: el estado indica cuándo se borra */
+estadoPago = (function(orig){
+  return function(d){
+    const r = orig.apply(this, arguments);
+    if (r && r.cod === 'vencido' && !r.acceso && !(typeof mjEsBaja === 'function' && mjEsBaja(d)) && d && d.tarifa && d.tarifa.acceso !== 'permitido' && r.finGracia) {
+      const f = mjSumarDias(r.finGracia, PG_RETENCION), n = mjDias(mjISO(new Date()), f);
+      if (n > 0) r.txt += ' · se borra en ' + n + (n === 1 ? ' día' : ' días');
+    }
+    return r;
+  };
+})(estadoPago);
