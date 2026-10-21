@@ -3,8 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.69.0 (actual)
-Cambios acumulados hacia la 0.70: **0 de 10**
+## Versión 0.69 → 0.69.1 (actual)
+Cambios acumulados hacia la 0.70: **2 de 10**
+
+### Hacia la 0.70
+1. 21/10/2026 19:40 · Seguimiento semanal más visual: agujetas de 1 verde a 4 rojo; motivación con caras (1 😞 → 5 😄); cumplimiento nutricional coloreado de 1 rojo a 10 verde; estrés con una cara que cambia al deslizar (1 😌 tranquilo → 10 😫 muy estresado). Los valores que se guardan no cambian
+2. 21/10/2026 19:40 · Hoy (cliente): fuera las tarjetas «Hoy toca» y «Ahora»; las tarjetas Entrenamiento (sesiones de la semana y completadas) y Plan nutricional (kcal, comidas y macros) son el acceso directo a la rutina y al plan → **0.69.1**
+
+## Versión 0.69.0
 
 ## Versión 0.68 → 0.68.5
 
