@@ -64,34 +64,28 @@ function muVolCliente(k){
 }
 function muFmt(n){ return fmtNum(Math.round(n * 2) / 2); }
 
-/* ---------- figura (dibujo propio, sencillo) ---------- */
-function muZona(g, v, forma){ return '<g class="mu-z ' + muNivel(v[g] ? v[g].hecho : 0).c + '" data-g="' + g + '" role="button" tabindex="0" aria-label="' + MU_GRUPOS[g] + ': ' + muFmt(v[g] ? v[g].hecho : 0) + ' series">' + forma + '</g>'; }
-function muCuerpo(){
-  return '<path class="mu-sil" d="M100 14c13 0 22 10 22 24s-9 26-22 26-22-12-22-26 9-24 22-24z'
-    + 'M86 64h28l6 10c16 2 30 8 36 20l8 40 6 44-2 34-10 2-8-34-6-30-4 22-2 40 6 46 2 52-4 46 2 30-22 2-2-30-4-52-2-48-4 48-2 52-2 30-22-2 2-30-4-46 2-52 6-46-2-40-4-22-6 30-8 34-10-2-2-34 6-44 8-40c6-12 20-18 36-20z"/>';
+/* ---------- figura: react-native-body-highlighter (MIT, ver cuerpo.js), hombre o mujer según el cliente ---------- */
+const MU_SLUG = { chest: 'pecho', 'upper-back': 'espalda', 'lower-back': 'espalda', trapezius: 'espalda', deltoids: 'hombro', biceps: 'biceps', triceps: 'triceps',
+  abs: 'core', obliques: 'core', quadriceps: 'cuadriceps', adductors: 'cuadriceps', hamstring: 'isquios', gluteal: 'gluteo', calves: 'gemelos' };
+function muFiguraDe(k){ const d = clientesData[k]; return d && d.figura === 'mujer' ? 'mujer' : 'hombre'; }
+function muFigura(v, lado, fig){
+  const f = (typeof CUERPO_SVG !== 'undefined' && CUERPO_SVG[fig || 'hombre'] || {})[lado]; if (!f) return '';
+  const grupos = {}, neutro = [];
+  f.p.forEach(function(p){
+    const g = MU_SLUG[p.s];
+    if (g) (grupos[g] = grupos[g] || []).push.apply(grupos[g], p.d);
+    else { const c = p.s === 'hair' ? 'mu-pelo' : (p.s === 'head' ? 'mu-cabeza' : 'mu-neutro'); p.d.forEach(function(d){ neutro.push('<path class="' + c + '" d="' + d + '"/>'); }); }
+  });
+  let h = '<svg viewBox="' + f.vb + '" class="mu-svg" role="img" aria-label="Músculos ' + (lado === 'frente' ? 'de frente' : 'de espalda') + '">'
+    + '<path class="mu-sil" d="' + f.c + '"/>' + neutro.join('');
+  Object.keys(grupos).forEach(function(g){
+    const val = v[g] ? v[g].hecho : 0;
+    h += '<g class="mu-z ' + muNivel(val).c + '" data-g="' + g + '" role="button" tabindex="0" aria-label="' + MU_GRUPOS[g] + ': ' + muFmt(val) + ' series">' + grupos[g].map(function(d){ return '<path d="' + d + '"/>'; }).join('') + '</g>';
+  });
+  return h + '</svg>';
 }
-function muFrente(v){
-  return '<svg viewBox="0 0 200 420" class="mu-svg" aria-label="Músculos de frente">' + muCuerpo()
-    + muZona('hombro', v, '<ellipse cx="62" cy="92" rx="15" ry="13"/><ellipse cx="138" cy="92" rx="15" ry="13"/>')
-    + muZona('pecho', v, '<path d="M98 80c-14-2-30 2-34 12-3 10 2 26 14 30 10 3 20 0 20-8z"/><path d="M102 80c14-2 30 2 34 12 3 10-2 26-14 30-10 3-20 0-20-8z"/>')
-    + muZona('biceps', v, '<ellipse cx="50" cy="132" rx="9" ry="21" transform="rotate(8 50 132)"/><ellipse cx="150" cy="132" rx="9" ry="21" transform="rotate(-8 150 132)"/>')
-    + muZona('core', v, '<rect x="84" y="126" width="32" height="64" rx="9"/><path d="M78 130l6 0 0 54-8-6z"/><path d="M122 130l-6 0 0 54 8-6z"/>')
-    + muZona('cuadriceps', v, '<path d="M82 214c-10 10-14 40-10 70 2 14 10 20 16 18 6-2 10-16 10-36 0-26-4-46-16-52z"/><path d="M118 214c10 10 14 40 10 70-2 14-10 20-16 18-6-2-10-16-10-36 0-26 4-46 16-52z"/>')
-    + muZona('gemelos', v, '<ellipse cx="80" cy="340" rx="8" ry="24"/><ellipse cx="120" cy="340" rx="8" ry="24"/>')
-    + '<g class="mu-lin"><line x1="100" y1="132" x2="100" y2="186"/><line x1="86" y1="148" x2="114" y2="148"/><line x1="86" y1="166" x2="114" y2="166"/></g>'
-    + '</svg>';
-}
-function muEspalda(v){
-  return '<svg viewBox="0 0 200 420" class="mu-svg" aria-label="Músculos de espalda">' + muCuerpo()
-    + muZona('hombro', v, '<ellipse cx="62" cy="92" rx="15" ry="13"/><ellipse cx="138" cy="92" rx="15" ry="13"/>')
-    + muZona('espalda', v, '<path d="M100 70l-24 14 24 20 24-20z"/><path d="M96 104c-10-4-22-6-28 0-4 18 2 46 14 60 6 6 14 4 14-6z"/><path d="M104 104c10-4 22-6 28 0 4 18-2 46-14 60-6 6-14 4-14-6z"/>')
-    + muZona('triceps', v, '<ellipse cx="50" cy="130" rx="9" ry="21" transform="rotate(8 50 130)"/><ellipse cx="150" cy="130" rx="9" ry="21" transform="rotate(-8 150 130)"/>')
-    + muZona('gluteo', v, '<ellipse cx="87" cy="214" rx="15" ry="16"/><ellipse cx="113" cy="214" rx="15" ry="16"/>')
-    + muZona('isquios', v, '<path d="M80 236c-6 16-8 40-4 58 2 8 8 10 12 8 6-4 8-20 8-36 0-18-4-30-16-30z"/><path d="M120 236c6 16 8 40 4 58-2 8-8 10-12 8-6-4-8-20-8-36 0-18 4-30 16-30z"/>')
-    + muZona('gemelos', v, '<ellipse cx="80" cy="336" rx="10" ry="26"/><ellipse cx="120" cy="336" rx="10" ry="26"/>')
-    + '<g class="mu-lin"><line x1="100" y1="70" x2="100" y2="196"/></g>'
-    + '</svg>';
-}
+function muFrente(v, fig){ return muFigura(v, 'frente', fig); }
+function muEspalda(v, fig){ return muFigura(v, 'espalda', fig); }
 function muLeyenda(){
   return '<div class="mu-ley">' + MU_NIVELES.slice(1).map(function(n){ return '<span class="mu-ley-i"><i class="' + n.c + '"></i><b>' + n.r + '</b>' + n.t + '</span>'; }).join('') + '</div>'
     + '<p class="mu-nota">Series efectivas por músculo esta semana. Para ganar músculo, la evidencia sitúa el rango más productivo en <b>10-20 series semanales</b>; con 4-9 ya hay progreso y por encima de 20 la mejora es pequeña y cuesta más recuperarse.</p>';
@@ -110,7 +104,7 @@ function muHtml(k, opc){
   return '<div class="mu-box' + (opc.compacto ? ' mu-compacto' : '') + '" id="' + id + '" data-k="' + k + '" data-modo="' + modo + '" data-opc="' + esc(JSON.stringify(opc)) + '">'
     + (opc.titulo !== false ? '<div class="mu-cab"><b>' + (opc.titulo || 'Músculos de la semana') + '</b><span>' + muFmt(tot) + ' series ' + (modo === 'plan' ? 'pautadas / semana' : 'efectivas hechas') + '</span></div>' : '')
     + conmut
-    + '<div class="mu-cuerpo"><div class="mu-figs"><figure>' + muFrente(vv) + '<figcaption>Frente</figcaption></figure><figure>' + muEspalda(vv) + '<figcaption>Espalda</figcaption></figure></div>'
+    + '<div class="mu-cuerpo"><div class="mu-figs"><figure>' + muFrente(vv, muFiguraDe(k)) + '<figcaption>Frente</figcaption></figure><figure>' + muEspalda(vv, muFiguraDe(k)) + '<figcaption>Espalda</figcaption></figure></div>'
     + (opc.lista !== false ? '<div class="mu-lista">' + lista.map(function(g){
         const val = muVal(v[g], modo), n = muNivel(val), otro = modo === 'plan' ? 'hechas ' + muFmt(v[g].hecho) : 'de ' + muFmt(v[g].plan) + ' pautadas';
         return '<button type="button" class="mu-fila" data-g="' + g + '"><i class="' + n.c + '"></i><span>' + MU_GRUPOS[g] + '</span><b>' + muFmt(val) + '</b><small>' + n.t + ' · ' + otro + '</small></button>';
@@ -194,3 +188,53 @@ toggleSesionHecha = (function(orig){
 fsdTras('goTo', function(r, n){ if (n === 'entreno') muPintarCliente(); });
 fsdTras('enPintarFilas', function(){ clearTimeout(muPintarCliente._t); muPintarCliente._t = setTimeout(muPintarCliente, 300); });
 if (typeof atrasDentroApp === 'function') atrasDentroApp = (function(orig){ return function(){ if (capaVisible('muHoja')) { mjCerrarHoja('muHoja'); return true; } return orig(); }; })(atrasDentroApp);
+
+/* ---------- figura del mapa en los datos del cliente (hombre / mujer) ---------- */
+if (typeof abrirEditarCliente === 'function') abrirEditarCliente = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const o = document.getElementById('mjEditCli'), d = clientesData[clienteActual];
+    if (o && d && !o.querySelector('[data-grupo="fig"]')) {
+      const ref = Array.prototype.filter.call(o.querySelectorAll('.alta-label'), function(x){ return /Objetivo/.test(x.textContent); })[0];
+      const w = document.createElement('div');
+      w.innerHTML = '<div class="alta-label">Figura del mapa muscular</div><div class="chips" data-grupo="fig">'
+        + [['hombre', 'Hombre'], ['mujer', 'Mujer']].map(function(x){ return '<button type="button" class="chip protein' + ((d.figura || 'hombre') === x[0] ? ' selected' : '') + '" data-v="' + x[0] + '" onclick="mjChip(this)">' + x[1] + '</button>'; }).join('') + '</div>';
+      while (w.firstChild) ref.parentNode.insertBefore(w.firstChild, ref);
+    }
+    return r;
+  };
+})(abrirEditarCliente);
+if (typeof guardarEditarCliente === 'function') guardarEditarCliente = (function(orig){
+  return function(){
+    const o = document.getElementById('mjEditCli'), d = clientesData[clienteActual];
+    const c = o && o.querySelector('[data-grupo="fig"] .chip.selected');
+    if (d && c) d.figura = c.dataset.v;
+    return orig.apply(this, arguments);
+  };
+})(guardarEditarCliente);
+
+/* ---------- créditos: licencia MIT de la figura del cuerpo ---------- */
+const LEGAL_CREDITOS = '<p class="legal-meta">Software de terceros incluido en la app</p>'
+  + '<h4>Figura del mapa muscular</h4><p>react-native-body-highlighter · © 2022 ELABBASSI Hicham · Licencia MIT · github.com/HichamELBSI/react-native-body-highlighter</p>'
+  + '<p class="legal-aviso">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>'
+  + '<h4>Compresión de datos</h4><p>lz-string · © Pieroxy · Licencia MIT.</p>';
+abrirLegal = (function(orig){
+  return function(tipo){
+    if (tipo !== 'creditos') return orig.apply(this, arguments);
+    document.getElementById('legalTitulo').textContent = 'Créditos y licencias';
+    document.getElementById('legalCuerpo').innerHTML = LEGAL_CREDITOS;
+    const ov = document.getElementById('legalOverlay'); ov.classList.add('show');
+    const s = ov.querySelector('.fsd-sheet'); if (s) s.scrollTop = 0;
+  };
+})(abrirLegal);
+function muFilaCreditos(){
+  ['ajustesCliente', 'ajustesCoach'].forEach(function(id){
+    const c = document.getElementById(id); if (!c || c.querySelector('.cr-fila')) return;
+    const tc = c.querySelector('.tc-fila'); if (!tc) return;
+    const f = tc.cloneNode(true); f.classList.remove('tc-fila'); f.classList.add('cr-fila');
+    f.setAttribute('onclick', "abrirLegal('creditos')");
+    const sp = f.querySelector('span'); if (sp) sp.textContent = 'Créditos y licencias';
+    tc.parentNode.appendChild(f);
+  });
+}
+['renderAjustes', 'refrescarAjustes'].forEach(function(n){ if (typeof window[n] === 'function') fsdTras(n, function(){ muFilaCreditos(); }); });
