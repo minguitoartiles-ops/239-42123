@@ -14,8 +14,7 @@ function fsdLimpiarEnt(html){
   const w = document.createTreeWalker(r, NodeFilter.SHOW_COMMENT); const com = [];
   while (w.nextNode()) com.push(w.currentNode);
   com.forEach(function(c){ c.remove(); });
-  const d = document.createElement('div'); d.appendChild(r);
-  return d.innerHTML;
+  return t.innerHTML;                                  // sin sacar el contenido del <template> (no se carga nada)
 }
 guardarPlan = (function(orig){
   return function(){

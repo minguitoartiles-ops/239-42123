@@ -210,7 +210,7 @@ function ruLimpiarHtml(h){
   t.content.querySelectorAll('.ex-name-cell[role], .ex-name-cell[aria-expanded]').forEach(function(x){ x.removeAttribute('role'); x.removeAttribute('aria-expanded'); });
   t.content.querySelectorAll('.sesion-title.ru-renombrando').forEach(function(x){ x.classList.remove('ru-renombrando'); });
   t.content.querySelectorAll('.ru-foco').forEach(function(x){ x.classList.remove('ru-foco'); });
-  const d = document.createElement('div'); d.appendChild(t.content); return d.innerHTML;
+  return t.innerHTML;                                  // sin sacar el contenido del <template> (no se carga nada)
 }
 guardarPlan = (function(orig){
   return function(){
