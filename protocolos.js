@@ -91,7 +91,7 @@ function prAbrir(k, id){
     setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
   }).catch(function(){ toast('No se ha podido abrir el PDF'); });
 }
-nuPintarFicha = (function(orig){ return function(){ const r = orig.apply(this, arguments); prPintarFicha(); return r; }; })(nuPintarFicha);
+fsdTras('nuPintarFicha', function(){ prPintarFicha(); });
 
 /* ---------- cliente: en Nutrición ---------- */
 function prPintarCliente(){
@@ -104,8 +104,8 @@ function prPintarCliente(){
   if (c.nextSibling !== ref || c.parentNode !== v) v.insertBefore(c, ref || null);
   c.innerHTML = '<div class="section-lbl">📄 Protocolos de Fátima</div><div class="pr-lista">' + prItems(k, false) + '</div>';
 }
-goTo = (function(orig){ return function(n){ const r = orig.apply(this, arguments); if (n === 'plan') prPintarCliente(); return r; }; })(goTo);
-if (typeof rcPintarRecetario === 'function') rcPintarRecetario = (function(orig){ return function(){ const r = orig.apply(this, arguments); prPintarCliente(); return r; }; })(rcPintarRecetario);
+fsdTras('goTo', function(r, n){ if (n === 'plan') prPintarCliente(); });
+fsdTras('rcPintarRecetario', function(){ prPintarCliente(); });
 if (typeof TIPOS_CLIENTE !== 'undefined') TIPOS_CLIENTE.push({ id: 'protocolos', ico: '📄', nombre: 'Protocolos de Fátima', desc: 'Cuando Fátima te envía un protocolo en PDF' });
 
 /* ---------- al borrar un cliente, fuera también sus PDF ---------- */
