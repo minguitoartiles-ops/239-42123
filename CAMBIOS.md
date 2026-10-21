@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.70 → 0.70.4 (actual)
-Cambios acumulados hacia la 0.71: **9 de 10**
+## Versión 0.71.0 (actual)
+Cambios acumulados hacia la 0.72: **1 de 10**
+
+### Hacia la 0.72
+1. 21/10/2026 23:20 · Ficha del cliente (sección Seguimiento): «📸 Antes / Ahora» con la primera y la última foto de cada posición (frente, perfil, espalda), con fecha y peso; se amplían al tocarlas
+
+## Versión 0.70 → 0.70.4
 
 ### Hacia la 0.71
 1. 21/10/2026 21:00 · Seguimiento → Datos biométricos: apartado «Fotos de progreso» con tres huecos (Frente · Perfil · Espalda), opcional; se puede quitar o cambiar cada foto y, al editar el seguimiento de la semana, salen las que ya envió. Fátima y Domingo las ven en la tarjeta del seguimiento y se amplían al tocarlas. Fuera el «+ Añadir fotos» que no hacía nada. Se guardan reducidas en el propio dispositivo (pendiente de Supabase, punto 6)
@@ -17,6 +22,7 @@ Cambios acumulados hacia la 0.71: **9 de 10**
 8. 21/10/2026 22:55 · Menú de los profesionales en este orden: Clientes · Seguimientos · Entrenamientos (Nutrición y Recetas para Fátima) · Chats · Pagos · Ajustes (en el móvil, Más al final)
 9. 21/10/2026 22:55 · Tarjetas de Clientes sin la casilla «Mensajes» (los mensajes se ven en Chats); quedan Global, Entreno y Nutrición → **0.70.4**
    · 21/10/2026 23:30 · Auditoría: en móviles de 360 px los filtros «Todos · Necesitan atención · Sin plan» de Clientes bajan de línea en vez de cortarse (arreglo dentro de la auditoría)
+10. 21/10/2026 23:20 · Cardio registrado: al marcarlo como hecho el cliente apunta los minutos y la distancia (por tiempo) o las rondas (intervalos) y lo ve como «✓ Hecho: 32 min · 5,2 km»; se puede cambiar o quitar. Los minutos de la semana se guardan con el seguimiento (salen en su tarjeta), en el gráfico de evolución (filtro «Cardio») y en Entrenamientos junto al tonelaje → **0.71.0**
 
 ## Versión 0.69 → 0.69.4
 
