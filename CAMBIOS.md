@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.64 → 0.64.4 (actual)
-Cambios acumulados hacia la 0.65: **9 de 10**
+## Versión 0.65 (actual)
+Cambios acumulados hacia la 0.66: **1 de 10**
+
+### Hacia la 0.66
+1. 21/10/2026 13:25 · Seguimientos de un cliente (profesionales): en lista de una sola columna, del más reciente (arriba) al más antiguo (abajo), también en el ordenador; en el móvil el botón «Descargar en PDF» ya no ocupa todo el ancho
+
+## Versión 0.64 → 0.64.4
 
 ### Hacia la 0.65
 1. 20/10/2026 18:51 · Botones de eliminar más grandes y en rojo en toda la app: ✕ de días, comidas, ejercicios y series (38 px, fondo rojo claro, rojo entero al pasar por encima) y ✕ de cada alimento como círculo rojo con zona de toque más grande; «Borrar» plantilla, «Quitar» foto y «Quitar» vídeo en rojo
@@ -16,6 +21,7 @@ Cambios acumulados hacia la 0.65: **9 de 10**
 7. 21/10/2026 12:35 · Arrastrar ejercicios: el ejercicio ya no salta de sitio mientras se arrastra; una línea azul marca dónde quedará y se mueve al soltar (ratón y dedo)
 8. 21/10/2026 13:10 · Avisos de «plan actualizado»: abrir o consultar el plan de un cliente ya no cuenta como cambio; solo se avisa al cliente al guardar si de verdad ha cambiado algo de la pauta. El botón pasa a llamarse «Guardar cambios y notificar» («Guardar y notificar» en el móvil) y al pulsarlo se confirma si se ha avisado o no hubo cambios → **0.64.4** (junto con el 9)
 9. 21/10/2026 13:10 · Cliente: el botón «Chat» de la barra de abajo muestra en rojo cuántos mensajes del equipo tiene sin leer; desaparece al abrir el chat
+10. 21/10/2026 13:25 · Ficha del cliente (profesionales): «Gestión del cliente», «Suscripción» y «Entrenamiento» salen plegados al abrirla desde Clientes, con un resumen en una línea (p. ej. «Mensual · hasta 20/11/2026»); se despliegan tocando el título y se quedan abiertos mientras trabajas con ese cliente. Los filtros de arriba y los avisos (alergias, pagos) abren el apartado que toca. En el ordenador ya no salen tarjetas vacías → **sube a la 0.65**
 
 ## Versión 0.63 → 0.63.4
 

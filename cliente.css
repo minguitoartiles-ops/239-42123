@@ -6,3 +6,23 @@
 .tb-badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;
   background:#d93025;color:#fff;font:700 10.5px/18px var(--f-mono);text-align:center;box-shadow:0 0 0 2px var(--bg, #fff);pointer-events:none;}
 .tb-badge.hide{display:none;}
+
+/* #106 apartados plegables de la ficha del cliente */
+.alta-label.fp-lbl{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;min-height:40px;margin-bottom:6px;}
+.alta-label.fp-lbl::after{display:none;}
+.fp-lbl .fp-t{flex:none;}
+.fp-lbl .fp-res{flex:1;min-width:0;font:500 12px var(--f-body, inherit);letter-spacing:0;text-transform:none;color:var(--dim-45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
+.fp-lbl .fp-chev{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--chip, rgba(0,0,0,.05));font:600 16px/1 var(--f-body, inherit);transition:transform .18s;transform:rotate(90deg);}
+.fp-lbl.fp-abierto .fp-chev{transform:rotate(-90deg);}
+.fp-lbl:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px;}
+.fp-oculto{display:none !important;}
+/* ordenador: sin tarjetas vacías en la ficha (p. ej. nutrición sin datos para Domingo) */
+.esc-grupo.fp-vacio{display:none !important;}
+.esc-grupo > div > .alta-label.fp-lbl:first-child, .esc-grupo > .alta-label.fp-lbl:first-child{margin-top:0;}
+.fp-lbl:not(.fp-abierto){margin-bottom:0;}
+
+/* #115 seguimientos del cliente: una sola columna (lista), el más reciente arriba */
+html.esc #seguiList{display:flex;flex-direction:column;gap:14px;max-width:820px;width:100%;margin-left:auto;margin-right:auto;}
+html.esc #seguiList > .esc-tabla-wrap{max-width:none;}
+/* móvil: «Descargar en PDF» dentro del margen, no a todo lo ancho */
+html:not(.esc) #view-coach-seguimientos > .mj-pdf{align-self:flex-start;width:auto;margin:6px 22px 0;padding:0 14px;min-height:36px;}

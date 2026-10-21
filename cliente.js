@@ -76,3 +76,105 @@ window.addEventListener('storage', function(e){
   }, 0);
 });
 clPintarChat();
+
+/* =========================================================
+   #106 Ficha del cliente (profesionales): «Gestión del cliente», «Suscripción» y «Entrenamiento»
+   salen plegados al abrir la ficha desde Clientes; se despliegan tocando el título.
+   Mientras se trabaja con el mismo cliente (ir al plan y volver) se respeta lo abierto.
+   ========================================================= */
+const FP_PLEGABLES = { 'gestión del cliente': 'gestion', 'suscripción': 'pago', 'entrenamiento': 'entreno' };
+let fpAbiertos = {}, fpCliente = null;
+function fpContenido(lbl){
+  const r = []; let x = lbl.nextElementSibling;
+  while (x && !x.classList.contains('alta-label') && !x.querySelector('.alta-label') && (!x.id || x.id === 'fichaRegistro')
+         && !x.classList.contains('stat-row') && !x.classList.contains('tonelaje-card')) { r.push(x); x = x.nextElementSibling; }
+  return r;
+}
+function fpResumen(id, cont){
+  try {
+    if (id === 'pago') {
+      const filas = cont[0] ? cont[0].querySelectorAll('.list-row') : [];
+      const val = function(f){ const l = f.firstElementChild ? f.firstElementChild.textContent : ''; return f.textContent.replace(l, '').replace('›', '').trim(); };
+      const v = Array.prototype.slice.call(filas, 0, 2).map(val).filter(Boolean);
+      return v.length > 1 ? v[0] + ' · hasta ' + v[1] : v.join(' · ');
+    }
+    if (id === 'entreno') { const t = cont[0] && cont[0].querySelector('.fe-top span'); return t ? t.textContent.trim() : ''; }
+    if (id === 'gestion') return 'Datos, código, alergias…';
+  } catch(e){}
+  return '';
+}
+function fpAplicar(){
+  const v = document.getElementById('view-coach-cliente'); if (!v || !coachActivo) return;
+  const filtro = typeof enSeccion === 'string' && enSeccion !== 'todo';
+  Array.prototype.forEach.call(v.querySelectorAll('.alta-label'), function(lbl){
+    const txt = (lbl.getAttribute('data-fp-txt') || lbl.textContent).trim();
+    const id = FP_PLEGABLES[txt.toLowerCase()];
+    if (!id) return;
+    if (!lbl.hasAttribute('data-fp')) {
+      lbl.setAttribute('data-fp', id); lbl.setAttribute('data-fp-txt', txt);
+      lbl.setAttribute('role', 'button'); lbl.tabIndex = 0;
+      lbl.innerHTML = '<span class="fp-t">' + esc(txt) + '</span><span class="fp-res"></span><span class="fp-chev" aria-hidden="true">›</span>';
+      lbl.addEventListener('click', function(){ fpAbiertos[id] = !fpAbiertos[id]; fpAplicar(); });
+      lbl.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lbl.click(); } });
+    }
+    const abierto = filtro || !!fpAbiertos[id];
+    const cont = fpContenido(lbl);
+    lbl.classList.add('fp-lbl');
+    lbl.classList.toggle('fp-abierto', abierto);
+    lbl.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    const res = lbl.querySelector('.fp-res'); if (res) res.textContent = abierto ? '' : fpResumen(id, cont);
+    cont.forEach(function(x){ x.classList.toggle('fp-oculto', !abierto); });
+  });
+  /* ordenador: fuera las tarjetas que se quedan sin nada visible */
+  Array.prototype.forEach.call(v.querySelectorAll('.esc-grupo'), function(g){
+    g.classList.remove('fp-vacio');
+    const algo = Array.prototype.some.call(g.children, function(c){ return c.offsetHeight > 2; });
+    g.classList.toggle('fp-vacio', !algo);
+  });
+}
+function fpReiniciar(){ fpAbiertos = {}; }
+goToCliente = (function(orig){
+  return function(k){
+    if (k !== fpCliente) { fpReiniciar(); fpCliente = k; }
+    const r = orig.apply(this, arguments);
+    fpAplicar();
+    return r;
+  };
+})(goToCliente);
+backToPanel = (function(orig){ return function(){ fpReiniciar(); fpCliente = null; return orig.apply(this, arguments); }; })(backToPanel);
+if (typeof enPintarFicha === 'function') enPintarFicha = (function(orig){ return function(){ const r = orig.apply(this, arguments); fpAplicar(); return r; }; })(enPintarFicha);
+if (typeof enAplicarSeccion === 'function') enAplicarSeccion = (function(orig){ return function(){ const r = orig.apply(this, arguments); fpAplicar(); return r; }; })(enAplicarSeccion);
+if (typeof pintarSuscripcionFicha === 'function') pintarSuscripcionFicha = (function(orig){ return function(){ const r = orig.apply(this, arguments); fpAplicar(); return r; }; })(pintarSuscripcionFicha);
+/* si un aviso lleva a la ficha (alergias, pagos…), se abre ya el apartado que toca */
+abrirAviso = (function(orig){
+  return function(dest, id){
+    const x = ((leerAvisos().lista[dest]) || []).filter(function(y){ return y.id === id; })[0];
+    const r = orig.apply(this, arguments);
+    if (x && String(dest).indexOf('pro:') === 0 && x.ir && x.ir.cliente) {
+      const ab = { alergias: 'gestion', imagen: 'gestion', pago: 'pago', pagos: 'pago', bajas: 'pago' }[x.tipo];
+      if (ab) { fpAbiertos[ab] = true; fpAplicar(); }
+    }
+    return r;
+  };
+})(abrirAviso);
+
+/* =========================================================
+   #115 Seguimientos de un cliente (profesionales): en lista, del más reciente (arriba) al más antiguo
+   ========================================================= */
+function sgFechaCard(c){
+  const m = (c.textContent || '').match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  return m ? +(m[3] + m[2] + m[1]) : 0;
+}
+function sgOrdenarLista(){
+  const cont = document.getElementById('seguiList'); if (!cont) return;
+  const cards = Array.prototype.slice.call(cont.querySelectorAll(':scope > .segui-card'));
+  if (cards.length < 2) return;
+  const orden = cards.map(function(c, i){ return { c: c, f: sgFechaCard(c), i: i }; })
+    .sort(function(a, b){ return (b.f - a.f) || (a.i - b.i); });
+  if (orden.every(function(x, i){ return x.c === cards[i]; })) return;
+  const ref = cards[cards.length - 1].nextSibling;
+  orden.forEach(function(x){ cont.insertBefore(x.c, ref); });
+}
+goToSeguimientos = (function(orig){
+  return function(){ const r = orig.apply(this, arguments); sgOrdenarLista(); return r; };
+})(goToSeguimientos);
