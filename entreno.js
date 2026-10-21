@@ -1272,10 +1272,11 @@ document.addEventListener('keydown', function(e){
   }
 });
 enUndoPintar();
-/* pantallas muy estrechas: «Guardar» en vez de «Guardar cambios» para que quepa el nombre del cliente */
+/* «Guardar cambios y notificar» (el cliente solo recibe aviso si hay cambios reales);
+   en móviles «Guardar y notificar» y en pantallas muy estrechas «Guardar», para que quepa el nombre del cliente */
 function enTextoGuardar(){
   const b = document.getElementById('editarBtn'); if (!b) return;
-  if (coachEditing) b.textContent = window.innerWidth <= 360 ? 'Guardar' : 'Guardar cambios';
+  if (coachEditing) b.textContent = window.innerWidth <= 360 ? 'Guardar' : window.innerWidth <= 560 ? 'Guardar y notificar' : 'Guardar cambios y notificar';
 }
 editarPlan = (function(orig){ return function(){ orig(); enTextoGuardar(); }; })(editarPlan);
 window.addEventListener('resize', enTextoGuardar);

@@ -1,0 +1,8 @@
+/* =========================================================
+   Fitness sin Dramas — Barra del cliente (21/10/2026)
+   ========================================================= */
+/* #108 mensajes sin leer en «Chat» */
+.tb .tbi{position:relative;}
+.tb-badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:#d93025;color:#fff;font:700 10.5px/18px var(--f-mono);text-align:center;box-shadow:0 0 0 2px var(--bg, #fff);pointer-events:none;}
+.tb-badge.hide{display:none;}

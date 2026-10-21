@@ -194,7 +194,23 @@ meterEnChat = (function(orig){
 
 /* Plan actualizado: solo si al guardar hay cambios reales */
 let fotoPlanAntes = null;
-function fotoPlan(){ try { sincronizarInputs(contEnt()); sincronizarInputs(contNut()); } catch(e){} return contEnt().innerHTML + '|' + contNut().innerHTML; }
+/* Huella del plan: solo lo que el cliente ve como pauta (textos, valores, datos de cada serie).
+   Se ignoran botones, modo edición (contenteditable, readonly…), clases y estilos: abrir o consultar
+   un plan ya no cuenta como cambio. */
+function huellaPlan(cont){
+  const c = cont.cloneNode(true);
+  try { if (typeof FSD_SOBRA_ENT === 'string') c.querySelectorAll(FSD_SOBRA_ENT).forEach(function(x){ x.remove(); }); } catch(e){}
+  c.querySelectorAll('button, .chip-x, .chip-add, .ses-del, .srf-x, .add-ej-btn, .en-del, .meal-del').forEach(function(x){ x.remove(); });
+  c.querySelectorAll('*').forEach(function(el){
+    Array.prototype.slice.call(el.attributes).forEach(function(a){
+      const n = a.name;
+      if (n === 'value' || n === 'src' || n === 'href' || (n.indexOf('data-') === 0 && n !== 'data-prev' && n !== 'data-ph' && n !== 'data-v2' && n !== 'data-edit-ready')) return;
+      el.removeAttribute(n);
+    });
+  });
+  return c.innerHTML.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ');
+}
+function fotoPlan(){ try { sincronizarInputs(contEnt()); sincronizarInputs(contNut()); } catch(e){} return huellaPlan(contEnt()) + '|' + huellaPlan(contNut()); }
 editarPlan = (function(orig){
   return function(){
     const empezando = !coachEditing;
@@ -204,8 +220,10 @@ editarPlan = (function(orig){
     if (!empezando && fotoPlanAntes !== null && clienteActual && coachActivo) {
       const cambio = fotoPlan() !== fotoPlanAntes;
       fotoPlanAntes = null;
+      if (!cambio && typeof toast === 'function') toast('Sin cambios: no se ha avisado al cliente');
       if (cambio) {
         const nut = vista === 'plan';
+        if (typeof toast === 'function') toast('Cambios guardados y ' + ((clientesData[clienteActual] || {}).nombre || 'el cliente') + ' avisado');
         crearAviso(claveCliente(clienteActual), 'plan',
           (nut ? 'Tu plan de nutrición' : 'Tu entrenamiento') + ' se ha actualizado',
           coachActivo.u + ' ha hecho cambios. Échales un vistazo.', { vista: nut ? 'plan' : 'entreno' });
