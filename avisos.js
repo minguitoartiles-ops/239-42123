@@ -8,14 +8,14 @@
 
 const AVISOS_KEY = 'fsd_avisos';
 const TIPOS_CLIENTE = [
-  { id: 'mensajes',    ico: '💬', nombre: 'Mensajes del equipo',        desc: 'Cuando Domingo o Fátima te escriben' },
+  { id: 'mensajes',    ico: '💬', nombre: 'Mensajes del equipo',        desc: 'Cuando Domingo o Fátima te escriben (se cuentan en la pestaña Chat, no en la campana)' },
   { id: 'plan',        ico: '📝', nombre: 'Cambios en tu plan',          desc: 'Cuando se actualiza tu entrenamiento o tu nutrición' },
   { id: 'seguimiento', ico: '⏰', nombre: 'Recordatorio de seguimiento', desc: 'Cuando toca enviar el seguimiento semanal' },
   { id: 'revisado',    ico: '👀', nombre: 'Seguimiento revisado',        desc: 'Cuando tu profesional ha visto tu seguimiento' }
 ];
 const TIPOS_PRO = [
   { id: 'seguimientos', ico: '📋', nombre: 'Seguimientos recibidos',  desc: 'Cuando un cliente envía su seguimiento' },
-  { id: 'mensajes',     ico: '💬', nombre: 'Mensajes de clientes',    desc: 'Cuando un cliente escribe en el chat' },
+  { id: 'mensajes',     ico: '💬', nombre: 'Mensajes de clientes',    desc: 'Cuando un cliente escribe en el chat (se cuentan en Chats, no en la campana)' },
   { id: 'altas',        ico: '🆕', nombre: 'Clientes nuevos',         desc: 'Cuando el otro profesional da de alta a alguien' },
   { id: 'pendientes',   ico: '⏰', nombre: 'Seguimientos pendientes', desc: 'Clientes con más de 7 días sin enviar seguimiento' }
 ];
@@ -78,7 +78,19 @@ function tocaAvisar(clave){
 }
 
 /* ---------- campanas y lista ---------- */
-function noLeidos(dest){ return ((leerAvisos().lista[dest]) || []).filter(function(x){ return !x.leida; }).length; }
+/* #141 La campana no incluye los mensajes del chat (ya los cuenta en rojo la pestaña Chat) */
+function enCampana(x){ return x.tipo !== 'mensajes'; }
+function noLeidosTodos(dest){ return ((leerAvisos().lista[dest]) || []).filter(function(x){ return !x.leida; }).length; }
+function noLeidos(dest){ return ((leerAvisos().lista[dest]) || []).filter(function(x){ return !x.leida && enCampana(x); }).length; }
+/* primero los recordatorios importantes sin leer: seguimiento, pago, cambios de plan */
+const AV_PRIORIDAD = { seguimiento: 1, pendientes: 1, seguimientos: 1, pago: 2, pagos: 2, plan: 3, revisado: 4 };
+function avOrdenados(lista){
+  return lista.filter(enCampana).map(function(x, i){ return [x, i]; }).sort(function(a, b){
+    if (!!a[0].leida !== !!b[0].leida) return a[0].leida ? 1 : -1;
+    if (!a[0].leida) { const pa = AV_PRIORIDAD[a[0].tipo] || 9, pb = AV_PRIORIDAD[b[0].tipo] || 9; if (pa !== pb) return pa - pb; }
+    return a[1] - b[1];
+  }).map(function(p){ return p[0]; });
+}
 function pintarBadge(id, n){
   const b = document.getElementById(id);
   if (!b) return;
@@ -98,7 +110,7 @@ function hace(iso){
   return d === 1 ? 'ayer' : 'hace ' + d + ' días';
 }
 function htmlListaAvisos(dest){
-  const lista = (leerAvisos().lista[dest]) || [];
+  const lista = avOrdenados((leerAvisos().lista[dest]) || []);
   const tipos = tiposDe(dest);
   if (!lista.length) return '<div class="picker-empty">No tienes notificaciones.</div>';
   return lista.map(function(x){
@@ -134,7 +146,7 @@ function pintarListas(){
   pintarCampanas();
 }
 function marcarTodosLeidos(dest){
-  ((leerAvisos().lista[dest]) || []).forEach(function(x){ x.leida = true; });
+  ((leerAvisos().lista[dest]) || []).forEach(function(x){ if (enCampana(x)) x.leida = true; });
   guardarAvisos();
   pintarListas();
 }

@@ -3,14 +3,16 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.69 → 0.69.2 (actual)
-Cambios acumulados hacia la 0.70: **4 de 10**
+## Versión 0.69 → 0.69.3 (actual)
+Cambios acumulados hacia la 0.70: **6 de 10**
 
 ### Hacia la 0.70
 1. 21/10/2026 19:40 · Seguimiento semanal más visual: agujetas de 1 verde a 4 rojo; motivación con caras (1 😞 → 5 😄); cumplimiento nutricional coloreado de 1 rojo a 10 verde; estrés con una cara que cambia al deslizar (1 😌 tranquilo → 10 😫 muy estresado). Los valores que se guardan no cambian
 2. 21/10/2026 19:40 · Hoy (cliente): fuera las tarjetas «Hoy toca» y «Ahora»; las tarjetas Entrenamiento (sesiones de la semana y completadas) y Plan nutricional (kcal, comidas y macros) son el acceso directo a la rutina y al plan → **0.69.1**
 3. 21/10/2026 19:55 · «Necesitan atención» = riesgo de abandono: solo marca a quien lleva 2 o más seguimientos seguidos con puntuación global baja (menos de 55), +48 h sin que le contestemos u 8 semanas o más con la misma rutina (esto último solo para Domingo). Los mensajes sin leer, seguimientos nuevos y pagos ya no lo activan; mensajes y seguimientos nuevos siguen en la tarjeta en gris, como información
 4. 21/10/2026 19:55 · Ficha en el ordenador: el tonelaje de la semana sale en su propio marco, separado del de Entrenamiento (se muestra con el filtro Entrenamiento; Fátima no lo ve) → **0.69.2**
+5. 21/10/2026 20:15 · Campana: ya no cuenta ni muestra los mensajes del chat (los cuenta en rojo la pestaña Chat/Chats; el sonido de mensaje sigue sonando). Los avisos sin leer salen ordenados por importancia: primero seguimientos, luego pagos, luego cambios de plan y después el resto
+6. 21/10/2026 20:15 · Seguimiento: en Agujetas, el número de la semana anterior ya no sale con un aro gris que tapaba el color; se marca con un borde discontinuo de su propio color → **0.69.3**
 
 ## Versión 0.69.0
 
