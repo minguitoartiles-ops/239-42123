@@ -244,8 +244,8 @@ function escFiltrarClientes(){
 
 /* ---------- 3 · Ficha en columnas ---------- */
 const ESC_GRUPOS = {
-  entrenador: ['gestion', 'pago', 'entreno', 'nutri', 'segui', 'datos'],
-  dietista: ['gestion', 'pago', 'nutri', 'segui', 'datos', 'entreno']
+  entrenador: ['gestion', 'pago', 'entreno', 'ton', 'nutri', 'segui', 'datos'],
+  dietista: ['gestion', 'pago', 'nutri', 'segui', 'datos', 'entreno', 'ton']
 };
 enSeccionDe = (function(orig){ return function(el){ return el.id === 'escFichaGrid' ? 'siempre' : orig(el); }; })(enSeccionDe);
 function escAgruparFicha(){
@@ -269,7 +269,7 @@ function escAgruparFicha(){
   const orden = ESC_GRUPOS[coachActivo && coachActivo.rol === 'dietista' ? 'dietista' : 'entrenador'];
   const grupo = function(g){
     let el = grid.querySelector('.esc-grupo[data-g="' + g + '"]');
-    if (!el) { el = document.createElement('div'); el.className = 'esc-grupo'; el.dataset.g = g; el.dataset.sec = g === 'gestion' ? 'datos' : g; grid.appendChild(el); }
+    if (!el) { el = document.createElement('div'); el.className = 'esc-grupo'; el.dataset.g = g; el.dataset.sec = g === 'gestion' ? 'datos' : (g === 'ton' ? 'entreno' : g); grid.appendChild(el); }
     return el;
   };
   let gestion = !!grid.querySelector('.esc-grupo[data-g="gestion"] .alta-label');
@@ -278,7 +278,7 @@ function escAgruparFicha(){
     const s = enSeccionDe(el);
     if (s === 'siempre') return;
     if (el.classList.contains('alta-label') && /Gestión/i.test(el.textContent)) gestion = true;
-    const g = gestion && (el.classList.contains('alta-label') || el.classList.contains('list-group')) ? 'gestion' : s;
+    const g = gestion && (el.classList.contains('alta-label') || el.classList.contains('list-group')) ? 'gestion' : (el.classList.contains('tonelaje-card') ? 'ton' : s);   // #147 tonelaje en su propio marco
     grupo(g).appendChild(el);
   });
   orden.forEach(function(g){ const el = grid.querySelector('.esc-grupo[data-g="' + g + '"]'); if (el) grid.appendChild(el); });

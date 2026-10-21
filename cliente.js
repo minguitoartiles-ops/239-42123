@@ -737,3 +737,42 @@ if (typeof toggleEmojis === 'function') toggleEmojis = function(){ const i = doc
    y Plan nutricional (kcal, comidas y macros) ya hacen de acceso directo a la rutina y al plan. */
 exPintarHoyToca = function(){ const c = document.getElementById('hoyToca'); if (c) { c.innerHTML = ''; c.hidden = true; } };
 exPintarHoyToca();
+
+/* ---------- #145 «Necesitan atención» = riesgo de abandono ----------
+   Solo cuenta: puntuación global baja (menos de 55) en los 2 últimos seguimientos seguidos,
+   +48 h sin contestarle o 8 semanas o más con la misma rutina.
+   Mensajes sin leer y seguimientos nuevos siguen en la tarjeta como información (en gris), pero no lo marcan. */
+const AT_BAJA = 55, AT_SEMANAS_BAJAS = 2;
+function atBajas(k){
+  const l = SEGUIMIENTOS[k] || []; if (l.length < AT_SEMANAS_BAJAS || typeof puntuacionCliente !== 'function') return 0;
+  let n = 0;
+  for (let i = 0; i < l.length; i++) { const p = puntuacionCliente(k, i); if (p && p.total != null && p.total < AT_BAJA) n++; else break; }
+  return n >= AT_SEMANAS_BAJAS ? n : 0;
+}
+exMotivos = function(k){
+  const d = clientesData[k], m = [];
+  if (!d || (typeof mjEsBaja === 'function' && mjEsBaja(d))) return m;
+  const b = atBajas(k); if (b) m.push('📉 ' + b + ' semanas con puntuación baja');
+  const esp = esperaDesde(k); if (esp && horasDesde(esp) >= ESPERA_ROJA_H) m.push('💬 +48 h sin contestar');
+  const r = typeof rutDatos === 'function' ? rutDatos(k) : null;
+  if (r && r.sem >= RUT_ROJO && !(coachActivo && coachActivo.rol === 'dietista')) m.push('🏋️ ' + r.sem + ' semanas con la misma rutina');
+  return m;
+};
+exPintarFiltros = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const claves = Object.keys(clientesData);
+    Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
+      const k = claves[i]; if (!k) return;
+      const inf = [], msg = msgsSinLeer(k), sg = segsSinVer(k);
+      if (msg) inf.push('💬 ' + msg + (msg === 1 ? ' mensaje' : ' mensajes'));
+      if (sg) inf.push('📋 ' + (sg === 1 ? 'seguimiento nuevo' : sg + ' seguimientos nuevos'));
+      let e = card.querySelector('.kc-info');
+      if (inf.length) {
+        if (!e) { e = document.createElement('div'); e.className = 'kc-info'; const ref = card.querySelector('.kc-motivos') || card.querySelector('.kc-top'); card.insertBefore(e, ref ? ref.nextSibling : null); }
+        e.textContent = inf.join(' · ');
+      } else if (e) e.remove();
+    });
+    return r;
+  };
+})(exPintarFiltros);
