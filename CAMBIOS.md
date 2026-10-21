@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.68 → 0.68.5 (actual)
-Cambios acumulados hacia la 0.69: **8 de 10**
+## Versión 0.69.0 (actual)
+Cambios acumulados hacia la 0.70: **0 de 10**
+
+## Versión 0.68 → 0.68.5
 
 ### Hacia la 0.69
 1. 21/10/2026 18:00 · Creador de rutinas (móvil y ordenador): los días se abren y cierran tocando su cabecera o su nombre (el ✎ de al lado sirve para renombrarlos); cada ejercicio sale plegado en una línea (series × reps · RIR editables) y se despliega o pliega tocando su nombre; el botón «Cambiar» abre la lista para elegir otro ejercicio; «Añadir ejercicio» añade una fila vacía sin abrir la lista (se elige con «Cambiar»; si se queda sin elegir, se quita al guardar); fuera las sugerencias 3×10, 4×8…
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.69: **8 de 10**
 6. 21/10/2026 18:55 · Creador de rutinas: «Añadir ejercicio» añade la fila plegada y vacía (sin 3 series ni RIR 2 por defecto); series, reps y RIR se rellenan en la propia línea → **0.68.4**
 7. 21/10/2026 19:05 · Creador de rutinas: la línea plegada se actualiza al instante al rellenar series, reps o RIR en el editor (también en el móvil y al añadir o quitar series); si las reps varían se ven tal cual («8/6/6») en vez de casillas vacías
 8. 21/10/2026 19:05 · Botón «Cambiar» siempre del mismo color → **0.68.5**
+9. 21/10/2026 19:20 · Teléfono (alta de cliente y demás fichas): al entrar en el campo aparece «+34 » ya escrito y se mantiene al escribir el número; si se vuelve a teclear +34 no se duplica, y si solo queda el prefijo el campo se guarda vacío
+10. 21/10/2026 19:20 · App de escritorio instalada: fuera el texto de la barra de título («Fitness sin Dramas · Fitnessindramas — Prototipo (Semana viva)»); en su lugar queda una franja fina y limpia (sirve para arrastrar la ventana) separada del contenido por una línea suave. El título de la pestaña pasa a ser solo «Fitness sin Dramas» → **0.69.0**
 
 ## Versión 0.67 → 0.67.4
 
