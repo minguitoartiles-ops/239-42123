@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Seguimiento semanal del cliente (21/10/2026)
+   Fitnessindramas — Seguimiento semanal del cliente (21/10/2026)
    #144 Uno por semana: si ya lo envió esta semana (de lunes a domingo), en vez del formulario
         ve «Ya enviado» con «Editar el de esta semana»; al editar, el formulario sale relleno
         con lo que puso y al enviar se corrige ese mismo seguimiento (no se crea otro).

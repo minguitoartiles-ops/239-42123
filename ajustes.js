@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Ajustes, privacidad y cookies
+   Fitnessindramas — Ajustes, privacidad y cookies
    Se carga después de app.js y usa sus variables globales
    (clientesData, PLANES, SEGUIMIENTOS, notisCoach, clienteActual,
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
@@ -250,7 +250,7 @@ function restaurarCopia(inp){
     let o = null;
     try { o = JSON.parse(r.result); } catch(e){}
     if (!o || o.app !== 'fitness-sin-dramas' || o.tipo !== 'completa' || !o.datos || typeof o.datos.clientes !== 'object') {
-      toast('Ese archivo no es una copia completa de Fitness sin Dramas');
+      toast('Ese archivo no es una copia completa de Fitnessindramas');
       return;
     }
     const n = Object.keys(o.datos.clientes).length;
@@ -473,7 +473,7 @@ function htmlAjustes(rol){
 
   /* --- Sesión --- */
   h += '<div class="list-group">' + fila('Cerrar sesión', '', cliente ? 'confirmarSalidaCliente()' : 'confirmarSalidaCoach()', 'danger') + '</div>';
-  h += '<div class="ajx-foot">Fitness sin Dramas · versión ' + APP_VERSION + '</div>';
+  h += '<div class="ajx-foot">Fitnessindramas · versión ' + APP_VERSION + '</div>';
   return h;
 }
 function renderAjustes(rol){
@@ -502,7 +502,7 @@ const TITULAR = {
   nif: '45374373L',
   direccion: 'Calle Juan XXIII n.º 33, 3.º B, 35110 Santa Lucía de Tirajana (Las Palmas)',
   correo: 'fitnessindramas@gmail.com',
-  marca: 'Fitnessindramas (Fitness sin Dramas)'
+  marca: 'Fitnessindramas'
 };
 const LEGAL_PRIVACIDAD =
   '<p class="legal-meta">Última actualización: 21 de octubre de 2026</p>'

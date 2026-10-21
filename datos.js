@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Planes más ligeros y aviso de memoria (21/10/2026)
+   Fitnessindramas — Planes más ligeros y aviso de memoria (21/10/2026)
    - Los entrenos se guardaban con todos sus botones y pantallas (≈200 KB por cliente):
      ahora solo se guardan sus datos; los botones se vuelven a crear al abrir el plan.
    - Aviso cuando la memoria del dispositivo pasa del 80 %.

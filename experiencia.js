@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas · EXPERIENCIA DE USO (v0.62)
+   Fitnessindramas · EXPERIENCIA DE USO (v0.62)
    Auditoría de navegación del 20/10/2026 · fases A, B y C + recompensas.
    Se carga la última: envuelve funciones de los demás archivos.
    ========================================================= */

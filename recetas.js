@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Recetas de Fátima (20/10/2026)
+   Fitnessindramas — Recetas de Fátima (20/10/2026)
    - Fátima crea recetas completas a mano (ingredientes en gramos, raciones y preparación).
    - Con un clic las envía a todos los clientes: la última sale destacada una semana
      («Receta de la semana») y todas quedan en el recetario de cada cliente.

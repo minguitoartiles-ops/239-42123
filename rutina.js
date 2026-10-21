@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — #120 Tiempo con la rutina actual (21/10/2026)
+   Fitnessindramas — #120 Tiempo con la rutina actual (21/10/2026)
    Cuenta desde el último cambio de EJERCICIOS (o de días) guardado en el entrenamiento;
    ajustar reps, RIR o notas no reinicia la cuenta.
    - Ficha: «Con esta rutina desde el dd/mm · N semanas» (ámbar desde 6 semanas, rojo desde 8).

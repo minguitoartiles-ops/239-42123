@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — #135 Cada profesional en su área (21/10/2026)
+   Fitnessindramas — #135 Cada profesional en su área (21/10/2026)
    Domingo (entrenador): ve un resumen rápido de la nutrición del cliente, pero no abre ni edita el plan
    nutricional ni las recetas. Fátima (dietista): ve un resumen del entrenamiento, pero no lo edita
    ni ve el registro de pesos ni el tonelaje. Lo compartido (ficha, chat, seguimientos, pagos) sigue igual.
