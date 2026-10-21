@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.70 → 0.70.3 (actual)
-Cambios acumulados hacia la 0.71: **6 de 10**
+Cambios acumulados hacia la 0.71: **7 de 10**
 
 ### Hacia la 0.71
 1. 21/10/2026 21:00 · Seguimiento → Datos biométricos: apartado «Fotos de progreso» con tres huecos (Frente · Perfil · Espalda), opcional; se puede quitar o cambiar cada foto y, al editar el seguimiento de la semana, salen las que ya envió. Fátima y Domingo las ven en la tarjeta del seguimiento y se amplían al tocarlas. Fuera el «+ Añadir fotos» que no hacía nada. Se guardan reducidas en el propio dispositivo (pendiente de Supabase, punto 6)
@@ -13,6 +13,7 @@ Cambios acumulados hacia la 0.71: **6 de 10**
 4. 21/10/2026 21:50 · Domingo: nueva pestaña «Entrenamientos» (en el móvil «Entrenos») justo debajo de Clientes, con buscador, foto, estado de la rutina (sin plan, toca revisar, al día) y semanas con la rutina actual. Un toque abre el entreno del cliente listo para editar; atrás vuelve a la lista → **0.70.2**
 5. 21/10/2026 22:05 · Entrenamientos (Domingo): clientes en lista; al tocar uno, a la derecha (en el móvil, debajo) sale su entreno día a día con el tonelaje movido esa semana (y el de la anterior), sesiones hechas y tiempo con la rutina, con «Abrir entreno» (doble clic también lo abre)
 6. 21/10/2026 22:30 · Cardio en el creador de rutinas: 27 ejercicios nuevos (máquinas de cardio, exterior y metabólicos) con filtros propios. Cada uno se pauta «Por tiempo» (minutos + intensidad), «Intervalos / SIIT» (rondas × trabajo / descanso + intensidad, con atajos HIIT 30/30, SIIT 20 s / 2 min, Tabata y 1/1) o «Por series». El cliente lo ve en una línea («35 min · Zona 2», «6 × 20 s / 2 min · Sprint (14 min)») y lo marca como hecho. Nuevo grupo «🔄 Circuito» en ⚡ Técnica para circuitos de fuerza + cardio (vueltas y descanso), hasta 8 ejercicios → **0.70.3**
+7. 21/10/2026 22:45 · Botón «Volver» de la barra del plan: vuelve a donde estabas (Entrenamientos, Nutrición, Chats o la ficha del cliente), igual que el botón atrás; antes siempre llevaba a Clientes
 
 ## Versión 0.69 → 0.69.4
 
