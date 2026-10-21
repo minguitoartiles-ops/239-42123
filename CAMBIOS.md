@@ -16,6 +16,7 @@ Cambios acumulados hacia la 0.71: **9 de 10**
 7. 21/10/2026 22:45 · Botón «Volver» de la barra del plan: vuelve a donde estabas (Entrenamientos, Nutrición, Chats o la ficha del cliente), igual que el botón atrás; antes siempre llevaba a Clientes
 8. 21/10/2026 22:55 · Menú de los profesionales en este orden: Clientes · Seguimientos · Entrenamientos (Nutrición y Recetas para Fátima) · Chats · Pagos · Ajustes (en el móvil, Más al final)
 9. 21/10/2026 22:55 · Tarjetas de Clientes sin la casilla «Mensajes» (los mensajes se ven en Chats); quedan Global, Entreno y Nutrición → **0.70.4**
+   · 21/10/2026 23:30 · Auditoría: en móviles de 360 px los filtros «Todos · Necesitan atención · Sin plan» de Clientes bajan de línea en vez de cortarse (arreglo dentro de la auditoría)
 
 ## Versión 0.69 → 0.69.4
 
