@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — #127 Evolución del cliente en gráfico (21/10/2026)
+   Fitnessindramas — #127 Evolución del cliente en gráfico (21/10/2026)
    En «Seguimientos» de un cliente (profesionales), arriba: gráfico de línea con filtros
    Peso · Cintura · Cadera · Bíceps · Muslo · Entreno · Nutrición · Motivación · Estrés · Pasos · Tonelaje.
    Una sola serie cada vez (un solo eje); pasar el ratón o el dedo muestra cada semana.

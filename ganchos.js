@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Ganchos «después de…» (21/10/2026 · limpieza interna)
+   Fitnessindramas — Ganchos «después de…» (21/10/2026 · limpieza interna)
    En vez de envolver una función una y otra vez (goTo llegó a tener 30 capas), cada módulo
    registra lo que quiere hacer después con fsdTras('goTo', fn). Al final de la carga
    (fsdInstalarGanchos, en datos.js) se envuelve cada función UNA sola vez, como capa exterior,

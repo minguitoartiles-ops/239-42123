@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Creación de rutinas (Domingo, 20/10/2026)
+   Fitnessindramas — Creación de rutinas (Domingo, 20/10/2026)
    - Una sola pauta por ejercicio: nº de series, reps y RIR (sin editar serie a serie).
    - «Notas» de Domingo en vez de la descripción automática (si no hay nota, el cliente no ve nada).
    - Vídeo de ejemplo por ejercicio que el cliente ve dentro de la app.

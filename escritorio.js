@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas · MODO ORDENADOR (v0.59)
+   Fitnessindramas · MODO ORDENADOR (v0.59)
    Solo para Fátima y Domingo en pantallas anchas (≥ 900 px; antes 1100).
    En el móvil no cambia nada. Los clientes solo pueden usar la app en el móvil o la tablet.
    ========================================================= */
@@ -25,7 +25,7 @@ function escSoloMovil(conSesion){
     document.body.appendChild(o);
   }
   o.innerHTML = '<div class="esc-sm-card">'
-    + '<img class="esc-sm-logo" src="assets/logo_fsd.png" alt="Fitness sin dramas">'
+    + '<img class="esc-sm-logo" src="assets/logo_fsd.png" alt="Fitnessindramas">'
     + '<h2 id="escSmTit">La app de clientes funciona en el móvil</h2>'
     + '<p>Para ver tu entrenamiento, tu plan y hablar con tu equipo, abre la app en tu móvil o tu tablet. Escanea este código con la cámara:</p>'
     + '<img class="esc-sm-qr" src="assets/qr_app.png" alt="Código QR para abrir la app en el móvil" width="180" height="180">'
@@ -112,7 +112,7 @@ if (window.fsdSesionCliente && escEsOrdenador()) { if (escEsEquipo()) escVistaCl
   if (!nav) return;
   const logo = document.createElement('div');
   logo.className = 'esc-logo'; logo.id = 'escLogo';
-  logo.innerHTML = '<img src="assets/logo_fsd.png" alt="" width="40" height="40"><div><b>Fitness sin dramas</b><span id="escQuien"></span></div>';
+  logo.innerHTML = '<img src="assets/logo_fsd.png" alt="" width="40" height="40"><div><b>Fitnessindramas</b><span id="escQuien"></span></div>';
   nav.insertBefore(logo, nav.firstChild);
   const pie = document.createElement('div');
   pie.className = 'esc-pie'; pie.id = 'escPie';

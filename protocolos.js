@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — #142 Protocolos en PDF (21/10/2026)
+   Fitnessindramas — #142 Protocolos en PDF (21/10/2026)
    - Fátima sube PDFs (protocolos, guías…) a la ficha de cada cliente, en el bloque de Nutrición.
    - El cliente los ve en Nutrición («Protocolos de Fátima») y los abre o descarga.
    - Domingo los ve en la ficha, sin poder subir ni borrar.

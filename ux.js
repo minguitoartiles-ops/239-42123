@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — v0.4
+   Fitnessindramas — v0.4
    Navegación estándar, animaciones, emojis en el chat,
    seguimientos con flechas y datos reales en «Hoy».
    Se carga después de app.js y ajustes.js.
@@ -744,7 +744,7 @@ function enviarCodigoCoach(){
   const d = clienteActual ? clientesData[clienteActual] : null;
   if (!c || !d) return;
   const nombre = (d.nombre || '').split(' ')[0];
-  const texto = 'Hola' + (nombre ? ' ' + nombre : '') + ', tu código de acceso a Fitness sin Dramas es ' + c +
+  const texto = 'Hola' + (nombre ? ' ' + nombre : '') + ', tu código de acceso a Fitnessindramas es ' + c +
     '. Entra en ' + location.origin + location.pathname.replace(/index\.html$/, '') + ' y escríbelo en «Código de acceso».';
   if (navigator.share) {
     navigator.share({ title: 'Tu código de acceso', text: texto }).catch(function(err){

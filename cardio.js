@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Cardio en el creador de rutinas (21/10/2026)
+   Fitnessindramas — Cardio en el creador de rutinas (21/10/2026)
    - Ejercicios nuevos en la base: máquinas de cardio, exterior y metabólicos (grupo «Cardio»).
    - Cada ejercicio de cardio se pauta:
        · Por tiempo: minutos + intensidad (Zona 2, RPE 6…)

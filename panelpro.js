@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Espacio de los profesionales con barra inferior
+   Fitnessindramas — Espacio de los profesionales con barra inferior
    Pestañas: Clientes · Seguimientos · Ajustes (como el panel del cliente)
    Se carga después de app.js, ajustes.js, ux.js y avisos.js.
    ========================================================= */
@@ -66,7 +66,7 @@ function htmlFlechaDato(dato, unidad){
 function pintarSegsResumen(){
   const cont = document.getElementById('segsResumen');
   if (!cont) return;
-  setTxt('segsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  setTxt('segsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitnessindramas');
   const claves = Object.keys(clientesData);
   if (!claves.length) {
     cont.innerHTML = '<div class="vacio"><b>Todavía no hay clientes</b><span>Cuando des de alta a alguien y envíe su seguimiento, lo verás aquí.</span></div>';
@@ -309,7 +309,7 @@ function colorearSeguimientos(cont){
 pintarSegsResumen = function(){
   const cont = document.getElementById('segsResumen');
   if (!cont) return;
-  setTxt('segsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  setTxt('segsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitnessindramas');
   const claves = Object.keys(clientesData);
   if (!claves.length) {
     cont.innerHTML = '<div class="vacio"><b>Todavía no hay clientes</b><span>Cuando des de alta a alguien y envíe su seguimiento, lo verás aquí.</span></div>';
@@ -1006,7 +1006,7 @@ function datosChats(){
 function pintarChatsPro(){
   const cont = document.getElementById('chatsPro');
   if (!cont) return;
-  setTxt('chatsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitness sin dramas');
+  setTxt('chatsWho', coachActivo ? coachActivo.u + ' · ' + coachActivo.rol : 'Fitnessindramas');
   const lista = datosChats();
   if (!lista.length) { cont.innerHTML = '<div class="vacio"><b>Todavía no hay clientes</b><span>Cuando des de alta a alguien, su chat aparecerá aquí.</span></div>'; return; }
   const esperan = lista.filter(function(x){ return x.esp; });

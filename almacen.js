@@ -1,5 +1,5 @@
 /* =========================================================
-   Fitness sin Dramas — Almacenamiento comprimido (21/10/2026)
+   Fitnessindramas — Almacenamiento comprimido (21/10/2026)
    Los datos de la app (clientes, planes, seguimientos y chats) se guardan comprimidos
    en el dispositivo (lz-string), así caben muchos más clientes en los ~5 MB del navegador.
    Es transparente: el resto de la app sigue leyendo y escribiendo como siempre.
