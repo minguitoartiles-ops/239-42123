@@ -630,3 +630,11 @@ html.esc .cm-fw-in{border-radius:20px;}
 .emo-borrar:hover{color:var(--accent);}
 .emo-rec-vacio{font:500 12px var(--f-body);color:var(--dim-55);padding:6px 2px 4px;}
 html.esc .emoji-panel{max-height:290px;}
+
+/* móvil táctil: tocar o mantener pulsado un mensaje no selecciona texto (evita el panel «buscar con Google» de Android);
+   copiar se hace desde el menú del mensaje. El campo de escribir sigue siendo seleccionable. */
+@media (pointer: coarse){
+  #chatList .bubble, #chatList .bubble *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+  #chatList .bubble{-webkit-tap-highlight-color:transparent;}
+  #chatInput{-webkit-user-select:text;user-select:text;}
+}
