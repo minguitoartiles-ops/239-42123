@@ -1018,7 +1018,6 @@ entrarAlPanel = (function(orig){ return function(){ const r = orig.apply(this, a
    por categorías (Recientes, Caras, Gestos, Deporte, Comida, Símbolos); se inserta donde está el cursor,
    el panel sigue abierto para poner varios y se cierra con Esc o al hacer clic fuera. */
 const EMO_CAT = [
-  ['rec', '🕘', 'Recientes', []],
   ['car', '😀', 'Caras', '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 😉 😌 😍 🥰 😘 😋 😎 🤩 🥳 😏 🤔 🤨 😐 😶 🙄 😬 😮 😲 😳 🥺 😢 😭 😤 😠 🤯 😱 😓 😩 😫 🥱 😴 🤒 🤕 🤢 🥵 🥶 🤗 🤫 🤭'.split(' ')],
   ['ges', '👍', 'Gestos', '👍 👎 👌 ✌️ 🤞 🤟 🤘 👏 🙌 👐 🤝 🙏 💪 🦵 👊 ✊ 👋 🫶 ❤️ 🧡 💛 💚 💙 💜 🤍 🖤 💔 💯'.split(' ')],
   ['dep', '🏋️', 'Deporte', '🏋️ 🏋️‍♀️ 🤸 🏃 🏃‍♀️ 🚴 🚴‍♀️ 🧘 🧘‍♀️ 🏊 ⛹️ 🧗 🥊 🏆 🥇 🥈 🥉 🎯 ⏱️ ⏰ 📈 📉 🔥 ⚡ 💧 🫀 🦾 👟'.split(' ')],
@@ -1029,21 +1028,22 @@ let emoCat = 'car';
 function emoRecientes(){ try { return JSON.parse(localStorage.getItem('fsd_emo_rec') || '[]'); } catch(e){ return []; } }
 function emoPintar(){
   const p = document.getElementById('emojiPanel'); if (!p) return;
-  const rec = emoRecientes();
-  if (emoCat === 'rec' && !rec.length) emoCat = 'car';
-  const cat = EMO_CAT.filter(function(c){ return c[0] === emoCat; })[0];
-  const lista = emoCat === 'rec' ? rec : cat[3];
-  p.innerHTML = '<div class="emo-tabs" role="tablist">' + EMO_CAT.map(function(c){
-      if (c[0] === 'rec' && !rec.length) return '';
+  const rec = emoRecientes().slice(0, 16);
+  const cat = EMO_CAT.filter(function(c){ return c[0] === emoCat; })[0] || EMO_CAT[0];
+  const btn = function(e){ return '<button type="button" class="emo-b" aria-label="' + e + '" onclick="emoPoner(\'' + e + '\')">' + e + '</button>'; };
+  p.innerHTML = '<div class="emo-rec"><div class="emo-tit">🕘 Recientes' + (rec.length ? '<button type="button" class="emo-borrar" onclick="emoBorrarRec()">Borrar</button>' : '') + '</div>'
+    + (rec.length ? '<div class="emo-grid">' + rec.map(btn).join('') + '</div>' : '<div class="emo-rec-vacio">Los emojis que uses aparecerán aquí.</div>') + '</div>'
+    + '<div class="emo-tabs" role="tablist">' + EMO_CAT.map(function(c){
       return '<button type="button" role="tab" aria-selected="' + (c[0] === emoCat) + '" class="emo-tab' + (c[0] === emoCat ? ' on' : '') + '" title="' + c[2] + '" onclick="emoElegirCat(\'' + c[0] + '\')">' + c[1] + '</button>';
-    }).join('') + '</div><div class="emo-tit">' + cat[2] + '</div><div class="emo-grid">'
-    + lista.map(function(e){ return '<button type="button" class="emo-b" aria-label="' + e + '" onclick="emoPoner(\'' + e + '\')">' + e + '</button>'; }).join('') + '</div>';
+    }).join('') + '</div><div class="emo-tit">' + cat[2] + '</div><div class="emo-grid">' + cat[3].map(btn).join('') + '</div>';
 }
+function emoBorrarRec(){ try { localStorage.removeItem('fsd_emo_rec'); } catch(e){} emoPintar(); }
 function emoElegirCat(c){ emoCat = c; emoPintar(); }
 function emoPoner(e){
   insertarEmoji(e);
   let r = emoRecientes().filter(function(x){ return x !== e; }); r.unshift(e); r = r.slice(0, 24);
   try { localStorage.setItem('fsd_emo_rec', JSON.stringify(r)); } catch(err){}
+  const pn = document.getElementById('emojiPanel'), sc = pn ? pn.scrollTop : 0; emoPintar(); if (pn) pn.scrollTop = sc;
   const i = document.getElementById('chatInput'); if (i) { i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); }
 }
 toggleEmojis = function(){
