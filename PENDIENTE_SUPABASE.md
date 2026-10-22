@@ -21,5 +21,6 @@ Se activarán cuando Domingo decida montar el servidor. Cada entrada indica de d
 | 15 | **Borrado automático de clientes sin pago** (ficha guardada 15 días tras perder el acceso; después se borra el perfil) | Sin servidor, el borrado solo ocurre en el dispositivo donde se abre la app; con Supabase hay que borrar también en la base de datos y en las fotos guardadas | 21/10/2026 |
 | 16 | **Protocolos en PDF de Fátima en el móvil de cada cliente** (y en las copias de seguridad) | Los PDF se guardan en el dispositivo donde Fátima los sube (IndexedDB); solo los descargan los clientes de ese mismo dispositivo y la copia descargable no los incluye. Con Supabase: almacenamiento de archivos privado por cliente | 21/10/2026 |
 | 10 | **Pasos medios semanales automáticos** en el seguimiento (Salud, Health Connect, Samsung Health, Garmin) | Ahora el cliente los indica con un deslizador; leerlos solos necesita app nativa (o servidor para Garmin) | 20/10/2026 |
+| 17 | **Alojamiento de los datos en Supabase** (base de datos y usuarios en la nube en lugar de guardarlo todo en cada dispositivo) | Hoy los datos viven en el navegador de cada móvil u ordenador y no se comparten | 22/10/2026 |
 
 **Aparte (no es Supabase, necesita app nativa):** Apple Salud, Samsung Health y Health Connect solo se pueden leer desde una app instalada desde App Store o Google Play.
