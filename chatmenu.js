@@ -52,7 +52,7 @@ function cmAbrir(b, x, y){
   const it = [['responder', 'Responder'], ['fijar', fijo ? 'Desfijar' : 'Fijar']];
   if (txt) it.push(['copiar', 'Copiar texto']);
   if (pro && txt) it.push(['reenviar', 'Reenviar']);
-  if (pro && o) it.push(['duda', 'Duda para ' + o.u]);
+  if (pro && o && !b.classList.contains('in')) it.push(['duda', 'Duda para ' + o.u]);   // solo mensajes del cliente
   if (cmPuedeEliminar(b)) it.push(['eliminar', 'Eliminar']);
   it.push(['seleccionar', 'Seleccionar']);
   const m = document.createElement('div'); m.id = 'cmMenu'; m.className = 'cm-menu'; m.setAttribute('role', 'menu');

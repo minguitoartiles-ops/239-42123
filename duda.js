@@ -63,6 +63,7 @@ document.addEventListener('click', function(e){
   const ya = b.previousElementSibling && b.previousElementSibling.classList.contains('dd-chip');
   ddQuitarChip();
   if (ya || b.classList.contains('dd-marca')) return;
+  if (b.classList.contains('in')) return;      // 22/10 · solo se marcan como duda los mensajes del cliente, no los de Domingo ni los de Fátima
   const o = ddOtro(); if (!o) return;
   const c = document.createElement('div'); c.className = 'dd-chip dd-x';
   c.style.alignSelf = getComputedStyle(b).alignSelf;
