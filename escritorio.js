@@ -244,8 +244,8 @@ function escFiltrarClientes(){
 
 /* ---------- 3 · Ficha en columnas ---------- */
 const ESC_GRUPOS = {
-  entrenador: ['gestion', 'pago', 'entreno', 'ton', 'nutri', 'segui', 'datos'],
-  dietista: ['gestion', 'pago', 'nutri', 'segui', 'datos', 'entreno', 'ton']
+  entrenador: ['segui', 'gestion', 'pago', 'entreno', 'ton', 'nutri', 'datos'],
+  dietista: ['segui', 'gestion', 'pago', 'nutri', 'datos', 'entreno', 'ton']
 };
 enSeccionDe = (function(orig){ return function(el){ return el.id === 'escFichaGrid' ? 'siempre' : orig(el); }; })(enSeccionDe);
 function escAgruparFicha(){

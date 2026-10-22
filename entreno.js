@@ -1003,7 +1003,7 @@ function enSeccionDe(el){
   if (id === 'fichaPago') return 'pago';
   if (id === 'fichaEntrenoRes') return 'entreno';
   if (el.classList.contains('tonelaje-card')) return 'entreno';
-  if (el.classList.contains('stat-row')) return el.querySelector('#cd-adhE') ? 'segui' : 'datos';
+  if (el.classList.contains('stat-row')) return 'segui';
   return 'datos';
 }
 function enAplicarSeccion(){
