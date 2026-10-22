@@ -968,7 +968,9 @@ function registrarMensaje(k, deCliente, txt){
 function esperaDesde(k){
   const d = clientesData[k];
   if (!coachActivo || !d || !d.chatT) return null;
-  const mio = d.chatT.pro[norm(coachActivo.u)] || '';
+  /* 22/10 · el mensaje de un cliente cuenta como atendido cuando responde CUALQUIERA de los dos profesionales:
+     si Domingo ya habla con el cliente, a Fátima no le sale «esperando respuesta» (y al revés) */
+  const mio = Object.keys(d.chatT.pro || {}).map(function(u){ return d.chatT.pro[u] || ''; }).reduce(function(a, b){ return b > a ? b : a; }, '');
   const pend = d.chatT.cli.filter(function(t){ return t > mio; });
   return pend.length ? pend[0] : null;
 }
