@@ -17,7 +17,8 @@ const TIPOS_PRO = [
   { id: 'seguimientos', ico: '📋', nombre: 'Seguimientos recibidos',  desc: 'Cuando un cliente envía su seguimiento' },
   { id: 'mensajes',     ico: '💬', nombre: 'Mensajes de clientes',    desc: 'Cuando un cliente escribe en el chat (se cuentan en Chats, no en la campana)' },
   { id: 'altas',        ico: '🆕', nombre: 'Clientes nuevos',         desc: 'Cuando el otro profesional da de alta a alguien' },
-  { id: 'pendientes',   ico: '⏰', nombre: 'Seguimientos pendientes', desc: 'Clientes con más de 7 días sin enviar seguimiento' }
+  { id: 'pendientes',   ico: '⏰', nombre: 'Seguimientos pendientes', desc: 'Clientes con más de 7 días sin enviar seguimiento' },
+  { id: 'duda',         ico: '❓', nombre: 'Dudas del equipo',        desc: 'Cuando tu compañero te marca un mensaje del chat como duda, o resuelve la tuya' }
 ];
 const DIA_MS = 86400000;
 
