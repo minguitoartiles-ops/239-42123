@@ -100,7 +100,7 @@ function fpResumen(id, cont){
       const v = Array.prototype.slice.call(filas, 0, 2).map(val).filter(Boolean);
       return v.length > 1 ? v[0] + ' · hasta ' + v[1] : v.join(' · ');
     }
-    if (id === 'entreno') { const t = cont[0] && cont[0].querySelector('.fe-top span'); return t ? t.textContent.trim() : ''; }
+    if (id === 'entreno') { const t = cont.map(function(c){ return c.querySelector && c.querySelector('.fe-top span'); }).filter(Boolean)[0]; return t ? t.textContent.trim() : ''; }
     if (id === 'nutri') { const r = nuResumenCliente(clienteActual); return r && r.obj ? fmtMil(Math.round(r.obj.kcal)) + ' kcal · ' + r.comidas.length + (r.comidas.length === 1 ? ' comida' : ' comidas') : 'Plan sin preparar'; }
     if (id === 'gestion') return 'Datos, código, alergias…';
   } catch(e){}
@@ -116,18 +116,57 @@ function fpMoverBloques(extra){
   const enOrden = deseados.every(function(e, i){ return hijos[hijos.length - deseados.length + i] === e; });
   if (!enOrden) deseados.forEach(function(e){ box.appendChild(e); });
 }
+/* 22/10 · las adherencias van dentro de su apartado (primero de todo) y «Sensaciones del día» + peso/revisión suben arriba de la ficha */
+let fpAdh = {};
+function fpAdhSalvar(){ ['e', 'n'].forEach(function(t){ const w = document.querySelector('#view-coach-cliente .fp-adh[data-t="' + t + '"]'); if (w) { fpAdh[t] = w; w.remove(); } }); }
+function fpAdhPoner(){
+  const v = document.getElementById('view-coach-cliente'); if (!v) return;
+  [['e', 'cd-adhE', 'fichaEntrenoRes'], ['n', 'cd-adhN', 'fichaNutri']].forEach(function(x){
+    const val = document.getElementById(x[1]);
+    let w = fpAdh[x[0]];
+    if (!w) {
+      if (!val) return;
+      const card = val.closest('.stat-card'), fila = card.parentNode;
+      w = document.createElement('div'); w.className = 'stat-row fp-adh'; w.dataset.t = x[0]; w.appendChild(card); fpAdh[x[0]] = w;
+      if (fila && fila.classList.contains('stat-row') && !fila.children.length) fila.remove();
+    }
+    const box = document.getElementById(x[2]); if (!box) return;
+    const lbl = box.querySelector('.alta-label');
+    if (lbl && lbl.nextElementSibling !== w) lbl.insertAdjacentElement('afterend', w);
+  });
+}
+function fpOrdenarArriba(){
+  const v = document.getElementById('view-coach-cliente'); if (!v) return;
+  const sens = document.getElementById('fichaSens'), peso = document.getElementById('cd-peso'), fotos = document.getElementById('fichaFotos');
+  const fila = peso ? peso.closest('.stat-row') : null;
+  if (!sens || !fila) return;
+  const grid = document.getElementById('escFichaGrid');
+  if (grid) {
+    const padre = sens.parentNode;
+    if (fila.parentNode !== padre || fila.previousElementSibling !== sens) padre.insertBefore(fila, sens.nextSibling);
+    if (fotos && fotos.parentNode === padre && fotos.previousElementSibling !== fila) padre.insertBefore(fotos, fila.nextSibling);
+    return;
+  }
+  const sec = document.getElementById('fichaSecciones'), body = v.querySelector('.alta-body');
+  if (!sec || sec.parentNode !== body) return;
+  let ref = sec.nextSibling;
+  [sens, fila, fotos].forEach(function(e){ if (!e || e.parentNode !== body) return; if (e !== ref) body.insertBefore(e, ref); else ref = e.nextSibling; });
+}
 enPintarEntrenoFicha = (function(orig){
   return function(){
+    fpAdhSalvar();
     const b = document.getElementById('fichaEntrenoRes'), guardar = [];
     if (b) ['.tonelaje-card', '#fichaPasos'].forEach(function(s){ const e = b.querySelector(s); if (e) { guardar.push(e); e.remove(); } });
     const r = orig.apply(this, arguments);
     fpMoverBloques(guardar);
+    fpAdhPoner();
     return r;
   };
 })(enPintarEntrenoFicha);
+nuPintarFicha = (function(orig){ return function(){ fpAdhSalvar(); const r = orig.apply(this, arguments); fpAdhPoner(); return r; }; })(nuPintarFicha);
 function fpAplicar(){
   const v = document.getElementById('view-coach-cliente'); if (!v || !coachActivo) return;
-  fpMoverBloques();
+  fpMoverBloques(); fpAdhPoner(); fpOrdenarArriba();
   const filtro = typeof enSeccion === 'string' && enSeccion !== 'todo';
   /* al elegir un filtro, su apartado se abre (y después se puede plegar) */
   if (filtro && fpUltFiltro !== enSeccion) { const m = { entreno: 'entreno', nutri: 'nutri', pago: 'pago', datos: 'gestion' }[enSeccion]; if (m) fpAbiertos[m] = true; }
