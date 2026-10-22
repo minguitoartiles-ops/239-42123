@@ -3,13 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.73.1 (actual)
-Cambios acumulados hacia la 0.74: **3 de 10**
+## Versión 0.73.2 (actual)
+Cambios acumulados hacia la 0.74: **4 de 10**
 
 ### Hacia la 0.74
 1. 22/10/2026 11:20 · Ficha del cliente (Domingo y Fátima): «Sensaciones del día» arriba del todo, debajo peso actual y próxima revisión; «Adherencia entreno» dentro de Entrenamiento y «Adherencia nutrición» dentro de Nutrición
 2. 22/10/2026 11:30 · Nutrición de un vistazo rediseñada: anillo con el reparto de calorías (proteína, carbos, grasa) y una tarjeta por macro con emoji, gramos y porcentaje → **0.73.1**
 3. 22/10/2026 11:45 · Planes de nutrición (Fátima): los clientes con comidas pero sin objetivo de calorías ya no salen «Al día» sino «Revisar · falta fijar el objetivo»; y su resumen deja de decir «Sin alimentos» y muestra los alimentos elegidos
+4. 22/10/2026 11:55 · Chat (ordenador): el teclado de emojis tiene siempre arriba una sección «Recientes» (los 16 últimos usados, con botón Borrar) que se actualiza al momento y se recuerda en ese dispositivo → **0.73.2**
 
 ## Versión 0.72 → 0.73.0
 
