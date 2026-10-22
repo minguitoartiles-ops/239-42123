@@ -477,12 +477,29 @@ function nuOtroCliente(dir){
 /* =========================================================
    Nutrición de un vistazo: ficha del cliente y tarjetas del panel
    ========================================================= */
+/* 22/10 · macros de un vistazo: anillo con el reparto de calorías + una tarjeta por macronutriente */
+function nuHtmlMacros(o){
+  const kp = (o.p || 0) * 4, kc = (o.c || 0) * 4, kf = (o.f || 0) * 9, tot = (kp + kc + kf) || 1, C = 2 * Math.PI * 40;
+  const m = [['p', '🥩', 'Proteína', o.p, kp, 'var(--protein)'], ['c', '🍚', 'Carbos', o.c, kc, 'var(--carb)'], ['f', '🥑', 'Grasa', o.f, kf, 'var(--fat)']];
+  let acc = 0;
+  const arcos = m.map(function(x){
+    const len = Math.max(0, x[4] / tot * C - 2), off = acc; acc += x[4] / tot * C;
+    return '<circle cx="50" cy="50" r="40" fill="none" stroke="' + x[5] + '" stroke-width="12" stroke-dasharray="' + len.toFixed(1) + ' ' + (C - len).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '" transform="rotate(-90 50 50)"/>';
+  }).join('');
+  return '<div class="nu-macros"><div class="nu-dona" role="img" aria-label="Reparto de calorías: ' + m.map(function(x){ return x[2] + ' ' + Math.round(x[4] / tot * 100) + '%'; }).join(', ') + '">'
+    + '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--wash-med)" stroke-width="12"/>' + arcos + '</svg>'
+    + '<div class="nu-dona-c"><b>' + fmtMil(Math.round(o.kcal)) + '</b><span>kcal/día</span></div></div>'
+    + '<div class="nu-mlista">' + m.map(function(x){
+      const pc = Math.round(x[4] / tot * 100);
+      return '<div class="nu-m ' + x[0] + '"><span class="nu-m-e" aria-hidden="true">' + x[1] + '</span><div class="nu-m-t"><b>' + Math.round(x[3]) + ' g</b><span>' + x[2] + '</span></div>'
+        + '<span class="nu-m-pc">' + pc + '%</span><i class="nu-m-bar"><u style="width:' + pc + '%;background:' + x[5] + '"></u></i></div>';
+    }).join('') + '</div></div>';
+}
 function nuHtmlResumen(k, compacto){
   const d = clientesData[k], r = nuResumenCliente(k);
   let h = '';
   if (r.obj) {
-    h += '<div class="nu-vista-top"><div><b>' + fmtMil(Math.round(r.obj.kcal)) + '</b><span>kcal/día</span></div>'
-      + '<div><b>' + Math.round(r.obj.p) + ' g</b><span>Proteína</span></div><div><b>' + Math.round(r.obj.c) + ' g</b><span>Carbos</span></div><div><b>' + Math.round(r.obj.f) + ' g</b><span>Grasa</span></div></div>';
+    h += nuHtmlMacros(r.obj);
     if (r.total && r.total.comidas.length) {
       const dif = r.total.kcal - Math.round(r.obj.kcal);
       h += '<div class="nu-vista-cuadre' + (Math.abs(dif) <= Math.max(40, r.obj.kcal * 0.03) ? ' ok' : '') + '">Plan: ' + fmtMil(r.total.kcal) + ' kcal · ' + r.total.comidas.length + (r.total.comidas.length === 1 ? ' comida' : ' comidas') + (Math.abs(dif) <= 5 ? ' · cuadra ✓' : ' · ' + (dif > 0 ? '+' : '') + dif + ' kcal') + '</div>';

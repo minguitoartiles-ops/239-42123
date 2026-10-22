@@ -12,7 +12,7 @@ function ddOtro(){ return COACHES.filter(function(x){ return norm(x.u) !== norm(
 function ddBurbujas(){ const l = document.getElementById('chatList'); return l ? Array.prototype.slice.call(l.querySelectorAll('.bubble')) : []; }
 function ddTexto(b){
   const c = b.cloneNode(true);
-  Array.prototype.forEach.call(c.querySelectorAll('.dd-x, .sender, .sender-x, .msg-av, .msg-av2, .mencion-tag'), function(x){ x.remove(); });
+  Array.prototype.forEach.call(c.querySelectorAll('.dd-x, .sender, .sender-x, .msg-av, .msg-av2, .mencion-tag, .rp-q, .fw-tag'), function(x){ x.remove(); });
   const t = c.textContent.replace(/\s+/g, ' ').trim();
   return (t || (b.querySelector('audio') ? '🎤 Nota de voz' : (b.querySelector('img') ? '📷 Foto' : ''))).slice(0, 60);
 }
@@ -70,18 +70,22 @@ document.addEventListener('click', function(e){
   b.parentNode.insertBefore(c, b);
   c._b = b;
 });
+function ddCrearDuda(b){
+  const k = clienteActual; if (!k || !b || !coachActivo) return;
+  const o = ddOtro(), d = clientesData[k];
+  const du = { id: 'dd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), n: ddBurbujas().indexOf(b), txt: ddTexto(b),
+               de: coachActivo.u, para: o.u, f: new Date().toISOString(), ok: false };
+  d.dudas = ddLista(k).concat([du]);
+  try { guardarTodo(); } catch(e){}
+  crearAviso(clavePro(o.u), 'duda', '❓ ' + coachActivo.u + ' tiene una duda · ' + (d.nombre || 'cliente'), du.txt, { cliente: k, vista: 'chat', duda: du.id });
+  ddQuitarChip(); ddPintar();
+  toast('Aviso enviado a ' + o.u);
+}
 function ddAccion(bot){
   const a = bot.dataset.dd, k = clienteActual; if (!k) return;
   if (a === 'nueva') {
     const chip = bot.closest('.dd-chip'), b = chip && chip._b; if (!b) return;
-    const o = ddOtro(), d = clientesData[k];
-    const du = { id: 'dd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), n: ddBurbujas().indexOf(b), txt: ddTexto(b),
-                 de: coachActivo.u, para: o.u, f: new Date().toISOString(), ok: false };
-    d.dudas = ddLista(k).concat([du]);
-    try { guardarTodo(); } catch(e){}
-    crearAviso(clavePro(o.u), 'duda', '❓ ' + coachActivo.u + ' tiene una duda · ' + (d.nombre || 'cliente'), du.txt, { cliente: k, vista: 'chat', duda: du.id });
-    ddQuitarChip(); ddPintar();
-    toast('Aviso enviado a ' + o.u);
+    ddCrearDuda(b);
   } else {
     const t = bot.closest('.dd-tag'), du = ddLista(k).filter(function(x){ return x.id === (t && t.dataset.id); })[0]; if (!du) return;
     if (a === 'ok') {

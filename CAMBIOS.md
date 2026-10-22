@@ -3,10 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.72.4 (actual)
-Cambios acumulados hacia la 0.73: **9 de 10**
+## Versión 0.73.1 (actual)
+Cambios acumulados hacia la 0.74: **2 de 10**
 
-## Versión 0.72 → 0.72.4
+### Hacia la 0.74
+1. 22/10/2026 11:20 · Ficha del cliente (Domingo y Fátima): «Sensaciones del día» arriba del todo, debajo peso actual y próxima revisión; «Adherencia entreno» dentro de Entrenamiento y «Adherencia nutrición» dentro de Nutrición
+2. 22/10/2026 11:30 · Nutrición de un vistazo rediseñada: anillo con el reparto de calorías (proteína, carbos, grasa) y una tarjeta por macro con emoji, gramos y porcentaje → **0.73.1**
+
+## Versión 0.72 → 0.73.0
 
 ### Hacia la 0.73
 1. 21/10/2026 23:30 · Seguridad: si la app de un profesional se queda abierta 30 minutos sin usarse, se guarda lo que estaba editando y se cierra la sesión sola; al volver avisa «Sesión cerrada por seguridad»
@@ -18,6 +22,7 @@ Cambios acumulados hacia la 0.73: **9 de 10**
 7. 22/10/2026 09:40 · Ficha del cliente más limpia, para Domingo y para Fátima: el tonelaje de la semana y la actividad física (pasos) pasan dentro del desplegable «Entrenamiento», y «Nutrición de un vistazo» y los protocolos en PDF dentro de un desplegable «Nutrición» nuevo (cerrados al entrar, con un resumen en el título). «Sensaciones del día», «Peso actual» y «Próxima revisión» siguen fuera, a la vista
 8. 22/10/2026 09:40 · Chat: un mensaje del cliente cuenta como atendido cuando responde cualquiera de los dos profesionales; si Domingo ya habla con el cliente, a Fátima no le sale «esperando tu respuesta» ni «+48 h sin contestar» (y al revés) → **0.72.4**
 9. 22/10/2026 10:15 · Chat entre profesionales: tocando un bocadillo sale encima el botón «❓ Duda para Fátima» (o para Domingo). Marca ese mensaje con una etiqueta que ven los dos profesionales (el cliente no ve nada, no se guarda en la conversación) y avisa al compañero en su campana. El aviso abre el chat y baja directo al mensaje marcado, que parpadea; cada vez que entra a ese chat con una duda pendiente se coloca en ella. «✓ Resuelta» la cierra y avisa a quien la planteó; en la lista de Chats sale «❓ Duda de Domingo». Nuevo tipo de aviso «Dudas del equipo» en los ajustes de notificaciones
+10. 22/10/2026 11:00 · Chat: menú al hacer clic derecho (o mantener pulsado en el móvil) sobre un mensaje: Responder (con cita), Fijar, Copiar texto, Reenviar a otro cliente (solo profesionales, sin decir de qué cliente viene), Eliminar («Mensaje eliminado») y Seleccionar varios → **0.73.0**
 
 ## Versión 0.71 → 0.71.4
 
