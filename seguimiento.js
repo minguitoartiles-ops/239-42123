@@ -244,7 +244,7 @@ function sgPintarFotosFicha(){
   if (!d.length) { if (c) c.remove(); return; }
   if (!c) {
     c = document.createElement('div'); c.id = 'fichaFotos';
-    const ref = document.getElementById('fichaPasos') || document.getElementById('fichaSens');
+    const ref = document.getElementById('fichaSens') || document.getElementById('fichaPasos');
     if (ref && ref.parentNode) ref.parentNode.insertBefore(c, ref.nextSibling); else v.querySelector('.alta-body').appendChild(c);
   }
   const celda = function(x, lbl){
