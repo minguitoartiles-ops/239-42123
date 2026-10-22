@@ -29,7 +29,7 @@ function escSoloMovil(conSesion){
     + '<h2 id="escSmTit">La app de clientes funciona en el móvil</h2>'
     + '<p>Para ver tu entrenamiento, tu plan y hablar con tu equipo, abre la app en tu móvil o tu tablet. Escanea este código con la cámara:</p>'
     + '<img class="esc-sm-qr" src="assets/qr_app.png" alt="Código QR para abrir la app en el móvil" width="180" height="180">'
-    + '<div class="esc-sm-url">minguitoartiles-ops.github.io/Fitnessindramas-APP</div>'
+    + '<div class="esc-sm-url">minguitoartiles-ops.github.io/239-42123</div>'
     + '<p class="esc-sm-nota">Usa el mismo código de acceso que te dio tu profesional. Desde el ordenador solo pueden entrar Fátima y Domingo.</p>'
     + '<button type="button" class="btn-primary" onclick="escCerrarSoloMovil(' + (conSesion ? 'true' : 'false') + ')">Volver</button>'
     + (conSesion ? '' : '<button type="button" class="esc-sm-equipo" onclick="escEquipoForm()">Soy del equipo: ver la app como este cliente</button>'
