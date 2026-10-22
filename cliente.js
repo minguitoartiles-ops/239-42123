@@ -82,10 +82,12 @@ clPintarChat();
    salen plegados al abrir la ficha desde Clientes; se despliegan tocando el título.
    Mientras se trabaja con el mismo cliente (ir al plan y volver) se respeta lo abierto.
    ========================================================= */
-const FP_PLEGABLES = { 'gestión del cliente': 'gestion', 'suscripción': 'pago', 'entrenamiento': 'entreno' };
+const FP_PLEGABLES = { 'gestión del cliente': 'gestion', 'suscripción': 'pago', 'entrenamiento': 'entreno', 'nutrición': 'nutri' };
 let fpAbiertos = {}, fpCliente = null, fpUltFiltro = null;
 function fpContenido(lbl){
   const r = []; let x = lbl.nextElementSibling;
+  /* «Entrenamiento» y «Nutrición» llevan su etiqueta dentro de su bloque: todo lo que sigue es suyo */
+  if (lbl.parentNode && (lbl.parentNode.id === 'fichaEntrenoRes' || lbl.parentNode.id === 'fichaNutri')) { while (x) { r.push(x); x = x.nextElementSibling; } return r; }
   while (x && !x.classList.contains('alta-label') && !x.querySelector('.alta-label') && (!x.id || x.id === 'fichaRegistro')
          && !x.classList.contains('stat-row') && !x.classList.contains('tonelaje-card')) { r.push(x); x = x.nextElementSibling; }
   return r;
@@ -99,15 +101,36 @@ function fpResumen(id, cont){
       return v.length > 1 ? v[0] + ' · hasta ' + v[1] : v.join(' · ');
     }
     if (id === 'entreno') { const t = cont[0] && cont[0].querySelector('.fe-top span'); return t ? t.textContent.trim() : ''; }
+    if (id === 'nutri') { const r = nuResumenCliente(clienteActual); return r && r.obj ? fmtMil(Math.round(r.obj.kcal)) + ' kcal · ' + r.comidas.length + (r.comidas.length === 1 ? ' comida' : ' comidas') : 'Plan sin preparar'; }
     if (id === 'gestion') return 'Datos, código, alergias…';
   } catch(e){}
   return '';
 }
+/* 22/10 · el tonelaje y la actividad física (pasos) van dentro de «Entrenamiento», tras el resumen y el registro de pesos */
+function fpMoverBloques(extra){
+  const v = document.getElementById('view-coach-cliente'), box = document.getElementById('fichaEntrenoRes'); if (!v || !box) return;
+  const ton = (extra || []).filter(function(e){ return e.classList && e.classList.contains('tonelaje-card'); })[0] || v.querySelector('.tonelaje-card');
+  const pasos = (extra || []).filter(function(e){ return e.id === 'fichaPasos'; })[0] || document.getElementById('fichaPasos');
+  const reg = document.getElementById('fichaRegistro');
+  const deseados = [reg, ton, pasos].filter(Boolean), hijos = Array.prototype.slice.call(box.children);
+  const enOrden = deseados.every(function(e, i){ return hijos[hijos.length - deseados.length + i] === e; });
+  if (!enOrden) deseados.forEach(function(e){ box.appendChild(e); });
+}
+enPintarEntrenoFicha = (function(orig){
+  return function(){
+    const b = document.getElementById('fichaEntrenoRes'), guardar = [];
+    if (b) ['.tonelaje-card', '#fichaPasos'].forEach(function(s){ const e = b.querySelector(s); if (e) { guardar.push(e); e.remove(); } });
+    const r = orig.apply(this, arguments);
+    fpMoverBloques(guardar);
+    return r;
+  };
+})(enPintarEntrenoFicha);
 function fpAplicar(){
   const v = document.getElementById('view-coach-cliente'); if (!v || !coachActivo) return;
+  fpMoverBloques();
   const filtro = typeof enSeccion === 'string' && enSeccion !== 'todo';
   /* al elegir un filtro, su apartado se abre (y después se puede plegar) */
-  if (filtro && fpUltFiltro !== enSeccion) { const m = { entreno: 'entreno', pago: 'pago', datos: 'gestion' }[enSeccion]; if (m) fpAbiertos[m] = true; }
+  if (filtro && fpUltFiltro !== enSeccion) { const m = { entreno: 'entreno', nutri: 'nutri', pago: 'pago', datos: 'gestion' }[enSeccion]; if (m) fpAbiertos[m] = true; }
   fpUltFiltro = filtro ? enSeccion : null;
   Array.prototype.forEach.call(v.querySelectorAll('.alta-label'), function(lbl){
     const txt = (lbl.getAttribute('data-fp-txt') || lbl.textContent).trim();

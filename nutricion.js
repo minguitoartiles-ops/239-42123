@@ -518,7 +518,7 @@ function nuPintarFicha(){
     const meta = document.getElementById('cd-meta');
     body.insertBefore(box, meta ? meta.nextSibling : body.firstChild);
   }
-  box.innerHTML = '<div class="nu-vista" onclick="goToPlanCoach()" role="button" tabindex="0" aria-label="Abrir el plan nutricional">'
+  box.innerHTML = '<div class="alta-label">Nutrición</div><div class="nu-vista" onclick="goToPlanCoach()" role="button" tabindex="0" aria-label="Abrir el plan nutricional">'
     + '<div class="nu-vista-h"><span>🍽️ Nutrición de un vistazo</span><span class="lnk">Abrir plan ›</span></div>' + nuHtmlResumen(k, false) + '</div>';
 }
 goToCliente = (function(orig){ return function(k){ orig(k); nuPintarFicha(); }; })(goToCliente);
