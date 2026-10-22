@@ -843,10 +843,15 @@ function enEstadoPlan(k){
     r.vacio = !ses; r.resumen = ses ? ses + (ses === 1 ? ' día' : ' días') + ' · ' + ej + (ej === 1 ? ' ejercicio' : ' ejercicios') : 'Sin sesiones';
   } else {
     const n = t.querySelectorAll('.meal-block').length, o = nuObjetivoDe(k);
-    r.vacio = !n; r.resumen = (o ? fmtMil(Math.round(o.kcal)) + ' kcal · ' : 'Sin objetivo · ') + n + (n === 1 ? ' comida' : ' comidas');
+    /* 22/10 · comidas creadas pero vacías y sin objetivo = nada pautado todavía */
+    const alim = Array.prototype.filter.call(t.querySelectorAll('.meal-block .macro-group .chip'), function(c){ return !c.classList.contains('chip-add'); }).length;
+    r.sinAlim = !!n && !alim;
+    r.vacio = !n || (!o && !alim); r.resumen = (o ? fmtMil(Math.round(o.kcal)) + ' kcal · ' : 'Sin objetivo · ') + n + (n === 1 ? ' comida' : ' comidas');
   }
   const dias = act ? Math.floor((Date.now() - new Date(act.fecha).getTime()) / DIA_MS) : null;
   if (r.vacio) { r.cod = 'vacio'; r.txt = 'Sin plan'; }
+  else if (vista !== 'entreno' && !nuObjetivoDe(k)) { r.cod = 'revisar'; r.txt = 'Falta fijar el objetivo de calorías'; }
+  else if (r.sinAlim) { r.cod = 'revisar'; r.txt = 'Objetivo fijado, faltan los alimentos'; }
   else if (ult && act && new Date(ult.fecha) > new Date(act.fecha)) { r.cod = 'revisar'; r.txt = 'Seguimiento nuevo desde el último cambio'; }
   else if (dias != null && dias >= 21) { r.cod = 'revisar'; r.txt = 'Sin cambios hace ' + dias + ' días'; }
   else { r.cod = 'ok'; r.txt = act ? 'Actualizado ' + (dias === 0 ? 'hoy' : (dias === 1 ? 'ayer' : 'hace ' + dias + ' días')) + (act.por ? ' · ' + act.por : '') : 'Al día'; }

@@ -200,7 +200,15 @@ function nuResumenCliente(k){
   const t = document.createElement('div'); t.innerHTML = html;
   const n = t.querySelectorAll('.meal-block').length;
   if (!n) return r;
-  if (!obj) { r.comidas = Array.prototype.map.call(t.querySelectorAll('.meal-block-title'), function(x){ return { titulo: x.textContent.trim(), refs: [] }; }); return r; }
+  if (!obj) {
+    /* sin objetivo no se pueden calcular gramos, pero los alimentos elegidos sí se muestran */
+    r.comidas = Array.prototype.map.call(t.querySelectorAll('.meal-block'), function(b){
+      const ti = b.querySelector('.meal-block-title'), el = b.querySelector('.meal-elegidas');
+      const nombres = el ? el.textContent.split(/\s{2,}|·/).map(function(x){ return x.trim(); }).filter(Boolean) : [];
+      return { titulo: ti ? ti.textContent.trim() : 'Comida', refs: nombres.map(function(n){ return { nombre: n, g: 0 }; }) };
+    });
+    return r;
+  }
   const d = clientesData[k];
   const rep = d.nutObj.repartoManual && d.nutObj.comidas && d.nutObj.comidas.length === n ? d.nutObj.comidas : nuRepartoAuto(n);
   const res = nuCalcularPlan(t, obj, rep, false);
@@ -509,7 +517,7 @@ function nuHtmlResumen(k, compacto){
     if (r.comidas.length) {
       h += '<div class="nu-vista-comidas">' + r.comidas.map(function(c){
         return '<div class="nu-vc"><b>' + esc(c.titulo) + (c.kcal ? ' <small>' + fmtMil(c.kcal) + ' kcal</small>' : '') + '</b><span>'
-          + (c.refs.length ? c.refs.map(function(x){ return esc(x.nombre) + ' ' + x.g + ' g'; }).join(' · ') : 'Sin alimentos') + '</span></div>';
+          + (c.refs.length ? c.refs.map(function(x){ return esc(x.nombre) + (x.g ? ' ' + x.g + ' g' : ''); }).join(' · ') : 'Sin alimentos') + '</span></div>';
       }).join('') + '</div>';
     } else h += '<div class="nu-vista-vacio">Todavía no tiene comidas en el plan.</div>';
     const a = d.alergias;
