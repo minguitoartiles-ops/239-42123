@@ -536,3 +536,8 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 #app:not(.coach-edit) #view-entreno .srf:not(.actual):not(:focus-within):not(:has(.srf-opc:not([hidden]))) .srf-l2{display:none;}
 #app:not(.coach-edit) #view-entreno .srf:not(.actual) .srf-rirb{display:block;white-space:nowrap;margin-top:2px;padding:1px 4px;border-radius:6px;font:700 10px/1.2 var(--f-mono);}
 @media (min-width:700px){ #app:not(.coach-edit) #view-entreno .sr-filas{max-width:620px;} }
+
+/* modo pruebas: botón para cambiar de profesional */
+.pb-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);left:10px;z-index:260;height:32px;padding:0 12px;border-radius:99px;border:1.5px solid var(--accent);background:var(--card);color:var(--ink);font:700 12px var(--f-body);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);cursor:pointer;}
+.pb-btn:active{transform:scale(.97);}
+@media (min-width:900px){ .pb-btn{top:8px;bottom:auto;left:auto;right:8px;} }

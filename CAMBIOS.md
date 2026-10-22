@@ -3,10 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.72.2 (actual)
-Cambios acumulados hacia la 0.73: **5 de 10**
+## Versión 0.72.3 (actual)
+Cambios acumulados hacia la 0.73: **6 de 10**
 
-## Versión 0.72 → 0.72.2
+## Versión 0.72 → 0.72.3
 
 ### Hacia la 0.73
 1. 21/10/2026 23:30 · Seguridad: si la app de un profesional se queda abierta 30 minutos sin usarse, se guarda lo que estaba editando y se cierra la sesión sola; al volver avisa «Sesión cerrada por seguridad»
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.73: **5 de 10**
 3. 21/10/2026 23:30 · Seguridad: el IBAN y los números de Bizum salen del código de la app (que es público) y pasan a Ajustes → Pagos de clientes → «Bizum y transferencia». El recuadro «¿Cómo renovar?» del cliente los lee de ahí (y viajan en la copia de seguridad cifrada)
 4. 21/10/2026 23:30 · Cliente (móvil): en Entrenamiento las sesiones salen todas plegadas y el cliente despliega la que quiere → **0.72.2**
 5. 21/10/2026 23:35 · Cliente: sesión de entreno rediseñada para leerse mejor. Cada ejercicio va en su propia tarjeta con número y nombre grandes y su progreso al lado («1/3 ●○○»); la pauta va en etiquetas («3 series» destacada, «10 reps», «RIR 2» con su color); la serie que toca se resalta en azul con su RIR, las hechas quedan en verde y las demás en una sola línea limpia (el RIR se abre al tocarlas)
+6. 22/10/2026 09:30 · Modo pruebas (temporal, solo en el dispositivo donde se activa): abriendo la app con `#pruebas` al final de la dirección, Domingo y Fátima entran sin contraseña, aparece un botón «🧪 Domingo → Fátima» para cambiar de profesional sin cerrar sesión (guarda lo que se estuviera editando) y no se cierra la sesión por inactividad. `#pruebas-off` lo apaga y vuelve a pedir contraseña → **0.72.3**
 
 ## Versión 0.71 → 0.71.4
 
