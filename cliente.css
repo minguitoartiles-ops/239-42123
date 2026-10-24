@@ -638,3 +638,13 @@ html.esc .emoji-panel{max-height:290px;}
   #chatList .bubble{-webkit-tap-highlight-color:transparent;}
   #chatInput{-webkit-user-select:text;user-select:text;}
 }
+
+/* 24/10 · tarjeta de cliente en móvil con el mismo aspecto que en escritorio:
+   sin la línea de pie (último seguimiento / evolución) y los indicadores con el rótulo encima */
+#listaClientes .kcard .kc-pie{display:none !important;}
+@media (max-width:1099px){
+  #listaClientes .kcard .kc{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;padding:6px 8px;}
+  #listaClientes .kcard .kc-l{font-size:10px !important;letter-spacing:.02em;}
+  #listaClientes .kcard .kc-v{font-size:14px;}
+  #listaClientes .kcard .kc-v small,#listaClientes .kcard .kc-v i{display:inline;}
+}
