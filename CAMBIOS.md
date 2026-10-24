@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.73.3 (actual)
-Cambios acumulados hacia la 0.74: **7 de 10**
+## Versión 0.73.4 (actual)
+Cambios acumulados hacia la 0.74: **8 de 10**
 
 ### Hacia la 0.74
 1. 22/10/2026 11:20 · Ficha del cliente (Domingo y Fátima): «Sensaciones del día» arriba del todo, debajo peso actual y próxima revisión; «Adherencia entreno» dentro de Entrenamiento y «Adherencia nutrición» dentro de Nutrición
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.74: **7 de 10**
 5. 22/10/2026 14:50 · La app pasa a la dirección nueva del repositorio (al renombrarlo cambió): se actualizan el texto y el código QR de la pantalla «La app funciona en el móvil»
 6. 22/10/2026 17:35 · Chat (móvil): tocar un mensaje ya no selecciona su texto, así Android no abre el panel de búsqueda de Google; el campo de escribir sigue seleccionable y copiar se hace desde el menú del mensaje → **0.73.3**
 7. 22/10/2026 18:10 · Chat: el botón «❓ Duda para…» (al tocar un mensaje y en el menú de clic derecho) solo sale en los mensajes del cliente; ya no en los de Domingo ni en los de Fátima
+8. 24/10/2026 14:40 · Lista de clientes (móvil): la tarjeta tiene el mismo aspecto que en el ordenador (indicadores con el rótulo encima y sin la línea de último seguimiento y evolución) → **0.73.4**
 
 ## Versión 0.72 → 0.73.0
 
