@@ -829,3 +829,38 @@ html.esc .ds-bar{bottom:24px;}
 .pu-fold > .ent-prev-card,.pu-fold > .mu-box{margin:0 10px 10px;}
 .pu-fold .mu-cab b{display:none;}
 .alim-emo{display:inline-block;width:1.4em;margin-right:4px;text-align:center;font-size:15px;}
+
+/* =========================================================
+   #218 · Plegables con estado claro (todo el mismo patrón)
+   ========================================================= */
+@keyframes plIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+/* flecha: círculo gris cerrada · círculo de color y girada abierta */
+.fp-lbl .fp-chev,.pu-fold-ch,.sesion-chevron,.meal-chevron,.aj-sec-v{
+  flex:none;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--wash-soft);color:var(--dim-6);font:700 15px/1 var(--f-body);transform:none;
+  transition:transform .25s ease, background-color .2s, color .2s;}
+.fp-lbl .fp-chev::before,.pu-fold-ch::before{content:none;}
+.fp-lbl.fp-abierto .fp-chev,.pu-fold[open] > summary .pu-fold-ch,.sesion-chevron.open,.meal-chevron.open,.aj-sec.abierta .aj-sec-v{
+  transform:rotate(180deg);background:var(--accent);color:var(--on-accent);}
+/* título del apartado: se resalta al pasar el ratón y se tiñe al abrir */
+.alta-label.fp-lbl{padding:6px 8px 6px 10px;margin-left:-10px;margin-right:-8px;border-radius:12px;transition:background-color .2s, box-shadow .2s;}
+.alta-label.fp-lbl.fp-abierto{background:var(--accent-wash);box-shadow:inset 3px 0 0 var(--accent);}
+.alta-label.fp-lbl.fp-abierto .fp-t{color:var(--ink);}
+.pu-fold > summary{border-radius:16px;transition:background-color .2s;}
+.pu-fold[open]{border-color:var(--accent-line);box-shadow:0 0 0 1px var(--accent-line);}
+.pu-fold[open] > summary{background:var(--accent-wash);border-radius:15px 15px 0 0;}
+.pu-fold[open] > summary .pu-fold-t{color:var(--ink);}
+.sesion-card,.meal-block{transition:box-shadow .2s, border-color .2s;}
+.meal-block:has(> .meal-body.open){box-shadow:0 0 0 1.5px var(--accent-line);}
+.meal-block.ahora:has(> .meal-body.open){box-shadow:0 0 0 1.5px var(--fat-line);}
+.aj-sec.abierta .aj-sec-h{color:var(--accent);}
+@media (hover:hover){
+  .alta-label.fp-lbl:not(.fp-abierto):hover,.pu-fold:not([open]) > summary:hover,.sesion-head:hover,.meal-head:hover,.aj-sec-h:hover{background:var(--wash-soft);}
+  .alta-label.fp-lbl:hover .fp-chev,.pu-fold > summary:hover .pu-fold-ch,.sesion-head:hover .sesion-chevron,.meal-head:hover .meal-chevron{box-shadow:0 0 0 2px var(--accent-line);}
+}
+.sesion-head:focus-visible,.meal-head:focus-visible,.pu-fold > summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+/* contenido: entra deslizando y, en la ficha, queda unido a su título */
+.fp-dentro,.sesion-card.open > .sesion-body,.meal-body.open,.pu-fold[open] > :not(summary),.aj-sec.abierta .aj-sec-c,details[open] > :not(summary){animation:plIn .22s ease-out;}
+.fp-dentro{margin-left:4px !important;padding-left:12px;border-left:2px solid var(--accent-line);}
+.fp-dentro-fin{margin-bottom:18px;}
+@media (prefers-reduced-motion: reduce){.fp-dentro,.sesion-card.open > .sesion-body,.meal-body.open,.pu-fold[open] > :not(summary),.aj-sec.abierta .aj-sec-c,details[open] > :not(summary){animation:none;}}

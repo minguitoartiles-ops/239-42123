@@ -56,7 +56,7 @@ const puAbierto = { res: false, mu: false };
 function puPlegable(cual, titulo, res, nodo){
   const d = document.createElement('details'); d.className = 'pu-fold'; d.dataset.fold = cual;
   if (puAbierto[cual]) d.open = true;
-  d.innerHTML = '<summary><span class="pu-fold-t">' + titulo + '</span><span class="pu-fold-r">' + res + '</span><span class="pu-fold-ch" aria-hidden="true">›</span></summary>';
+  d.innerHTML = '<summary><span class="pu-fold-t">' + titulo + '</span><span class="pu-fold-r">' + res + '</span><span class="pu-fold-ch" aria-hidden="true">⌄</span></summary>';
   nodo.parentNode.insertBefore(d, nodo); d.appendChild(nodo);
 }
 if (typeof entResumenHtml === 'function') entResumenHtml = (function(orig){
@@ -86,3 +86,42 @@ if (typeof muCambiarModo === 'function') muCambiarModo = (function(orig){
     return r;
   };
 })(muCambiarModo);
+
+/* =========================================================
+   #218 · Plegables: que se note siempre si están abiertos o cerrados (móvil y ordenador)
+   Un mismo patrón en toda la app: flecha en un círculo que gira y se colorea, título teñido con una línea
+   de color al abrir, contenido que entra con una animación corta y, en la ficha, lo que pertenece al
+   apartado abierto queda unido a él con una línea a la izquierda. Los lectores de pantalla oyen abierto/cerrado.
+   ========================================================= */
+fpAplicar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const v = document.getElementById('view-coach-cliente'); if (!v) return r;
+    Array.prototype.forEach.call(v.querySelectorAll('.alta-label.fp-lbl'), function(lbl){
+      const ab = lbl.classList.contains('fp-abierto'), cont = fpContenido(lbl);
+      cont.forEach(function(x, i){ x.classList.toggle('fp-dentro', ab); x.classList.toggle('fp-dentro-fin', ab && i === cont.length - 1); });
+      const ch = lbl.querySelector('.fp-chev'); if (ch) ch.textContent = '⌄';
+    });
+    return r;
+  };
+})(fpAplicar);
+/* sesiones y comidas: estado para lectores de pantalla y teclado */
+function puAria(){
+  Array.prototype.forEach.call(document.querySelectorAll('#sesionesCont .sesion-head'), function(h){
+    const c = h.parentElement; h.setAttribute('role', 'button'); if (!h.hasAttribute('tabindex')) h.tabIndex = 0;
+    h.setAttribute('aria-expanded', c.classList.contains('open') ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#comidasCont .meal-head'), function(h){
+    const b = h.nextElementSibling; h.setAttribute('role', 'button'); if (!h.hasAttribute('tabindex')) h.tabIndex = 0;
+    h.setAttribute('aria-expanded', b && b.classList.contains('open') ? 'true' : 'false');
+  });
+}
+if (typeof toggleSesion === 'function') toggleSesion = (function(orig){ return function(){ const r = orig.apply(this, arguments); puAria(); return r; }; })(toggleSesion);
+if (typeof toggleMealBlock === 'function') toggleMealBlock = (function(orig){ return function(){ const r = orig.apply(this, arguments); puAria(); return r; }; })(toggleMealBlock);
+fsdTras('goTo', function(){ setTimeout(puAria, 0); });
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const h = e.target.closest && e.target.closest('#sesionesCont .sesion-head, #comidasCont .meal-head');
+  if (!h || e.target !== h) return;
+  e.preventDefault(); h.click();
+});
