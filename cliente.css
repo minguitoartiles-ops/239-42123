@@ -1050,3 +1050,6 @@ html.esc .ficha-accesos{max-width:none;}
 
 /* 0.79.1-1: plan del cliente más limpio, sin «Ahora toca» ni lista de la compra */
 #nhCard .nh-ahora,#nhCard .nh-compra-btn{display:none !important;}
+
+/* 0.79.2-1: teclado abierto en el móvil → sin barra de pestañas */
+html.fsd-teclado .tb{display:none !important;}

@@ -4,13 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.79.2 (actual)
-Cambios acumulados hacia la 0.80: **4 de 10**
+Cambios acumulados hacia la 0.80: **5 de 10**
 
 ### Hacia la 0.80
 1. 25/10/2026 23:10 · Ficha en el móvil: al desplegar «Evolución», «Sensaciones del día» o «Antes / Ahora» con la pantalla desplazada, el navegador empujaba el título hacia arriba y parecía que se abría hacia arriba; ahora el título se queda quieto y el contenido aparece debajo (en toda la app) → **0.79.0-1 (caché)**
 2. 25/10/2026 23:15 · Ficha del cliente más limpia (móvil y ordenador): fuera «Semana X de 12 · objetivo», los filtros (Todo, Datos y medidas, Seguimiento…) y los resúmenes a la derecha de cada apartado plegable; la flecha queda a la derecha → **0.79.1**
 3. 25/10/2026 23:25 · Nutrición del cliente más limpia: fuera la tarjeta «Ahora toca» y el botón «Lista de la compra de la semana» de la tarjeta de hoy → **0.79.1-1 (caché)**
 4. 25/10/2026 23:30 · Entreno del cliente sin redundancias: fuera las etiquetas «3 series · 10 reps · RIR 2» de cada ejercicio (ya salen en cada serie); se mantiene «Semana pasada». El profesional las sigue viendo → **0.79.2**
+5. 25/10/2026 23:35 · Móvil: al escribir (pesos del entreno, chat, formularios…) se oculta la barra de pestañas mientras el teclado está abierto, para que no suba y tape lo que se rellena; vuelve al cerrar el teclado → **0.79.2-1 (caché)**
 
 ## Versión 0.78 → 0.79.0
 
