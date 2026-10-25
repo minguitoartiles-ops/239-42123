@@ -933,3 +933,11 @@ html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !
 .chat-dia{display:flex;justify-content:center;margin:10px 0 6px;pointer-events:none;}
 .chat-dia span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);background:var(--wash-soft);border:1px solid var(--line);padding:4px 10px;border-radius:999px;}
 .bubble[data-hora]::after{content:attr(data-hora);display:block;text-align:right;margin-top:3px;font:500 10.5px var(--f-mono);opacity:.6;}
+
+/* Chat 6 · mensajes nuevos y botón para bajar */
+.chat-nuevos{display:flex;align-items:center;gap:10px;margin:12px 0 8px;pointer-events:none;}
+.chat-nuevos::before,.chat-nuevos::after{content:'';flex:1;height:1px;background:var(--accent);opacity:.5;}
+.chat-nuevos span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);}
+#view-chat{position:relative;}
+.chat-bajar{position:absolute;right:18px;bottom:96px;z-index:5;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 20px var(--f-body);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;}
+.chat-bajar[hidden]{display:none;}
