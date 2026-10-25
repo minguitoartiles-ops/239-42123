@@ -680,3 +680,40 @@ html.esc .emoji-panel{max-height:290px;}
 html.esc .ds-bar{bottom:24px;}
 /* peso de la semana pasada: más visible que un «kg» vacío */
 #sesionesCont .srf-peso input::placeholder{color:var(--dim-6);opacity:.75;}
+
+/* nutrición del cliente: el día de un vistazo */
+.nh-card{margin:0 0 14px;padding:16px;border-radius:20px;background:var(--card);border:1.5px solid var(--accent-line);}
+.nh-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;}
+.nh-eye{font:600 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+.nh-quedan{font:500 12.5px var(--f-body);color:var(--dim-6);}
+.nh-quedan b{color:var(--ink);}
+.nh-anillos{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center;}
+.nh-anillo{position:relative;}
+.nh-anillo svg{display:block;width:100%;height:100%;}
+.nh-anillo svg circle{transition:stroke-dashoffset .5s ease;}
+.nh-grande{width:132px;height:132px;}
+.nh-peq{width:44px;height:44px;flex:none;}
+.nh-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.nh-grande .nh-c b{font:800 24px var(--f-body);line-height:1;}
+.nh-grande .nh-c small{font:600 9.5px var(--f-mono);color:var(--dim-55);margin-top:4px;text-transform:uppercase;}
+.nh-peq .nh-c span{font-size:18px;}
+.nh-macros{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.nh-m{display:flex;align-items:center;gap:10px;}
+.nh-m-t b{display:block;font:800 15px var(--f-body);line-height:1.1;}
+.nh-m-t b small{font:500 11px var(--f-body);color:var(--dim-55);}
+.nh-m-t span{font:600 9.5px var(--f-mono);text-transform:uppercase;color:var(--dim-55);}
+.nh-agua{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);}
+.nh-agua-h{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font:600 13px var(--f-body);}
+.nh-agua-h b{font:700 13px var(--f-body);margin-left:auto;}
+.nh-agua-h small{font:500 11.5px var(--f-mono);color:var(--dim-55);}
+.nh-vasos{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.nh-vaso{width:26px;height:32px;border:1.5px solid rgba(88,160,220,.55);border-radius:4px 4px 8px 8px;background:none;cursor:pointer;padding:0;position:relative;overflow:hidden;}
+.nh-vaso.on{background:linear-gradient(to top,#6FB3E8 0 78%,transparent 78%);border-color:#58A0DC;}
+.nh-agua-mas{margin-left:auto;height:32px;padding:0 12px;border-radius:10px;border:1px solid var(--accent-line);background:var(--accent-wash);color:var(--accent);font:700 13px var(--f-body);cursor:pointer;}
+.nh-ahora{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:14px;padding:12px 40px 12px 14px;border-radius:14px;border:1.5px solid var(--fat-line);background:rgba(116,188,138,.12);color:var(--ink);text-align:left;cursor:pointer;}
+.nh-ahora-eye{font:600 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:#2E7D4F;}
+.nh-ahora b{font:700 15px var(--f-body);}
+.nh-ahora-sub{font:500 12.5px var(--f-body);color:var(--dim-6);}
+.nh-ahora-cta{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;color:#2E7D4F;}
+@media (max-width:360px){.nh-anillos{grid-template-columns:1fr;justify-items:center;}.nh-macros{width:100%;}}
+#nhCard + #planResumen{display:none;}   /* la tarjeta «Hoy» ya muestra el objetivo */
