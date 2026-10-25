@@ -928,3 +928,8 @@ html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !
 .pu-chat-chips::-webkit-scrollbar{display:none;}
 .pu-chat-chips .chip{flex:none;}
 #chatsPro .chat-fila[hidden],#chatsPro .chat-filas[hidden],#chatsPro .alta-label[hidden]{display:none !important;}
+
+/* Chat 5 · días y horas */
+.chat-dia{display:flex;justify-content:center;margin:10px 0 6px;pointer-events:none;}
+.chat-dia span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);background:var(--wash-soft);border:1px solid var(--line);padding:4px 10px;border-radius:999px;}
+.bubble[data-hora]::after{content:attr(data-hora);display:block;text-align:right;margin-top:3px;font:500 10.5px var(--f-mono);opacity:.6;}

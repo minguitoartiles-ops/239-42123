@@ -388,3 +388,72 @@ pintarChatsPro = (function(orig){
     return r;
   };
 })(pintarChatsPro);
+/* chat 5 · separadores de día («Hoy», «Ayer», «Lunes 20/10») y hora en cada mensaje.
+   Cada mensaje nuevo guarda su momento (data-ts); los antiguos no tienen hora y no se inventa. */
+function puTs(b){ if (b && b.classList && b.classList.contains('bubble') && !b.dataset.ts) b.dataset.ts = new Date().toISOString(); return b; }
+burbujaNueva = (function(orig){ return function(){ return puTs(orig.apply(this, arguments)); }; })(burbujaNueva);
+meterEnChat = (function(orig){ return function(b){ puTs(b); return orig.apply(this, arguments); }; })(meterEnChat);
+function puDiaTxt(d){
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const x = new Date(d); x.setHours(0, 0, 0, 0);
+  const dif = Math.round((hoy - x) / 864e5);
+  if (dif === 0) return 'Hoy';
+  if (dif === 1) return 'Ayer';
+  const dd = ('0' + x.getDate()).slice(-2) + '/' + ('0' + (x.getMonth() + 1)).slice(-2);
+  if (dif > 1 && dif < 7) return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][x.getDay()] + ' ' + dd;
+  return dd + '/' + x.getFullYear();
+}
+let puFechasOcupado = false;
+function puChatFechas(){
+  const l = document.getElementById('chatList'); if (!l || puFechasOcupado) return;
+  puFechasOcupado = true;
+  try {
+    Array.prototype.forEach.call(l.querySelectorAll('.chat-dia'), function(s){ s.remove(); });
+    let ult = '';
+    Array.prototype.forEach.call(l.querySelectorAll('.bubble[data-ts]'), function(b){
+      const d = new Date(b.dataset.ts); if (isNaN(d)) return;
+      const hora = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+      if (b.dataset.hora !== hora) b.dataset.hora = hora;
+      const dia = puDiaTxt(d);
+      if (dia !== ult) {
+        ult = dia;
+        const s = document.createElement('div'); s.className = 'chat-dia'; s.setAttribute('role', 'separator');
+        s.innerHTML = '<span>' + dia + '</span>';
+        const fila = b.closest('.msg-row') || b;                 // si la burbuja va envuelta con su foto
+        fila.parentNode.insertBefore(s, fila);
+      }
+    });
+  } finally { setTimeout(function(){ puFechasOcupado = false; }, 0); }
+}
+(function(){
+  const l = document.getElementById('chatList'); if (!l || !window.MutationObserver) return;
+  let pend = false;
+  new MutationObserver(function(recs){
+    /* un mensaje que se añade solo (sin vaciar la lista) es nuevo: se le pone la hora; al cargar un chat se reemplaza todo y no se toca */
+    recs.forEach(function(r){
+      if (r.removedNodes.length) return;
+      const nuevos = Array.prototype.filter.call(r.addedNodes, function(n){ return n.nodeType === 1 && n.classList.contains('bubble'); });
+      if (nuevos.length && nuevos.length <= 3) nuevos.forEach(puTs);
+    });
+    if (pend || puFechasOcupado) return; pend = true; requestAnimationFrame(function(){ pend = false; puChatFechas(); });
+  }).observe(l, { childList: true });
+})();
+/* los separadores no se guardan en el chat */
+guardarChat = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const p = clienteActual && PLANES[clienteActual];
+    if (p && typeof p.chat === 'string' && p.chat.indexOf('chat-dia') > -1) {
+      const t = document.createElement('template'); t.innerHTML = p.chat;
+      Array.prototype.forEach.call(t.content.querySelectorAll('.chat-dia'), function(x){ x.remove(); });
+      p.chat = t.innerHTML;
+    }
+    return r;
+  };
+})(guardarChat);
+/* la cabecera compacta y la barra principal también al volver a abrir un chat (la clase en-chat puede no cambiar) */
+['abrirChatPro', 'verConversacion', 'goTo', 'showScreen', 'backToCliente'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){ const r = orig.apply(this, arguments); try { puChatEsc(); pintarTabsPro(); } catch(e){} return r; };
+});
