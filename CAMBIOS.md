@@ -4,13 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.78.2 (actual)
-Cambios acumulados hacia la 0.79: **4 de 10**
+Cambios acumulados hacia la 0.79: **5 de 10**
 
 ### Hacia la 0.79
 1. 25/10/2026 16:20 · Chat: los enlaces de YouTube muestran una tarjeta con la portada y el título del vídeo (se abre en YouTube al tocarla). Seguridad: la política de contenido permite solo las portadas de i.ytimg.com y los títulos de www.youtube.com → **0.78.0-1 (caché)**
 2. 25/10/2026 16:30 · Ficha del cliente: «Peso actual» y «Próxima revisión» aparte y arriba del todo, encima de «Evolución» y «Sensaciones del día» (en el ordenador, fuera de la tarjeta) → **0.78.1**
 3. 25/10/2026 17:20 · Bienvenida del cliente nuevo en 5 toques: la app recorre Hoy · Nutrición · Entreno · Chat · Ajustes, ilumina cada pestaña en la barra y explica para qué sirve (con «Saltar»; atrás vuelve un paso). Los consentimientos de salud e imagen salen al terminar el recorrido, ya no al entrar
 4. 25/10/2026 17:20 · Cuestionario inicial (Word V5) en lugar del primer seguimiento: 7 pasos (sobre ti con DNI/NIE validado, medidas, entrenamiento, salud y descanso, alergias e intolerancias + enfermedades gastrointestinales, alimentación y objetivos), con borrador automático y tarjeta en «Hoy» para terminarlo. Las alergias son las mismas de siempre (sin duplicar) y el digestivo se ve junto a ellas. Al enviarlo avisa a Domingo y Fátima, las medidas pasan a ser las de partida, el DNI y el nombre se rellenan solos en las facturas y en la ficha aparece «Cuestionario inicial» con todas las respuestas → **0.78.2**
+5. 25/10/2026 17:35 · Alta de cliente: fuera las «Medidas iniciales» (peso, altura, cintura, cadera, bíceps y muslo); las rellena el cliente en su cuestionario inicial y en la ficha salen como «Peso inicial» → **0.78.2-1 (caché)**
 
 ## Versión 0.77 → 0.78.0
 

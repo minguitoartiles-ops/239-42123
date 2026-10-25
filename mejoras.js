@@ -404,7 +404,7 @@ goToCliente = (function(orig){
   return function(k){
     orig(k);
     const d = clientesData[k], b = mjBase(k), segs = SEGUIMIENTOS[k] || [];
-    if (b && b.med.peso != null && !segs.length) { setTxt('cd-peso', fmtNum(b.med.peso) + ' kg'); setTxt('cd-pesoDelta', 'Peso del alta'); }
+    if (b && b.med.peso != null && !segs.length) { setTxt('cd-peso', fmtNum(b.med.peso) + ' kg'); setTxt('cd-pesoDelta', 'Peso inicial'); }
     else if (b && b.med.peso != null && segs[0] && segs[0].med && segs[0].med.peso != null) {
       const df = segs[0].med.peso - b.med.peso;
       setTxt('cd-pesoDelta', (df > 0 ? '+' : (df < 0 ? '−' : '')) + fmtNum(Math.abs(df)) + ' kg desde el alta');
