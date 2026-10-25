@@ -457,3 +457,53 @@ guardarChat = (function(orig){
   const orig = window[n];
   window[n] = function(){ const r = orig.apply(this, arguments); try { puChatEsc(); pintarTabsPro(); } catch(e){} return r; };
 });
+/* chat 6 · «Mensajes nuevos» antes del primero sin leer y botón «↓» para bajar al final */
+function puMarcarNuevos(n){
+  const l = document.getElementById('chatList'); if (!l) return;
+  Array.prototype.forEach.call(l.querySelectorAll('.chat-nuevos'), function(x){ x.remove(); });
+  if (!n) return;
+  const otros = Array.prototype.filter.call(l.querySelectorAll('.bubble'), function(b){ return !b.classList.contains('msg-mio'); });
+  const primero = otros[Math.max(0, otros.length - n)]; if (!primero) return;
+  const s = document.createElement('div'); s.className = 'chat-nuevos'; s.setAttribute('role', 'separator');
+  s.innerHTML = '<span>' + n + (n === 1 ? ' mensaje nuevo' : ' mensajes nuevos') + '</span>';
+  primero.parentNode.insertBefore(s, primero);
+  setTimeout(function(){ try { l.scrollTop = Math.max(0, s.offsetTop - l.offsetTop - 12); } catch(e){} puBajarPintar(); }, 60);
+}
+(function(){
+  const envolver = function(nombre, cuantos){
+    if (typeof window[nombre] !== 'function') return;
+    const orig = window[nombre];
+    window[nombre] = function(){
+      let n = 0; try { n = cuantos.apply(this, arguments) || 0; } catch(e){}
+      const r = orig.apply(this, arguments);
+      if (n) setTimeout(function(){ puMarcarNuevos(n); }, 30);
+      return r;
+    };
+  };
+  envolver('abrirChatPro', function(k){ return msgsSinLeer(k); });
+  envolver('verConversacion', function(){ return clienteActual ? msgsSinLeer(clienteActual) : 0; });
+  envolver('goTo', function(v){ return v === 'chat' && !isCoachView() && typeof clChatSinLeer === 'function' && clienteActual ? clChatSinLeer(clienteActual) : 0; });
+})();
+guardarChat = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const p = clienteActual && PLANES[clienteActual];
+    if (p && typeof p.chat === 'string' && p.chat.indexOf('chat-nuevos') > -1) {
+      const t = document.createElement('template'); t.innerHTML = p.chat;
+      Array.prototype.forEach.call(t.content.querySelectorAll('.chat-nuevos'), function(x){ x.remove(); });
+      p.chat = t.innerHTML;
+    }
+    return r;
+  };
+})(guardarChat);
+function puBajarPintar(){
+  const l = document.getElementById('chatList'), v = document.getElementById('view-chat'); if (!l || !v) return;
+  let b = document.getElementById('chatBajar');
+  if (!b) {
+    b = document.createElement('button'); b.type = 'button'; b.id = 'chatBajar'; b.className = 'chat-bajar'; b.setAttribute('aria-label', 'Ir al último mensaje'); b.innerHTML = '↓';
+    b.addEventListener('click', function(){ try { l.scrollTo({ top: l.scrollHeight, behavior: 'smooth' }); } catch(e){ l.scrollTop = l.scrollHeight; } });
+    l.insertAdjacentElement('afterend', b);
+  }
+  b.hidden = l.scrollHeight - l.clientHeight - l.scrollTop < 160;
+}
+(function(){ const l = document.getElementById('chatList'); if (l) l.addEventListener('scroll', function(){ puBajarPintar(); }, { passive: true }); })();
