@@ -98,6 +98,7 @@ const CQ_PASOS = [
   { id: 'ti', e: '🙋', t: 'Sobre ti', intro: 'Sé sincero/a: no estamos aquí para juzgarte. Recuerda que la dieta y el entreno se adaptan a tu vida, no tú a ellos.', c: [
     { id: 'nombre', l: 'Nombre y apellidos (para la factura)', req: 1 },
     { id: 'dni', l: 'DNI o NIE (para la factura)', tipo: 'dni', req: 1, ph: '12345678Z' },
+    { id: 'direccion', l: 'Dirección (opcional, para la factura)', ph: 'Calle, número, CP y municipio' },
     { id: 'edad', l: 'Edad', tipo: 'num', req: 1, min: 18, max: 99, u: 'años' },
     { id: 'sexo', l: 'Sexo', tipo: 'chips', opts: ['Mujer', 'Hombre', 'Prefiero no decirlo'] },
     { id: 'altura', l: 'Altura', tipo: 'num', req: 1, min: 120, max: 230, u: 'cm' },
@@ -289,6 +290,7 @@ function cqEnviar(){
   delete d.cqBorrador;
   d.dni = cqDniOk(r.dni) || d.dni;
   if (r.nombre && r.nombre.trim()) d.nombreFiscal = r.nombre.trim().slice(0, 120);
+  if (r.direccion && r.direccion.trim()) d.dirFiscal = r.direccion.trim().slice(0, 200);
   /* medidas de partida */
   const med = Object.assign({}, d.medIni || {});
   [['peso', 'peso'], ['cintura', 'cintura'], ['cadera', 'cadera'], ['brazo', 'biceps'], ['muslo', 'muslo'], ['pecho', 'pecho']].forEach(function(x){ const n = mjNum(r[x[0]]); if (n) med[x[1]] = n; });
@@ -414,3 +416,37 @@ enPintarAccesos = (function(orig){
 exMotivos = (function(orig){
   return function(k){ const m = orig.apply(this, arguments); if (cqNuevoPara(k)) m.unshift('📝 Cuestionario nuevo'); return m; };
 })(exMotivos);
+
+/* ---------- datos de facturación de cada cliente (se rellenan solos con el cuestionario) ---------- */
+function cfAbrir(){
+  const k = clienteActual, d = clientesData[k]; if (!d) return;
+  const o = mjHoja('cfHoja');
+  o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Datos de facturación · ' + esc(d.nombre) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'cfHoja\')" aria-label="Cerrar">×</button></div>'
+    + '<p class="ajx-note">' + (d.cuestionario ? 'Rellenados con su cuestionario inicial. ' : '') + 'Salen solos en sus facturas.</p>'
+    + '<div class="field"><label for="cfNom">Nombre y apellidos</label><input type="text" id="cfNom" value="' + esc(d.nombreFiscal || d.nombre || '') + '"></div>'
+    + '<div class="field"><label for="cfNif">DNI / NIE</label><input type="text" id="cfNif" autocapitalize="characters" autocomplete="off" value="' + esc(d.dni || '') + '"></div>'
+    + '<div class="field"><label for="cfDir">Dirección</label><input type="text" id="cfDir" value="' + esc(d.dirFiscal || '') + '" placeholder="Opcional"></div>'
+    + '<small class="cq-err" id="cfErr" hidden></small>'
+    + '<button class="btn-primary" onclick="cfGuardar()">Guardar</button></div>';
+  o.classList.add('show');
+}
+function cfGuardar(){
+  const d = clientesData[clienteActual]; if (!d) return;
+  const v = function(id){ return (document.getElementById(id).value || '').trim(); };
+  const nif = v('cfNif'), e = document.getElementById('cfErr');
+  if (nif) { const rv = cqDniRevisar(nif); if (rv.err) { e.hidden = false; e.textContent = rv.err; return; } d.dni = rv.ok; } else delete d.dni;
+  d.nombreFiscal = v('cfNom').slice(0, 120) || d.nombre;
+  if (v('cfDir')) d.dirFiscal = v('cfDir').slice(0, 200); else delete d.dirFiscal;
+  try { guardarTodo(); } catch(err){}
+  mjCerrarHoja('cfHoja'); pintarSuscripcionFicha(); toast('Datos de facturación guardados');
+}
+pintarSuscripcionFicha = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const d = clientesData[clienteActual], g = document.querySelector('#fichaPago .list-group');
+    if (!d || !g || g.querySelector('.cf-fila')) return r;
+    const ok = !!(d.dni);
+    g.insertAdjacentHTML('beforeend', '<div class="list-row cf-fila" onclick="cfAbrir()"><span>Datos de facturación</span><span class="ajx-acts"><span class="pill' + (ok ? ' ok' : '') + '">' + (ok ? esc(d.dni) : 'Sin DNI') + '</span><span class="chev">›</span></span></div>');
+    return r;
+  };
+})(pintarSuscripcionFicha);
