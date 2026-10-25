@@ -919,3 +919,12 @@ html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !
 .chat-fila.nv-roj{border-color:var(--line);border-left:4px solid var(--danger);background:var(--card);}
 .chat-fila.nv-roj .chat-fila-est{background:rgba(217,80,63,.12);color:var(--danger);}
 .chat-fila.espera .chat-fila-est{background:var(--accent-wash);color:var(--ink);}
+
+/* Chat 4 · buscador y filtros de la lista de chats */
+.pu-chat-barra{margin:4px 0 10px;}
+.pu-chat-q{width:100%;height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--wash-soft);padding:0 14px;font:500 15px var(--f-body);color:var(--ink);}
+.pu-chat-q:focus{outline:none;border-color:var(--accent);}
+.pu-chat-chips{margin-top:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+.pu-chat-chips::-webkit-scrollbar{display:none;}
+.pu-chat-chips .chip{flex:none;}
+#chatsPro .chat-fila[hidden],#chatsPro .chat-filas[hidden],#chatsPro .alta-label[hidden]{display:none !important;}
