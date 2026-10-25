@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.75.4 (actual)
-Cambios acumulados hacia la 0.76: **8 de 10**
+## Versión 0.76.0 (actual)
+Cambios acumulados hacia la 0.77: **0 de 10**
+
+## Versión 0.75 → 0.76.0
 
 ### Hacia la 0.76
 1. 25/10/2026 15:30 · Planes de entrenamiento (Domingo): «Resumen del entrenamiento» y «Volumen semanal por músculo» salen plegados con su resumen y se abren al tocarlos (se recuerda lo abierto al cambiar de cliente)
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.76: **8 de 10**
 6. 25/10/2026 18:40 · Ficha del cliente en el ordenador: dos columnas fijas (izquierda: evolución, sensaciones, peso y fotos; derecha: el resto). Al desplegar un apartado ya no saltan los demás de columna ni parece que se abre por encima → **0.75.3**
 7. 25/10/2026 11:50 · Pagos: al tocar un cliente se despliega ahí mismo su suscripción (tarifa, pagado hasta, estado, registrar pago, permitir o denegar acceso, historial, baja y aviso de borrado) sin ir a su ficha; se actualiza al momento y tiene «Ver ficha completa ›» → **0.75.3-1 (caché)**
 8. 25/10/2026 13:10 · Profesionales: casilla «Entrar sin contraseña en este dispositivo» al escribir la contraseña. Se activa solo con la contraseña correcta, queda guardado solo en ese móvil u ordenador y en la portada se ve «🧪 Sin contraseña en este dispositivo · Quitar» → **0.75.4**
+9. 25/10/2026 14:50 · Chat en el ordenador (pestaña Chats): la barra de arriba ya no repite el nombre del cliente ni enseña «Volver»; la lista de la izquierda ya dice con quién hablas
+10. 25/10/2026 14:55 · Ficha del cliente: «📈 Evolución» también sale plegada al abrirla (móvil y ordenador), con el peso y su cambio en el resumen; el gráfico se dibuja al desplegarla → **0.76.0**
 
 ## Versión 0.74 → 0.75.0
 
