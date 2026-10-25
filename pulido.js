@@ -125,3 +125,24 @@ document.addEventListener('keydown', function(e){
   if (!h || e.target !== h) return;
   e.preventDefault(); h.click();
 });
+
+/* =========================================================
+   25/10 · Ficha en el ordenador: dos columnas fijas (izquierda: evolución, sensaciones, peso y fotos;
+   derecha: el resto). Antes las columnas se repartían solas y, al desplegar un apartado, otros saltaban
+   de columna y el contenido parecía abrirse por encima.
+   ========================================================= */
+if (typeof escAgruparFicha === 'function') escAgruparFicha = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const grid = document.getElementById('escFichaGrid'); if (!grid) return r;
+    grid.classList.add('pu-cols');
+    let a = grid.querySelector(':scope > .esc-col-a'), b = grid.querySelector(':scope > .esc-col-b');
+    if (!a) { a = document.createElement('div'); a.className = 'esc-col esc-col-a'; grid.insertBefore(a, grid.firstChild); }
+    if (!b) { b = document.createElement('div'); b.className = 'esc-col esc-col-b'; a.insertAdjacentElement('afterend', b); }
+    const orden = ESC_GRUPOS[coachActivo && coachActivo.rol === 'dietista' ? 'dietista' : 'entrenador'];
+    const grupos = Array.prototype.slice.call(grid.querySelectorAll('.esc-grupo'));
+    grupos.sort(function(x, y){ return orden.indexOf(x.dataset.g) - orden.indexOf(y.dataset.g); });
+    grupos.forEach(function(g){ (g.dataset.g === 'segui' ? a : b).appendChild(g); });
+    return r;
+  };
+})(escAgruparFicha);
