@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.76.4 (actual)
-Cambios acumulados hacia la 0.77: **8 de 10**
+## Versión 0.77.0 (actual)
+Cambios acumulados hacia la 0.78: **0 de 10**
+
+## Versión 0.76 → 0.77.0
 
 ### Hacia la 0.77
 1. 25/10/2026 15:10 · Alimentos con el emoji de su tipo (🫘 legumbres, 🍚 arroz, 🥣 cereales, 🍎🍌🍓🍊 cada fruta, 🐟 pescado, 🍗 pollo y pavo, 🥚 huevo, 🧀 quesos, 🥛 lácteos, 🌰 frutos secos, 🫒 aceite y aceitunas…) en el buscador y en las opciones del plan, para Fátima y los clientes; si no encaja ninguno, el de su macronutriente
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.77: **8 de 10**
 6. 25/10/2026 16:40 · Ventanas por encima (fotos del chat y de los seguimientos, términos, privacidad, licencia, diálogos, hojas de profesionales, buscadores, lista de la compra, bienvenida…): se cierran al tocar fuera, con el botón atrás del móvil y con Esc en el ordenador, siempre la de más arriba y sin cambiar de pantalla. Si en una hoja has escrito algo, pregunta antes de cerrarla. Las obligatorias (cookies, consentimientos y acceso pausado) no se cierran así → **0.76.3**
 7. 25/10/2026 17:10 · Ejercicios: 64 variantes nuevas de los principales (flexiones inclinadas, declinadas, diamante, hindúes, pike, arquero…; sentadilla con pausa, a cajón, pistol, cosaca…; zancadas, dominadas, remos, press, peso muerto, hip thrust, fondos, plancha, gemelos, curl) más «Remo invertido» y «Swing con kettlebell». En el buscador cada principal muestra cuántas variantes tiene y debajo salen sus variantes; cada una cuenta para su músculo en el mapa y el volumen → **0.76.3-1 (caché)**
 8. 25/10/2026 17:40 · Nutrición: en cada fila de una comida (proteína, hidratos o grasa) se pueden combinar hasta 3 opciones; tocar una opción la añade o la quita. La cantidad se reparte para que cada una aporte lo mismo de ese macronutriente y la comida siga cuadrando. Se ve en el resumen de cada comida, en «Ahora toca» y en la lista de la compra (cliente, y Fátima al editar) → **0.76.4**
+9. 25/10/2026 18:10 · Pagos: al registrar un pago se elige el periodo que paga (mensual, trimestral, semestral, anual u «otro» con meses o fecha a mano); el «pagado hasta», los avisos de renovación y el periodo de la factura se ajustan solos, y si el periodo es distinto de su tarifa propone cambiarla. Nueva tarifa semestral
+10. 25/10/2026 18:25 · Recetas: enlace opcional al vídeo de Fátima (Instagram, TikTok, YouTube o Facebook) con botón «▶ Ver cómo se hace» para los clientes, e ingredientes de repostería (harinas, maicena, azúcar, panela, miel, cacao, levadura, gelatina, leche condensada…) solo en el creador de recetas → **0.77.0**
 
 ## Versión 0.75 → 0.76.0
 

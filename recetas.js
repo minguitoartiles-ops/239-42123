@@ -339,7 +339,7 @@ function rcEmo(n, g){ return typeof alimEmoji === 'function' ? alimEmoji(n, g) :
 function rcBuscar(q){
   q = norm(String(q || '').trim());
   const pal = q.split(/\s+/).filter(function(w){ return w && ['de', 'del', 'la', 'el', 'y', 'con'].indexOf(w) < 0; });
-  const l = FOOD_CATALOG.filter(function(o){ const n = norm(o.n); return pal.every(function(w){ return n.indexOf(w) > -1; }); });
+  const l = FOOD_CATALOG.concat(typeof RC_BASICOS !== 'undefined' ? RC_BASICOS : []).filter(function(o){ const n = norm(o.n); return pal.every(function(w){ return n.indexOf(w) > -1; }); });
   l.sort(function(a, b){
     const ia = q ? (norm(a.n).indexOf(q) === 0 ? 0 : 1) : 0, ib = q ? (norm(b.n).indexOf(q) === 0 ? 0 : 1) : 0;
     return ia - ib || a.n.localeCompare(b.n, 'es');
@@ -356,7 +356,7 @@ function rcSugAbrir(inp){
     return '<div class="rc-sug-it" role="option" data-n="' + esc(o.n) + '">'
       + '<span class="rc-sug-e" aria-hidden="true">' + rcEmo(o.n, o.g) + '</span>'
       + '<span class="rc-sug-t"><b>' + esc(o.n) + '</b><small>' + foodKcal(o) + ' kcal · P ' + o.p + ' · C ' + o.c + ' · G ' + o.f + ' /100 g</small></span>'
-      + (o.custom ? '<span class="rc-sug-b">Propio</span>' : (o.super ? '<span class="rc-sug-b">Súper</span>' : '')) + '</div>';
+      + (o.custom ? '<span class="rc-sug-b">Propio</span>' : (o.basico ? '<span class="rc-sug-b">Repostería</span>' : (o.super ? '<span class="rc-sug-b">Súper</span>' : ''))) + '</div>';
   };
   let h = '';
   if (!l.length) h = '<div class="rc-sug-vacio">Ningún alimento coincide. Puedes dejarlo escrito (especias, «al gusto»): no cuenta en las calorías.</div>';
@@ -385,6 +385,14 @@ function rcSugMover(inp, d){
   i = Math.max(0, Math.min(its.length - 1, i + d));
   its[i].classList.add('on'); its[i].scrollIntoView({ block: 'nearest' });
 }
+/* calorías de un ingrediente, en su fila, sin repintar la lista (no se pierde el foco al escribir o tabular) */
+function rcIngKcal(f, k){
+  const ing = rcBorr.ing[k], inf = ing && ing.n ? rcIngInfo(ing.n) : null;
+  let s = f.querySelector('.rc-ing-k'); const g = inf ? mjNum(ing.g) : 0;
+  if (!g) { if (s) s.remove(); return; }
+  if (!s) { s = document.createElement('small'); s.className = 'rc-ing-k'; f.appendChild(s); }
+  s.textContent = Math.round(foodKcal(inf) * g / 100) + ' kcal · P ' + Math.round(inf.p * g / 100) + ' · C ' + Math.round(inf.c * g / 100) + ' · G ' + Math.round(inf.f * g / 100);
+}
 rcIngPintar = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
@@ -396,8 +404,7 @@ rcIngPintar = (function(orig){
       if (inf) {
         f.classList.add('rc-ok');
         inp.insertAdjacentHTML('beforebegin', '<span class="rc-ing-emo" aria-hidden="true">' + rcEmo(inf.n, inf.g) + '</span>');
-        const g = mjNum(ing.g);
-        if (g) f.insertAdjacentHTML('beforeend', '<small class="rc-ing-k">' + Math.round(foodKcal(inf) * g / 100) + ' kcal · P ' + Math.round(inf.p * g / 100) + ' · C ' + Math.round(inf.c * g / 100) + ' · G ' + Math.round(inf.f * g / 100) + '</small>');
+        rcIngKcal(f, k);
       }
       const prev = inp.oninput;
       inp.oninput = function(){ if (prev) prev.call(this); rcSugAbrir(this); };
@@ -411,8 +418,81 @@ rcIngPintar = (function(orig){
         else if (e.key === 'Escape') { if (document.getElementById('rcSug')) { e.preventDefault(); e.stopPropagation(); rcSugCerrar(); } }
       };
       const gi = f.querySelector('.rc-ing-g'), pg = gi.oninput;
-      gi.onchange = function(){ rcIngPintar(); };
+      gi.oninput = function(){ if (pg) pg.call(this); rcIngKcal(f, k); };
     });
     return r;
   };
 })(rcIngPintar);
+
+
+/* =========================================================
+   #236 Ingredientes básicos de repostería (harinas, azúcar, cacao, levadura…)
+   Solo para el creador de recetas: no están en el catálogo de los planes ni en el buscador de los clientes.
+   Valores de referencia por 100 g (BEDCA y, si no lo recoge, USDA).
+   ========================================================= */
+const RC_BASICOS = [
+  ['Harina de trigo', 10, 72, 1.2], ['Harina de trigo integral', 13, 62, 2.5], ['Harina de maíz', 6.9, 72, 3.9],
+  ['Maicena (almidón de maíz)', 0.3, 91, 0.1], ['Harina de avena', 14.7, 60, 9.1], ['Harina de almendra', 21.4, 10.7, 50],
+  ['Harina de arroz', 6, 80, 1.4], ['Harina de garbanzo', 22.4, 47, 6.7], ['Azúcar blanco', 0, 100, 0],
+  ['Azúcar moreno', 0.1, 97, 0], ['Panela', 0.4, 90, 0.1], ['Miel', 0.3, 82, 0], ['Cacao puro en polvo', 19.6, 21, 13.7],
+  ['Levadura química', 0, 27.7, 0], ['Bicarbonato sódico', 0, 0, 0], ['Gelatina neutra en polvo', 85.6, 0, 0.1],
+  ['Edulcorante (eritritol)', 0, 0, 0], ['Leche condensada', 7.9, 54.4, 8.7]
+].map(function(x){ return { n: x[0], p: x[1], c: x[2], f: x[3], g: nuGrupoPorMacros(x[1], x[2], x[3]), basico: true, ref: 'BEDCA/USDA' }; });
+function rcBasico(n){ const k = norm(String(n || '').trim()); return RC_BASICOS.filter(function(o){ return norm(o.n) === k; })[0] || null; }
+rcIngInfo = function(n){ return foodInfo(n) || rcBasico(n); };
+NU_ALERGENOS.push(
+  [/harina de trigo/i, ['gluten', 'celiaquia', 'sgnc']],
+  [/harina de avena/i, ['gluten']],
+  [/harina de almendra/i, ['frutoscascara']],
+  [/harina de garbanzo/i, ['legumbres']],
+  [/leche condensada/i, ['leche', 'lactosa']],
+  [/^miel$|panela|az[uú]car/i, ['fructosa']]
+);
+if (typeof ALIM_TIPOS !== 'undefined') ALIM_TIPOS.unshift([/^harina|maicena/, '🌾'], [/azucar|panela|edulcorante/, '🍬'], [/^miel/, '🍯'], [/levadura|bicarbonato|gelatina/, '🧂'], [/leche condensada/, '🥛']);
+
+/* =========================================================
+   #237 Vídeo de la receta (Instagram, TikTok, YouTube o Facebook de Fátima)
+   El cliente lo abre en la red social: así llega también a su perfil.
+   ========================================================= */
+const RC_VIDEO_RE = /^https:\/\/([a-z0-9-]+\.)*(instagram\.com|tiktok\.com|youtube\.com|youtu\.be|facebook\.com|fb\.watch)(\/|$)/i;
+function rcVideoOk(u){ u = String(u || '').trim(); return !u || (RC_VIDEO_RE.test(u) && u.length < 500 && !/[\s"'<>]/.test(u)); }
+function rcRed(u){ const m = String(u).match(/instagram|tiktok|youtu|facebook|fb\.watch/i); return m ? ({ instagram: 'Instagram', tiktok: 'TikTok', youtu: 'YouTube', facebook: 'Facebook', 'fb.watch': 'Facebook' })[m[0].toLowerCase()] : ''; }
+rcEditar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const o = document.getElementById('rcHoja'); if (!o) return r;
+    const fila = o.querySelector('.btn-row'); if (!fila || o.querySelector('#rcVideo')) return r;
+    fila.insertAdjacentHTML('beforebegin', '<div class="field"><label for="rcVideo">Vídeo de la receta (opcional)</label>'
+      + '<input type="url" id="rcVideo" inputmode="url" placeholder="Pega el enlace de Instagram, TikTok, YouTube o Facebook" value="' + esc(rcBorr.video || '') + '" autocomplete="off">'
+      + '<small class="rc-video-ayuda" id="rcVideoAyuda">Tus clientes verán «▶ Ver cómo se hace» y lo abrirán en la red social.</small></div>');
+    const i = o.querySelector('#rcVideo');
+    i.oninput = function(){
+      rcBorr.video = this.value.trim();
+      const ok = rcVideoOk(this.value);
+      this.classList.toggle('rc-mal', !ok);
+      document.getElementById('rcVideoAyuda').textContent = ok ? (this.value.trim() ? '✓ Vídeo de ' + rcRed(this.value) : 'Tus clientes verán «▶ Ver cómo se hace» y lo abrirán en la red social.') : 'Pega un enlace https de Instagram, TikTok, YouTube o Facebook.';
+    };
+    return r;
+  };
+})(rcEditar);
+rcLimpia = (function(orig){
+  return function(r){ const x = orig.apply(this, arguments); const v = String(r.video || '').trim(); if (v && rcVideoOk(v)) x.video = v; else delete x.video; return x; };
+})(rcLimpia);
+rcGuardarBorrador = (function(orig){
+  return function(){
+    if (rcBorr && !rcVideoOk(rcBorr.video)) { toast('El enlace del vídeo no es válido: usa uno de Instagram, TikTok, YouTube o Facebook'); const i = document.getElementById('rcVideo'); if (i) i.focus(); return; }
+    return orig.apply(this, arguments);
+  };
+})(rcGuardarBorrador);
+rcAbrir = (function(orig){
+  return function(id){
+    const r0 = orig.apply(this, arguments);
+    const r = rcPorId(id), o = document.getElementById('rcVer');
+    if (r && r.video && rcVideoOk(r.video) && o && !o.querySelector('.rc-video')) {
+      const por = o.querySelector('.rc-por');
+      const a = '<a class="rc-video" href="' + esc(r.video) + '" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">▶</span> Ver cómo se hace<small>Vídeo de ' + esc(r.por || 'Fátima') + ' en ' + rcRed(r.video) + '</small></a>';
+      if (por) por.insertAdjacentHTML('afterend', a);
+    }
+    return r0;
+  };
+})(rcAbrir);

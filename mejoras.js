@@ -812,7 +812,7 @@ document.addEventListener('keydown', function(e){
    - El profesional registra los pagos y puede denegar o permitir el acceso.
    d.tarifa = { tipo, precio, hasta, pagos: [{ fecha, importe, hasta }], acceso: 'auto' | 'denegado' | 'permitido' }
    ========================================================= */
-const MJ_TARIFAS = { mensual: { n: 'Mensual', meses: 1 }, trimestral: { n: 'Trimestral', meses: 3 }, anual: { n: 'Anual', meses: 12 } };
+const MJ_TARIFAS = { mensual: { n: 'Mensual', meses: 1 }, trimestral: { n: 'Trimestral', meses: 3 }, semestral: { n: 'Semestral', meses: 6 }, anual: { n: 'Anual', meses: 12 } };
 const MJ_GRACIA = 7;
 const MJ_CFG_KEY = 'fsd_pagos_cfg';
 TIPOS_CLIENTE.push({ id: 'pago', ico: '💳', nombre: 'Tu suscripción', desc: 'Cuando tu tarifa está a punto de vencer o ha vencido' });
@@ -846,19 +846,35 @@ function estadoPago(d){
   if (!r.acceso) r.txt = 'Sin acceso · ' + (t.acceso === 'denegado' ? 'denegado por el equipo' : 'gracia terminada');
   return r;
 }
-function registrarPago(k, importe){
+/* 25/10/2026 (#235) · el pago puede cubrir otra duración que la de su tarifa: dur = { meses } o { hasta: 'AAAA-MM-DD' } */
+function mjBasePago(d){
+  const t = d.tarifa, e = estadoPago(d), hoy = mjISO(new Date());
+  // si paga a tiempo o en la gracia se mantiene su ciclo; si llevaba tiempo sin pagar, empieza hoy
+  return (e.cod === 'vencido') ? hoy : (t.hasta || hoy);
+}
+function mjHastaPago(d, dur){
+  if (dur && dur.hasta) return dur.hasta;
+  const m = dur && dur.meses ? dur.meses : (MJ_TARIFAS[d.tarifa.tipo] || { meses: 1 }).meses;
+  return mjSumarMeses(mjBasePago(d), m);
+}
+function mjDurTxt(dur, t){
+  if (dur && dur.hasta) return 'hasta el ' + mjFecha(dur.hasta);
+  const m = dur && dur.meses ? dur.meses : (MJ_TARIFAS[t.tipo] || { meses: 1 }).meses;
+  const tipo = Object.keys(MJ_TARIFAS).filter(function(x){ return MJ_TARIFAS[x].meses === m; })[0];
+  return tipo ? MJ_TARIFAS[tipo].n.toLowerCase() : m + (m === 1 ? ' mes' : ' meses');
+}
+function registrarPago(k, importe, dur){
   const d = clientesData[k], t = d && d.tarifa;
   if (!t || !MJ_TARIFAS[t.tipo]) return;
   const hoy = mjISO(new Date());
-  const e = estadoPago(d);
-  // si paga a tiempo o en la gracia se mantiene su ciclo; si llevaba tiempo sin pagar, empieza hoy
-  const base = (e.cod === 'vencido') ? hoy : (t.hasta || hoy);
-  t.hasta = mjSumarMeses(base, MJ_TARIFAS[t.tipo].meses);
+  t.hasta = mjHastaPago(d, dur);
   t.pagos = t.pagos || [];
-  t.pagos.push({ fecha: hoy, importe: importe, hasta: t.hasta, por: coachActivo ? coachActivo.u : '' });
+  const p = { fecha: hoy, importe: importe, hasta: t.hasta, por: coachActivo ? coachActivo.u : '' };
+  if (dur && (dur.meses || dur.hasta)) p.dur = mjDurTxt(dur, t);
+  t.pagos.push(p);
   t.acceso = 'auto';
   guardarTodo();
-  crearAviso(claveCliente(k), 'pago', 'Pago recibido ✓', 'Tu suscripción ' + MJ_TARIFAS[t.tipo].n.toLowerCase() + ' está activa hasta el ' + mjFecha(t.hasta) + '. ¡Gracias!', { vista: 'hoy' });
+  crearAviso(claveCliente(k), 'pago', 'Pago recibido ✓', 'Tu suscripción está activa hasta el ' + mjFecha(t.hasta) + '. ¡Gracias!', { vista: 'hoy' });
 }
 
 /* ---------- ficha del cliente: sección «Suscripción» ---------- */
@@ -889,26 +905,73 @@ function pintarSuscripcionFicha(){
     + '</div>';
   box.innerHTML = h;
 }
+let mjPagoDur = null;
 function pedirPago(){
   const d = clientesData[clienteActual], t = d && d.tarifa;
   if (!t) return;
-  const e = estadoPago(d);
-  const base = e.cod === 'vencido' ? mjISO(new Date()) : t.hasta;
-  const nuevo = mjSumarMeses(base, MJ_TARIFAS[t.tipo].meses);
+  mjPagoDur = { tipo: MJ_TARIFAS[t.tipo] ? t.tipo : 'mensual' };
   const o = mjHoja('mjPago');
   o.innerHTML = '<div class="fsd-sheet dlg"><h3>Registrar pago de ' + esc(d.nombre) + '</h3>'
-    + '<p>Tarifa ' + MJ_TARIFAS[t.tipo].n.toLowerCase() + '. Quedará pagado hasta el <b>' + mjFecha(nuevo) + '</b>.</p>'
+    + '<div class="section-lbl">¿Qué periodo paga?</div>'
+    + '<div class="chips" id="mjPgDur">' + Object.keys(MJ_TARIFAS).concat(['otro']).map(function(x){
+        return '<button type="button" class="chip protein' + (x === mjPagoDur.tipo ? ' selected' : '') + '" data-v="' + x + '" onclick="mjPagoElegir(\'' + x + '\')">' + (MJ_TARIFAS[x] ? MJ_TARIFAS[x].n : 'Otro') + '</button>'; }).join('') + '</div>'
+    + '<div id="mjPgOtro" class="mj-pg-otro" hidden>'
+    + '<div class="field"><label for="mjPgMeses">Meses</label><input type="text" inputmode="numeric" id="mjPgMeses" placeholder="Ej.: 2" oninput="this.value=this.value.replace(/[^0-9]/g,\'\');mjPagoOtro(\'m\')"></div>'
+    + '<div class="field"><label for="mjPgHasta">o pagado hasta</label><input type="date" id="mjPgHasta" oninput="mjPagoOtro(\'f\')"></div></div>'
+    + '<p id="mjPgRes" class="mj-pg-res"></p>'
     + '<div class="field"><label for="mjPgImp">Importe (€)</label><input type="text" inputmode="decimal" id="mjPgImp" value="' + (t.precio != null ? String(t.precio).replace('.', ',') : '') + '" placeholder="Opcional"></div>'
-    + '<div class="btn-row"><button class="btn-eq" onclick="mjCerrarHoja(\'mjPago\')">Cancelar</button><button class="btn-eq btn-eq-p" onclick="confirmarPago()">Registrar</button></div></div>';
+    + '<div class="btn-row"><button class="btn-eq" onclick="mjCerrarHoja(\'mjPago\')">Cancelar</button><button class="btn-eq btn-eq-p" id="mjPgOk" onclick="confirmarPago()">Registrar</button></div></div>';
   o.classList.add('show');
+  mjPagoPintar();
+}
+function mjPagoElegir(x){
+  mjPagoDur = { tipo: x };
+  Array.prototype.forEach.call(document.querySelectorAll('#mjPgDur .chip'), function(c){ c.classList.toggle('selected', c.dataset.v === x); });
+  const otro = document.getElementById('mjPgOtro'); if (otro) otro.hidden = x !== 'otro';
+  if (x === 'otro') { const m = document.getElementById('mjPgMeses'); if (m) setTimeout(function(){ m.focus(); }, 30); }
+  mjPagoPintar();
+}
+function mjPagoOtro(cual){
+  const m = document.getElementById('mjPgMeses'), f = document.getElementById('mjPgHasta');
+  if (cual === 'm' && f) f.value = ''; if (cual === 'f' && m) m.value = '';
+  mjPagoPintar();
+}
+function mjPagoLeer(){
+  if (!mjPagoDur) return null;
+  if (mjPagoDur.tipo !== 'otro') return { meses: MJ_TARIFAS[mjPagoDur.tipo].meses };
+  const m = parseInt((document.getElementById('mjPgMeses') || {}).value, 10), f = (document.getElementById('mjPgHasta') || {}).value;
+  if (f) return { hasta: f };
+  if (m > 0 && m <= 36) return { meses: m };
+  return null;
+}
+function mjPagoPintar(){
+  const d = clientesData[clienteActual], r = document.getElementById('mjPgRes'), ok = document.getElementById('mjPgOk');
+  if (!d || !r) return;
+  const dur = mjPagoLeer();
+  const hoy = mjISO(new Date());
+  if (!dur) { r.innerHTML = 'Indica los meses o la fecha hasta la que paga.'; if (ok) ok.disabled = true; return; }
+  const hasta = mjHastaPago(d, dur);
+  if (hasta <= hoy) { r.innerHTML = 'La fecha tiene que ser posterior a hoy.'; if (ok) ok.disabled = true; return; }
+  if (ok) ok.disabled = false;
+  r.innerHTML = 'Quedará pagado hasta el <b>' + mjFecha(hasta) + '</b>. El siguiente cobro y los avisos de renovación se ajustan a esa fecha.';
 }
 function confirmarPago(){
+  const d = clientesData[clienteActual], t = d && d.tarifa;
+  const dur = mjPagoLeer(); if (!dur) return;
   const imp = mjNum(document.getElementById('mjPgImp').value);
-  registrarPago(clienteActual, imp);
+  const nuevoTipo = mjPagoDur && mjPagoDur.tipo !== 'otro' && t && mjPagoDur.tipo !== t.tipo ? mjPagoDur.tipo : null;
+  registrarPago(clienteActual, imp, dur);
   mjCerrarHoja('mjPago');
   pintarSuscripcionFicha();
   actualizarPanel();
-  toast('Pago registrado');
+  toast('Pago registrado · hasta el ' + mjFecha(t.hasta));
+  if (nuevoTipo) {
+    const k = clienteActual;
+    abrirDialogo({ titulo: '¿Cambiar su tarifa a ' + MJ_TARIFAS[nuevoTipo].n.toLowerCase() + '?',
+      texto: d.nombre + ' tiene tarifa ' + MJ_TARIFAS[t.tipo].n.toLowerCase() + '. Si la cambias, los próximos pagos se propondrán como ' + MJ_TARIFAS[nuevoTipo].n.toLowerCase() + (imp ? ' y el precio pasará a ' + mjEuros(imp) : '') + '.',
+      ok: 'Cambiar tarifa', cancel: 'Dejarla igual',
+      onOk: function(){ const tt = clientesData[k].tarifa; tt.tipo = nuevoTipo; if (imp) tt.precio = imp; guardarTodo(); if (clienteActual === k) pintarSuscripcionFicha(); actualizarPanel(); toast('Tarifa cambiada'); } });
+  }
 }
 function cambiarAcceso(modo){
   const d = clientesData[clienteActual];
@@ -935,7 +998,7 @@ function abrirTarifa(){
   const t = d.tarifa || { tipo: 'ninguna' };
   const o = mjHoja('mjTarifa');
   o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Tarifa de ' + esc(d.nombre) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'mjTarifa\')" aria-label="Cerrar">×</button></div>'
-    + '<div class="chips" data-grupo="tar">' + ['mensual', 'trimestral', 'anual', 'ninguna'].map(function(x){
+    + '<div class="chips" data-grupo="tar">' + ['mensual', 'trimestral', 'semestral', 'anual', 'ninguna'].map(function(x){
         return '<button type="button" class="chip protein' + (t.tipo === x ? ' selected' : '') + '" data-v="' + x + '" onclick="mjChip(this)">' + (MJ_TARIFAS[x] ? MJ_TARIFAS[x].n : 'Sin tarifa') + '</button>'; }).join('') + '</div>'
     + '<div class="field"><label for="mjTfPre">Precio (€)</label><input type="text" inputmode="decimal" id="mjTfPre" value="' + (t.precio != null ? String(t.precio).replace('.', ',') : '') + '" placeholder="Opcional"></div>'
     + '<div class="field"><label for="mjTfHasta">Pagado hasta</label><input type="date" id="mjTfHasta" value="' + (t.hasta || mjISO(new Date())) + '"></div>'

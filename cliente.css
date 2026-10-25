@@ -890,3 +890,7 @@ html.esc-chat-pro #coachBar .coach-bar-left{display:none;}
 
 /* #225 emoji del tipo de alimento en las opciones del plan */
 .macro-group .chip[data-emo]::before{content:attr(data-emo);margin-right:5px;font-size:1.05em;}
+
+/* #235 periodo del pago */
+.mj-pg-res{margin:10px 0 4px;font-size:14px;line-height:1.4;}
+.mj-pg-otro{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:10px;}
