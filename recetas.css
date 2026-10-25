@@ -90,3 +90,11 @@ html.esc #view-coach-recetas .alta-body{padding-left:max(28px, calc((100% - 880p
 .rc-sug-b{flex:none;font:700 10px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:99px;background:var(--wash-soft);color:var(--dim-55);}
 .rc-sug-vacio{padding:12px;font-size:13px;color:var(--dim-55);}
 @media (prefers-reduced-motion:reduce){ .rc-sug{animation:none;} }
+
+/* #237 vídeo de la receta */
+.rc-video{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 14px;padding:12px 14px;border-radius:14px;background:var(--accent);color:#fff;font:700 15px var(--f-body);text-decoration:none;text-align:center;}
+.rc-video span{font-size:13px;}
+.rc-video small{font:500 11.5px var(--f-mono);opacity:.9;}
+.rc-video:active{transform:scale(.98);}
+.rc-video-ayuda{display:block;margin-top:4px;font-size:12px;color:var(--dim-55);}
+#rcVideo.rc-mal{border-color:var(--danger);}
