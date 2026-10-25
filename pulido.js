@@ -47,3 +47,42 @@ grPintar = (function(orig){
   };
 })(grPintar);
 window.addEventListener('resize', function(){ clearTimeout(puGraficoCliente._t); puGraficoCliente._t = setTimeout(function(){ const b = document.querySelector('#pgGraf .gr-box'); if (b && b.offsetParent) grPintar(b); }, 150); });
+
+/* =========================================================
+   #212 · Planes de entrenamiento (Domingo): el resumen de los días y el «Volumen semanal por músculo»
+   salen plegados, con una línea de resumen; se abren al tocar su título (se recuerda mientras navegas)
+   ========================================================= */
+const puAbierto = { res: false, mu: false };
+function puPlegable(cual, titulo, res, nodo){
+  const d = document.createElement('details'); d.className = 'pu-fold'; d.dataset.fold = cual;
+  if (puAbierto[cual]) d.open = true;
+  d.innerHTML = '<summary><span class="pu-fold-t">' + titulo + '</span><span class="pu-fold-r">' + res + '</span><span class="pu-fold-ch" aria-hidden="true">›</span></summary>';
+  nodo.parentNode.insertBefore(d, nodo); d.appendChild(nodo);
+}
+if (typeof entResumenHtml === 'function') entResumenHtml = (function(orig){
+  return function(k){
+    const t = document.createElement('template'); t.innerHTML = orig.apply(this, arguments);
+    const card = t.content.querySelector('.ent-prev-card');
+    if (card) {
+      const dias = card.querySelectorAll('.fe-dia').length, ej = card.querySelectorAll('.fe-ej').length;
+      puPlegable('res', '🏋️ Resumen del entrenamiento', dias ? dias + (dias === 1 ? ' día' : ' días') + ' · ' + ej + (ej === 1 ? ' ejercicio' : ' ejercicios') : 'sin sesiones', card);
+    }
+    const mu = t.content.querySelector('.mu-box');
+    if (mu) {
+      const s = mu.querySelector('.mu-cab span');
+      puPlegable('mu', '💪 Volumen semanal por músculo', s ? esc(s.textContent.trim()) : '', mu);
+    }
+    const w = document.createElement('div'); w.appendChild(t.content.cloneNode(true)); return w.innerHTML;
+  };
+})(entResumenHtml);
+document.addEventListener('toggle', function(e){
+  const d = e.target; if (!d.classList || !d.classList.contains('pu-fold')) return;
+  puAbierto[d.dataset.fold] = d.open;
+}, true);
+if (typeof muCambiarModo === 'function') muCambiarModo = (function(orig){
+  return function(btn){
+    const d = btn.closest('.pu-fold'), r = orig.apply(this, arguments);
+    if (d) { const s = d.querySelector('.mu-cab span'), x = d.querySelector('.pu-fold-r'); if (s && x) x.textContent = s.textContent.trim(); }
+    return r;
+  };
+})(muCambiarModo);
