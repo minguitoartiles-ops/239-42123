@@ -1032,3 +1032,11 @@ html.esc .ficha-accesos{max-width:none;}
   html.esc .alta-top,html.esc .alta-body{padding-left:max(32px, calc((100% - 1480px) / 2));padding-right:max(32px, calc((100% - 1480px) / 2));}
   html.esc .esc-izq .alta-top,html.esc .esc-izq .alta-body{padding-left:18px;padding-right:18px;}
 }
+
+/* Pantallas muy anchas (pantalla completa en monitores grandes): sin hueco entre la lista y la ficha,
+   contenido pegado a la lista y un poco más grande para que se lea bien */
+@media (min-width:1700px){
+  html.esc .esc-dual > :not(.esc-izq) .alta-top,
+  html.esc .esc-dual > :not(.esc-izq) .alta-body{padding-left:40px;padding-right:max(40px, calc(100% - 1560px));}
+  html.esc .esc-dual > :not(.esc-izq) .ficha-accesos{max-width:900px;}
+}
