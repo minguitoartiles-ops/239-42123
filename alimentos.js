@@ -235,8 +235,63 @@ renderFoodList = (function(orig){
     Array.prototype.forEach.call(list.querySelectorAll('.picker-item[data-g]'), function(it){
       const e = ALIM_EMO[it.dataset.g], n = it.querySelector('.picker-item-name');
       if (!e || !n || n.querySelector('.alim-emo')) return;
-      n.insertAdjacentHTML('afterbegin', '<span class="alim-emo" title="' + e[1] + '" aria-label="' + e[1] + ':">' + e[0] + '</span>');
+      const t = alimEmoji(n.textContent, it.dataset.g);
+      n.insertAdjacentHTML('afterbegin', '<span class="alim-emo" title="' + e[1] + '" aria-label="' + e[1] + ':">' + t + '</span>');
     });
     return r;
   };
 })(renderFoodList);
+
+
+/* =========================================================
+   #225 Emoji según el TIPO de alimento (legumbre, arroz, cereal, cada fruta, pescado…)
+   y, si no encaja ninguno, el de su macronutriente. Se ve en el buscador y en las opciones del plan.
+   ========================================================= */
+const ALIM_TIPOS = [
+  [/batido de prote|whey|protein drink/, '🥤'], [/pudding|postre/, '🍮'],
+  [/atun|sardina|boqueron|caballa|salmon|merluza|bacalao|lubina|dorada|rape|lenguado|trucha|pescado/, '🐟'],
+  [/gamba|langostino/, '🦐'], [/calamar|sepia|pulpo/, '🦑'], [/mejillon|almeja/, '🦪'],
+  [/huevo|clara/, '🥚'], [/pollo|pavo|contramuslo/, '🍗'], [/jamon|fiambre|bacon/, '🥓'],
+  [/ternera|lomo|solomillo|cerdo|conejo|carne/, '🥩'], [/tofu|seitan|tempeh|soja/, '🌱'],
+  [/queso|requeson|mozzarella|cottage|burgos/, '🧀'], [/skyr|yogur|kefir|leche|bebida de/, '🥛'],
+  [/lenteja|garbanzo|alubia|judia|hummus|legumbre|guisante|edamame/, '🫘'],
+  [/tortitas? de arroz/, '🍘'], [/fideos de arroz/, '🍜'], [/arroz/, '🍚'],
+  [/pasta|espagueti|macarron|gnocchi|fideo/, '🍝'],
+  [/gofio/, '🥣'], [/maiz|millo/, '🌽'],
+  [/avena|muesli|granola|copos|quinoa|cous|bulgur|sarraceno|mijo|amaranto|gofio|cereal/, '🥣'],
+  [/pan |pan$|pan de|tortilla|pita|biscote/, '🍞'],
+  [/boniato|batata/, '🍠'], [/patata|yuca/, '🥔'],
+  [/platano/, '🍌'], [/manzana/, '🍎'], [/pera/, '🍐'], [/naranja|mandarina|pomelo|limon/, '🍊'],
+  [/kiwi/, '🥝'], [/fresa/, '🍓'], [/frambuesa|arandano|frutos rojos|mora/, '🫐'], [/uva|pasas/, '🍇'],
+  [/sandia/, '🍉'], [/melon/, '🍈'], [/pina/, '🍍'], [/mango|papaya/, '🥭'],
+  [/melocoton|nectarina|albaricoque|orejon/, '🍑'], [/cereza/, '🍒'], [/ciruela/, '🍑'],
+  [/datil/, '🌴'], [/higo|granada|caqui|chirimoya|fruta/, '🍎'],
+  [/aceituna|aceite de oliva|oliva/, '🫒'], [/coco/, '🥥'], [/aguacate|guacamole/, '🥑'],
+  [/cacahuete/, '🥜'], [/nuez|nueces|almendra|avellana|anacardo|pistacho|macadamia|pinon|frutos secos/, '🌰'],
+  [/semilla|pipas|chia|lino|sesamo|tahini/, '🌻'], [/mantequilla/, '🧈'], [/chocolate|cacao/, '🍫'],
+  [/alioli|ajo/, '🧄'], [/tomate|ketchup/, '🍅'], [/mostaza|mayonesa|salsa|mojo|vinagreta/, '🥫']
+];
+function alimEmoji(nombre, g){
+  const n = norm(String(nombre || '')).replace(/\(.*?\)/g, '').trim();
+  for (let i = 0; i < ALIM_TIPOS.length; i++) if (ALIM_TIPOS[i][0].test(n)) return ALIM_TIPOS[i][1];
+  return (ALIM_EMO[g] || ['🍽️'])[0];
+}
+/* opciones del plan (Fátima y cliente): el emoji va como atributo y se pinta con CSS, sin tocar el texto guardado */
+function alimEmoChips(raiz){
+  Array.prototype.forEach.call((raiz || document).querySelectorAll('.macro-group .chip:not(.chip-add)'), function(c){
+    const t = c.firstChild && c.firstChild.nodeType === 3 ? c.firstChild.textContent : '';
+    if (!t.trim()) return;
+    const grp = c.classList.contains('protein') ? 'p' : (c.classList.contains('carb') ? 'c' : (c.classList.contains('fat') ? 'f' : ''));
+    const e = alimEmoji(t, grp);
+    if (c.dataset.emo !== e) c.dataset.emo = e;
+  });
+}
+(function(){
+  let pend = false;
+  const mirar = function(){ if (pend) return; pend = true; requestAnimationFrame(function(){ pend = false; try { alimEmoChips(); } catch(e){} }); };
+  window.addEventListener('load', function(){
+    mirar();
+    const c = document.getElementById('screenRoot') || document.body;
+    if (window.MutationObserver) new MutationObserver(mirar).observe(c, { childList: true, subtree: true });
+  });
+})();

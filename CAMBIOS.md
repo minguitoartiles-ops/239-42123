@@ -3,8 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.76.0 (actual)
-Cambios acumulados hacia la 0.77: **0 de 10**
+## Versión 0.76.1 (actual)
+Cambios acumulados hacia la 0.77: **2 de 10**
+
+### Hacia la 0.77
+1. 25/10/2026 15:10 · Alimentos con el emoji de su tipo (🫘 legumbres, 🍚 arroz, 🥣 cereales, 🍎🍌🍓🍊 cada fruta, 🐟 pescado, 🍗 pollo y pavo, 🥚 huevo, 🧀 quesos, 🥛 lácteos, 🌰 frutos secos, 🫒 aceite y aceitunas…) en el buscador y en las opciones del plan, para Fátima y los clientes; si no encaja ninguno, el de su macronutriente
+2. 25/10/2026 15:20 · Licencia de uso (EULA) de la app en Ajustes, en la pantalla de inicio y en el consentimiento del primer acceso, y archivo LICENSE «todos los derechos reservados» en el repositorio → **0.76.1**
 
 ## Versión 0.75 → 0.76.0
 

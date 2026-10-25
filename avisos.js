@@ -217,7 +217,7 @@ function huellaPlan(cont){
   c.querySelectorAll('*').forEach(function(el){
     Array.prototype.slice.call(el.attributes).forEach(function(a){
       const n = a.name;
-      if (n === 'value' || n === 'src' || n === 'href' || (n.indexOf('data-') === 0 && n !== 'data-prev' && n !== 'data-ph' && n !== 'data-v2' && n !== 'data-edit-ready')) return;
+      if (n === 'value' || n === 'src' || n === 'href' || (n.indexOf('data-') === 0 && n !== 'data-prev' && n !== 'data-ph' && n !== 'data-v2' && n !== 'data-edit-ready' && n !== 'data-emo')) return;
       el.removeAttribute(n);
     });
   });

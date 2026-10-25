@@ -887,3 +887,6 @@ html.esc .pg-panel{padding:14px 18px 16px;}
 
 /* #227 chat del ordenador sin nombre repetido ni «Volver» */
 html.esc-chat-pro #coachBar .coach-bar-left{display:none;}
+
+/* #225 emoji del tipo de alimento en las opciones del plan */
+.macro-group .chip[data-emo]::before{content:attr(data-emo);margin-right:5px;font-size:1.05em;}
