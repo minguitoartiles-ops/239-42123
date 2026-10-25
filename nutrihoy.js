@@ -81,3 +81,106 @@ function nhPintar(){
 }
 recalcConsumo = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { nhPintar(); } catch(e){} return r; }; })(recalcConsumo);
 fsdTras('goTo', function(r, v){ if (v === 'plan') setTimeout(nhPintar, 0); });
+
+/* =========================================================
+   #185 · Lista de la compra semanal y sustituciones rápidas
+   · «🛒 Lista de la compra»: suma lo elegido en cada comida × 7 días, agrupado por proteína / carbos / grasa,
+     con casillas para ir tachando (se recuerdan durante la semana) y botón para copiar o compartir.
+   · Sustituciones: en cada comida, tocar otra opción la cambia y la cantidad se ajusta sola;
+     ahora se avisa con «Cambiado: 135 g de yogur → 160 g de queso fresco».
+   ========================================================= */
+function nhLunes(){ const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function nhGramos(ch){ const q = ch && ch.querySelector('.chip-qty'); const m = q && q.textContent.match(/(\d+(?:[.,]\d+)?)\s*g/); return m ? Math.round(parseFloat(m[1].replace(',', '.'))) : 0; }
+function nhElegido(g){ return g.querySelector('.chip.selected') || g.querySelector('.chip:not(.chip-add)'); }
+const NH_GRUPOS = [['protein', '🥩', 'Proteínas'], ['carb', '🍚', 'Hidratos'], ['fat', '🥑', 'Grasas']];
+function nhLista(){
+  const l = {};
+  mealBlocks().forEach(function(b){
+    Array.prototype.forEach.call(b.querySelectorAll('.macro-group'), function(g){
+      const ch = nhElegido(g); if (!ch) return;
+      const n = chipName(ch); if (!n) return;
+      const tipo = (NH_GRUPOS.filter(function(x){ return ch.classList.contains(x[0]); })[0] || NH_GRUPOS[1])[0];
+      const key = norm(n);
+      const x = l[key] = l[key] || { n: n, tipo: tipo, g: 0, veces: 0 };
+      x.g += nhGramos(ch); x.veces++;
+    });
+  });
+  return Object.keys(l).map(function(k){ return l[k]; });
+}
+function nhCant(x){
+  if (!x.g) return x.veces * 7 + (x.veces * 7 === 1 ? ' ración' : ' raciones');
+  const t = x.g * 7;
+  return t >= 1000 ? fmtNum(Math.round(t / 100) / 10) + ' kg' : t + ' g';
+}
+function nhCompraHechos(){ const d = clientesData[clienteActual]; return d && d.compra && d.compra.sem === nhLunes() ? d.compra.hechos || {} : {}; }
+function nhAbrirCompra(){
+  const lista = nhLista(); if (!lista.length) { toast('Tu plan todavía no tiene alimentos'); return; }
+  nhCerrarCompra();
+  const hechos = nhCompraHechos();
+  const h = document.createElement('div'); h.id = 'nhCompra'; h.className = 'cm-fw show';
+  const sinG = lista.some(function(x){ return !x.g; });
+  h.innerHTML = '<div class="cm-fw-in nh-compra" role="dialog" aria-modal="true" aria-label="Lista de la compra">'
+    + '<div class="cm-fw-top"><b>🛒 Lista de la compra · 7 días</b><button type="button" class="cm-fw-x" aria-label="Cerrar">✕</button></div>'
+    + '<p class="nh-compra-nota">Con lo que tienes elegido en cada comida' + (sinG ? '. Las cantidades saldrán cuando Fátima fije tu objetivo.' : ', en crudo.') + '</p>'
+    + '<div class="nh-compra-lista">' + NH_GRUPOS.map(function(gr){
+        const xs = lista.filter(function(x){ return x.tipo === gr[0]; }).sort(function(a, b){ return a.n.localeCompare(b.n, 'es'); });
+        if (!xs.length) return '';
+        return '<div class="nh-compra-g"><div class="nh-compra-gt">' + gr[1] + ' ' + gr[2] + '</div>' + xs.map(function(x){
+          const k = norm(x.n), on = !!hechos[k];
+          return '<label class="nh-compra-f' + (on ? ' on' : '') + '"><input type="checkbox" data-k="' + esc(k) + '"' + (on ? ' checked' : '') + '><span class="nh-compra-n">' + esc(x.n) + '</span><span class="nh-compra-c">' + nhCant(x) + '</span></label>';
+        }).join('') + '</div>';
+      }).join('') + '</div>'
+    + '<div class="nh-compra-acts"><button type="button" class="btn-primary" data-compra="compartir">Copiar o compartir</button><button type="button" class="nh-compra-reset" data-compra="reset">Desmarcar todo</button></div></div>';
+  (document.getElementById('screenRoot') || document.body).appendChild(h);
+  h.addEventListener('click', function(e){
+    if (e.target === h || e.target.closest('.cm-fw-x')) { nhCerrarCompra(); return; }
+    const a = e.target.closest('[data-compra]'); if (!a) return;
+    if (a.dataset.compra === 'reset') { nhGuardarHechos({}); Array.prototype.forEach.call(h.querySelectorAll('input'), function(i){ i.checked = false; i.closest('label').classList.remove('on'); }); }
+    else nhCompartirCompra(lista);
+  });
+  h.addEventListener('change', function(e){
+    const i = e.target.closest('input[data-k]'); if (!i) return;
+    const x = Object.assign({}, nhCompraHechos()); if (i.checked) x[i.dataset.k] = 1; else delete x[i.dataset.k];
+    i.closest('label').classList.toggle('on', i.checked); nhGuardarHechos(x);
+  });
+}
+function nhGuardarHechos(x){ const d = clientesData[clienteActual]; if (!d) return; d.compra = { sem: nhLunes(), hechos: x }; try { guardarTodo(); } catch(e){} }
+function nhCerrarCompra(){ const h = document.getElementById('nhCompra'); if (h) h.remove(); }
+function nhCompartirCompra(lista){
+  const hechos = nhCompraHechos();
+  const txt = 'Lista de la compra (7 días)\n' + NH_GRUPOS.map(function(gr){
+    const xs = lista.filter(function(x){ return x.tipo === gr[0] && !hechos[norm(x.n)]; });
+    return xs.length ? '\n' + gr[2] + ':\n' + xs.map(function(x){ return '• ' + x.n + ' — ' + nhCant(x); }).join('\n') : '';
+  }).join('');
+  if (navigator.share) { navigator.share({ title: 'Lista de la compra', text: txt }).catch(function(){}); return; }
+  const ok = function(){ toast('Lista copiada'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, function(){ toast('No se ha podido copiar'); });
+}
+if (typeof atrasDentroApp === 'function') atrasDentroApp = (function(orig){
+  return function(){ if (document.getElementById('nhCompra')) { nhCerrarCompra(); return true; } return orig.apply(this, arguments); };
+})(atrasDentroApp);
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && document.getElementById('nhCompra')) nhCerrarCompra(); });
+/* botón en la tarjeta «Hoy» */
+nhPintar = (function(orig){
+  return function(){
+    orig.apply(this, arguments);
+    const c = document.getElementById('nhCard'); if (!c || c.querySelector('.nh-compra-btn')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'nh-compra-btn'; b.innerHTML = '🛒 Lista de la compra de la semana <span aria-hidden="true">›</span>';
+    b.onclick = nhAbrirCompra; c.appendChild(b);
+  };
+})(nhPintar);
+
+/* sustituciones: aviso de la equivalencia al cambiar de opción */
+pick = (function(orig){
+  return function(el){
+    const g = el && el.closest('.macro-group'), cli = !isCoachView();
+    const antes = cli && g ? nhElegido(g) : null, nA = antes ? chipName(antes) : '', gA = antes ? nhGramos(antes) : 0;
+    const r = orig.apply(this, arguments);
+    if (cli && g && antes && antes !== el && el.classList.contains('selected')) {
+      const gN = nhGramos(el);
+      if (gA && gN) toast('Cambiado: ' + gA + ' g de ' + nA + ' → ' + gN + ' g de ' + chipName(el));
+    }
+    try { nhPintar(); } catch(e){}
+    return r;
+  };
+})(pick);
