@@ -952,6 +952,8 @@ function mjPagoPintar(){
   if (!dur) { r.innerHTML = 'Indica los meses o la fecha hasta la que paga.'; if (ok) ok.disabled = true; return; }
   const hasta = mjHastaPago(d, dur);
   if (hasta <= hoy) { r.innerHTML = 'La fecha tiene que ser posterior a hoy.'; if (ok) ok.disabled = true; return; }
+  const base = mjBasePago(d);
+  if (dur.hasta && hasta <= base) { r.innerHTML = 'Ya tiene pagado hasta el <b>' + mjFecha(base) + '</b>: elige una fecha posterior.'; if (ok) ok.disabled = true; return; }
   if (ok) ok.disabled = false;
   r.innerHTML = 'Quedará pagado hasta el <b>' + mjFecha(hasta) + '</b>. El siguiente cobro y los avisos de renovación se ajustan a esa fecha.';
 }
