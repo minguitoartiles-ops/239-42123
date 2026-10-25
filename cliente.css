@@ -1040,3 +1040,6 @@ html.esc .ficha-accesos{max-width:none;}
   html.esc .esc-dual > :not(.esc-izq) .alta-body{padding-left:40px;padding-right:max(40px, calc(100% - 1560px));}
   html.esc .esc-dual > :not(.esc-izq) .ficha-accesos{max-width:900px;}
 }
+
+/* Al desplegar un apartado, el navegador no debe «anclar» lo de abajo y empujar el título hacia arriba */
+.alta-body,.sc,#content,.fsd-sheet{overflow-anchor:none;}
