@@ -380,3 +380,37 @@ pintarAlergiasFicha = (function(orig){
 /* el cuestionario guarda solo lo que llevas: cerrarlo (✕, atrás, Esc) nunca pregunta ni pierde nada */
 mjCerrarHoja = (function(orig){ return function(id){ if (id === 'cqHoja' && capaVisible('cqHoja') && document.querySelector('#cqHoja .cq-paso')) { cqCerrar(); return; } return orig.apply(this, arguments); }; })(mjCerrarHoja);
 document.addEventListener('input', function(e){ const q = e.target && e.target.closest && e.target.closest('#cqHoja'); if (q) setTimeout(function(){ delete q.dataset.capaSucia; }, 0); });
+
+/* ---------- más a la vista para los profesionales ---------- */
+function cqNuevoPara(k){
+  const d = clientesData[k], q = d && d.cuestionario;
+  return !!(q && coachActivo && !(q.vistoPor && q.vistoPor[norm(coachActivo.u)]));
+}
+cqVerPro = (function(orig){
+  return function(k){
+    const r = orig.apply(this, arguments);
+    const q = clientesData[k] && clientesData[k].cuestionario;
+    if (q && coachActivo) { q.vistoPor = q.vistoPor || {}; q.vistoPor[norm(coachActivo.u)] = new Date().toISOString(); try { guardarTodo(); } catch(e){} try { enPintarAccesos(); } catch(e){} }
+    return r;
+  };
+})(cqVerPro);
+function cqAbrirDesdeFicha(){
+  const k = clienteActual, d = clientesData[k]; if (!d) return;
+  if (d.cuestionario) { cqVerPro(k); return; }
+  toast(d.cqBorrador ? 'Lo tiene a medias (paso ' + ((d.cqBorrador.paso || 0) + 1) + ' de 7)' : 'Todavía no ha rellenado su cuestionario inicial');
+}
+/* botón «📝 Cuestionario» arriba de la ficha, junto a Seguimientos, Entreno/Nutrición y Chat */
+enPintarAccesos = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const a = document.getElementById('fichaAccesos'), k = clienteActual, d = k && clientesData[k];
+    if (!a || !d) return r;
+    const nuevo = cqNuevoPara(k), pend = !d.cuestionario;
+    a.insertAdjacentHTML('beforeend', '<button type="button" class="acc-btn' + (pend ? ' acc-pend' : '') + '" onclick="cqAbrirDesdeFicha()"><span aria-hidden="true">📝</span>Cuestionario' + (nuevo ? '<i class="acc-n">1</i>' : '') + '</button>');
+    return r;
+  };
+})(enPintarAccesos);
+/* tarjeta de la lista de clientes: «📝 Cuestionario nuevo» hasta que lo abráis */
+exMotivos = (function(orig){
+  return function(k){ const m = orig.apply(this, arguments); if (cqNuevoPara(k)) m.unshift('📝 Cuestionario nuevo'); return m; };
+})(exMotivos);

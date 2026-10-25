@@ -407,7 +407,7 @@ goToCliente = (function(orig){
     if (b && b.med.peso != null && !segs.length) { setTxt('cd-peso', fmtNum(b.med.peso) + ' kg'); setTxt('cd-pesoDelta', 'Peso inicial'); }
     else if (b && b.med.peso != null && segs[0] && segs[0].med && segs[0].med.peso != null) {
       const df = segs[0].med.peso - b.med.peso;
-      setTxt('cd-pesoDelta', (df > 0 ? '+' : (df < 0 ? '−' : '')) + fmtNum(Math.abs(df)) + ' kg desde el alta');
+      setTxt('cd-pesoDelta', (df > 0 ? '+' : (df < 0 ? '−' : '')) + fmtNum(Math.abs(df)) + ' kg desde el inicio');
     }
   };
 })(goToCliente);
