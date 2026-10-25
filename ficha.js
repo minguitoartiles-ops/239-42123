@@ -74,3 +74,43 @@ fpOrdenarArriba = (function(orig){ return function(){ const r = orig.apply(this,
 enPintarFicha = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { fgPintar(); } catch(e){} return r; }; })(enPintarFicha);
 let fgRz = null;
 window.addEventListener('resize', function(){ clearTimeout(fgRz); fgRz = setTimeout(function(){ const b = document.querySelector('#fichaGraf .gr-box'); if (b && b.offsetParent) grPintar(b); }, 150); });
+
+/* =========================================================
+   #222 «Evolución» también sale plegada al abrir la ficha (móvil y ordenador), con su resumen
+   ========================================================= */
+FP_PLEGABLES['📈 evolución'] = 'evol';
+fpContenido = (function(orig){
+  return function(lbl){
+    const p = lbl.parentNode;
+    if (p && p.id === 'fichaGraf') { const r = []; let x = lbl.nextElementSibling; while (x) { r.push(x); x = x.nextElementSibling; } return r; }
+    return orig.apply(this, arguments);
+  };
+})(fpContenido);
+fpResumen = (function(orig){
+  return function(id, cont){
+    if (id === 'evol') {
+      try {
+        const s = grSerie(clienteActual, 'peso');
+        if (s.length) {
+          const u = s[s.length - 1].v, d = s.length > 1 ? Math.round((u - s[0].v) * 10) / 10 : null;
+          return 'Peso ' + String(u).replace('.', ',') + ' kg' + (d ? ' · ' + (d > 0 ? '+' : '−') + String(Math.abs(d)).replace('.', ',') : '');
+        }
+        const n = (SEGUIMIENTOS[clienteActual] || []).length;
+        return n + (n === 1 ? ' seguimiento' : ' seguimientos');
+      } catch(e){ return ''; }
+    }
+    return orig.apply(this, arguments);
+  };
+})(fpResumen);
+/* el gráfico se dibuja al desplegarlo (plegado no tiene ancho) */
+fpAplicar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    if (fpAbiertos.evol) { const b = document.querySelector('#fichaGraf .gr-box'); if (b && b.offsetParent && !b.dataset.fgOk) { b.dataset.fgOk = '1'; try { grPintar(b); } catch(e){} } }
+    else { const b = document.querySelector('#fichaGraf .gr-box'); if (b) delete b.dataset.fgOk; }
+    return r;
+  };
+})(fpAplicar);
+fgPintar = (function(orig){
+  return function(){ const r = orig.apply(this, arguments); const b = document.querySelector('#fichaGraf .gr-box'); if (b) delete b.dataset.fgOk; try { fpAplicar(); } catch(e){} return r; };
+})(fgPintar);

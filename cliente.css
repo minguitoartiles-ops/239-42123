@@ -884,3 +884,6 @@ html.esc .pg-panel{padding:14px 18px 16px;}
 .pb-recordar input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:var(--accent);}
 .pb-recordar small{display:block;color:var(--dim-45,#888);font-size:11.5px;margin-top:2px;}
 .pb-marca{text-align:center;font-size:12px;margin:-2px 0 8px;color:var(--dim-45,#888);}
+
+/* #227 chat del ordenador sin nombre repetido ni «Volver» */
+html.esc-chat-pro #coachBar .coach-bar-left{display:none;}

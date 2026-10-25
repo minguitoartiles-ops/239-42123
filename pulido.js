@@ -221,3 +221,19 @@ goToCliente = (function(orig){
     return orig.apply(this, arguments);
   };
 })(goToCliente);
+
+/* =========================================================
+   #227 Chat en el ordenador (pestaña Chats): la lista ya dice con quién hablas,
+   así que la barra de arriba no repite el nombre ni enseña «Volver»
+   ========================================================= */
+function puChatEsc(){
+  const c = document.getElementById('content');
+  const on = !!(c && c.classList.contains('en-chat') && typeof escActivo === 'function' && escActivo() && typeof tabProActual !== 'undefined' && tabProActual === 'chats' && coachActivo);
+  document.documentElement.classList.toggle('esc-chat-pro', on);
+}
+(function(){
+  const c = document.getElementById('content');
+  if (c && window.MutationObserver) new MutationObserver(puChatEsc).observe(c, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', puChatEsc);
+})();
+abrirTabPro = (function(orig){ return function(){ const r = orig.apply(this, arguments); puChatEsc(); return r; }; })(abrirTabPro);
