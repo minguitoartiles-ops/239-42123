@@ -542,7 +542,7 @@ function puPendPintar(){
 });
 /* chat 12 · galería con todas las fotos de la conversación (cliente y profesionales) */
 function puFotosChat(){
-  return Array.prototype.filter.call(document.querySelectorAll('#chatList .bubble img'), function(i){ return i.src && !i.closest('.msg-av, .msg-av2'); });
+  return Array.prototype.filter.call(document.querySelectorAll('#chatList .bubble img'), function(i){ return i.src && !i.closest('.msg-av, .msg-av2, .yt-card'); });
 }
 function puGaleria(){
   const fotos = puFotosChat();
@@ -612,3 +612,57 @@ sendMsg = (function(orig){ return function(){ const r = orig.apply(this, argumen
   const orig = window[n];
   window[n] = function(v){ const r = orig.apply(this, arguments); if (n !== 'goTo' || v === 'chat') setTimeout(function(){ try { puBorrPoner(); } catch(e){} }, 30); return r; };
 });
+
+/* =========================================================
+   Chat · enlaces de YouTube con portada y título (25/10/2026)
+   La tarjeta se pinta al ver el chat y no se guarda en él. El título se pide una vez a YouTube (oEmbed)
+   y se recuerda en el dispositivo; si no llega, «Vídeo de YouTube». Al tocarla se abre en YouTube.
+   ========================================================= */
+const PU_YT_RE = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:[^\s#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+const PU_YT_KEY = 'fsd_yt_titulos';
+function puYtTitulos(){ try { return JSON.parse(localStorage.getItem(PU_YT_KEY) || '{}') || {}; } catch(e){ return {}; } }
+function puYtGuardarTitulo(id, t){ const o = puYtTitulos(); o[id] = t; const ks = Object.keys(o); if (ks.length > 300) delete o[ks[0]]; try { localStorage.setItem(PU_YT_KEY, JSON.stringify(o)); } catch(e){} }
+const puYtPidiendo = {};
+function puYtTitulo(id, cb){
+  const t = puYtTitulos()[id]; if (t) { cb(t); return; }
+  if (puYtPidiendo[id] || !window.fetch) return;
+  puYtPidiendo[id] = 1;
+  fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + id), { credentials: 'omit', referrerPolicy: 'no-referrer' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){ const tt = j && typeof j.title === 'string' ? j.title.slice(0, 200) : ''; if (tt) { puYtGuardarTitulo(id, tt); cb(tt); } })
+    .catch(function(){}).then(function(){ delete puYtPidiendo[id]; });
+}
+function puYtTarjetas(){
+  const l = document.getElementById('chatList'); if (!l) return;
+  Array.prototype.forEach.call(l.querySelectorAll('.bubble'), function(b){
+    if (b.querySelector('.yt-card')) return;
+    const txt = Array.prototype.filter.call(b.childNodes, function(n){ return n.nodeType === 3; }).map(function(n){ return n.textContent; }).join(' ');
+    const m = txt.match(PU_YT_RE); if (!m) return;
+    const id = m[1], url = 'https://www.youtube.com/watch?v=' + id;
+    const a = document.createElement('a'); a.className = 'yt-card'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.setAttribute('aria-label', 'Abrir vídeo de YouTube');
+    a.innerHTML = '<span class="yt-img"><img alt="" loading="lazy" referrerpolicy="no-referrer"><span class="yt-play" aria-hidden="true">▶</span></span><span class="yt-txt"><b>Vídeo de YouTube</b><small>YouTube · youtube.com</small></span>';
+    const im = a.querySelector('img'); im.onerror = function(){ im.style.visibility = 'hidden'; }; im.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+    a.addEventListener('click', function(e){ e.stopPropagation(); });
+    const av = b.querySelector('.msg-av, .msg-av2');
+    if (av) b.insertBefore(a, av); else b.appendChild(a);
+    puYtTitulo(id, function(t){ const x = a.querySelector('.yt-txt b'); if (x) x.textContent = t; });
+  });
+}
+(function(){
+  const l = document.getElementById('chatList'); if (!l || !window.MutationObserver) return;
+  let pend = false;
+  new MutationObserver(function(){ if (pend) return; pend = true; requestAnimationFrame(function(){ pend = false; try { puYtTarjetas(); } catch(e){} }); }).observe(l, { childList: true, subtree: true });
+})();
+guardarChat = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const p = clienteActual && PLANES[clienteActual];
+    if (p && typeof p.chat === 'string' && p.chat.indexOf('yt-card') > -1) {
+      const t = document.createElement('template'); t.innerHTML = p.chat;
+      Array.prototype.forEach.call(t.content.querySelectorAll('.yt-card'), function(x){ x.remove(); });
+      p.chat = t.innerHTML;
+    }
+    return r;
+  };
+})(guardarChat);
