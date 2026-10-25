@@ -308,3 +308,35 @@ guardarChat = (function(orig){
     p.chat = t.innerHTML;
   };
 })(guardarChat);
+
+/* ---------- 24/10 · #208 Fotos del chat a pantalla completa ----------
+   Tocar una foto la amplía. Se cierra tocando fuera de la foto, con «Volver», con ✕,
+   con el botón atrás del móvil o con Esc en el ordenador. */
+function cmVisorAbierto(){ return !!document.getElementById('cmVisor'); }
+function cmCerrarVisor(){ const v = document.getElementById('cmVisor'); if (v) v.remove(); }
+function cmAbrirVisor(src, alt){
+  cmCerrarVisor();
+  const v = document.createElement('div'); v.id = 'cmVisor'; v.className = 'cm-visor';
+  v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', 'Foto ampliada');
+  v.innerHTML = '<div class="cm-visor-top"><button type="button" class="cm-visor-volver"><span aria-hidden="true">‹</span> Volver</button>'
+    + '<button type="button" class="cm-visor-x" aria-label="Cerrar">✕</button></div>'
+    + '<img class="cm-visor-img" alt="' + esc(alt || 'Foto del chat') + '">';
+  v.querySelector('img').src = src;
+  v.addEventListener('click', function(e){
+    if (e.target.closest('.cm-visor-img')) return;          // tocar la foto no la cierra
+    cmCerrarVisor();
+  });
+  cmRaiz().appendChild(v);
+  try { v.querySelector('.cm-visor-volver').focus(); } catch(e){}
+}
+document.addEventListener('click', function(e){
+  if (cmSel) return;
+  const img = e.target.closest && e.target.closest('#chatList .bubble img');
+  if (!img || !img.src) return;
+  e.preventDefault(); e.stopPropagation();
+  cmAbrirVisor(img.src, img.alt);
+}, true);
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && cmVisorAbierto()) { e.stopPropagation(); cmCerrarVisor(); } }, true);
+if (typeof atrasDentroApp === 'function') atrasDentroApp = (function(orig){
+  return function(){ if (cmVisorAbierto()) { cmCerrarVisor(); return true; } return orig.apply(this, arguments); };
+})(atrasDentroApp);

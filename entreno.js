@@ -978,7 +978,8 @@ function enPintarAccesos(){
     chat: '<button type="button" class="acc-btn' + (rojo ? ' rojo' : '') + '" onclick="verConversacion()"><span aria-hidden="true">💬</span>Chat' + (msgs ? '<i class="acc-n">' + msgs + '</i>' : '') + '</button>',
     segs: '<button type="button" class="acc-btn" onclick="goToSeguimientos()"><span aria-hidden="true">📋</span>Seguimientos' + (segs ? '<i class="acc-n">' + segs + '</i>' : '') + '</button>'
   };
-  const orden = coachActivo && coachActivo.rol === 'dietista' ? ['nutri', 'entreno', 'chat', 'segs'] : ['entreno', 'nutri', 'chat', 'segs'];
+  /* 24/10 · #210: Domingo → Seguimientos · Entreno · Chat; Fátima → Seguimientos · Nutrición · Chat */
+  const orden = coachActivo && coachActivo.rol === 'dietista' ? ['segs', 'nutri', 'chat'] : ['segs', 'entreno', 'chat'];
   a.innerHTML = orden.map(function(x){ return bt[x]; }).join('');
 }
 function enAbrirPlanNutri(){
