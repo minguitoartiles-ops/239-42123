@@ -864,3 +864,7 @@ html.esc .ds-bar{bottom:24px;}
 .fp-dentro{margin-left:4px !important;padding-left:12px;border-left:2px solid var(--accent-line);}
 .fp-dentro-fin{margin-bottom:18px;}
 @media (prefers-reduced-motion: reduce){.fp-dentro,.sesion-card.open > .sesion-body,.meal-body.open,.pu-fold[open] > :not(summary),.aj-sec.abierta .aj-sec-c,details[open] > :not(summary){animation:none;}}
+/* ficha del ordenador: dos columnas que no se reparten solas */
+html.esc .esc-ficha-grid.pu-cols{columns:auto;display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 22px;}
+html.esc .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 330px;min-width:0;}
+html.esc .esc-ficha-grid.pu-cols > .esc-col:not(:has(> .esc-grupo:not([hidden]):not(.sec-oculta):not(.fp-vacio))){display:none;}
