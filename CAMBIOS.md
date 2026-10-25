@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.78.4 (actual)
-Cambios acumulados hacia la 0.79: **9 de 10**
+## Versión 0.79.0 (actual)
+Cambios acumulados hacia la 0.80: **0 de 10**
+
+## Versión 0.78 → 0.79.0
 
 ### Hacia la 0.79
 1. 25/10/2026 16:20 · Chat: los enlaces de YouTube muestran una tarjeta con la portada y el título del vídeo (se abre en YouTube al tocarla). Seguridad: la política de contenido permite solo las portadas de i.ytimg.com y los títulos de www.youtube.com → **0.78.0-1 (caché)**
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.79: **9 de 10**
 7. 25/10/2026 18:00 · Cuestionario más a la vista: botón «📝 Cuestionario» arriba de la ficha (con globo si es nuevo) y «📝 Cuestionario nuevo» en la tarjeta del cliente hasta que cada profesional lo abre; «desde el alta» pasa a «desde el inicio» → **0.78.3-1 (caché)**
 8. 25/10/2026 18:10 · Datos de facturación de cada cliente (Suscripción → «Datos de facturación»): nombre, DNI/NIE y dirección, rellenados solos con su cuestionario (que ahora pide la dirección opcional) y editables; salen directamente en sus facturas → **0.78.4**
 9. 25/10/2026 19:00 · Testeo integral con 40 clientes nuevos desde cero (1.303 comprobaciones). Arreglos: al registrar un pago con «Otro → pagado hasta», ya no deja poner una fecha anterior a la que el cliente ya tiene pagada; el texto de Nutrición explica que se pueden combinar hasta 3 opciones → **0.78.4-1 (caché)**
+10. 25/10/2026 18:40 · Ordenador a pantalla completa: en pantallas grandes la ficha y las demás pantallas aprovechan el ancho (hasta ≈ 1.480 px en vez de 1.120) y los accesos de arriba de la ficha se alinean con las tarjetas → **0.79.0**
 
 ## Versión 0.77 → 0.78.0
 

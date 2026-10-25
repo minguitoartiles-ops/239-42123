@@ -1025,3 +1025,10 @@ html.esc .esc-col > .stat-row.fp-peso-arriba{margin:0 0 14px;}
 .cq-sheet > .cq-acts{flex-shrink:0;}
 .obt-acts .obt-sig{width:auto;flex:1 1 auto;min-width:0;max-width:240px;margin:0;}
 .acc-btn.acc-pend{opacity:.6;}
+
+/* Pantalla completa (ordenador grande): el contenido aprovecha el ancho y los accesos de la ficha se alinean con las tarjetas */
+html.esc .ficha-accesos{max-width:none;}
+@media (min-width:1600px){
+  html.esc .alta-top,html.esc .alta-body{padding-left:max(32px, calc((100% - 1480px) / 2));padding-right:max(32px, calc((100% - 1480px) / 2));}
+  html.esc .esc-izq .alta-top,html.esc .esc-izq .alta-body{padding-left:18px;padding-right:18px;}
+}
