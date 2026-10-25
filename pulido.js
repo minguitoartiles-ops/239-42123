@@ -507,3 +507,36 @@ function puBajarPintar(){
   b.hidden = l.scrollHeight - l.clientHeight - l.scrollTop < 160;
 }
 (function(){ const l = document.getElementById('chatList'); if (l) l.addEventListener('scroll', function(){ puBajarPintar(); }, { passive: true }); })();
+/* chat 8 · «✓ Marcar como resuelto»: quita el «Sin contestar» sin escribir nada al cliente (él no ve nada) */
+esperaDesde = (function(orig){
+  return function(k){
+    const r = orig.apply(this, arguments);
+    const d = clientesData[k], res = d && d.chatT && d.chatT.resuelto;
+    if (!r || !res) return r;
+    const pend = d.chatT.cli.filter(function(t){ return t > res && t >= r; });
+    return pend.length ? pend[0] : null;
+  };
+})(esperaDesde);
+function puResolver(){
+  const k = clienteActual; if (!k || !coachActivo) return;
+  const c = chatT(k); c.resuelto = new Date().toISOString();
+  try { guardarTodo(); } catch(e){}
+  puPendPintar();
+  try { if (typeof pintarChatsPro === 'function') pintarChatsPro(); } catch(e){}
+  try { if (typeof actualizarPanel === 'function') actualizarPanel(); } catch(e){}
+  toast('Marcado como resuelto');
+}
+function puPendPintar(){
+  const barra = document.getElementById('emojiPanel') || document.getElementById('composer'); if (!barra) return;
+  let b = document.getElementById('chatPend');
+  const k = clienteActual, esp = k && coachActivo && isCoachView() ? esperaDesde(k) : null;
+  if (!esp) { if (b) b.hidden = true; return; }
+  if (!b) { b = document.createElement('div'); b.id = 'chatPend'; b.className = 'chat-pend'; barra.parentNode.insertBefore(b, barra); }
+  b.hidden = false;
+  b.innerHTML = '<span>⏳ Esperando respuesta · ' + esc(textoEspera(horasDesde(esp))) + '</span><button type="button" onclick="puResolver()">✓ Marcar como resuelto</button>';
+}
+['abrirChatPro', 'verConversacion', 'sendMsg', 'goTo'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { puPendPintar(); } catch(e){} }, 40); return r; };
+});
