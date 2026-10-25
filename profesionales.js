@@ -250,8 +250,8 @@ function prFactura(k, i){
   const o = mjHoja('prFactura');
   o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Factura · ' + esc(d.nombre) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'prFactura\')" aria-label="Cerrar">×</button></div>'
     + '<p class="ajx-note">Pago del ' + mjFecha(p.fecha) + ' · ' + mjEuros(p.importe) + (p.factura ? ' · ya tiene el número <b>' + esc(p.factura) + '</b>' : ' · se le dará el número <b>' + prSiguienteNumero((p.fecha || mjISO(new Date())).slice(0, 4)) + '</b>') + '</p>'
-    + '<div class="field"><label for="prFcNom">Nombre del cliente en la factura</label><input type="text" id="prFcNom" value="' + esc(p.factNom || d.nombre || '') + '"></div>'
-    + '<div class="field"><label for="prFcNif">NIF del cliente (opcional)</label><input type="text" id="prFcNif" value="' + esc(p.factNif || '') + '" autocomplete="off"></div>'
+    + '<div class="field"><label for="prFcNom">Nombre del cliente en la factura</label><input type="text" id="prFcNom" value="' + esc(p.factNom || d.nombreFiscal || d.nombre || '') + '"></div>'
+    + '<div class="field"><label for="prFcNif">NIF del cliente (opcional)</label><input type="text" id="prFcNif" value="' + esc(p.factNif || d.dni || '') + '" autocomplete="off"></div>'
     + '<div class="field"><label for="prFcDir">Dirección del cliente (opcional)</label><input type="text" id="prFcDir" value="' + esc(p.factDir || '') + '" autocomplete="off"></div>'
     + '<p class="ajx-note">Se abrirá la ventana de imprimir: elige «Guardar como PDF» para tener el archivo.</p>'
     + '<button class="btn-primary" onclick="prImprimirFactura(\'' + esc(k) + '\',' + i + ')">Crear factura</button></div>';
