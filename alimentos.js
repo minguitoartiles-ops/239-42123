@@ -225,3 +225,18 @@ setTimeout(function(){
     if (n) { guardarTodo(); if (typeof clienteActual !== 'undefined' && clienteActual && typeof cargarPlan === 'function' && document.getElementById('app').style.display !== 'none') cargarPlan(clienteActual); }
   } catch(e){}
 }, 0);
+
+/* #216 · en el buscador, cada alimento lleva el emoji de su macronutriente principal (el que decide su fila) */
+const ALIM_EMO = { p: ['🥩', 'Proteína'], c: ['🍚', 'Hidratos'], f: ['🥑', 'Grasa'] };
+renderFoodList = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const list = document.getElementById('foodList'); if (!list) return r;
+    Array.prototype.forEach.call(list.querySelectorAll('.picker-item[data-g]'), function(it){
+      const e = ALIM_EMO[it.dataset.g], n = it.querySelector('.picker-item-name');
+      if (!e || !n || n.querySelector('.alim-emo')) return;
+      n.insertAdjacentHTML('afterbegin', '<span class="alim-emo" title="' + e[1] + '" aria-label="' + e[1] + ':">' + e[0] + '</span>');
+    });
+    return r;
+  };
+})(renderFoodList);
