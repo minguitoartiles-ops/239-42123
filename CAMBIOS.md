@@ -3,8 +3,15 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.73.4 (actual)
-Cambios acumulados hacia la 0.74: **8 de 10**
+## Versión 0.74.1 (actual)
+Cambios acumulados hacia la 0.75: **3 de 10**
+
+### Hacia la 0.75
+1. 25/10/2026 10:45 · Ficha del cliente: «Sensaciones del día» y «Antes / Ahora» salen plegados con un resumen al lado (móvil y ordenador). En el ordenador «Antes / Ahora» sale igual que en el móvil cuando ese dispositivo tiene las fotos
+2. 25/10/2026 10:45 · Ficha del cliente: el gráfico de evolución de los seguimientos va arriba del todo, encima de «Sensaciones del día» (también sigue en Seguimientos) → **0.74.1**
+3. 25/10/2026 10:45 · Ficha del cliente: accesos de arriba en el orden Seguimientos · Entreno · Chat (Domingo) y Seguimientos · Nutrición · Chat (Fátima)
+
+## Versión 0.73 → 0.74.0
 
 ### Hacia la 0.74
 1. 22/10/2026 11:20 · Ficha del cliente (Domingo y Fátima): «Sensaciones del día» arriba del todo, debajo peso actual y próxima revisión; «Adherencia entreno» dentro de Entrenamiento y «Adherencia nutrición» dentro de Nutrición
@@ -15,6 +22,8 @@ Cambios acumulados hacia la 0.74: **8 de 10**
 6. 22/10/2026 17:35 · Chat (móvil): tocar un mensaje ya no selecciona su texto, así Android no abre el panel de búsqueda de Google; el campo de escribir sigue seleccionable y copiar se hace desde el menú del mensaje → **0.73.3**
 7. 22/10/2026 18:10 · Chat: el botón «❓ Duda para…» (al tocar un mensaje y en el menú de clic derecho) solo sale en los mensajes del cliente; ya no en los de Domingo ni en los de Fátima
 8. 24/10/2026 14:40 · Lista de clientes (móvil): la tarjeta tiene el mismo aspecto que en el ordenador (indicadores con el rótulo encima y sin la línea de último seguimiento y evolución) → **0.73.4**
+9. 25/10/2026 10:30 · Campana de Domingo y Fátima: solo seguimientos, pagos vencidos (periodo de gracia o sin acceso) y dudas entre profesionales; el resto deja de avisar y sale de Ajustes → Notificaciones
+10. 25/10/2026 10:30 · Chat: tocar una foto la abre a pantalla completa; se cierra tocando fuera, con «Volver», ✕, el botón atrás del móvil o Esc → **0.74.0**
 
 ## Versión 0.72 → 0.73.0
 

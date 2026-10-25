@@ -648,3 +648,15 @@ html.esc .emoji-panel{max-height:290px;}
   #listaClientes .kcard .kc-v{font-size:14px;}
   #listaClientes .kcard .kc-v small,#listaClientes .kcard .kc-v i{display:inline;}
 }
+
+/* fotos del chat ampliadas */
+#chatList .bubble img{cursor:zoom-in;}
+.cm-visor{position:fixed;inset:0;z-index:400;background:rgba(8,10,13,.92);display:flex;align-items:center;justify-content:center;padding:64px 12px 24px;animation:cmVisorIn .18s ease-out;}
+@keyframes cmVisorIn{from{opacity:0}to{opacity:1}}
+.cm-visor-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.cm-visor-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;}
+.cm-visor-volver,.cm-visor-x{border:none;background:rgba(255,255,255,.14);color:#fff;font:600 14px var(--f-body);height:38px;border-radius:19px;cursor:pointer;}
+.cm-visor-volver{padding:0 16px 0 12px;display:flex;align-items:center;gap:6px;}
+.cm-visor-volver span{font-size:20px;line-height:1;}
+.cm-visor-x{width:38px;font-size:16px;}
+.cm-visor-volver:hover,.cm-visor-x:hover{background:rgba(255,255,255,.24);}

@@ -32,8 +32,11 @@ function grSerie(k, met){
   }).filter(function(x){ return x.v != null; });
 }
 function grFmt(v, met){ return met === 'pasos' || met === 'ton' ? fmtMil(Math.round(v)) : fmtNum(Math.round(v * 10) / 10); }
-function grPintar(){
-  const box = document.getElementById('grBox'); if (!box || !clienteActual) return;
+function grPintar(boxIn){
+  /* 24/10 · también pinta el de la ficha del cliente (#fichaGraf) */
+  if (!boxIn) { const f = document.querySelector('#fichaGraf .gr-box'); if (f) grPintar(f); }
+  const box = boxIn || document.getElementById('grBox'); if (!box || !clienteActual) return;
+  const enFicha = box.id !== 'grBox';
   const k = clienteActual, mdef = GR_METRICAS.filter(function(m){ return m[0] === grMetrica; })[0];
   const datos = grSerie(k, grMetrica);
   const chips = GR_METRICAS.map(function(m){
@@ -46,13 +49,13 @@ function grPintar(){
     const signo = dif > 0 ? '+' : (dif < 0 ? '−' : '±');
     cab = '<div class="gr-cab"><div><span class="gr-tit">' + mdef[1] + '</span><b class="gr-val">' + grFmt(z, grMetrica) + ' <small>' + mdef[2] + '</small></b></div>'
       + (datos.length > 1 ? '<span class="gr-dif">' + signo + grFmt(Math.abs(dif), grMetrica) + ' ' + mdef[2] + ' desde ' + fechaCorta(datos[0].f) + '</span>' : '') + '</div>';
-    svg = '<div class="gr-plot" id="grPlot"></div>';
+    svg = '<div class="gr-plot"' + (enFicha ? '' : ' id="grPlot"') + '></div>';
   } else cab = '<div class="gr-vacio">Todavía no hay datos de ' + mdef[1].toLowerCase() + '.</div>';
   box.innerHTML = '<div class="chips gr-chips" role="tablist" aria-label="Qué ver en el gráfico">' + chips + '</div>' + cab + svg
     + '<button type="button" class="gr-tabla-btn" onclick="grVerTabla()">' + (grTabla ? 'Ocultar tabla ▴' : 'Ver tabla ▾') + '</button>';
-  const tw = document.querySelector('#seguiList .esc-tabla-wrap'); if (tw) tw.hidden = !grTabla;
+  const tw = enFicha ? null : document.querySelector('#seguiList .esc-tabla-wrap'); if (tw) tw.hidden = !grTabla;
   const tb = box.querySelector('.gr-tabla-btn'); if (tb) tb.hidden = !tw;
-  if (datos.length) grDibujar(document.getElementById('grPlot'), datos, mdef);
+  if (datos.length) grDibujar(box.querySelector('.gr-plot'), datos, mdef);
 }
 function grDibujar(el, d, mdef){
   const W = Math.max(280, el.clientWidth || 600), H = W < 500 ? 190 : 230, P = { l: 46, r: 16, t: 14, b: 26 };
