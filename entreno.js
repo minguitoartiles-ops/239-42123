@@ -1550,9 +1550,11 @@ function enPintarFilas(it){
   // 22/10 · pauta en etiquetas: «3 series» destacada, reps y RIR al lado
   const chipRir = iDist ? '<span class="srf-chip srf-chip-rir">' + txtRir.replace(' · ', '') + '</span>'
     : (rir !== undefined && rir !== '' ? '<span class="srf-chip srf-chip-rir ' + enRir(rir) + '">RIR <b>' + esc(rir) + '</b></span>' : '');
-  f.innerHTML = '<div class="srf-cab"><div class="srf-pauta"><span class="srf-chip srf-chip-s"><b>' + pesos.length + '</b> ' + (pesos.length === 1 ? 'serie' : 'series') + '</span>'
-    + '<span class="srf-chip srf-chip-r"><b>' + (rDist ? vr.map(esc).join(' / ') : esc(p0.dataset.reps || '—')) + '</b> reps</span>' + chipRir + '</div>'
-    + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + '</div>'
+  // 25/10 · el cliente ya ve series, reps y RIR en cada fila: la pauta resumida solo la ve el profesional
+  const verPauta = isCoachView();
+  f.innerHTML = ((verPauta || ult) ? '<div class="srf-cab">' : '') + (verPauta ? '<div class="srf-pauta"><span class="srf-chip srf-chip-s"><b>' + pesos.length + '</b> ' + (pesos.length === 1 ? 'serie' : 'series') + '</span>'
+    + '<span class="srf-chip srf-chip-r"><b>' + (rDist ? vr.map(esc).join(' / ') : esc(p0.dataset.reps || '—')) + '</b> reps</span>' + chipRir + '</div>' : '')
+    + (ult ? '<span class="srf-ref">Semana pasada <b>' + enTxtSerie(ult).replace('×', ' kg × ') + '</b></span>' : '') + ((verPauta || ult) ? '</div>' : '')
     + pesos.map(function(p, i){ return enFilaHTML(it, p, i, hechas[i], isCoachView()); }).join('');
   abiertas.forEach(function(a, i){ const o = f.querySelectorAll('.srf-opc')[i]; if (o && a) o.hidden = false; });
 }
