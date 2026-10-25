@@ -666,3 +666,23 @@ guardarChat = (function(orig){
     return r;
   };
 })(guardarChat);
+
+/* Ficha: «Peso actual» y «Próxima revisión» aparte, arriba del todo (encima de Evolución y Sensaciones del día).
+   En el ordenador van fuera de la tarjeta, encima de ella, en la columna izquierda. */
+fpOrdenarArriba = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    try {
+      const peso = document.getElementById('cd-peso'), fila = peso ? peso.closest('.stat-row') : null;
+      const graf = document.getElementById('fichaGraf'), sens = document.getElementById('fichaSens');
+      if (!fila) return r;
+      fila.classList.add('fp-peso-arriba');
+      const primero = graf && graf.parentNode ? graf : sens;
+      if (!primero || !primero.parentNode) return r;
+      const grupo = primero.closest('.esc-grupo'), col = grupo && grupo.parentNode && grupo.parentNode.classList.contains('esc-col') ? grupo.parentNode : null;
+      if (col) { if (fila.parentNode !== col || fila.nextElementSibling !== grupo) col.insertBefore(fila, grupo); }
+      else if (fila.nextElementSibling !== primero) primero.parentNode.insertBefore(fila, primero);
+    } catch(e){}
+    return r;
+  };
+})(fpOrdenarArriba);
