@@ -45,7 +45,7 @@ function capaCerrarYa(el){
 /* devuelve true si la ha cerrado o si no se puede cerrar (para que «atrás» no haga nada más) */
 function capaCerrar(el){
   if (!el) return false;
-  if (CAPA_FIJAS.indexOf(el.id) > -1) return true;
+  if (CAPA_FIJAS.indexOf(el.id) > -1 || el.id === 'obBienvenida') return true;   // el recorrido se cierra con «Saltar»
   if (el.dataset.capaSucia === '1' && CAPA_SIN_AVISO.indexOf(el.id) < 0 && typeof abrirDialogo === 'function') {
     abrirDialogo({ titulo: '¿Cerrar sin guardar?', texto: 'Has hecho cambios en esta ventana. Si la cierras ahora, se perderán.', ok: 'Cerrar sin guardar', cancel: 'Seguir editando', peligro: true,
       onOk: function(){ capaCerrarYa(el); } });
@@ -80,6 +80,7 @@ document.addEventListener('click', function(e){
 atrasDentroApp = (function(orig){
   return function(){
     const arriba = capaArriba();
+    if (arriba && arriba.id === 'obBienvenida') return orig.apply(this, arguments);   // el recorrido va paso a paso
     if (arriba) return capaCerrar(arriba);
     return orig.apply(this, arguments);
   };

@@ -971,3 +971,56 @@ html.esc:not([style*="--esc-lista"]) #view-coach-chats.esc-izq{flex:0 0 clamp(38
 /* Peso actual y próxima revisión, aparte y arriba */
 .stat-row.fp-peso-arriba{margin:6px 0 14px;}
 html.esc .esc-col > .stat-row.fp-peso-arriba{margin:0 0 14px;}
+
+/* #223 · recorrido de 5 toques */
+.ob-capa.ob-tour{background:rgba(8,10,13,.55);display:block;padding:0;overflow:hidden;}
+.obt-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 3px var(--accent),0 0 0 9999px rgba(8,10,13,.0);transition:all .25s ease;pointer-events:none;background:rgba(255,255,255,.08);}
+.obt-card{position:fixed;left:50%;transform:translateX(-50%);bottom:110px;width:min(420px,calc(100% - 32px));background:var(--card);color:var(--ink);border-radius:20px;padding:16px 18px 12px;box-shadow:0 18px 50px rgba(0,0,0,.28);animation:plIn .2s ease-out;}
+.obt-hola{margin:0 0 8px;font:600 13px var(--f-body);color:var(--accent);}
+.obt-top{display:flex;align-items:center;gap:10px;}
+.obt-e{font-size:28px;line-height:1;}
+.obt-top h2{flex:1;margin:0;font:400 24px var(--f-display);}
+.obt-n{font:700 11px var(--f-mono);color:var(--dim-55);}
+.obt-l{margin:10px 0 6px;padding-left:18px;font-size:14.5px;line-height:1.45;}
+.obt-l li{margin:3px 0;}
+.obt-tip{margin:6px 0;font-size:12.5px;color:var(--dim-6);}
+.obt-acts{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;}
+.obt-saltar{background:none;border:0;color:var(--dim-55);font:600 13px var(--f-body);padding:10px 6px;cursor:pointer;}
+.obt-sig{flex:0 0 auto;min-width:150px;}
+.ob-tour .ob-puntos{justify-content:center;margin-top:8px;}
+@media (prefers-reduced-motion:reduce){ .obt-foco{transition:none;} .obt-card{animation:none;} }
+
+/* #223 · cuestionario inicial */
+.cq-sheet{display:flex;flex-direction:column;}
+.cq-prog{margin:-2px 0 12px;font:600 12px var(--f-mono);color:var(--dim-55);}
+.cq-barra{height:6px;border-radius:99px;background:var(--wash-soft);margin-top:6px;overflow:hidden;}
+.cq-barra i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s;}
+.cq-e{font-size:34px;text-align:center;margin:2px 0 6px;}
+.cq-intro{font-size:14px;color:var(--dim-6);margin:0 0 12px;}
+.cq-f label{line-height:1.35;}
+.cq-req{color:var(--danger);}
+.cq-in{position:relative;}
+.cq-in.con-u input{padding-right:52px;}
+.cq-u{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:600 13px var(--f-mono);color:var(--dim-55);pointer-events:none;}
+.cq-nota{display:block;margin-top:4px;font-size:12px;color:var(--dim-55);}
+.cq-err{display:block;margin-top:4px;font-size:12.5px;color:var(--danger);font-weight:600;}
+.cq-f.cq-mal input,.cq-f.cq-mal textarea{border-color:var(--danger);}
+.cq-chips,.cq-multi{flex-wrap:wrap;}
+.cq-escala{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;}
+.cq-escala button{height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);font:700 14px var(--f-mono);color:var(--ink);cursor:pointer;padding:0;}
+.cq-escala button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cq-alg{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--accent-line);background:var(--wash-soft);font:600 14.5px var(--f-body);color:var(--ink);cursor:pointer;text-align:left;}
+.cq-aviso{margin:12px 0 4px;padding:10px 12px;border-radius:12px;background:var(--accent-wash);font-size:13.5px;line-height:1.4;}
+.cq-acts{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:auto;padding-top:14px;position:sticky;bottom:0;background:var(--card);padding-bottom:4px;}
+.cq-fin{align-items:center;text-align:center;justify-content:center;}
+.cq-fin h3{font:400 28px var(--f-display);margin:4px 0;}
+.cq-fin .cq-acts{width:100%;margin-top:18px;position:static;}
+.cq-qas{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;}
+.cq-qa{display:flex;flex-direction:column;gap:3px;padding:10px 14px;}
+.cq-qa + .cq-qa{border-top:1px solid var(--line);}
+.cq-qa > span{font-size:12px;color:var(--dim-55);}
+.cq-qa > b{font:500 14.5px var(--f-body);color:var(--ink);white-space:pre-wrap;}
+.alg-gastro{margin-top:8px;font-size:13.5px;}
+.cq-sheet > *{flex-shrink:0;}
+.cq-sheet > .cq-acts{flex-shrink:0;}
+.obt-acts .obt-sig{width:auto;flex:1 1 auto;min-width:0;max-width:240px;margin:0;}
