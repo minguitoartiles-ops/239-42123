@@ -878,3 +878,9 @@ html.esc .esc-ficha-grid.pu-cols > .esc-col:not(:has(> .esc-grupo:not([hidden]):
 .pg-ficha-lnk{display:block;text-align:right;margin-top:10px;font-size:13px;}
 html.esc .pg-panel{padding:14px 18px 16px;}
 @media (prefers-reduced-motion:reduce){ .pg-panel{animation:none;} }
+
+/* acceso directo sin contraseña (modo pruebas) */
+.pb-recordar{display:flex;gap:10px;align-items:flex-start;margin:4px 0 10px;font-size:13.5px;line-height:1.3;cursor:pointer;}
+.pb-recordar input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:var(--accent);}
+.pb-recordar small{display:block;color:var(--dim-45,#888);font-size:11.5px;margin-top:2px;}
+.pb-marca{text-align:center;font-size:12px;margin:-2px 0 8px;color:var(--dim-45,#888);}

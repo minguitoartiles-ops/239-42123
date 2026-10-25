@@ -58,3 +58,50 @@ setInterval(function(){
   if (pbActivo() && coachActivo) prUltimaActividad = Date.now();   // sin cierre por inactividad
   pbPintar();
 }, 500);
+
+/* =========================================================
+   25/10/2026 · Acceso directo sin contraseña desde la app instalada
+   En el diálogo de contraseña: «Entrar sin contraseña en este dispositivo». Se activa SOLO tras
+   escribir la contraseña correcta una vez; queda guardado solo en ese móvil u ordenador.
+   En la portada se ve «🧪 Sin contraseña en este dispositivo · Quitar».
+   ========================================================= */
+function pbCasilla(){
+  const err = document.getElementById('proPassErr'); if (!err) return null;
+  let c = document.getElementById('pbRecordarFila');
+  if (!c) {
+    c = document.createElement('label'); c.id = 'pbRecordarFila'; c.className = 'pb-recordar';
+    c.innerHTML = '<input type="checkbox" id="pbRecordar"> <span>Entrar sin contraseña en este dispositivo<small>Solo en este móvil u ordenador. Se puede quitar desde la portada.</small></span>';
+    err.parentNode.insertBefore(c, err);
+  }
+  return document.getElementById('pbRecordar');
+}
+pedirPassPro = (function(orig){
+  return function(){ const r = orig.apply(this, arguments); const cb = pbCasilla(); if (cb) cb.checked = false; return r; };
+})(pedirPassPro);
+entrarComo = (function(orig){
+  return function(){
+    const cb = document.getElementById('pbRecordar');
+    if (cb && cb.checked) {
+      cb.checked = false;
+      try { localStorage.setItem(PB_KEY, '1'); } catch(e){}
+      setTimeout(function(){ try { toast('Listo: en este dispositivo ya no te pedirá la contraseña'); } catch(e){} }, 400);
+    }
+    return orig.apply(this, arguments);
+  };
+})(entrarComo);
+function pbQuitar(){
+  try { localStorage.removeItem(PB_KEY); } catch(e){}
+  pbMarca(); try { toast('Vuelve a pedir la contraseña en este dispositivo'); } catch(e){}
+}
+function pbMarca(){
+  const lbl = document.querySelector('#view-splash .pro-quick-lbl'); if (!lbl) return;
+  let m = document.getElementById('pbMarca');
+  if (!pbActivo()) { if (m) m.remove(); return; }
+  if (!m) {
+    m = document.createElement('div'); m.id = 'pbMarca'; m.className = 'pb-marca';
+    m.innerHTML = '🧪 Sin contraseña en este dispositivo · <a href="#" class="lnk" onclick="pbQuitar();return false;">Quitar</a>';
+    lbl.insertAdjacentElement('afterend', m);
+  }
+}
+setInterval(pbMarca, 1000);
+window.addEventListener('load', pbMarca);

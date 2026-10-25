@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.75.3 (actual)
-Cambios acumulados hacia la 0.76: **7 de 10**
+## Versión 0.75.4 (actual)
+Cambios acumulados hacia la 0.76: **8 de 10**
 
 ### Hacia la 0.76
 1. 25/10/2026 15:30 · Planes de entrenamiento (Domingo): «Resumen del entrenamiento» y «Volumen semanal por músculo» salen plegados con su resumen y se abren al tocarlos (se recuerda lo abierto al cambiar de cliente)
@@ -13,7 +13,8 @@ Cambios acumulados hacia la 0.76: **7 de 10**
 4. 25/10/2026 17:30 · Seguridad: contraseñas nuevas de Domingo y Fátima (frases largas), guardadas solo como huella PBKDF2-SHA256 con sal propia y 310.000 vueltas → **0.75.2**
 5. 25/10/2026 18:15 · Plegables con estado claro en toda la app (móvil y ordenador): flecha en un círculo que gira y se colorea al abrir, título teñido con una línea de color, contenido que entra con una animación corta y, en la ficha, unido a su apartado con una línea a la izquierda; resaltado al pasar el ratón, teclado y lectores de pantalla (abierto/cerrado), respetando «reducir movimiento»
 6. 25/10/2026 18:40 · Ficha del cliente en el ordenador: dos columnas fijas (izquierda: evolución, sensaciones, peso y fotos; derecha: el resto). Al desplegar un apartado ya no saltan los demás de columna ni parece que se abre por encima → **0.75.3**
-7. 25/10/2026 11:50 · Pagos: al tocar un cliente se despliega ahí mismo su suscripción (tarifa, pagado hasta, estado, registrar pago, permitir o denegar acceso, historial, baja y aviso de borrado) sin ir a su ficha; se actualiza al momento y tiene «Ver ficha completa ›»
+7. 25/10/2026 11:50 · Pagos: al tocar un cliente se despliega ahí mismo su suscripción (tarifa, pagado hasta, estado, registrar pago, permitir o denegar acceso, historial, baja y aviso de borrado) sin ir a su ficha; se actualiza al momento y tiene «Ver ficha completa ›» → **0.75.3-1 (caché)**
+8. 25/10/2026 13:10 · Profesionales: casilla «Entrar sin contraseña en este dispositivo» al escribir la contraseña. Se activa solo con la contraseña correcta, queda guardado solo en ese móvil u ordenador y en la portada se ve «🧪 Sin contraseña en este dispositivo · Quitar» → **0.75.4**
 
 ## Versión 0.74 → 0.75.0
 
