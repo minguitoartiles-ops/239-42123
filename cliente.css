@@ -894,3 +894,19 @@ html.esc-chat-pro #coachBar .coach-bar-left{display:none;}
 /* #235 periodo del pago */
 .mj-pg-res{margin:10px 0 4px;font-size:14px;line-height:1.4;}
 .mj-pg-otro{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:10px;}
+
+/* Chat 1 · móvil del profesional: cabecera compacta de una línea */
+.chat-acc-pro,.chat-av-pro{display:none;}
+html.chat-pro-movil #view-chat > .view-top,html.chat-pro-movil #view-chat > .team-row{display:none;}
+html.chat-pro-movil #coachBar{display:flex;align-items:center;gap:8px;padding-top:8px;padding-bottom:8px;}
+html.chat-pro-movil #coachBar .coach-bar-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+html.chat-pro-movil #coachBarLabel,html.chat-pro-movil #coachBar .nu-nav{display:none !important;}
+html.chat-pro-movil #chatList{padding-top:10px;}
+html.chat-pro-movil #coachBarName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;}
+html.chat-pro-movil .chat-av-pro{display:inline-flex;flex:none;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:var(--accent-wash);color:var(--accent);font:700 15px var(--f-body);overflow:hidden;}
+html.chat-pro-movil .chat-av-pro img{width:100%;height:100%;object-fit:cover;}
+html.chat-pro-movil .chat-acc-pro{display:flex;flex:none;gap:4px;}
+html.chat-pro-movil .chat-acc-pro button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 4px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);cursor:pointer;}
+html.chat-pro-movil .chat-acc-pro button span{font-size:16px;line-height:1;}
+html.chat-pro-movil .chat-acc-pro button small{font:600 9.5px var(--f-mono);letter-spacing:.02em;margin-top:2px;color:var(--dim-55);}
+html.chat-pro-movil .chat-acc-pro button:active{transform:scale(.95);}

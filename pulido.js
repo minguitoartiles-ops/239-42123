@@ -228,8 +228,35 @@ goToCliente = (function(orig){
    ========================================================= */
 function puChatEsc(){
   const c = document.getElementById('content');
-  const on = !!(c && c.classList.contains('en-chat') && typeof escActivo === 'function' && escActivo() && typeof tabProActual !== 'undefined' && tabProActual === 'chats' && coachActivo);
+  const enChat = !!(c && c.classList.contains('en-chat') && coachActivo && isCoachView());
+  const esc = typeof escActivo === 'function' && escActivo();
+  const on = enChat && esc && typeof tabProActual !== 'undefined' && tabProActual === 'chats';
   document.documentElement.classList.toggle('esc-chat-pro', on);
+  /* chat 1 · móvil del profesional: cabecera de una línea (Volver · foto · nombre · Ficha, Plan y Seguimientos) */
+  document.documentElement.classList.toggle('chat-pro-movil', enChat && !esc);
+  if (enChat && !esc) puChatCabecera();
+}
+function puChatCabecera(){
+  const bar = document.getElementById('coachBar'), k = clienteActual, d = k && clientesData[k];
+  if (!bar || !d) return;
+  let a = document.getElementById('chatAccPro');
+  if (!a) { a = document.createElement('div'); a.id = 'chatAccPro'; a.className = 'chat-acc-pro'; bar.appendChild(a); }
+  const nutri = coachActivo && coachActivo.rol === 'dietista';
+  const firma = k + '|' + (coachActivo && coachActivo.rol);
+  if (a.dataset.k !== firma) {
+    a.dataset.k = firma;
+    a.innerHTML = '<button type="button" onclick="backToCliente()" aria-label="Ficha de ' + esc(d.nombre) + '" title="Ficha"><span aria-hidden="true">👤</span><small>Ficha</small></button>'
+      + '<button type="button" onclick="' + (nutri ? 'enAbrirPlanNutri()' : 'enAbrirPlan(clienteActual)') + '" aria-label="Plan de ' + (nutri ? 'nutrición' : 'entrenamiento') + '" title="Plan"><span aria-hidden="true">' + (nutri ? '🍽️' : '🏋️') + '</span><small>Plan</small></button>'
+      + '<button type="button" onclick="goToSeguimientos()" aria-label="Seguimientos" title="Seguimientos"><span aria-hidden="true">📋</span><small>Segs.</small></button>';
+  }
+  let av = document.getElementById('chatAvPro');
+  const nom = document.getElementById('coachBarName');
+  if (!av && nom) { av = document.createElement('span'); av.id = 'chatAvPro'; av.className = 'chat-av-pro'; av.setAttribute('aria-hidden', 'true'); nom.parentNode.insertBefore(av, nom); }
+  if (av) {
+    const foto = typeof fotoDe === 'function' ? fotoDe('cliente:' + k) : '';
+    const html = foto ? '<img src="' + esc(foto) + '" alt="">' : esc((d.nombre || '?').charAt(0).toUpperCase());
+    if (av.dataset.k !== k) { av.dataset.k = k; av.innerHTML = html; }
+  }
 }
 (function(){
   const c = document.getElementById('content');
