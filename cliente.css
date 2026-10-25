@@ -955,3 +955,6 @@ html.esc .pu-gal{grid-template-columns:repeat(4,1fr);}
 .pu-gal-it{position:relative;aspect-ratio:1;padding:0;border:0;border-radius:10px;overflow:hidden;background:var(--wash-soft);cursor:pointer;}
 .pu-gal-it img{width:100%;height:100%;object-fit:cover;display:block;}
 html.chat-pro-movil #coachBarName{font-size:14px;}
+
+/* Chat 14 · ordenador: la lista de chats algo más ancha (si no la has ajustado a mano con la barra) */
+html.esc:not([style*="--esc-lista"]) #view-coach-chats.esc-izq{flex:0 0 clamp(380px, 31vw, 440px) !important;}
