@@ -540,3 +540,45 @@ function puPendPintar(){
   const orig = window[n];
   window[n] = function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { puPendPintar(); } catch(e){} }, 40); return r; };
 });
+/* chat 12 · galería con todas las fotos de la conversación (cliente y profesionales) */
+function puFotosChat(){
+  return Array.prototype.filter.call(document.querySelectorAll('#chatList .bubble img'), function(i){ return i.src && !i.closest('.msg-av, .msg-av2'); });
+}
+function puGaleria(){
+  const fotos = puFotosChat();
+  if (!fotos.length) { toast('Todavía no hay fotos en este chat'); return; }
+  const o = mjHoja('chatGaleria');
+  o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Fotos del chat · ' + fotos.length + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'chatGaleria\')" aria-label="Cerrar">×</button></div>'
+    + '<div class="pu-gal"></div><p class="ajx-note">Toca una foto para verla en grande. Las más recientes salen primero.</p></div>';
+  const g = o.querySelector('.pu-gal');
+  fotos.slice().reverse().forEach(function(im, i){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pu-gal-it'; b.setAttribute('aria-label', 'Ver foto ' + (i + 1));
+    const c = document.createElement('img'); c.src = im.src; c.alt = ''; c.loading = 'lazy';
+    b.appendChild(c);
+    b.addEventListener('click', function(){ cmAbrirVisor(im.src, 'Foto del chat'); });
+    g.appendChild(b);
+  });
+  o.classList.add('show');
+}
+function puGaleriaBotones(){
+  const n = puFotosChat().length;
+  const txt = '🖼️ Fotos' + (n ? ' · ' + n : '');
+  const row = document.querySelector('#view-chat > .team-row');
+  if (row) {
+    let c = document.getElementById('chatGalChip');
+    if (!c) { c = document.createElement('button'); c.type = 'button'; c.id = 'chatGalChip'; c.className = 'team-chip pu-gal-chip'; c.onclick = puGaleria; row.appendChild(c); }
+    if (c.textContent !== txt) c.textContent = txt;
+  }
+  const acc = document.getElementById('chatAccPro');
+  if (acc && !acc.querySelector('.pu-gal-btn')) acc.insertAdjacentHTML('afterbegin', '<button type="button" class="pu-gal-btn" onclick="puGaleria()" aria-label="Fotos del chat" title="Fotos"><span aria-hidden="true">🖼️</span><small>Fotos</small></button>');
+}
+(function(){
+  const l = document.getElementById('chatList'); if (!l || !window.MutationObserver) return;
+  let pend = false;
+  new MutationObserver(function(){ if (pend) return; pend = true; requestAnimationFrame(function(){ pend = false; try { puGaleriaBotones(); } catch(e){} }); }).observe(l, { childList: true });
+})();
+['abrirChatPro', 'verConversacion', 'goTo'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { puGaleriaBotones(); } catch(e){} }, 50); return r; };
+});

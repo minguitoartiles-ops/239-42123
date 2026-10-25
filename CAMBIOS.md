@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.77.3 (actual)
-Cambios acumulados hacia la 0.78: **7 de 10**
+## Versión 0.77.4 (actual)
+Cambios acumulados hacia la 0.78: **8 de 10**
 
 ### Hacia la 0.78
 1. 25/10/2026 18:40 · Chat en el móvil de Domingo y Fátima: cabecera de una sola línea (Volver · foto · nombre · Ficha, Plan y Seguimientos); fuera el nombre repetido y el bloque grande de arriba → **0.77.0-1 (caché)**
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.78: **7 de 10**
 5. 25/10/2026 19:30 · Chat: separadores de día («Hoy», «Ayer», «Lunes 20/10») y la hora en cada mensaje nuevo (los mensajes antiguos no tenían hora guardada). Arreglado: la cabecera compacta y la barra principal se mantienen también al volver a abrir un chat → **0.77.2-1 (caché)**
 6. 25/10/2026 19:45 · Chat: al abrirlo con mensajes sin leer, línea «N mensajes nuevos» justo antes del primero y la conversación se coloca ahí; botón flotante «↓» para volver al último mensaje cuando subes a leer (cliente y profesionales) → **0.77.3**
 7. 25/10/2026 20:00 · Chat de Domingo y Fátima: aviso «⏳ Esperando respuesta · hace X» encima del campo de escribir con el botón «✓ Marcar como resuelto», que quita el «Sin contestar» sin escribir al cliente (él no ve nada); si vuelve a escribir, el aviso vuelve → **0.77.3-1 (caché)**
+8. 25/10/2026 20:15 · Chat: «🖼️ Fotos» abre en cuadrícula todas las fotos de la conversación (las más recientes primero); al tocar una se ve en grande (cliente y profesionales, móvil y ordenador) → **0.77.4**
 
 ## Versión 0.76 → 0.77.0
 
