@@ -4,7 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.75.0 (actual)
-Cambios acumulados hacia la 0.76: **0 de 10**
+Cambios acumulados hacia la 0.76: **1 de 10**
+
+### Hacia la 0.76
+1. 25/10/2026 15:30 · Planes de entrenamiento (Domingo): «Resumen del entrenamiento» y «Volumen semanal por músculo» salen plegados con su resumen y se abren al tocarlos (se recuerda lo abierto al cambiar de cliente)
 
 ## Versión 0.74 → 0.75.0
 
