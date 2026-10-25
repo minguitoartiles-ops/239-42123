@@ -688,3 +688,35 @@ fpOrdenarArriba = (function(orig){
 })(fpOrdenarArriba);
 /* sin filtros en la ficha: siempre se ve todo */
 goToCliente = (function(orig){ return function(){ try { if (typeof enSeccion !== 'undefined' && enSeccion !== 'todo') { enSeccion = 'todo'; } } catch(e){} return orig.apply(this, arguments); }; })(goToCliente);
+
+/* 25/10 · móvil: con el teclado abierto se oculta la barra de pestañas para dejar sitio a lo que se escribe */
+(function(){
+  const NO_TXT = /^(checkbox|radio|button|submit|reset|range|color|file|image|hidden)$/;
+  function esCampo(el){
+    if (!el || !el.tagName) return false;
+    if (el.isContentEditable || el.tagName === 'TEXTAREA') return true;
+    return el.tagName === 'INPUT' && !NO_TXT.test(el.type || '');
+  }
+  function tactil(){ return !document.documentElement.classList.contains('esc') && window.matchMedia('(pointer:coarse)').matches; }
+  let t = null;
+  document.addEventListener('focusin', function(e){
+    if (!tactil() || !esCampo(e.target)) return;
+    clearTimeout(t); document.documentElement.classList.add('fsd-teclado');
+  });
+  document.addEventListener('focusout', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){ if (!esCampo(document.activeElement)) document.documentElement.classList.remove('fsd-teclado'); }, 120);
+  });
+  // si el usuario baja el teclado sin quitar el foco (botón atrás de Android), la ventana vuelve a crecer
+  if (window.visualViewport) {
+    let alto = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', function(){
+      const h = window.visualViewport.height;
+      if (h > alto + 120 && document.documentElement.classList.contains('fsd-teclado')) {
+        document.documentElement.classList.remove('fsd-teclado');
+        if (esCampo(document.activeElement)) document.activeElement.blur();
+      }
+      alto = h;
+    });
+  }
+})();
