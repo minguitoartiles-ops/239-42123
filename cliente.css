@@ -1053,3 +1053,4 @@ html.esc .ficha-accesos{max-width:none;}
 
 /* 0.79.2-1: teclado abierto en el móvil → sin barra de pestañas */
 html.fsd-teclado .tb{display:none !important;}
+#dsBar{display:none !important;}
