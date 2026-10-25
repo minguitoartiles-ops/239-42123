@@ -213,7 +213,7 @@ function cqPintar(){
   o.querySelectorAll('.cq-f').forEach(function(f){
     const c = f.dataset.c;
     const inp = f.querySelector('input, textarea');
-    if (inp) inp.addEventListener('input', function(){ cqR[c] = inp.value; f.classList.remove('cq-mal'); cqBorrador(); });
+    if (inp) inp.addEventListener('input', function(){ cqR[c] = inp.value; f.classList.remove('cq-mal'); const e = f.querySelector('.cq-err'); if (e) e.hidden = true; cqBorrador(); });
     f.querySelectorAll('.cq-chips .chip').forEach(function(b){ b.onclick = function(){ cqR[c] = b.dataset.v; const reP = c === 'sexo'; if (reP) { cqBorrador(); cqPintarMantener(); return; } f.querySelectorAll('.chip').forEach(function(x){ const on = x === b; x.classList.toggle('selected', on); x.setAttribute('aria-checked', on); }); cqBorrador(); }; });
     f.querySelectorAll('.cq-multi .chip').forEach(function(b){ b.onclick = function(){
       let sel = Array.isArray(cqR[c]) ? cqR[c].slice() : [];
@@ -231,13 +231,20 @@ function cqBorrador(){
   clearTimeout(cqGuardarT);
   cqGuardarT = setTimeout(function(){ const d = clientesData[clienteActual]; if (!d || d.cuestionario) return; d.cqBorrador = { paso: cqPaso, r: cqR, fecha: new Date().toISOString() }; try { guardarTodo(); } catch(e){} }, 400);
 }
-function cqDniOk(v){
-  v = String(v || '').toUpperCase().replace(/[\s.-]/g, '');
-  const L = 'TRWAGMYFPDXBNJZSQVHLCKE';
-  let m = v.match(/^(\d{8})([A-Z])$/); if (m) return L[+m[1] % 23] === m[2] ? v : null;
-  m = v.match(/^([XYZ])(\d{7})([A-Z])$/); if (m) return L[+(('XYZ'.indexOf(m[1])) + m[2]) % 23] === m[3] ? v : null;
-  return null;
+/* DNI/NIE: admite minúsculas, espacios, puntos, guiones y DNI antiguos de 7 cifras (se completa con un 0 delante) */
+const CQ_LETRAS = 'TRWAGMYFPDXBNJZSQVHLCKE';
+function cqDniLimpio(v){ return String(v || '').toUpperCase().normalize('NFKC').replace(/[^0-9A-Z]/g, ''); }
+function cqDniRevisar(v){
+  let x = cqDniLimpio(v);
+  if (/^\d{7}[A-Z]$/.test(x)) x = '0' + x;
+  let m = x.match(/^(\d{8})([A-Z])$/);
+  if (m) { const l = CQ_LETRAS[+m[1] % 23]; return l === m[2] ? { ok: x } : { err: 'La letra no coincide con el número: para ' + m[1] + ' la letra es ' + l + '. Revisa los números o la letra.' }; }
+  m = x.match(/^([XYZ])(\d{7})([A-Z])$/);
+  if (m) { const l = CQ_LETRAS[+('XYZ'.indexOf(m[1]) + m[2]) % 23]; return l === m[3] ? { ok: x } : { err: 'La letra final no coincide con el NIE: para ' + m[1] + m[2] + ' la letra es ' + l + '.' }; }
+  if (/^\d{8}$/.test(x)) return { err: 'Falta la letra del final del DNI (por ejemplo 12345678Z).' };
+  return { err: 'Escribe el DNI (8 números y la letra) o el NIE (X, Y o Z, 7 números y la letra).' };
 }
+function cqDniOk(v){ return cqDniRevisar(v).ok || null; }
 function cqValidar(){
   const p = CQ_PASOS[cqPaso], o = document.getElementById('cqHoja'); let primero = null;
   const mal = function(id, txt){ const f = o.querySelector('.cq-f[data-c="' + id + '"]'); if (!f) return; f.classList.add('cq-mal'); const e = f.querySelector('.cq-err'); if (e) { e.hidden = false; e.textContent = txt; } if (!primero) primero = f; };
@@ -247,7 +254,7 @@ function cqValidar(){
     if (c.req && vacio) { mal(c.id, 'Este dato es necesario.'); return; }
     if (vacio) return;
     if (c.tipo === 'num') { const n = mjNum(v); if (n == null || isNaN(n) || (c.min != null && n < c.min) || (c.max != null && n > c.max)) mal(c.id, 'Revisa el número' + (c.min != null ? ' (entre ' + c.min + ' y ' + c.max + (c.u ? ' ' + c.u : '') + ')' : '') + '.'); }
-    if (c.tipo === 'dni') { const ok = cqDniOk(v); if (!ok) mal(c.id, 'Revisa el DNI o NIE: 8 números y una letra (o X/Y/Z, 7 números y una letra).'); else cqR[c.id] = ok; }
+    if (c.tipo === 'dni') { const rv = cqDniRevisar(v); if (rv.err) mal(c.id, rv.err); else { cqR[c.id] = rv.ok; const inp = document.getElementById('cq_dni'); if (inp) inp.value = rv.ok; } }
   });
   if (p.especial === 'alergias') { const a = alergiasDe(clienteActual); if (!(a && a.fecha)) mal('alergias', 'Marca tus alergias o indica que no tienes ninguna.'); }
   if (primero) { try { primero.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(e){} toast('Revisa lo marcado en rojo'); return false; }
