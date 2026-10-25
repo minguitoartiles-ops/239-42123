@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.74.3 (actual)
-Cambios acumulados hacia la 0.75: **7 de 10**
+## Versión 0.74.4 (actual)
+Cambios acumulados hacia la 0.75: **9 de 10**
 
 ### Hacia la 0.75
 1. 25/10/2026 10:45 · Ficha del cliente: «Sensaciones del día» y «Antes / Ahora» salen plegados con un resumen al lado (móvil y ordenador). En el ordenador «Antes / Ahora» sale igual que en el móvil cuando ese dispositivo tiene las fotos
@@ -14,6 +14,8 @@ Cambios acumulados hacia la 0.75: **7 de 10**
 5. 25/10/2026 12:15 · Nutrición del cliente: tarjeta «Hoy» arriba del plan con anillo de calorías tomadas y anillos de proteína, carbos y grasa (🥩 🍚 🥑), vasos de agua del día (objetivo según su peso) y «Ahora toca» con la comida de esta hora
 6. 25/10/2026 12:50 · Nutrición del cliente: «🛒 Lista de la compra» de la semana con lo elegido en cada comida × 7 días (agrupada, para ir tachando y copiar o compartir); al cambiar de opción en una comida avisa de la cantidad equivalente → **0.74.3**
 7. 25/10/2026 13:20 · Clientes nuevos: bienvenida de 3 pantallas la primera vez (qué es la app, dónde está cada cosa e instalarla en Android o iPhone) y, al terminar, propuesta de hacer su primer seguimiento con una guía de consejos arriba del formulario
+8. 25/10/2026 14:10 · Profesionales: plantillas de nutrición (guardar un plan y aplicarlo a otro cliente), adherencia por comida en el resumen de nutrición (qué comida se salta más), «Renuevan en los próximos 7 días» en Pagos con botón para recordárselo por el chat, y facturas de cada pago (numeradas por año, con IGIC/IVA/exento, para imprimir o guardar en PDF; los datos del emisor se guardan solo en el dispositivo) → **0.74.4**
+9. 25/10/2026 14:10 · Seguimientos: botón «💬 Escribirle» en cada cliente para abrir su chat directamente
 
 ## Versión 0.73 → 0.74.0
 

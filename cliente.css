@@ -767,3 +767,44 @@ html.esc .ds-bar{bottom:24px;}
 .ob-guia .ob-guia-i{color:var(--ink);font-size:13.5px;margin:0 0 6px;}
 .ob-guia li{margin:0 0 4px;}
 .ob-guia p{margin:0;color:var(--dim-6);font-size:12.5px;}
+
+/* herramientas de profesionales */
+.nu-pl-res{display:block;font:500 11.5px var(--f-body);color:var(--dim-55);margin-top:2px;}
+.pr-adh{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
+.pr-adh-t{font:600 10px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);margin-bottom:6px;}
+.pr-adh-f{display:grid;grid-template-columns:minmax(80px,1fr) 2fr auto;gap:8px;align-items:center;font:500 12.5px var(--f-body);margin:3px 0;}
+.pr-adh-b{display:block;height:6px;border-radius:3px;background:var(--wash-med);overflow:hidden;}
+.pr-adh-b u{display:block;height:100%;border-radius:3px;text-decoration:none;}
+.pr-adh-b u.ok{background:#4FA36C;} .pr-adh-b u.med{background:#E3A659;} .pr-adh-b u.mal{background:#D8493A;}
+.pr-adh-f b{font:700 11.5px var(--f-mono);} .pr-adh-f b.mal{color:#D8493A;}
+.pr-adh-nota{margin-top:6px;font:500 12px var(--f-body);color:var(--dim-6);}
+.pr-renov{margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1px solid #E3A659;background:rgba(227,166,89,.1);}
+.pr-renov-t{font:700 13px var(--f-body);margin-bottom:6px;}
+.pr-renov-f{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);}
+.pr-renov-f:first-of-type{border-top:none;}
+.pr-renov-f b{display:block;font:600 13.5px var(--f-body);}
+.pr-renov-f span{font:500 12px var(--f-body);color:var(--dim-6);}
+.pr-sg-chat{margin-left:auto;}
+.sg-rev{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+/* factura: al imprimir solo se ve la factura */
+#prFacturaPrint{display:none;}
+@media print{
+  html.imprimiendo-factura body > *:not(#prFacturaPrint){display:none !important;}
+  html.imprimiendo-factura #prFacturaPrint{display:block !important;}
+  html.imprimiendo-factura, html.imprimiendo-factura body{background:#fff !important;}
+}
+.fp-hoja{font:400 12.5px/1.5 Archivo,sans-serif;color:#111;padding:28px;max-width:720px;margin:0 auto;}
+.fp-cab{display:flex;justify-content:space-between;gap:24px;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:18px;}
+.fp-cab h1{margin:0;font:400 28px 'Archivo Black',Archivo,sans-serif;}
+.fp-num{font:700 14px 'IBM Plex Mono',monospace;}
+.fp-em{text-align:right;}
+.fp-cli{margin-bottom:18px;}
+.fp-cli span{display:block;font:600 10px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:#666;}
+.fp-tabla,.fp-tot{width:100%;border-collapse:collapse;}
+.fp-tabla th{text-align:left;font:600 10px 'IBM Plex Mono',monospace;text-transform:uppercase;color:#666;border-bottom:1px solid #999;padding:6px 0;}
+.fp-tabla td{padding:10px 0;border-bottom:1px solid #ddd;vertical-align:top;}
+.fp-tabla th:last-child,.fp-tabla td:last-child,.fp-tot td:last-child{text-align:right;}
+.fp-tot{width:300px;margin:14px 0 0 auto;}
+.fp-tot td{padding:4px 0;}
+.fp-total td{font-weight:700;font-size:15px;border-top:2px solid #111;padding-top:8px;}
+.fp-nota{margin-top:24px;font-size:11px;color:#555;}
