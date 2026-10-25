@@ -1043,3 +1043,7 @@ html.esc .ficha-accesos{max-width:none;}
 
 /* Al desplegar un apartado, el navegador no debe «anclar» lo de abajo y empujar el título hacia arriba */
 .alta-body,.sc,#content,.fsd-sheet{overflow-anchor:none;}
+
+/* Ficha del cliente más limpia: fuera «Semana X de 12 · objetivo», los filtros (Todo, Datos y medidas…) y los resúmenes a la derecha de cada apartado */
+#view-coach-cliente #cd-meta,#view-coach-cliente #fichaSecciones,#view-coach-cliente .fp-lbl .fp-res{display:none !important;}
+#view-coach-cliente .fp-lbl .fp-chev{margin-left:auto;}
