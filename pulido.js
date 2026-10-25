@@ -720,3 +720,6 @@ goToCliente = (function(orig){ return function(){ try { if (typeof enSeccion !==
     });
   }
 })();
+
+/* 25/10 · fuera el temporizador de descanso al marcar una serie (a petición: resultaba tedioso) */
+if (typeof dsEmpezar === 'function') { dsEmpezar = function(){}; if (typeof dsParar === 'function') dsParar(); }
