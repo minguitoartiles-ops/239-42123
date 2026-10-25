@@ -600,9 +600,13 @@ window.addEventListener('storage', function(e){
    Ojo: en una app sin servidor esto es un cierre de cortesía,
    no seguridad real; la seguridad llegará con cuentas en servidor.
    ========================================================= */
+/* 25/10/2026 · contraseñas nuevas (frases largas). Se guarda solo la huella PBKDF2-SHA256 (310.000 vueltas, sal propia por persona);
+   la contraseña no está en ningún sitio. Mayúsculas y minúsculas dan igual. */
+const PRO_ITER = 310000;
+const PRO_SAL = { domingo: '424eeacfe037dc4b35d116a610d48619', fatima: '4831222652f7d0f5331e51c2d52a304d' };
 const PRO_HASH = {
-  domingo: 'ebae2c1adf746cc77c6fc004773014594f63b6163ba809b1489646de67f421d3',
-  fatima:  '694a7b907fd5774f2b3dd6ae3f42eaf54843622e8b1165140d53aff75f443ce5'
+  domingo: 'c671e9e714ad529311e4c7f2843202f43309adaa6aa2003e68d15798f605f34c',
+  fatima:  'a8cfe6480fd47f8149c9970eaf7714ecc7a4da1ef5eca23936b8b7bfca09940d'
 };
 let proPendiente = null;
 function pedirPassPro(usuario){
@@ -619,8 +623,10 @@ function cerrarPassPro(){
   proPendiente = null;
 }
 function huellaPro(usuario, pw){
-  const datos = new TextEncoder().encode('fsd-pro:' + norm(usuario) + ':' + pw.trim().toLowerCase());
-  return crypto.subtle.digest('SHA-256', datos).then(function(buf){
+  const u = norm(usuario), enc = new TextEncoder();
+  return crypto.subtle.importKey('raw', enc.encode(pw.trim().toLowerCase()), 'PBKDF2', false, ['deriveBits']).then(function(k){
+    return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode('fsd-pro:' + u + ':' + (PRO_SAL[u] || '')), iterations: PRO_ITER, hash: 'SHA-256' }, k, 256);
+  }).then(function(buf){
     return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
   });
 }
