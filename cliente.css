@@ -868,3 +868,13 @@ html.esc .ds-bar{bottom:24px;}
 html.esc .esc-ficha-grid.pu-cols{columns:auto;display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 22px;}
 html.esc .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 330px;min-width:0;}
 html.esc .esc-ficha-grid.pu-cols > .esc-col:not(:has(> .esc-grupo:not([hidden]):not(.sec-oculta):not(.fp-vacio))){display:none;}
+
+/* #221 Pagos: suscripción desplegada bajo la fila del cliente */
+.pg-fila.pg-plegable{cursor:pointer;position:relative;}
+.pg-fila.pg-abierta{box-shadow:0 0 0 2px var(--accent);border-bottom-left-radius:6px;border-bottom-right-radius:6px;}
+.pg-panel{margin:-2px 0 6px;padding:10px 10px 12px;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;background:var(--accent-wash);animation:plIn .22s ease-out;}
+.pg-panel .list-group{margin:0;}
+.pg-panel .pg-borrado{margin-top:10px;}
+.pg-ficha-lnk{display:block;text-align:right;margin-top:10px;font-size:13px;}
+html.esc .pg-panel{padding:14px 18px 16px;}
+@media (prefers-reduced-motion:reduce){ .pg-panel{animation:none;} }

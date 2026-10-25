@@ -146,3 +146,78 @@ if (typeof escAgruparFicha === 'function') escAgruparFicha = (function(orig){
     return r;
   };
 })(escAgruparFicha);
+
+/* =========================================================
+   #221 Pagos: al tocar un cliente se despliega ahí mismo su «Suscripción»
+   (el mismo bloque de la ficha, con sus botones), sin ir a la ficha
+   ========================================================= */
+let pgAbierto = null, pgPintando = false;
+function pgElegir(k){
+  if (clienteActual === k) return;
+  try { guardarPlan(); } catch(e){}
+  clienteActual = k;
+  try { cargarPlan(k); } catch(e){}
+}
+function pgDesplegar(k){
+  pgAbierto = pgAbierto === k ? null : k;
+  if (pgAbierto) pgElegir(k);
+  pintarPagosPro();
+}
+function pgPanelHtml(k){
+  pgElegir(k);
+  pintarSuscripcionFicha();
+  const box = document.getElementById('fichaPago'); if (!box) return '';
+  const c = box.cloneNode(true);
+  c.removeAttribute('id');
+  Array.prototype.forEach.call(c.querySelectorAll('.alta-label'), function(x){ x.remove(); });
+  Array.prototype.forEach.call(c.querySelectorAll('.fp-oculto,.fp-dentro,.fp-dentro-fin'), function(x){ x.classList.remove('fp-oculto', 'fp-dentro', 'fp-dentro-fin'); });
+  Array.prototype.forEach.call(c.querySelectorAll('[id]'), function(x){ x.removeAttribute('id'); });
+  return c.innerHTML + '<a href="#" class="lnk pg-ficha-lnk" onclick="mjAbrirFichaPago(\'' + k + '\');return false;">Ver ficha completa ›</a>';
+}
+pintarPagosPro = (function(orig){
+  return function(){
+    pgPintando = true;
+    let r;
+    try {
+      r = orig.apply(this, arguments);
+      const l = document.querySelector('#pagosPro .pagos-lista');
+      if (l) Array.prototype.forEach.call(l.querySelectorAll('.pago-fila'), function(f){
+        const m = (f.getAttribute('onclick') || '').match(/mjAbrirFichaPago\('([^']+)'\)/);
+        if (!m) return;
+        const k = m[1], ab = pgAbierto === k;
+        f.setAttribute('onclick', "pgDesplegar('" + k + "')");
+        f.setAttribute('aria-expanded', ab ? 'true' : 'false');
+        f.classList.add('pg-plegable'); f.classList.toggle('pg-abierta', ab);
+        if (ab && clientesData[k]) {
+          const p = document.createElement('div');
+          p.className = 'pg-panel'; p.setAttribute('role', 'region'); p.setAttribute('aria-label', 'Suscripción de ' + clientesData[k].nombre);
+          p.innerHTML = pgPanelHtml(k);
+          f.parentNode.insertBefore(p, f.nextSibling);
+        }
+      });
+    } finally { pgPintando = false; }
+    return r;
+  };
+})(pintarPagosPro);
+/* al registrar un pago, cambiar el acceso, la tarifa o la baja: se refresca la lista sin cerrar el panel */
+pintarSuscripcionFicha = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    if (!pgPintando && pgAbierto && pgAbierto === clienteActual) {
+      const v = document.getElementById('view-coach-pagos');
+      if (v && v.style.display !== 'none' && v.offsetParent !== null) setTimeout(function(){ if (!pgPintando) pintarPagosPro(); }, 0);
+    }
+    return r;
+  };
+})(pintarSuscripcionFicha);
+/* las tarjetas de adherencia pueden quedar fuera del documento entre pintadas (p. ej. al desplegar Pagos);
+   antes de abrir una ficha se devuelven a su sitio para que se puedan rellenar */
+goToCliente = (function(orig){
+  return function(){
+    try {
+      const v = document.getElementById('view-coach-cliente');
+      if (v && typeof fpAdh === 'object') ['e', 'n'].forEach(function(t){ const w = fpAdh[t]; if (w && !w.isConnected) v.appendChild(w); });
+    } catch(e){}
+    return orig.apply(this, arguments);
+  };
+})(goToCliente);
