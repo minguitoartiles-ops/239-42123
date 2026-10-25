@@ -660,3 +660,23 @@ html.esc .emoji-panel{max-height:290px;}
 .cm-visor-volver span{font-size:20px;line-height:1;}
 .cm-visor-x{width:38px;font-size:16px;}
 .cm-visor-volver:hover,.cm-visor-x:hover{background:rgba(255,255,255,.24);}
+
+/* temporizador de descanso (cliente) */
+.ds-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:150;width:min(440px,calc(100% - 24px));border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);overflow:hidden;}
+.ds-bar[hidden],.ds-bar.ds-fuera{display:none;}
+.ds-prog{height:4px;background:rgba(255,255,255,.15);}
+.ds-prog i{display:block;height:100%;background:var(--accent);transition:width .25s linear;}
+.ds-fila{display:flex;align-items:center;gap:8px;padding:10px 12px 6px;}
+.ds-c{flex:1;text-align:center;display:flex;flex-direction:column;}
+.ds-c small{font:600 10px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;opacity:.7;}
+.ds-t{font:800 26px var(--f-body);line-height:1.1;font-variant-numeric:tabular-nums;}
+.ds-b{min-width:52px;height:40px;border:none;border-radius:12px;background:rgba(255,255,255,.12);color:inherit;font:700 14px var(--f-body);cursor:pointer;}
+.ds-b.ds-x{background:var(--accent);color:var(--on-accent,#12151A);}
+.ds-opc{display:flex;gap:6px;justify-content:center;padding:0 12px 10px;}
+.ds-opc button{border:1px solid rgba(255,255,255,.25);background:none;color:inherit;border-radius:999px;padding:3px 10px;font:600 11.5px var(--f-mono);cursor:pointer;opacity:.75;}
+.ds-opc button.on{background:rgba(255,255,255,.18);opacity:1;border-color:transparent;}
+.ds-bar.fin{background:#2E7D4F;}
+.ds-bar.fin .ds-t{font-size:20px;}
+html.esc .ds-bar{bottom:24px;}
+/* peso de la semana pasada: más visible que un «kg» vacío */
+#sesionesCont .srf-peso input::placeholder{color:var(--dim-6);opacity:.75;}

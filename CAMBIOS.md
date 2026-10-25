@@ -3,13 +3,14 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.74.1 (actual)
-Cambios acumulados hacia la 0.75: **3 de 10**
+## Versión 0.74.2 (actual)
+Cambios acumulados hacia la 0.75: **4 de 10**
 
 ### Hacia la 0.75
 1. 25/10/2026 10:45 · Ficha del cliente: «Sensaciones del día» y «Antes / Ahora» salen plegados con un resumen al lado (móvil y ordenador). En el ordenador «Antes / Ahora» sale igual que en el móvil cuando ese dispositivo tiene las fotos
 2. 25/10/2026 10:45 · Ficha del cliente: el gráfico de evolución de los seguimientos va arriba del todo, encima de «Sensaciones del día» (también sigue en Seguimientos) → **0.74.1**
 3. 25/10/2026 10:45 · Ficha del cliente: accesos de arriba en el orden Seguimientos · Entreno · Chat (Domingo) y Seguimientos · Nutrición · Chat (Fátima)
+4. 25/10/2026 11:30 · Entreno del cliente: el peso de la semana pasada sale ya escrito en cada serie (✓ lo confirma); temporizador de descanso al marcar una serie (1:00 · 1:30 · 2:00 · 3:00, ±15 s, vibra y suena al acabar); la pantalla no se apaga mientras está en Entrenamiento → **0.74.2**
 
 ## Versión 0.73 → 0.74.0
 
