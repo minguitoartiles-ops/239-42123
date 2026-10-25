@@ -340,3 +340,51 @@ pintarChatsPro = (function(orig){
     return r;
   };
 })(pintarChatsPro);
+/* chat 4 · buscador por nombre y filtros rápidos en la lista de chats */
+let puChatFiltro = 'todos', puChatQ = '';
+const PU_CHAT_FILTROS = [['todos', 'Todos'], ['sin', 'Sin contestar'], ['duda', '❓ Con duda'], ['leer', 'Sin leer']];
+function puChatCumple(f, filtro){
+  if (filtro === 'sin') return f.classList.contains('espera') || f.classList.contains('nv-amb') || f.classList.contains('nv-roj');
+  if (filtro === 'duda') return !!f.querySelector('.dd-fila');
+  if (filtro === 'leer') return !!f.querySelector('.chat-fila-n');
+  return true;
+}
+function puChatFiltrar(){
+  const cont = document.getElementById('chatsPro'); if (!cont) return;
+  const q = norm(puChatQ.trim());
+  const filas = Array.prototype.slice.call(cont.querySelectorAll('.chat-fila'));
+  let vis = 0;
+  filas.forEach(function(f){
+    const nom = norm(((f.querySelector('.chat-fila-top b') || {}).textContent || ''));
+    const ok = (!q || nom.indexOf(q) > -1) && puChatCumple(f, puChatFiltro);
+    f.hidden = !ok; if (ok) vis++;
+  });
+  Array.prototype.forEach.call(cont.querySelectorAll('.chat-filas'), function(l){
+    const algo = Array.prototype.some.call(l.querySelectorAll('.chat-fila'), function(f){ return !f.hidden; });
+    l.hidden = !algo; const lbl = l.previousElementSibling; if (lbl && lbl.classList.contains('alta-label')) lbl.hidden = !algo;
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#puChatChips .chip'), function(c){
+    const on = c.dataset.v === puChatFiltro; c.classList.toggle('selected', on); c.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  let v = document.getElementById('puChatVacio');
+  if (!vis) { if (!v) { v = document.createElement('div'); v.id = 'puChatVacio'; v.className = 'picker-empty'; cont.appendChild(v); } v.textContent = q ? 'Ningún chat coincide con «' + puChatQ.trim() + '».' : 'No hay chats en este apartado.'; }
+  else if (v) v.remove();
+}
+function puChatElegir(f){ puChatFiltro = f; puChatFiltrar(); }
+pintarChatsPro = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const cont = document.getElementById('chatsPro'); if (!cont || !cont.querySelector('.chat-fila')) return r;
+    const filas = Array.prototype.slice.call(cont.querySelectorAll('.chat-fila'));
+    const n = {}; PU_CHAT_FILTROS.forEach(function(x){ n[x[0]] = filas.filter(function(f){ return puChatCumple(f, x[0]); }).length; });
+    const barra = document.createElement('div'); barra.className = 'pu-chat-barra';
+    barra.innerHTML = '<input type="search" id="puChatQ" class="pu-chat-q" placeholder="Buscar cliente" aria-label="Buscar chat por nombre" autocomplete="off" value="' + esc(puChatQ) + '">'
+      + '<div class="chips pu-chat-chips" id="puChatChips" role="tablist">' + PU_CHAT_FILTROS.map(function(x){
+          return '<button type="button" role="tab" class="chip protein" data-v="' + x[0] + '" onclick="puChatElegir(\'' + x[0] + '\')">' + x[1] + (x[0] !== 'todos' && n[x[0]] ? ' <span class="sg-fn">' + n[x[0]] + '</span>' : '') + '</button>'; }).join('') + '</div>';
+    const stats = cont.querySelector('.chats-stats');
+    if (stats) stats.insertAdjacentElement('afterend', barra); else cont.insertBefore(barra, cont.firstChild);
+    barra.querySelector('#puChatQ').addEventListener('input', function(){ puChatQ = this.value; puChatFiltrar(); });
+    puChatFiltrar();
+    return r;
+  };
+})(pintarChatsPro);
