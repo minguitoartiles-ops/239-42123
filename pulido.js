@@ -723,3 +723,117 @@ goToCliente = (function(orig){ return function(){ try { if (typeof enSeccion !==
 
 /* 25/10 · fuera el temporizador de descanso al marcar una serie (a petición: resultaba tedioso) */
 if (typeof dsEmpezar === 'function') { dsEmpezar = function(){}; if (typeof dsParar === 'function') dsParar(); }
+
+/* 25/10 · Cambios del plan resaltados: al guardar, se apunta qué ejercicios / grupos de alimentos han cambiado;
+   el cliente toca el aviso → va a Entreno o Nutrición, abre lo cambiado, lo marca y lo explica arriba */
+function pcTxt(el){ return ((el && el.textContent) || '').replace(/\s*✎\s*/g, '').replace(/\s+/g, ' ').trim(); }
+function pcPauta(it){
+  try {
+    const p = enPesos(it); if (!p.length) return '';
+    const r = p.map(function(x){ return x.dataset.reps || '—'; }), i = p.map(function(x){ return x.dataset.rir == null ? '' : x.dataset.rir; });
+    const rT = r.every(function(v){ return v === r[0]; }) ? r[0] : r.join('/');
+    const iT = i.every(function(v){ return v === i[0]; }) ? i[0] : i.join('/');
+    return p.length + '×' + rT + (iT !== '' ? ' · RIR ' + iT : '');
+  } catch(e){ return ''; }
+}
+function pcChips(g){ return Array.prototype.slice.call(g.querySelectorAll('.chip')).filter(function(c){ return !c.classList.contains('chip-add'); }).map(function(c){ return chipName(c); }).filter(Boolean); }
+/* unidades comparables: un ejercicio dentro de su sesión, un grupo de alimentos dentro de su comida */
+function pcUnidades(nut){
+  const u = {};
+  if (nut) {
+    mealBlocks().forEach(function(b, i){
+      const com = pcTxt(b.querySelector('.meal-block-title')) || ('Comida ' + (i + 1));
+      b.querySelectorAll('.macro-group').forEach(function(g){
+        const lab = pcTxt(g.querySelector('.macro-label'));
+        u[i + '|' + lab] = { h: huellaPlan(g), t: com + ' · ' + lab.replace(/^([^\p{L}]+)(?=\p{L})/u, '$1 '), chips: pcChips(g) };
+      });
+    });
+  } else {
+    Array.prototype.forEach.call(contEnt().querySelectorAll('.sesion-card'), function(c, i){
+      const ses = pcTxt(c.querySelector('.sesion-title')) || ('Día ' + (i + 1));
+      c.querySelectorAll('.ex-item').forEach(function(it){
+        const n = enNombreEj(it); if (!n) return;
+        u[i + '|' + n] = { h: huellaPlan(it), t: n, ses: ses, pauta: pcPauta(it) };
+      });
+    });
+  }
+  return u;
+}
+let pcAntes = null;
+editarPlan = (function(orig){
+  return function(){
+    if (!coachEditing) { try { pcAntes = { ent: (sincronizarInputs(contEnt()), pcUnidades(false)), nut: (sincronizarInputs(contNut()), pcUnidades(true)) }; } catch(e){ pcAntes = null; } }
+    try { return orig.apply(this, arguments); } finally { if (!coachEditing) pcAntes = null; }
+  };
+})(editarPlan);
+function pcDiff(nut){
+  const a = pcAntes && pcAntes[nut ? 'nut' : 'ent']; if (!a) return null;
+  const d = pcUnidades(nut), cambios = [], quitados = [];
+  Object.keys(d).forEach(function(k){
+    const x = d[k], y = a[k];
+    if (y && y.h === x.h) return;
+    let det = '';
+    if (!y) det = nut ? 'nuevo' : 'nuevo';
+    else if (nut) {
+      const mas = x.chips.filter(function(c){ return y.chips.indexOf(c) === -1; }), menos = y.chips.filter(function(c){ return x.chips.indexOf(c) === -1; });
+      det = [mas.length ? 'añadido: ' + mas.join(', ') : '', menos.length ? 'quitado: ' + menos.join(', ') : ''].filter(Boolean).join(' · ') || 'cantidades';
+    } else det = (y.pauta && x.pauta && y.pauta !== x.pauta) ? y.pauta + ' → ' + x.pauta : 'detalles';
+    cambios.push({ k: k, t: x.t, d: det, n: !y });
+  });
+  Object.keys(a).forEach(function(k){ if (!d[k]) quitados.push(a[k].t); });
+  return (cambios.length || quitados.length) ? { c: cambios.slice(0, 30), q: quitados.slice(0, 15) } : null;
+}
+crearAviso = (function(orig){
+  return function(dest, tipo, titulo, texto, ir){
+    if (tipo === 'plan' && pcAntes && ir && (ir.vista === 'plan' || ir.vista === 'entreno')) {
+      try { const df = pcDiff(ir.vista === 'plan'); if (df) { ir = Object.assign({}, ir, { cambios: df, quien: coachActivo ? coachActivo.u : '' }); } } catch(e){}
+    }
+    return orig.call(this, dest, tipo, titulo, texto, ir);
+  };
+})(crearAviso);
+
+function pcLimpiar(){
+  document.querySelectorAll('.pc-marca').forEach(function(x){ x.classList.remove('pc-marca'); });
+  document.querySelectorAll('.pc-tag, .pc-banner').forEach(function(x){ x.remove(); });
+}
+function pcResaltar(ir){
+  pcLimpiar();
+  const nut = ir.vista === 'plan', df = ir.cambios; if (!df) return;
+  const marcados = [];
+  df.c.forEach(function(c){
+    const i = +c.k.split('|')[0], clave = c.k.slice(c.k.indexOf('|') + 1);
+    let el = null;
+    if (nut) {
+      const b = mealBlocks()[i]; if (!b) return;
+      el = Array.prototype.slice.call(b.querySelectorAll('.macro-group')).filter(function(g){ return pcTxt(g.querySelector('.macro-label')) === clave; })[0];
+      if (el) { const body = b.querySelector('.meal-body'); if (body && !body.classList.contains('open')) toggleMealBlock(b.querySelector('.meal-head')); }
+    } else {
+      const card = contEnt().querySelectorAll('.sesion-card')[i]; if (!card) return;
+      el = Array.prototype.slice.call(card.querySelectorAll('.ex-item')).filter(function(it){ return enNombreEj(it) === clave; })[0];
+      if (el && typeof exAbrirSesion === 'function') exAbrirSesion(card, false);
+    }
+    if (!el) return;
+    el.classList.add('pc-marca');
+    const tag = document.createElement('span'); tag.className = 'pc-tag'; tag.textContent = c.n ? 'Nuevo' : 'Cambiado';
+    el.insertBefore(tag, el.firstChild);
+    marcados.push(el);
+  });
+  const cont = nut ? contNut() : contEnt();
+  const bn = document.createElement('div'); bn.className = 'pc-banner'; bn.setAttribute('role', 'status');
+  bn.innerHTML = '<b>✨ ' + esc(ir.quien || 'Tu profesional') + ' ha cambiado ' + (nut ? 'tu nutrición' : 'tu entrenamiento') + '</b>'
+    + '<ul>' + df.c.map(function(c){ return '<li><span>' + esc(c.t) + '</span> <em>' + esc(c.d) + '</em></li>'; }).join('')
+    + df.q.map(function(t){ return '<li class="pc-fuera"><span>' + esc(t) + '</span> <em>quitado</em></li>'; }).join('') + '</ul>'
+    + '<button type="button" class="pc-ok">Entendido</button>';
+  bn.querySelector('.pc-ok').onclick = pcLimpiar;
+  cont.parentNode.insertBefore(bn, cont);
+  setTimeout(function(){ bn.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 120);
+}
+abrirAviso = (function(orig){
+  return function(dest, id){
+    const x = ((leerAvisos().lista[dest]) || []).filter(function(y){ return y.id === id; })[0];
+    const r = orig.apply(this, arguments);
+    if (x && x.ir && x.ir.cambios && dest.indexOf('pro:') !== 0) setTimeout(function(){ try { pcResaltar(x.ir); } catch(e){} }, 200);
+    return r;
+  };
+})(abrirAviso);
+fsdTras('goTo', function(){ if (document.querySelector('.pc-banner')) { const v = typeof vistaActual !== 'undefined' ? vistaActual : ''; const b = document.querySelector('.pc-banner'); if (b && !b.closest('#view-' + v)) pcLimpiar(); } });

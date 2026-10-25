@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.79.3 (actual)
-Cambios acumulados hacia la 0.80: **6 de 10**
+Cambios acumulados hacia la 0.80: **7 de 10**
 
 ### Hacia la 0.80
 1. 25/10/2026 23:10 · Ficha en el móvil: al desplegar «Evolución», «Sensaciones del día» o «Antes / Ahora» con la pantalla desplazada, el navegador empujaba el título hacia arriba y parecía que se abría hacia arriba; ahora el título se queda quieto y el contenido aparece debajo (en toda la app) → **0.79.0-1 (caché)**
@@ -13,6 +13,7 @@ Cambios acumulados hacia la 0.80: **6 de 10**
 4. 25/10/2026 23:30 · Entreno del cliente sin redundancias: fuera las etiquetas «3 series · 10 reps · RIR 2» de cada ejercicio (ya salen en cada serie); se mantiene «Semana pasada». El profesional las sigue viendo → **0.79.2**
 5. 25/10/2026 23:35 · Móvil: al escribir (pesos del entreno, chat, formularios…) se oculta la barra de pestañas mientras el teclado está abierto, para que no suba y tape lo que se rellena; vuelve al cerrar el teclado → **0.79.2-1 (caché)**
 6. 25/10/2026 23:40 · Entreno del cliente: fuera el temporizador de descanso que salía al marcar cada serie → **0.79.3**
+7. 25/10/2026 23:55 · Cambios del plan resaltados: al guardar Domingo o Fátima, el aviso apunta qué ha cambiado. Al tocarlo, el cliente va a Entreno o Nutrición, ve arriba un resumen («Press banca 3×10 → 4×8», «Desayuno · Proteína quitado: Yogur», ejercicios quitados tachados) y lo cambiado sale abierto, enmarcado y con la etiqueta «Nuevo» o «Cambiado» hasta pulsar «Entendido» o cambiar de pestaña → **0.79.3-1 (caché)**
 
 ## Versión 0.78 → 0.79.0
 

@@ -1054,3 +1054,15 @@ html.esc .ficha-accesos{max-width:none;}
 /* 0.79.2-1: teclado abierto en el móvil → sin barra de pestañas */
 html.fsd-teclado .tb{display:none !important;}
 #dsBar{display:none !important;}
+/* 0.79.4: cambios del plan resaltados al abrir el aviso */
+.pc-marca{position:relative;outline:2.5px solid var(--accent) !important;outline-offset:2px;background:rgba(120,170,225,.10) !important;border-radius:14px;animation:pcLatir 1.4s ease 2;}
+@keyframes pcLatir{50%{outline-color:transparent;}}
+.pc-tag{display:inline-block;margin:0 0 6px;padding:2px 9px;border-radius:99px;background:var(--accent);color:#fff;font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;}
+.pc-banner{margin:0 0 14px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--accent);background:var(--wash-soft);color:var(--ink);}
+.pc-banner > b{display:block;font:700 15px var(--f-body);margin-bottom:6px;}
+.pc-banner ul{margin:0 0 10px;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font:400 13.5px var(--f-body);}
+.pc-banner li span{font-weight:600;}
+.pc-banner li em{font-style:normal;color:var(--dim-6);font-family:var(--f-mono);font-size:12px;}
+.pc-banner li.pc-fuera span{text-decoration:line-through;color:var(--dim-6);}
+.pc-ok{padding:8px 16px;border-radius:99px;border:0;background:var(--accent);color:#fff;font:600 13px var(--f-body);cursor:pointer;}
+.pc-banner{scroll-margin-top:84px;}
