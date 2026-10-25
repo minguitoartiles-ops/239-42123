@@ -808,3 +808,12 @@ html.esc .ds-bar{bottom:24px;}
 .fp-tot td{padding:4px 0;}
 .fp-total td{font-weight:700;font-size:15px;border-top:2px solid #111;padding-top:8px;}
 .fp-nota{margin-top:24px;font-size:11px;color:#555;}
+
+/* pulido: los botones responden al tocarlos */
+.btn-primary,.btn-eq,.mini-btn,.chip,.acc-btn,.cm-menu button,.nh-agua-mas,.nh-vaso,.ds-b,.srf-ok,.meal-eat,.tb button,.ob-ant,.nh-compra-btn,.nh-ahora{transition:transform .12s ease, background-color .15s ease, box-shadow .15s ease, opacity .15s ease;}
+.btn-primary:active,.btn-eq:active,.mini-btn:active,.chip:active,.acc-btn:active,.nh-agua-mas:active,.nh-vaso:active,.ds-b:active,.srf-ok:active,.meal-eat:active,.ob-ant:active,.nh-compra-btn:active,.nh-ahora:active{transform:scale(.96);}
+.btn-primary:focus-visible,.btn-eq:focus-visible,.mini-btn:focus-visible,.chip:focus-visible,.acc-btn:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.pg-graf .gr-box{margin-top:6px;}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}
+}
