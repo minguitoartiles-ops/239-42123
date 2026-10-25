@@ -297,3 +297,26 @@ pick = (function(orig){
     toast('Añadido: ' + chipName(el) + ' · ahora combinas ' + (sel.length + 1));
   };
 })(pick);
+/* chat 2 · móvil del profesional: en el chat de un cliente se mantiene la barra principal (Chats marcado) */
+pintarTabsPro = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const nav = document.getElementById('coachTabs');
+    const en = document.documentElement.classList.contains('chat-pro-movil') && pantallaVisible() === 'app';
+    if (nav && en) {
+      nav.hidden = false;
+      Array.prototype.forEach.call(nav.querySelectorAll('.tbi'), function(b){ b.classList.toggle('active', b.id === 'ctab-chats'); });
+    }
+    return r;
+  };
+})(pintarTabsPro);
+abrirTabPro = (function(orig){
+  return function(){
+    if (pantallaVisible() === 'app' && isCoachView()) { try { backToCliente(); } catch(e){} }   // sale del cliente guardando, como «Volver»
+    return orig.apply(this, arguments);
+  };
+})(abrirTabPro);
+(function(){
+  const c = document.getElementById('content');
+  if (c && window.MutationObserver) new MutationObserver(function(){ try { pintarTabsPro(); } catch(e){} }).observe(c, { attributes: true, attributeFilter: ['class'] });
+})();
