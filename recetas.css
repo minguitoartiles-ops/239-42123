@@ -71,3 +71,22 @@ html.esc #view-coach-recetas .alta-body{padding-left:max(28px, calc((100% - 880p
 /* 21/10: nada se encoge en la pantalla de recetas aunque la lista sea larga o la ventana baja */
 #view-coach-recetas .alta-body > *, #rcLista > *, .rc-sheet > *{flex-shrink:0;}
 .rc-it .rc-badge{align-self:flex-start;margin-left:0;}
+
+/* #224 buscador de alimentos del creador de recetas */
+.rc-ing{position:relative;}
+.rc-ing.rc-ok{grid-template-columns:28px minmax(0,1fr) 84px 38px;}
+.rc-ing-emo{font-size:20px;text-align:center;}
+.rc-ing-k{grid-column:1/-1;margin:-2px 0 2px 36px;font:600 11.5px var(--f-mono);color:var(--dim-55);}
+.rc-ing .rc-sin{grid-column:1/-1;}
+.rc-sug{position:absolute;left:0;right:46px;top:46px;z-index:30;max-height:300px;overflow-y:auto;background:var(--card);border:1.5px solid var(--accent-line);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.16);padding:4px;animation:plIn .16s ease-out;}
+.rc-ing.rc-ok .rc-sug{left:36px;}
+.rc-sug-g{position:sticky;top:-4px;background:var(--card);padding:8px 8px 4px;font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
+.rc-sug-it{display:flex;align-items:center;gap:10px;padding:8px;border-radius:9px;cursor:pointer;}
+.rc-sug-it:hover,.rc-sug-it.on{background:var(--accent-wash);}
+.rc-sug-e{font-size:20px;width:26px;text-align:center;flex:none;}
+.rc-sug-t{display:flex;flex-direction:column;min-width:0;flex:1;}
+.rc-sug-t b{font:600 14px var(--f-body);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rc-sug-t small{font:500 11.5px var(--f-mono);color:var(--dim-55);}
+.rc-sug-b{flex:none;font:700 10px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:99px;background:var(--wash-soft);color:var(--dim-55);}
+.rc-sug-vacio{padding:12px;font-size:13px;color:var(--dim-55);}
+@media (prefers-reduced-motion:reduce){ .rc-sug{animation:none;} }
