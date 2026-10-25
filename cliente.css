@@ -958,3 +958,12 @@ html.chat-pro-movil #coachBarName{font-size:14px;}
 
 /* Chat 14 · ordenador: la lista de chats algo más ancha (si no la has ajustado a mano con la barra) */
 html.esc:not([style*="--esc-lista"]) #view-coach-chats.esc-izq{flex:0 0 clamp(380px, 31vw, 440px) !important;}
+
+/* Chat · tarjeta de YouTube */
+.yt-card{display:block;margin-top:8px;max-width:300px;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;}
+.yt-img{position:relative;display:block;aspect-ratio:16/9;background:#111;}
+.yt-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.yt-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:34px;border-radius:9px;background:rgba(220,0,0,.9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.yt-txt{display:flex;flex-direction:column;gap:2px;padding:8px 10px;}
+.yt-txt b{font:700 13.5px var(--f-body);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.yt-txt small{font:500 11px var(--f-mono);color:var(--dim-55);}
