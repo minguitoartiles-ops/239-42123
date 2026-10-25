@@ -499,16 +499,25 @@ function abrirAjustesCoach(){
 const PH = function(t){ return '<span class="ph">[' + t + ']</span>'; };
 const TITULAR = {
   nombre: 'Domingo Artiles Bordón',
-  nif: '45374373L',
-  direccion: 'Calle Juan XXIII n.º 33, 3.º B, 35110 Santa Lucía de Tirajana (Las Palmas)',
   correo: 'fitnessindramas@gmail.com',
   marca: 'Fitnessindramas'
 };
+/* 25/10/2026 · el NIF y el domicilio del titular ya no están en el código (el repositorio es público):
+   se leen de «Datos de facturación», que se guardan solo en el dispositivo de Domingo.
+   En los demás dispositivos se indica que se facilitan a petición por correo. */
+function legalPrivacidad(){
+  let e = {};
+  try { e = JSON.parse(localStorage.getItem('fsd_facturacion') || 'null') || {}; } catch(err){}
+  const fiscal = e.nif && e.dir
+    ? 'NIF ' + esc(e.nif) + ', con domicilio en ' + esc(e.dir)
+    : 'cuyos NIF y domicilio se facilitan a petición escribiendo a ' + TITULAR.correo;
+  return LEGAL_PRIVACIDAD.replace('{{TITULAR_FISCAL}}', fiscal);
+}
 const LEGAL_PRIVACIDAD =
   '<p class="legal-meta">Última actualización: 21 de octubre de 2026</p>'
 + '<p class="legal-aviso">Versión de prueba: por ahora los datos se guardan solo en este dispositivo y no se envían a ningún servidor.</p>'
 + '<h4>1. Responsable del tratamiento</h4>'
-+ '<p><b>' + TITULAR.nombre + '</b>, profesional autónomo, NIF ' + TITULAR.nif + ', con domicilio en ' + TITULAR.direccion + '. Nombre comercial: ' + TITULAR.marca + '. Contacto: <b>' + TITULAR.correo + '</b>.</p>'
++ '<p><b>' + TITULAR.nombre + '</b>, profesional autónomo, {{TITULAR_FISCAL}}. Nombre comercial: ' + TITULAR.marca + '. Contacto: <b>' + TITULAR.correo + '</b>.</p>'
 + '<p>El servicio lo prestan dos profesionales autónomos: Domingo, entrenador, y Fátima, dietista-nutricionista. Cada uno accede solo a los datos que necesita para su parte del asesoramiento.</p>'
 + '<h4>2. Qué datos tratamos</h4>'
 + '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono, código de acceso y, si la añades, tu foto de perfil.</li>'
@@ -581,7 +590,7 @@ const LEGAL_COOKIES =
 function abrirLegal(tipo){
   const cookies = tipo === 'cookies';
   document.getElementById('legalTitulo').textContent = cookies ? 'Política de cookies' : 'Política de privacidad';
-  document.getElementById('legalCuerpo').innerHTML = cookies ? LEGAL_COOKIES : LEGAL_PRIVACIDAD;
+  document.getElementById('legalCuerpo').innerHTML = cookies ? LEGAL_COOKIES : legalPrivacidad();
   const ov = document.getElementById('legalOverlay');
   ov.classList.add('show');
   const s = ov.querySelector('.fsd-sheet');
