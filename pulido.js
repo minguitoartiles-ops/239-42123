@@ -582,3 +582,33 @@ function puGaleriaBotones(){
   const orig = window[n];
   window[n] = function(){ const r = orig.apply(this, arguments); setTimeout(function(){ try { puGaleriaBotones(); } catch(e){} }, 50); return r; };
 });
+/* chat 13 · borrador por cliente: lo que dejas a medio escribir sigue ahí al volver (solo en este dispositivo) */
+const PU_BORR_KEY = 'fsd_borradores';
+function puBorrClave(){ return clienteActual ? ((coachActivo && isCoachView()) ? 'pro:' + norm(coachActivo.u) : 'cli') + ':' + clienteActual : null; }
+function puBorrLeer(){ try { return JSON.parse(localStorage.getItem(PU_BORR_KEY) || '{}') || {}; } catch(e){ return {}; } }
+function puBorrGuardar(txt){
+  const k = puBorrClave(); if (!k) return;
+  const b = puBorrLeer();
+  if (txt && txt.trim()) b[k] = txt.slice(0, 4000); else delete b[k];
+  try { localStorage.setItem(PU_BORR_KEY, JSON.stringify(b)); } catch(e){}
+}
+let puBorrT = null;
+(function(){
+  const i = document.getElementById('chatInput'); if (!i) return;
+  i.addEventListener('input', function(){ if (i.dataset.puRest) return; clearTimeout(puBorrT); const v = i.value; puBorrT = setTimeout(function(){ puBorrGuardar(v); }, 250); });
+})();
+function puBorrPoner(){
+  const i = document.getElementById('chatInput'), k = puBorrClave(); if (!i || !k) return;
+  const v = puBorrLeer()[k] || '';
+  if (i.dataset.puK === k && i.value) return;            // ya es el de este chat
+  i.dataset.puK = k;
+  if (i.value === v) return;
+  clearTimeout(puBorrT);
+  i.dataset.puRest = '1'; i.value = v; i.dispatchEvent(new Event('input', { bubbles: true })); delete i.dataset.puRest;
+}
+sendMsg = (function(orig){ return function(){ const r = orig.apply(this, arguments); clearTimeout(puBorrT); puBorrGuardar(''); return r; }; })(sendMsg);
+['abrirChatPro', 'verConversacion', 'goTo'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(v){ const r = orig.apply(this, arguments); if (n !== 'goTo' || v === 'chat') setTimeout(function(){ try { puBorrPoner(); } catch(e){} }, 30); return r; };
+});
