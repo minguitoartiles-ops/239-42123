@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.77.0 (actual)
-Cambios acumulados hacia la 0.78: **1 de 10**
+## Versión 0.77.1 (actual)
+Cambios acumulados hacia la 0.78: **2 de 10**
 
 ### Hacia la 0.78
 1. 25/10/2026 18:40 · Chat en el móvil de Domingo y Fátima: cabecera de una sola línea (Volver · foto · nombre · Ficha, Plan y Seguimientos); fuera el nombre repetido y el bloque grande de arriba → **0.77.0-1 (caché)**
+2. 25/10/2026 18:55 · Chat en el móvil de Domingo y Fátima: se mantiene la barra principal (Clientes · Seguimientos · Entrenos/Nutrición · Chats · Más) con «Chats» marcado; al cambiar de sección se sale del cliente guardando, como con «Volver» → **0.77.1**
 
 ## Versión 0.76 → 0.77.0
 

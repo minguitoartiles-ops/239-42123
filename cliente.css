@@ -910,3 +910,4 @@ html.chat-pro-movil .chat-acc-pro button{display:flex;flex-direction:column;alig
 html.chat-pro-movil .chat-acc-pro button span{font-size:16px;line-height:1;}
 html.chat-pro-movil .chat-acc-pro button small{font:600 9.5px var(--f-mono);letter-spacing:.02em;margin-top:2px;color:var(--dim-55);}
 html.chat-pro-movil .chat-acc-pro button:active{transform:scale(.95);}
+html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !important;}
