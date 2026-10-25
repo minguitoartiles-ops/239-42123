@@ -717,3 +717,20 @@ html.esc .ds-bar{bottom:24px;}
 .nh-ahora-cta{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;color:#2E7D4F;}
 @media (max-width:360px){.nh-anillos{grid-template-columns:1fr;justify-items:center;}.nh-macros{width:100%;}}
 #nhCard + #planResumen{display:none;}   /* la tarjeta «Hoy» ya muestra el objetivo */
+
+/* lista de la compra y sustituciones */
+.nh-compra-btn{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;padding:11px 14px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);font:600 13.5px var(--f-body);cursor:pointer;}
+.nh-compra-btn span{font-size:18px;color:var(--accent);}
+.nh-compra{max-width:520px;}
+.nh-compra-nota{margin:0;font:500 12.5px var(--f-body);color:var(--dim-6);}
+.nh-compra-lista{overflow:auto;display:flex;flex-direction:column;gap:12px;}
+.nh-compra-gt{font:600 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim-55);margin:0 0 4px;}
+.nh-compra-f{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;}
+.nh-compra-f input{width:20px;height:20px;accent-color:var(--accent);flex:none;}
+.nh-compra-n{flex:1;font:500 14.5px var(--f-body);}
+.nh-compra-c{font:700 13px var(--f-mono);color:var(--dim-6);}
+.nh-compra-f.on .nh-compra-n,.nh-compra-f.on .nh-compra-c{text-decoration:line-through;opacity:.5;}
+.nh-compra-acts{display:flex;gap:8px;align-items:center;}
+.nh-compra-acts .btn-primary{flex:1;}
+.nh-compra-reset{border:none;background:none;color:var(--dim-6);font:600 12.5px var(--f-body);cursor:pointer;padding:8px;}
+#app:not(.coach-view) #comidasCont .meal-body.open::before{content:'Toca otra opción para cambiarla: la cantidad se ajusta sola.';display:block;margin:0 0 10px;font:500 12px var(--f-body);color:var(--dim-6);}

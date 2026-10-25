@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.74.2 (actual)
-Cambios acumulados hacia la 0.75: **5 de 10**
+## Versión 0.74.3 (actual)
+Cambios acumulados hacia la 0.75: **6 de 10**
 
 ### Hacia la 0.75
 1. 25/10/2026 10:45 · Ficha del cliente: «Sensaciones del día» y «Antes / Ahora» salen plegados con un resumen al lado (móvil y ordenador). En el ordenador «Antes / Ahora» sale igual que en el móvil cuando ese dispositivo tiene las fotos
@@ -12,6 +12,7 @@ Cambios acumulados hacia la 0.75: **5 de 10**
 3. 25/10/2026 10:45 · Ficha del cliente: accesos de arriba en el orden Seguimientos · Entreno · Chat (Domingo) y Seguimientos · Nutrición · Chat (Fátima)
 4. 25/10/2026 11:30 · Entreno del cliente: el peso de la semana pasada sale ya escrito en cada serie (✓ lo confirma); temporizador de descanso al marcar una serie (1:00 · 1:30 · 2:00 · 3:00, ±15 s, vibra y suena al acabar); la pantalla no se apaga mientras está en Entrenamiento → **0.74.2**
 5. 25/10/2026 12:15 · Nutrición del cliente: tarjeta «Hoy» arriba del plan con anillo de calorías tomadas y anillos de proteína, carbos y grasa (🥩 🍚 🥑), vasos de agua del día (objetivo según su peso) y «Ahora toca» con la comida de esta hora
+6. 25/10/2026 12:50 · Nutrición del cliente: «🛒 Lista de la compra» de la semana con lo elegido en cada comida × 7 días (agrupada, para ir tachando y copiar o compartir); al cambiar de opción en una comida avisa de la cantidad equivalente → **0.74.3**
 
 ## Versión 0.73 → 0.74.0
 
