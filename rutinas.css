@@ -168,3 +168,8 @@ html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15
 .ru-linea[hidden]{display:none;}
 .ru-linea::before,.ru-linea::after{content:"";position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--accent);}
 .ru-linea::before{left:-6px;} .ru-linea::after{right:-6px;}
+
+/* #232 variantes bajo su ejercicio principal */
+#pickerList .picker-item.ex-var{margin-left:18px;border-left:2px solid var(--accent-line);border-top-left-radius:0;border-bottom-left-radius:0;}
+#pickerList .picker-item.ex-var .picker-item-name::before{content:'↳ ';color:var(--dim-55);}
+.ex-var-de{display:block;font:500 11px var(--f-mono);color:var(--dim-55);margin-top:1px;}
