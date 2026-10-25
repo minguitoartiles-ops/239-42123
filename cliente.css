@@ -967,3 +967,7 @@ html.esc:not([style*="--esc-lista"]) #view-coach-chats.esc-izq{flex:0 0 clamp(38
 .yt-txt{display:flex;flex-direction:column;gap:2px;padding:8px 10px;}
 .yt-txt b{font:700 13.5px var(--f-body);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .yt-txt small{font:500 11px var(--f-mono);color:var(--dim-55);}
+
+/* Peso actual y próxima revisión, aparte y arriba */
+.stat-row.fp-peso-arriba{margin:6px 0 14px;}
+html.esc .esc-col > .stat-row.fp-peso-arriba{margin:0 0 14px;}

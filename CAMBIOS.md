@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.78.0 (actual)
-Cambios acumulados hacia la 0.79: **1 de 10**
+## Versión 0.78.1 (actual)
+Cambios acumulados hacia la 0.79: **2 de 10**
 
 ### Hacia la 0.79
 1. 25/10/2026 16:20 · Chat: los enlaces de YouTube muestran una tarjeta con la portada y el título del vídeo (se abre en YouTube al tocarla). Seguridad: la política de contenido permite solo las portadas de i.ytimg.com y los títulos de www.youtube.com → **0.78.0-1 (caché)**
+2. 25/10/2026 16:30 · Ficha del cliente: «Peso actual» y «Próxima revisión» aparte y arriba del todo, encima de «Evolución» y «Sensaciones del día» (en el ordenador, fuera de la tarjeta) → **0.78.1**
 
 ## Versión 0.77 → 0.78.0
 
