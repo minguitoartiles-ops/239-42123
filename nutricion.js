@@ -107,12 +107,25 @@ function nuRepartoManual(){
 }
 
 /* ---------- cálculo de un plan (en pantalla o guardado) ---------- */
+const NU_MAX_COMBINAR = 3;
 function nuColumnas(block){
   return Array.prototype.map.call(block.querySelectorAll('.macro-group'), function(g){
     const chips = Array.prototype.filter.call(g.querySelectorAll('.chip'), function(ch){ return !ch.classList.contains('chip-add'); });
     const items = chips.map(function(ch){ return { chip: ch, nombre: chipName(ch), info: foodInfo(chipName(ch)), sel: ch.classList.contains('selected') }; })
       .filter(function(o){ return o.info; });
-    const ref = items.filter(function(o){ return o.sel; })[0] || items[0] || null;
+    const sels = items.filter(function(o){ return o.sel; }).slice(0, NU_MAX_COMBINAR);
+    let ref = sels[0] || items[0] || null;
+    /* #226 · hasta 3 opciones elegidas en la misma fila: cuentan como un «alimento mezcla» y cada una aporta
+       la misma cantidad del macronutriente de la fila (si alguna casi no lo tiene, a partes iguales en gramos) */
+    const fijo = items.some(function(o){ return mjNum(o.chip.dataset.fijo) > 0; });
+    if (sels.length > 1 && !fijo) {
+      const m = g.querySelector('.chip.protein:not(.chip-add)') ? 'p' : (g.querySelector('.chip.fat:not(.chip-add)') ? 'f' : 'c');
+      const porMacro = sels.every(function(o){ return o.info[m] >= 1; });
+      const parts = sels.map(function(o){ return { o: o, k: porMacro ? 100 / o.info[m] : 1 }; });
+      const info = { p: 0, c: 0, f: 0 };
+      parts.forEach(function(x){ info.p += x.o.info.p * x.k; info.c += x.o.info.c * x.k; info.f += x.o.info.f * x.k; });
+      ref = { nombre: sels.map(function(o){ return o.nombre; }).join(' + '), info: info, parts: parts, chip: sels[0].chip };
+    }
     return { items: items, ref: ref };
   });
 }
@@ -146,21 +159,23 @@ function nuCalcularPlan(cont, obj, reparto, pintar){
     };
     const gLib = nuResolver(libres.map(function(c){ return nuMacros(c.ref.info); }), tRest);
     const grDe = new Map();
-    libres.forEach(function(c, j){ grDe.set(c.ref, nuRedondear(gLib[j])); });
+    libres.forEach(function(c, j){ grDe.set(c.ref, c.ref.parts ? gLib[j] : nuRedondear(gLib[j])); });
     cols.forEach(function(c){ if (c.fijo && c.ref) grDe.set(c.ref, equivalente(c.ref, c)); });
     com.fijados = cols.filter(function(c){ return c.fijo; }).length;
     refs.forEach(function(o){
       const gr = grDe.get(o) || 0;
-      com.p += o.info.p * gr / 100; com.c += o.info.c * gr / 100; com.f += o.info.f * gr / 100;
-      com.refs.push({ nombre: o.nombre, g: gr });
-      if (pintar) nuQty(o.chip, gr);
+      (o.parts ? o.parts.map(function(x){ return { o: x.o, g: nuRedondear(gr * x.k) }; }) : [{ o: o, g: gr }]).forEach(function(x){
+        com.p += x.o.info.p * x.g / 100; com.c += x.o.info.c * x.g / 100; com.f += x.o.info.f * x.g / 100;
+        com.refs.push({ nombre: x.o.nombre, g: x.g });
+        if (pintar) nuQty(x.o.chip, x.g);
+      });
     });
     com.kcal = Math.round(com.p * 4 + com.c * 4 + com.f * 9);
     if (pintar) {
       // cada alternativa: lo que hay que comer de ella para que, con las otras filas, la comida siga cuadrando
       cols.forEach(function(col, ci){
         col.items.forEach(function(o){
-          if (o === col.ref) return;
+          if (o === col.ref || (col.ref && col.ref.parts && col.ref.parts.some(function(x){ return x.o === o; }))) return;
           if (col.fijo) { nuQty(o.chip, equivalente(o, col)); return; }
           const comb = libres.map(function(c2){ return c2 === col ? o : c2.ref; });
           const g2 = nuResolver(comb.map(function(x){ return nuMacros(x.info); }), tRest);

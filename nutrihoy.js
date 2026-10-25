@@ -97,12 +97,14 @@ function nhLista(){
   const l = {};
   mealBlocks().forEach(function(b){
     Array.prototype.forEach.call(b.querySelectorAll('.macro-group'), function(g){
-      const ch = nhElegido(g); if (!ch) return;
-      const n = chipName(ch); if (!n) return;
-      const tipo = (NH_GRUPOS.filter(function(x){ return ch.classList.contains(x[0]); })[0] || NH_GRUPOS[1])[0];
-      const key = norm(n);
-      const x = l[key] = l[key] || { n: n, tipo: tipo, g: 0, veces: 0 };
-      x.g += nhGramos(ch); x.veces++;
+      const sel = g.querySelectorAll('.chip.selected');
+      (sel.length ? Array.prototype.slice.call(sel) : [nhElegido(g)].filter(Boolean)).forEach(function(ch){
+        const n = chipName(ch); if (!n) return;
+        const tipo = (NH_GRUPOS.filter(function(x){ return ch.classList.contains(x[0]); })[0] || NH_GRUPOS[1])[0];
+        const key = norm(n);
+        const x = l[key] = l[key] || { n: n, tipo: tipo, g: 0, veces: 0 };
+        x.g += nhGramos(ch); x.veces++;
+      });
     });
   });
   return Object.keys(l).map(function(k){ return l[k]; });

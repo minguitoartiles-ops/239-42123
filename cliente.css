@@ -733,7 +733,7 @@ html.esc .ds-bar{bottom:24px;}
 .nh-compra-acts{display:flex;gap:8px;align-items:center;}
 .nh-compra-acts .btn-primary{flex:1;}
 .nh-compra-reset{border:none;background:none;color:var(--dim-6);font:600 12.5px var(--f-body);cursor:pointer;padding:8px;}
-#app:not(.coach-view) #comidasCont .meal-body.open::before{content:'Toca otra opción para cambiarla: la cantidad se ajusta sola.';display:block;margin:0 0 10px;font:500 12px var(--f-body);color:var(--dim-6);}
+#app:not(.coach-view) #comidasCont .meal-body.open::before{content:'Toca una opción para añadirla o quitarla: puedes combinar hasta 3 por fila y las cantidades se ajustan solas.';display:block;margin:0 0 10px;font:500 12px var(--f-body);color:var(--dim-6);}
 
 /* bienvenida del cliente */
 .ob-capa{position:fixed;inset:0;z-index:330;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 20px calc(24px + env(safe-area-inset-bottom));overflow:auto;}
