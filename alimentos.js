@@ -248,6 +248,7 @@ renderFoodList = (function(orig){
    y, si no encaja ninguno, el de su macronutriente. Se ve en el buscador y en las opciones del plan.
    ========================================================= */
 const ALIM_TIPOS = [
+  [/^aceite de coco|^leche de coco/, '🥥'], [/^aceite/, '🫒'], [/ghee|^mantequilla$/, '🧈'], [/^nata/, '🥛'], [/pesto/, '🌿'],
   [/batido de prote|whey|protein drink/, '🥤'], [/pudding|postre/, '🍮'],
   [/atun|sardina|boqueron|caballa|salmon|merluza|bacalao|lubina|dorada|rape|lenguado|trucha|pescado/, '🐟'],
   [/gamba|langostino/, '🦐'], [/calamar|sepia|pulpo/, '🦑'], [/mejillon|almeja/, '🦪'],
@@ -295,3 +296,55 @@ function alimEmoChips(raiz){
     if (window.MutationObserver) new MutationObserver(mirar).observe(c, { childList: true, subtree: true });
   });
 })();
+
+/* =========================================================
+   #220 Más salsas y fuentes de grasa (25/10/2026)
+   · Genéricos: valores de referencia por 100 g (tablas de composición: BEDCA y USDA cuando BEDCA no lo recoge).
+   · Supermercado: Open Food Facts (ODbL), con su ficha.
+   Van en la fila de su macronutriente principal, como cualquier alimento. Fuera los condimentos casi sin calorías
+   (vinagre, salsa de soja, mostaza…): el cálculo de cantidades daría raciones absurdas.
+   ========================================================= */
+const ALIM_GRASAS = [
+  ['Aceite de oliva virgen extra', 0, 0, 100],
+  ['Aceite de girasol', 0, 0, 100],
+  ['Aceite de aguacate', 0, 0, 100],
+  ['Aceite de sésamo', 0, 0, 100],
+  ['Ghee (mantequilla clarificada)', 0.3, 0, 99.5],
+  ['Nata para cocinar 18%', 2.5, 3.5, 18],
+  ['Nata para montar 35%', 2.1, 3, 35],
+  ['Queso crema para untar', 6, 4, 24],
+  ['Queso parmesano', 35.6, 0, 25.8],
+  ['Coco fresco', 3.3, 6.2, 33.5],
+  ['Leche de coco', 2, 3, 21],
+  ['Semillas de cáñamo peladas', 31.6, 8.7, 48.8],
+  ['Crema de anacardo', 17.6, 27.6, 49.4],
+  ['Mayonesa', 1, 0.6, 75],
+  ['Ketchup', 1.1, 25, 0.1],
+  ['Salsa barbacoa', 0.8, 40, 0.6],
+  ['Pesto', 5, 6, 45],
+  ['Guacamole', 1.6, 5, 14]
+];
+const ALIM_SALSAS_SUPER = [
+  ['Tomate frito (Mercadona Hacendado)', 1.5, 9.5, 3.5, 'https://world.openfoodfacts.org/product/8480000171511'],
+  ['Mayonesa ligera (Mercadona Hacendado)', 0.6, 6.6, 25.8, 'https://world.openfoodfacts.org/product/8480000170835'],
+  ['Salsa light (Mercadona Hacendado)', 0.7, 6.5, 31, 'https://world.openfoodfacts.org/product/8480000157942'],
+  ['Guacamole (Mercadona Hacendado)', 1.9, 2, 13.7, 'https://es-ca.openfoodfacts.org/product/8480000038524'],
+  ['Pesto salsa fresca (Mercadona Hacendado)', 4, 11, 51, 'https://world.openfoodfacts.org/product/8480000174192'],
+  ['Salsa kétchup (Mercadona Hacendado)', 1.3, 24, 0.2, 'https://world.openfoodfacts.org/product/8480000173980']
+];
+(function(){
+  ALIM_GRASAS.forEach(function(x){
+    if (!foodInfo(x[0])) FOOD_CATALOG.push({ n: x[0], p: x[1], c: x[2], f: x[3], g: nuGrupoPorMacros(x[1], x[2], x[3]), ref: 'BEDCA/USDA' });
+  });
+  ALIM_SALSAS_SUPER.forEach(function(x){
+    if (!foodInfo(x[0])) FOOD_CATALOG.push({ n: x[0], p: x[1], c: x[2], f: x[3], g: nuGrupoPorMacros(x[1], x[2], x[3]), super: true, fuente: x[4] });
+  });
+})();
+NU_ALERGENOS.push(
+  [/nata|queso crema|parmesano|ghee/i, ['leche', 'lactosa']],
+  [/mayonesa|salsa light/i, ['huevo']],
+  [/pesto/i, ['leche', 'frutoscascara']],
+  [/anacardo/i, ['frutoscascara']],
+  [/s[eé]samo/i, ['sesamo']],
+  [/mostaza/i, ['mostaza']]
+);

@@ -328,3 +328,91 @@ if (typeof abrirLegal === 'function') abrirLegal = (function(orig){
 })(abrirLegal);
 
 rcRefrescar();
+
+/* =========================================================
+   #224 Creador de recetas: buscador propio de alimentos (el mismo catálogo que los planes de nutrición,
+   con los alimentos propios de Fátima), con emoji del tipo de alimento, calorías y macros por 100 g,
+   agrupado por macronutriente y manejable con teclado. Sustituye a la lista nativa del navegador.
+   ========================================================= */
+const RC_GRUPOS = [['p', '🥩 Proteína'], ['c', '🍚 Hidratos'], ['f', '🥑 Grasa']];
+function rcEmo(n, g){ return typeof alimEmoji === 'function' ? alimEmoji(n, g) : '🍽️'; }
+function rcBuscar(q){
+  q = norm(String(q || '').trim());
+  const pal = q.split(/\s+/).filter(function(w){ return w && ['de', 'del', 'la', 'el', 'y', 'con'].indexOf(w) < 0; });
+  const l = FOOD_CATALOG.filter(function(o){ const n = norm(o.n); return pal.every(function(w){ return n.indexOf(w) > -1; }); });
+  l.sort(function(a, b){
+    const ia = q ? (norm(a.n).indexOf(q) === 0 ? 0 : 1) : 0, ib = q ? (norm(b.n).indexOf(q) === 0 ? 0 : 1) : 0;
+    return ia - ib || a.n.localeCompare(b.n, 'es');
+  });
+  return l;
+}
+function rcSugCerrar(){ Array.prototype.forEach.call(document.querySelectorAll('.rc-sug'), function(s){ s.remove(); }); Array.prototype.forEach.call(document.querySelectorAll('.rc-ing-n[aria-expanded="true"]'), function(i){ i.setAttribute('aria-expanded', 'false'); }); }
+function rcSugAbrir(inp){
+  rcSugCerrar();
+  const fila = inp.closest('.rc-ing'); if (!fila) return;
+  const k = +fila.dataset.k, q = inp.value.trim(), l = rcBuscar(q);
+  const s = document.createElement('div'); s.className = 'rc-sug'; s.id = 'rcSug'; s.setAttribute('role', 'listbox');
+  const item = function(o){
+    return '<div class="rc-sug-it" role="option" data-n="' + esc(o.n) + '">'
+      + '<span class="rc-sug-e" aria-hidden="true">' + rcEmo(o.n, o.g) + '</span>'
+      + '<span class="rc-sug-t"><b>' + esc(o.n) + '</b><small>' + foodKcal(o) + ' kcal · P ' + o.p + ' · C ' + o.c + ' · G ' + o.f + ' /100 g</small></span>'
+      + (o.custom ? '<span class="rc-sug-b">Propio</span>' : (o.super ? '<span class="rc-sug-b">Súper</span>' : '')) + '</div>';
+  };
+  let h = '';
+  if (!l.length) h = '<div class="rc-sug-vacio">Ningún alimento coincide. Puedes dejarlo escrito (especias, «al gusto»): no cuenta en las calorías.</div>';
+  else if (q) h = l.slice(0, 60).map(item).join('');
+  else RC_GRUPOS.forEach(function(g){ const x = l.filter(function(o){ return o.g === g[0]; }); if (x.length) h += '<div class="rc-sug-g">' + g[1] + '</div>' + x.map(item).join(''); });
+  s.innerHTML = h;
+  fila.appendChild(s);
+  inp.setAttribute('aria-expanded', 'true'); inp.setAttribute('aria-controls', 'rcSug');
+  s.addEventListener('mousedown', function(e){ e.preventDefault(); });
+  Array.prototype.forEach.call(s.querySelectorAll('.rc-sug-it'), function(it){
+    it.addEventListener('click', function(){ rcSugElegir(k, it.dataset.n); });
+  });
+}
+function rcSugElegir(k, n){
+  rcSugCerrar();
+  rcBorr.ing[k].n = n;
+  rcIngPintar();
+  const g = document.querySelector('#rcIngs .rc-ing[data-k="' + k + '"] .rc-ing-g');
+  if (g) { g.focus(); g.select(); }
+}
+function rcSugMover(inp, d){
+  const s = document.getElementById('rcSug'); if (!s) { rcSugAbrir(inp); return; }
+  const its = Array.prototype.slice.call(s.querySelectorAll('.rc-sug-it')); if (!its.length) return;
+  let i = its.findIndex(function(x){ return x.classList.contains('on'); });
+  if (i > -1) its[i].classList.remove('on');
+  i = Math.max(0, Math.min(its.length - 1, i + d));
+  its[i].classList.add('on'); its[i].scrollIntoView({ block: 'nearest' });
+}
+rcIngPintar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const c = document.getElementById('rcIngs'); if (!c) return r;
+    Array.prototype.forEach.call(c.querySelectorAll('.rc-ing'), function(f){
+      const k = +f.dataset.k, inp = f.querySelector('.rc-ing-n'), ing = rcBorr.ing[k];
+      inp.removeAttribute('list'); inp.setAttribute('role', 'combobox'); inp.setAttribute('aria-autocomplete', 'list'); inp.setAttribute('aria-expanded', 'false'); inp.autocomplete = 'off';
+      const inf = ing && ing.n ? rcIngInfo(ing.n) : null;
+      if (inf) {
+        f.classList.add('rc-ok');
+        inp.insertAdjacentHTML('beforebegin', '<span class="rc-ing-emo" aria-hidden="true">' + rcEmo(inf.n, inf.g) + '</span>');
+        const g = mjNum(ing.g);
+        if (g) f.insertAdjacentHTML('beforeend', '<small class="rc-ing-k">' + Math.round(foodKcal(inf) * g / 100) + ' kcal · P ' + Math.round(inf.p * g / 100) + ' · C ' + Math.round(inf.c * g / 100) + ' · G ' + Math.round(inf.f * g / 100) + '</small>');
+      }
+      const prev = inp.oninput;
+      inp.oninput = function(){ if (prev) prev.call(this); rcSugAbrir(this); };
+      inp.onfocus = function(){ if (!this.value) rcSugAbrir(this); };
+      inp.onclick = function(){ rcSugAbrir(this); };
+      inp.onblur = function(){ setTimeout(rcSugCerrar, 120); };
+      inp.onkeydown = function(e){
+        if (e.key === 'ArrowDown') { e.preventDefault(); rcSugMover(this, 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); rcSugMover(this, -1); }
+        else if (e.key === 'Enter') { const on = document.querySelector('#rcSug .rc-sug-it.on') || (this.value.trim() && document.querySelector('#rcSug .rc-sug-it')); if (on) { e.preventDefault(); rcSugElegir(k, on.dataset.n); } }
+        else if (e.key === 'Escape') { if (document.getElementById('rcSug')) { e.preventDefault(); e.stopPropagation(); rcSugCerrar(); } }
+      };
+      const gi = f.querySelector('.rc-ing-g'), pg = gi.oninput;
+      gi.onchange = function(){ rcIngPintar(); };
+    });
+    return r;
+  };
+})(rcIngPintar);
