@@ -86,8 +86,9 @@ function exPintarHoyToca(){
     const t = ((b.querySelector('.meal-block-title') || {}).textContent || 'Comida').trim();
     const kcal = Math.round((+b.dataset.mp || 0) * 4 + (+b.dataset.mc || 0) * 4 + (+b.dataset.mf || 0) * 9);
     const el = Array.prototype.map.call(b.querySelectorAll('.macro-group'), function(g){
-      const ch = g.querySelector('.chip.selected') || g.querySelector('.chip:not(.chip-add)');
-      return ch ? chipName(ch) : null;
+      const sel = g.querySelectorAll('.chip.selected');
+      const chs = sel.length ? Array.prototype.slice.call(sel) : [g.querySelector('.chip:not(.chip-add)')].filter(Boolean);
+      return chs.length ? chs.map(chipName).join(' + ') : null;
     }).filter(Boolean);
     const tomadas = mealBlocks().filter(function(x){ return x.classList.contains('eaten'); }).length;
     h += '<button type="button" class="ht-card ht-nut" onclick="exAbrirComida(' + i + ')">'
@@ -285,10 +286,10 @@ function exResumenComidas(){
     let r = head.querySelector('.meal-elegidas');
     if (!r) { r = document.createElement('div'); r.className = 'meal-elegidas'; head.appendChild(r); }
     const el = Array.prototype.map.call(b.querySelectorAll('.macro-group'), function(g){
-      const ch = g.querySelector('.chip.selected') || g.querySelector('.chip:not(.chip-add)');
-      if (!ch) return null;
-      const q = ch.querySelector('.chip-qty');
-      return chipName(ch) + (q ? ' ' + q.textContent.replace('·', '').replace('📌', '').trim() : '');
+      const sel = g.querySelectorAll('.chip.selected');
+      const chs = sel.length ? Array.prototype.slice.call(sel) : [g.querySelector('.chip:not(.chip-add)')].filter(Boolean);
+      if (!chs.length) return null;
+      return chs.map(function(ch){ const q = ch.querySelector('.chip-qty'); return chipName(ch) + (q ? ' ' + q.textContent.replace('·', '').replace('📌', '').trim() : ''); }).join(' + ');
     }).filter(Boolean);
     r.textContent = el.join(' · ');
   });

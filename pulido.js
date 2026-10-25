@@ -237,3 +237,36 @@ function puChatEsc(){
   window.addEventListener('resize', puChatEsc);
 })();
 abrirTabPro = (function(orig){ return function(){ const r = orig.apply(this, arguments); puChatEsc(); return r; }; })(abrirTabPro);
+
+/* =========================================================
+   #226 Hasta 3 opciones por fila (proteína, hidratos o grasa) en cada comida
+   Tocar una opción la añade o la quita; la cantidad de la fila se reparte entre las elegidas
+   para que la comida siga cuadrando (cliente, y Fátima en modo edición).
+   ========================================================= */
+function puRecalcComida(mb){
+  try { if (mb) updateMealSummary(mb); } catch(e){}
+  try { calcularPlan(); } catch(e){}
+  try { if (typeof exResumenComidas === 'function') exResumenComidas(); } catch(e){}
+  try { if (typeof pintarResumenGramos === 'function') pintarResumenGramos(); } catch(e){}
+  try { if (typeof nhPintar === 'function') nhPintar(); } catch(e){}
+  try { if (isCoachView() && typeof enUndoRegistrar === 'function') enUndoRegistrar(); } catch(e){}
+  if (!isCoachView()) { try { programarGuardado(); } catch(e){} }
+}
+pick = (function(orig){
+  return function(el){
+    const g = el && el.closest && el.closest('#comidasCont .macro-group');
+    if (!g || (isCoachView() && !coachEditing)) return orig.apply(this, arguments);
+    const sel = Array.prototype.slice.call(g.querySelectorAll('.chip.selected'));
+    const mb = el.closest('.meal-block');
+    if (el.classList.contains('selected')) {
+      if (sel.length > 1) { el.classList.remove('selected'); puRecalcComida(mb); toast('Quitado: ' + chipName(el)); return; }
+      if (isCoachView()) return orig.apply(this, arguments);           // Fátima puede dejar la fila sin elegir
+      toast('Deja al menos una opción en cada fila'); return;
+    }
+    if (!sel.length) return orig.apply(this, arguments);
+    if (sel.length >= NU_MAX_COMBINAR) { toast('Puedes combinar hasta ' + NU_MAX_COMBINAR + ' opciones: quita una antes'); return; }
+    el.classList.add('selected');
+    puRecalcComida(mb);
+    toast('Añadido: ' + chipName(el) + ' · ahora combinas ' + (sel.length + 1));
+  };
+})(pick);
