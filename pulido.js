@@ -320,3 +320,23 @@ abrirTabPro = (function(orig){
   const c = document.getElementById('content');
   if (c && window.MutationObserver) new MutationObserver(function(){ try { pintarTabsPro(); } catch(e){} }).observe(c, { attributes: true, attributeFilter: ['class'] });
 })();
+/* chat 3 · lista de chats con tres niveles: normal (<24 h), ámbar (24-48 h) y rojo (+48 h); el aviso sale una sola vez */
+const PU_CHAT_AMBAR_H = 24;
+pintarChatsPro = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const cont = document.getElementById('chatsPro'); if (!cont) return r;
+    const datos = {}; datosChats().forEach(function(x){ datos[x.k] = x; });
+    Array.prototype.forEach.call(cont.querySelectorAll('.chat-fila'), function(f){
+      const m = (f.getAttribute('onclick') || '').match(/abrirChatPro\('([^']+)'\)/); const x = m && datos[m[1]]; if (!x) return;
+      f.classList.remove('rojo', 'espera', 'nv-amb', 'nv-roj');
+      const t = f.querySelector('.chat-fila-t'), est = f.querySelector('.chat-fila-est:not(.dd-fila)');
+      if (!x.esp) return;
+      const nivel = x.h >= ESPERA_ROJA_H ? 'nv-roj' : (x.h >= PU_CHAT_AMBAR_H ? 'nv-amb' : 'espera');
+      f.classList.add(nivel);
+      if (t) t.textContent = '';                                     // el tiempo ya va en el aviso
+      if (est) est.textContent = nivel === 'espera' ? 'Esperando tu respuesta · ' + textoEspera(x.h) : (nivel === 'nv-roj' ? '⚠️ ' : '⏱ ') + 'Sin contestar · ' + textoEspera(x.h).replace('hace ', '');
+    });
+    return r;
+  };
+})(pintarChatsPro);

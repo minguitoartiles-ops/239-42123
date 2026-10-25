@@ -911,3 +911,11 @@ html.chat-pro-movil .chat-acc-pro button span{font-size:16px;line-height:1;}
 html.chat-pro-movil .chat-acc-pro button small{font:600 9.5px var(--f-mono);letter-spacing:.02em;margin-top:2px;color:var(--dim-55);}
 html.chat-pro-movil .chat-acc-pro button:active{transform:scale(.95);}
 html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !important;}
+
+/* Chat 3 · niveles de espera en la lista de chats */
+.chat-fila.espera{border-color:var(--line);border-left:4px solid var(--accent);}
+.chat-fila.nv-amb{border-color:var(--line);border-left:4px solid #E8894A;background:var(--card);}
+.chat-fila.nv-amb .chat-fila-est{background:rgba(232,137,74,.16);color:#B4561C;}
+.chat-fila.nv-roj{border-color:var(--line);border-left:4px solid var(--danger);background:var(--card);}
+.chat-fila.nv-roj .chat-fila-est{background:rgba(217,80,63,.12);color:var(--danger);}
+.chat-fila.espera .chat-fila-est{background:var(--accent-wash);color:var(--ink);}
