@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.75.0 (actual)
-Cambios acumulados hacia la 0.76: **1 de 10**
+## Versión 0.75.1 (actual)
+Cambios acumulados hacia la 0.76: **2 de 10**
 
 ### Hacia la 0.76
 1. 25/10/2026 15:30 · Planes de entrenamiento (Domingo): «Resumen del entrenamiento» y «Volumen semanal por músculo» salen plegados con su resumen y se abren al tocarlos (se recuerda lo abierto al cambiar de cliente)
+2. 25/10/2026 17:00 · Buscador de alimentos: 130 alimentos concretos nuevos (79 frescos y básicos con valores de referencia BEDCA —cada fruta y cada fruto seco por separado, pescados, mariscos, legumbres, cereales, gofio…— y 51 productos de Mercadona, Lidl, Carrefour, Dia, Alcampo, Eroski, Consum, HiperDino y bonÀrea con datos de Open Food Facts). Fuera las opciones ambiguas o repetidas («Fruta», «Frutos secos», «Pollo», «Huevos», «Legumbres», «Semillas»…), que en los planes se cambian por un alimento concreto con la cantidad recalculada → **0.75.1**
 
 ## Versión 0.74 → 0.75.0
 
