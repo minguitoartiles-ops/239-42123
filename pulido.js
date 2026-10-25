@@ -686,3 +686,5 @@ fpOrdenarArriba = (function(orig){
     return r;
   };
 })(fpOrdenarArriba);
+/* sin filtros en la ficha: siempre se ve todo */
+goToCliente = (function(orig){ return function(){ try { if (typeof enSeccion !== 'undefined' && enSeccion !== 'todo') { enSeccion = 'todo'; } } catch(e){} return orig.apply(this, arguments); }; })(goToCliente);

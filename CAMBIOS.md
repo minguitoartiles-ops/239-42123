@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.79.0 (actual)
-Cambios acumulados hacia la 0.80: **1 de 10**
+## Versión 0.79.1 (actual)
+Cambios acumulados hacia la 0.80: **2 de 10**
 
 ### Hacia la 0.80
 1. 25/10/2026 23:10 · Ficha en el móvil: al desplegar «Evolución», «Sensaciones del día» o «Antes / Ahora» con la pantalla desplazada, el navegador empujaba el título hacia arriba y parecía que se abría hacia arriba; ahora el título se queda quieto y el contenido aparece debajo (en toda la app) → **0.79.0-1 (caché)**
+2. 25/10/2026 23:15 · Ficha del cliente más limpia (móvil y ordenador): fuera «Semana X de 12 · objetivo», los filtros (Todo, Datos y medidas, Seguimiento…) y los resúmenes a la derecha de cada apartado plegable; la flecha queda a la derecha → **0.79.1**
 
 ## Versión 0.78 → 0.79.0
 
