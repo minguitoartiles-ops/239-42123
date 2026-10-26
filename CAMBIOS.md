@@ -4,7 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.82.0 (actual)
-Cambios acumulados hacia la 0.83: **0 de 10**
+Cambios acumulados hacia la 0.83: **1 de 10**
+
+### Hacia la 0.83
+1. 26/10/2026 21:45 · Ordenador del equipo: en un dispositivo marcado «Sin contraseña en este dispositivo», el código de un cliente entra directo a su app (vista de cliente con «👀 Vista de cliente · Salir»), sin el aviso de «solo móvil» ni la contraseña; sigue dentro al recargar hasta «Salir». En cualquier otro ordenador todo sigue igual (aviso y contraseña del profesional) → **0.82.0-1 (caché)**
 
 ## Versión 0.81 → 0.82.0
 
