@@ -172,7 +172,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.80.4</div>
+      <div class="app-version">Versión 0.81.0</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -525,8 +525,9 @@ if ('serviceWorker' in navigator) {
 
           <div class="sg-block">
             <div class="sg-cat">Bienestar</div>
-            <div class="sg-q"><label>¿Cómo ha sido tu descanso?</label></div>
-            <textarea class="sg-text" rows="3" placeholder="Me ha costado dormir, me he despertado varias veces, he dormido poco…"></textarea>
+            <div class="sg-q"><label>¿Cómo ha sido tu descanso?</label><span class="sg-help">1 es fatal, 10 es genial</span></div>
+            <div class="sg-range sg-desc"><input type="range" min="1" max="10" value="7" oninput="setRango(this,'rDescanso')" aria-label="Descanso del 1 al 10"><output id="rDescanso">7</output><span class="sg-de">/10</span></div>
+            <textarea class="sg-text" rows="2" placeholder="Opcional: me ha costado dormir, me he despertado varias veces…"></textarea>
 
             <div class="sg-q"><label>¿Cuál es tu nivel de estrés?</label><span class="sg-help">1 es nada, 10 es muy alto</span></div>
             <div class="sg-range"><input type="range" min="1" max="10" value="3" oninput="setRango(this,'rEstres')"><output id="rEstres">3</output><span class="sg-de">/10</span></div>
