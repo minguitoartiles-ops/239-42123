@@ -66,6 +66,15 @@ function fgPintar(){
 function fgColocar(g){
   g = g || document.getElementById('fichaGraf'); if (!g) return;
   const sens = document.getElementById('fichaSens');
+  // 26/10 · en el ordenador «Evolución» va en su propia tarjeta, encima de la de «Sensaciones del día»
+  const gs = sens && sens.closest('.esc-grupo[data-g="sens"]');
+  const seg = gs && gs.parentNode && gs.parentNode.querySelector(':scope > .esc-grupo[data-g="segui"]');
+  if (gs && seg) {
+    if (g.parentNode !== seg) seg.appendChild(g);
+    seg.hidden = false;
+    if (seg.nextElementSibling !== gs) gs.parentNode.insertBefore(seg, gs);
+    return;
+  }
   if (sens && sens.parentNode) { if (sens.previousElementSibling !== g) sens.parentNode.insertBefore(g, sens); return; }
   if (!g.parentNode) { const sec = document.getElementById('fichaSecciones'); if (sec) sec.insertAdjacentElement('afterend', g); }
 }

@@ -1150,3 +1150,10 @@ html.esc.mt-on .esc-chat-col{container-type:inline-size;container-name:mtchat;}
 @container mtchat (min-width: 560px){
   html.esc .esc-chat-col #view-chat .bubble{max-width:70%;}
 }
+/* 26/10 · multitarea: los accesos de la ficha ocupan el mismo ancho que las tarjetas de debajo */
+html.esc.mt-on .esc-dual > :not(.esc-izq) .ficha-accesos{max-width:none;}
+/* 26/10 · multitarea: la ficha en una sola columna, centrada, aunque se ensanche el centro con la barra
+   (antes, al ganar ancho, saltaba a dos columnas y el contenido se movía de sitio) */
+html.esc.mt-on .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 100%;}
+html.esc.mt-on #view-coach-cliente:not(.esc-izq) .alta-body,
+html.esc.mt-on #view-coach-cliente:not(.esc-izq) .alta-top{padding-left:max(28px, calc((100% - 860px) / 2)) !important;padding-right:max(28px, calc((100% - 860px) / 2)) !important;}

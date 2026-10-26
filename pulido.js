@@ -142,7 +142,7 @@ if (typeof escAgruparFicha === 'function') escAgruparFicha = (function(orig){
     const orden = ESC_GRUPOS[coachActivo && coachActivo.rol === 'dietista' ? 'dietista' : 'entrenador'];
     const grupos = Array.prototype.slice.call(grid.querySelectorAll('.esc-grupo'));
     grupos.sort(function(x, y){ return orden.indexOf(x.dataset.g) - orden.indexOf(y.dataset.g); });
-    grupos.forEach(function(g){ (g.dataset.g === 'segui' ? a : b).appendChild(g); });
+    grupos.forEach(function(g){ (g.dataset.g === 'segui' || g.dataset.g === 'sens' ? a : b).appendChild(g); });
     return r;
   };
 })(escAgruparFicha);
