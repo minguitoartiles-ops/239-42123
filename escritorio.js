@@ -120,7 +120,7 @@ if (window.fsdSesionCliente && escEsOrdenador()) { if (escEsEquipo()) escVistaCl
   if (!nav) return;
   const logo = document.createElement('div');
   logo.className = 'esc-logo'; logo.id = 'escLogo';
-  logo.innerHTML = '<img src="assets/logo_fsd.png" alt="" width="40" height="40"><div><b>Fitnessindramas</b><span id="escQuien"></span></div>';
+  logo.innerHTML = '<img src="assets/logo_fsd.png" alt="" width="40" height="40"><div><b>Fitnessin<i>dramas</i></b><span id="escQuien"></span></div>';
   nav.insertBefore(logo, nav.firstChild);
   const pie = document.createElement('div');
   pie.className = 'esc-pie'; pie.id = 'escPie';

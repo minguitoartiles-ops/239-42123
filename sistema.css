@@ -140,3 +140,23 @@ html.esc .pb-btn.pb-en-pie{overflow:hidden;white-space:nowrap;text-overflow:elli
   .sp-b2{width:110px;height:110px;left:-30px;bottom:30%;}
   .sp-puntos{right:48px;bottom:48px;width:140px;height:100px;}
 }
+
+/* ==========================================================================
+   #290 · Marca (paso 2) · Menú lateral del ordenador: degradado azul suave,
+   la pesa en blanco como marca de agua en el hueco central, «Fitnessindramas»
+   con la letra de los títulos y «dramas» en azul, y la cuadrícula de puntos
+   del mural junto al título de cada pestaña.
+   ========================================================================== */
+html.esc #coachTabs{overflow:hidden;}
+html.esc .screen.light #coachTabs{background:linear-gradient(180deg,#F6F9FD 0%,#E3EEF9 100%) !important;}
+html.esc .screen:not(.light) #coachTabs{background:linear-gradient(180deg,#151a20 0%,#11161c 100%) !important;}
+html.esc #coachTabs::after{content:'';position:absolute;pointer-events:none;z-index:0;left:-40px;top:340px;width:180px;height:220px;
+  background:url(assets/marca_agua.png) center/contain no-repeat;opacity:.9;}
+html.esc .screen:not(.light) #coachTabs::after{opacity:.05;}
+html.esc #coachTabs > *{position:relative;z-index:1;}
+html.esc.esc-mini #coachTabs::after{display:none;}
+html.esc .esc-logo b{font:400 var(--fs-m)/1.1 var(--f-display) !important;letter-spacing:.2px;}
+html.esc .esc-logo b i{font-style:normal;color:var(--accent);}
+html.esc .alta-top:has(> div > .eyebrow[id$="Who"]),html.esc .alta-top:has(.eyebrow[id$="Who"]){position:relative;}
+html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;pointer-events:none;right:72px;top:10px;width:84px;height:44px;
+  background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent) 1.8px, transparent 2.2px);background-size:14px 14px;}
