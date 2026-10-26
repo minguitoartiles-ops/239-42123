@@ -1162,3 +1162,12 @@ html.esc .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 100%;}
 html.esc #view-coach-cliente:not(.esc-izq) .alta-body,
 html.esc #view-coach-cliente:not(.esc-izq) .alta-top{padding-left:max(28px, calc((100% - 860px) / 2)) !important;padding-right:max(28px, calc((100% - 860px) / 2)) !important;}
 html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
+/* 26/10 · centro estrecho (multitarea): barra del plan y calculadora ordenadas */
+.calc-row label:not(:has(.nu-g))::after{content:"\00a0";display:block;visibility:hidden;height:11px;margin-top:3px;line-height:11px;}
+@container mtcentro (max-width: 900px){
+  html.esc #coachBar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:8px;padding-left:16px;padding-right:16px;}
+  html.esc #coachBar #enDeshacerBtn{margin-left:auto;}
+  html.esc #coachBar #editarBtn{flex:1 1 100%;order:9;}
+  html.esc #calcCard .nu-rapido,html.esc #calcCard .nu-plantillas{display:inline-flex;align-items:center;justify-content:center;width:calc(50% - 4px);height:42px;margin:4px 0 12px;vertical-align:top;}
+  html.esc #calcCard .nu-rapido{margin-right:8px;}
+}
