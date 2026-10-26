@@ -255,3 +255,220 @@ ilPoner = (function(orig){
     return r;
   };
 })(ilPoner);
+
+/* =========================================================
+   26/10 · v2 · Biomecánica afinada por ejercicio
+   · Bancos: plano, inclinado y declinado según el nombre.
+   · Presses: en la bajada el codo baja hacia la cadera (por debajo del pecho) y la barra llega al esternón.
+   · Patada de glúteo a cuatro apoyos (cadera en extensión), polea desde atrás y abajo.
+   · Curl femoral tumbado / sentado / de pie con el rodillo detrás del tobillo y la carga en su sentido real.
+   · Patrones propios para peso muerto desde el suelo, hiperextensión, remo a una mano, remo invertido,
+     fondos en banco, press francés, patada de tríceps, curl predicador, colgado, búlgara, step up, nórdico,
+     abducción, pájaros, face pull, remo al mentón, aperturas tumbado, pullover, swing, thruster, etc.
+   ========================================================= */
+const IL_BANCO_PLANO = IL_SUELO + '<rect x="14" y="58" width="52" height="4" rx="2" class="il-mueble"/><line x1="22" y1="62" x2="22" y2="84" class="il-fondo"/><line x1="58" y1="62" x2="58" y2="84" class="il-fondo"/>';
+const IL_BANCO_INCL = IL_SUELO + '<line x1="20" y1="38" x2="46" y2="62" class="il-mueble"/><rect x="44" y="60" width="22" height="4" rx="2" class="il-mueble"/><line x1="52" y1="64" x2="52" y2="84" class="il-fondo"/><line x1="30" y1="50" x2="30" y2="84" class="il-fondo"/>';
+const IL_BANCO_DECL = IL_SUELO + '<line x1="28" y1="70" x2="68" y2="52" class="il-mueble"/><line x1="40" y1="66" x2="40" y2="84" class="il-fondo"/><line x1="64" y1="54" x2="64" y2="84" class="il-fondo"/><circle cx="88" cy="58" r="3.5" class="il-mueble"/><line x1="76" y1="56" x2="88" y2="70" class="il-fondo"/>';
+const IL_PIE = { a: [60, 83], f: [68, 83] };
+Object.assign(IL_PAT, {
+  press_banca: { A: { h: [22, 52], n: [31, 55], p: [58, 56], k: [74, 60], a: [77, 83], f: [84, 83], e: [33, 42], w: [35, 29] },
+    B: { e: [37, 65], w: [39, 50] }, fondo: IL_BANCO_PLANO },
+  press_inclinado: { A: { h: [23, 34], n: [30, 40], p: [52, 58], k: [70, 57], a: [74, 83], f: [81, 83], e: [33, 27], w: [35, 14] },
+    B: { e: [31, 53], w: [39, 39] }, fondo: IL_BANCO_INCL },
+  press_declinado: { A: { h: [27, 69], n: [35, 65], p: [60, 54], k: [76, 50], a: [87, 60], f: [92, 56], e: [34, 51], w: [30, 38] },
+    B: { e: [45, 72], w: [38, 51] }, fondo: IL_BANCO_DECL },
+  press_frances: { A: { h: [22, 52], n: [31, 55], p: [58, 56], k: [74, 60], a: [77, 83], f: [84, 83], e: [33, 41], w: [34, 28] },
+    B: { w: [22, 44] }, fondo: IL_BANCO_PLANO },
+  aperturas_tumbado: { frente: true, A: { h: [60, 47], n: [60, 55], p: [60, 62], sL: [50, 56], sR: [70, 56], eL: [51, 43], wL: [53, 31], eR: [69, 43], wR: [67, 31], kL: [54, 72], aL: [52, 84], kR: [66, 72], aR: [68, 84] },
+    B: { eL: [38, 61], wL: [27, 53], eR: [82, 61], wR: [93, 53] }, manos: ['wL', 'wR'], fondo: IL_SUELO + '<rect x="52" y="60" width="16" height="24" rx="2" class="il-mueble"/>' },
+  pullover: { A: { h: [31, 59], n: [40, 56], p: [60, 66], k: [74, 60], a: [78, 83], f: [85, 83], e: [27, 52], w: [15, 56] },
+    B: { e: [38, 44], w: [42, 31] }, fondo: IL_SUELO + '<rect x="30" y="60" width="20" height="24" rx="2" class="il-mueble"/>' },
+  flexiones: { A: { h: [86, 49], n: [77, 53], p: [48, 63], k: [33, 72], a: [18, 80], f: [14, 84], e: [77, 68], w: [77, 83] },
+    B: { h: [86, 70], n: [77, 74], p: [48, 77], k: [33, 80], e: [69, 68] }, fondo: IL_SUELO },
+  fondos_banco: { A: { h: [49, 23], n: [48, 32], p: [53, 58], k: [70, 63], a: [86, 82], f: [90, 77], e: [43, 45], w: [40, 58] },
+    B: { h: [51, 37], n: [50, 46], p: [55, 72], k: [71, 71], e: [35, 51] }, fondo: IL_SUELO + '<rect x="14" y="58" width="28" height="4" rx="2" class="il-mueble"/><line x1="20" y1="62" x2="20" y2="84" class="il-fondo"/>' },
+  sentadilla: { A: ilDe(IL_PIE, { h: [62, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [49, 34], w: [53, 26] }),
+    B: { h: [69, 33], n: [64, 41], p: [48, 62], k: [70, 66], e: [51, 51], w: [56, 44] }, fondo: IL_SUELO },
+  sentadilla_frontal: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [71, 30], w: [66, 24] }),
+    B: { h: [66, 33], n: [63, 41], p: [48, 62], k: [70, 66], e: [76, 48], w: [70, 42] }, fondo: IL_SUELO },
+  sentadilla_goblet: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [64, 37], w: [67, 31] }),
+    B: { h: [66, 33], n: [63, 41], p: [48, 62], k: [70, 66], e: [69, 54], w: [72, 47] }, fondo: IL_SUELO },
+  sentadilla_lados: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [62, 35], w: [62, 48] }),
+    B: { h: [66, 33], n: [63, 41], p: [48, 62], k: [70, 66], e: [65, 53], w: [66, 66] }, fondo: IL_SUELO },
+  sentadilla_libre: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [62, 35], w: [63, 47] }),
+    B: { h: [66, 33], n: [63, 41], p: [48, 62], k: [70, 66], e: [76, 42], w: [89, 42] }, manos: [], fondo: IL_SUELO },
+  bulgara: { A: { h: [60, 14], n: [59, 23], p: [58, 48], k: [64, 66], a: [64, 83], f: [71, 83], k2: [50, 64], a2: [38, 62], f2: [34, 58], e: [62, 36], w: [62, 48] },
+    B: { h: [59, 29], n: [58, 38], p: [56, 62], k: [72, 67], k2: [49, 78], e: [61, 51], w: [62, 63] },
+    extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], fondo: IL_SUELO + '<rect x="24" y="62" width="20" height="22" rx="2" class="il-mueble"/>' },
+  step_up: { A: { h: [63, 15], n: [62, 24], p: [58, 48], k: [74, 56], a: [72, 70], f: [79, 70], k2: [56, 66], a2: [52, 83], f2: [59, 83], e: [62, 37], w: [62, 49] },
+    B: { h: [73, 8], n: [72, 16], p: [70, 39], k: [72, 55], k2: [66, 53], a2: [68, 67], f2: [74, 66], e: [73, 28], w: [73, 40] },
+    extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], fondo: IL_SUELO + '<rect x="62" y="70" width="28" height="14" rx="2" class="il-mueble"/>' },
+  peso_muerto: { A: { h: [77, 42], n: [70, 46], p: [48, 58], k: [64, 64], a: [60, 83], f: [68, 83], e: [69, 60], w: [68, 74] },
+    B: { h: [61, 13], n: [60, 22], p: [58, 47], k: [60, 65], e: [62, 35], w: [63, 48] }, fondo: IL_SUELO },
+  buenos_dias: { A: ilDe(IL_PIE, { h: [62, 13], n: [60, 22], p: [58, 47], k: [60, 65], e: [49, 34], w: [53, 26] }),
+    B: { h: [80, 35], n: [73, 40], p: [47, 50], k: [63, 66], e: [66, 46], w: [70, 40] }, fondo: IL_SUELO },
+  swing: { A: { h: [79, 36], n: [72, 40], p: [46, 52], k: [62, 66], a: [60, 83], f: [68, 83], e: [64, 54], w: [56, 64] },
+    B: { h: [61, 13], n: [60, 22], p: [58, 47], k: [60, 65], e: [72, 27], w: [84, 27] }, fondo: IL_SUELO },
+  hiperextension: { A: { h: [62, 81], n: [58, 73], p: [50, 54], k: [38, 66], a: [26, 78], f: [22, 74] },
+    B: { h: [73, 31], n: [67, 37] }, manos: [], fondo: '<line x1="18" y1="84" x2="54" y2="52" class="il-mueble"/><circle cx="54" cy="58" r="4" class="il-mueble"/><line x1="18" y1="84" x2="106" y2="84" class="il-fondo"/>' },
+  puente: { A: { h: [20, 78], n: [29, 81], p: [50, 81], k: [64, 64], a: [76, 83], f: [83, 83], e: [38, 83], w: [46, 83] },
+    B: { p: [54, 66], k: [68, 59] }, manos: ['p'], fondo: IL_SUELO },
+  patada_gluteo: { A: { h: [86, 46], n: [78, 52], p: [50, 54], k: [58, 72], a: [44, 78], f: [40, 76], k2: [50, 82], a2: [32, 82], f2: [28, 80], e: [78, 67], w: [78, 82] },
+    B: { k: [34, 47], a: [16, 43], f: [12, 47] }, extra: [['p', 'k2'], ['k2', 'a2']], manos: ['a'], ancla: [4, 82], fondo: IL_SUELO },
+  abduccion: { frente: true, A: { h: [60, 12], n: [60, 21], p: [60, 47], sL: [51, 24], sR: [69, 24], eL: [46, 32], wL: [40, 40], eR: [70, 36], wR: [66, 46], kL: [56, 65], aL: [55, 83], kR: [64, 65], aR: [65, 83] },
+    B: { kR: [70, 64], aR: [79, 81] }, manos: ['aR'], anclas: [[14, 83]], fondo: IL_SUELO + '<line x1="36" y1="40" x2="36" y2="84" class="il-mueble"/>' },
+  curl_femoral: { A: { h: [18, 52], n: [27, 56], p: [56, 56], k: [73, 57], a: [91, 58], f: [95, 63], e: [24, 64], w: [16, 64], pd: [88, 53] },
+    B: { a: [64, 41], f: [69, 37], pd: [61, 45] }, manos: [], fondo: IL_SUELO + '<rect x="12" y="60" width="62" height="4" rx="2" class="il-mueble"/><line x1="20" y1="64" x2="20" y2="84" class="il-fondo"/><line x1="66" y1="64" x2="66" y2="84" class="il-fondo"/>' },
+  curl_femoral_sentado: { A: { h: [46, 15], n: [46, 24], p: [46, 56], k: [66, 56], a: [84, 56], f: [88, 51], e: [50, 40], w: [56, 50], pd: [84, 61] },
+    B: { a: [60, 73], f: [66, 77], pd: [56, 72] }, manos: [], fondo: IL_ASIENTO + '<rect x="54" y="48" width="14" height="4" rx="2" class="il-mueble"/>' },
+  curl_femoral_pie: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], a: [60, 83], f: [68, 83], k2: [57, 65], a2: [56, 83], f2: [63, 83], e: [66, 33], w: [74, 38], pd: [55, 80] }),
+    B: { a: [46, 56], f: [43, 61], pd: [43, 52] }, extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], manos: [],
+    fondo: IL_SUELO + '<line x1="78" y1="30" x2="78" y2="84" class="il-mueble"/>' },
+  nordico: { A: { h: [52, 25], n: [51, 34], p: [50, 58], k: [50, 82], a: [30, 82], f: [27, 79], e: [57, 44], w: [57, 37] },
+    B: { h: [99, 54], n: [92, 58], p: [71, 70], e: [96, 70], w: [101, 78] }, manos: [], fondo: IL_SUELO + '<circle cx="30" cy="77" r="3.5" class="il-mueble"/>' },
+  extension_piernas: ilDe(IL_PAT.extension_piernas, { A: ilDe(IL_PAT.extension_piernas.A, { pd: [70, 78] }), B: { a: [86, 52], f: [90, 46], pd: [86, 47] }, pies: null }),
+  remo_mancuerna: { A: { h: [82, 40], n: [74, 42], p: [46, 44], k: [50, 64], a: [52, 83], f: [59, 83], k2: [44, 57], a2: [32, 57], e2: [73, 50], w2: [72, 57], e: [75, 55], w: [76, 68] },
+    B: { e: [64, 36], w: [68, 50] }, extra: [['p', 'k2'], ['k2', 'a2'], ['n', 'e2'], ['e2', 'w2']],
+    fondo: IL_SUELO + '<rect x="28" y="58" width="50" height="4" rx="2" class="il-mueble"/><line x1="34" y1="62" x2="34" y2="84" class="il-fondo"/><line x1="72" y1="62" x2="72" y2="84" class="il-fondo"/>' },
+  remo_invertido: { A: { h: [80, 59], n: [72, 62], p: [46, 72], k: [32, 77], a: [18, 82], f: [18, 76], e: [76, 50], w: [79, 37] },
+    B: { h: [71, 40], n: [64, 46], p: [41, 64], k: [30, 73], e: [60, 40] }, manos: [],
+    fondo: IL_SUELO + '<line x1="60" y1="37" x2="100" y2="37" class="il-mueble"/><line x1="96" y1="37" x2="96" y2="84" class="il-fondo"/>' },
+  patada_triceps: { A: { h: [81, 36], n: [74, 40], p: [50, 52], k: [62, 66], a: [60, 83], f: [68, 83], e: [63, 50], w: [63, 63] },
+    B: { w: [50, 57] }, ancla: [112, 80], fondo: IL_SUELO },
+  curl_predicador: { A: { h: [54, 14], n: [54, 23], p: [52, 50], k: [66, 52], a: [66, 76], f: [72, 77], e: [69, 41], w: [80, 53] },
+    B: { w: [64, 29] }, fondo: IL_SUELO + '<line x1="56" y1="26" x2="76" y2="46" class="il-mueble"/><line x1="72" y1="46" x2="72" y2="84" class="il-fondo"/><rect x="42" y="52" width="16" height="4" rx="2" class="il-mueble"/>' },
+  colgado_rodillas: { A: { h: [60, 22], n: [60, 30], p: [60, 54], k: [60, 70], a: [60, 84], f: [64, 85], e: [61, 18], w: [62, 7] },
+    B: { k: [76, 52], a: [77, 68], f: [83, 69] }, manos: [], fondo: '<line x1="38" y1="7" x2="86" y2="7" class="il-mueble"/>' },
+  colgado_piernas: { A: { h: [60, 22], n: [60, 30], p: [60, 54], k: [60, 70], a: [60, 84], f: [64, 85], e: [61, 18], w: [62, 7] },
+    B: { k: [76, 50], a: [92, 46], f: [94, 41] }, manos: [], fondo: '<line x1="38" y1="7" x2="86" y2="7" class="il-mueble"/>' },
+  pajaros: { frente: true, A: { h: [60, 26], n: [60, 33], p: [60, 44], sL: [50, 33], sR: [70, 33], eL: [49, 46], wL: [49, 58], eR: [71, 46], wR: [71, 58], kL: [54, 64], aL: [55, 83], kR: [66, 64], aR: [65, 83] },
+    B: { eL: [38, 34], wL: [26, 36], eR: [82, 34], wR: [94, 36] }, manos: ['wL', 'wR'], fondo: IL_SUELO },
+  face_pull: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], e: [72, 24], w: [84, 24] }),
+    B: { e: [54, 18], w: [66, 15] }, ancla: [114, 22], fondo: IL_SUELO },
+  remo_menton: { frente: true, A: { h: [60, 12], n: [60, 21], p: [60, 47], sL: [51, 24], sR: [69, 24], eL: [50, 37], wL: [56, 49], eR: [70, 37], wR: [64, 49], kL: [56, 65], aL: [55, 83], kR: [64, 65], aR: [65, 83] },
+    B: { eL: [41, 22], wL: [56, 27], eR: [79, 22], wR: [64, 27] }, manos: ['wL', 'wR'], fondo: IL_SUELO },
+  giro_ruso: { frente: true, A: { h: [60, 30], n: [60, 39], p: [60, 62], sL: [52, 41], sR: [68, 41], eL: [47, 48], wL: [44, 56], eR: [58, 52], wR: [46, 57], kL: [53, 54], aL: [49, 66], kR: [67, 54], aR: [71, 66] },
+    B: { eL: [62, 52], wL: [74, 57], eR: [73, 48], wR: [76, 56] }, manos: ['wL'], fondo: IL_SUELO },
+  pallof: { A: ilDe(IL_PIE, { h: [60, 13], n: [60, 22], p: [60, 47], k: [61, 65], k2: [58, 65], a2: [52, 83], f2: [59, 83], e: [64, 37], w: [70, 32] }),
+    B: { e: [75, 31], w: [88, 31] }, extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], ancla: [114, 44], fondo: IL_SUELO },
+  escalador: { A: { h: [86, 48], n: [77, 52], p: [48, 60], k: [64, 70], a: [56, 80], f: [52, 84], k2: [33, 70], a2: [18, 80], f2: [14, 84], e: [77, 68], w: [77, 83] },
+    B: { k: [33, 70], a: [18, 80], f: [14, 84], k2: [64, 70], a2: [56, 80], f2: [52, 84] }, extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], manos: [], fondo: IL_SUELO },
+  jacks: { frente: true, A: { h: [60, 12], n: [60, 21], p: [60, 47], sL: [51, 24], sR: [69, 24], eL: [49, 36], wL: [49, 48], eR: [71, 36], wR: [71, 48], kL: [57, 65], aL: [56, 83], kR: [63, 65], aR: [64, 83] },
+    B: { eL: [42, 14], wL: [38, 3], eR: [78, 14], wR: [82, 3], kL: [52, 65], aL: [44, 83], kR: [68, 65], aR: [76, 83] }, manos: [], fondo: IL_SUELO },
+  thruster: { A: { h: [66, 33], n: [63, 41], p: [48, 62], k: [70, 66], a: [60, 83], f: [68, 83], e: [74, 47], w: [69, 41] },
+    B: { h: [60, 17], n: [60, 26], p: [60, 50], k: [61, 66], e: [62, 13], w: [61, 3] }, fondo: IL_SUELO },
+  granjero: { A: { h: [62, 13], n: [61, 22], p: [60, 47], k: [65, 65], a: [67, 83], f: [74, 83], k2: [56, 65], a2: [53, 83], f2: [60, 83], e: [62, 35], w: [62, 48] },
+    B: { k: [56, 65], a: [53, 83], f: [60, 83], k2: [65, 65], a2: [67, 83], f2: [74, 83] }, extra: [['p', 'k2'], ['k2', 'a2'], ['a2', 'f2']], fondo: IL_SUELO }
+});
+IL_PAT.extension_piernas.manos = [];
+/* reglas por nombre (de lo más concreto a lo más general) */
+const IL_REGLAS2 = [
+  [/gemel|pantorrill|s[oó]leo/, 'gemelos'],
+  [/renegado/, 'plancha'],
+  [/prensa/, 'prensa'],
+  [/b[uú]lgara|split squat/, 'bulgara'],
+  [/step.?up|subida al caj/, 'step_up'],
+  [/thruster|wall ball/, 'thruster'],
+  [/sentadilla (frontal|zercher)|front squat/, 'sentadilla_frontal'],
+  [/goblet|sentadilla sumo con mancuerna|sentadilla con kettlebell/, 'sentadilla_goblet'],
+  [/sentadilla con mancuernas|sentadilla con talones elevados/, 'sentadilla_lados'],
+  [/sentadilla (con peso corporal|con salto|cosaca|pistol)|sissy|pistol/, 'sentadilla_libre'],
+  [/sentadilla|squat|hack/, 'sentadilla'],
+  [/patada de gl[uú]teo|kickback de gl/, 'patada_gluteo'],
+  [/abducci/, 'abduccion'],
+  [/hip thrust/, 'empuje_cadera'],
+  [/puente de gl|glute bridge|frog pump/, 'puente'],
+  [/n[oó]rdico/, 'nordico'],
+  [/curl femoral sentado/, 'curl_femoral_sentado'],
+  [/curl femoral de pie/, 'curl_femoral_pie'],
+  [/curl femoral|femoral tumbado/, 'curl_femoral'],
+  [/hiperextensi/, 'hiperextension'],
+  [/buenos d[ií]as|good morning/, 'buenos_dias'],
+  [/swing/, 'swing'],
+  [/rumano|piernas r[ií]gidas|a una pierna|stiff/, 'bisagra'],
+  [/peso muerto|rack pull/, 'peso_muerto'],
+  [/zancada|lunge|desplante/, 'zancada'],
+  [/extensi[oó]n de (cu[aá]driceps|piernas)/, 'extension_piernas'],
+  [/gemel|pantorrill|talones|s[oó]leo/, 'gemelos'],
+  [/fondos en banco/, 'fondos_banco'],
+  [/fondos/, 'fondos'],
+  [/mountain climber/, 'escalador'],
+  [/flexion/, 'flexiones'],
+  [/pallof/, 'pallof'],
+  [/franc[eé]s/, 'press_frances'],
+  [/sobre la cabeza|tras nuca|copa|tr[ií]ceps con mancuerna a dos manos/, 'triceps_nuca'],
+  [/patada de tr[ií]ceps|kickback/, 'patada_triceps'],
+  [/aperturas (con mancuernas|inclinadas)/, 'aperturas_tumbado'],
+  [/aperturas|cruce de poleas|contractor|pec.?deck|peck/, 'aperturas'],
+  [/pullover/, 'pullover'],
+  [/militar|press de hombro|arnold|press (de )?hombros|overhead|push press|press landmine|press con kettlebell$/, 'press_hombro'],
+  [/press.*inclinad|inclinado.*press/, 'press_inclinado'],
+  [/press.*declinad/, 'press_declinado'],
+  [/press|banca/, 'press_banca'],
+  [/face pull/, 'face_pull'],
+  [/p[aá]jaros|posterior|reverse fly/, 'pajaros'],
+  [/remo al ment[oó]n/, 'remo_menton'],
+  [/elevaci[oó]n(es)? lateral/, 'laterales'],
+  [/elevaci[oó]n(es)? frontal/, 'frontales'],
+  [/encogimientos? (con|de hombros)|shrug/, 'encogimientos'],
+  [/jal[oó]n|pulldown/, 'jalon'],
+  [/dominad|chin.?up|pull.?up/, 'dominadas'],
+  [/remo invertido/, 'remo_invertido'],
+  [/remo con mancuerna|remo kroc|remo con kettlebell/, 'remo_mancuerna'],
+  [/remo en polea|remo sentado|remo en m[aá]quina|remo apoyado|ergómetro|ergometro|skierg/, 'remo_polea'],
+  [/remo/, 'remo'],
+  [/tr[ií]ceps|pushdown|extensi[oó]n en polea|extensi[oó]n de codo/, 'triceps'],
+  [/predicador|scott/, 'curl_predicador'],
+  [/curl|b[ií]ceps|martillo/, 'curl'],
+  [/rodillas colgado|knee raise/, 'colgado_rodillas'],
+  [/colgad|toes to bar/, 'colgado_piernas'],
+  [/elevaci[oó]n(es)? de piernas|leg raise|v.?up/, 'elevacion_piernas'],
+  [/russian|giro ruso|rotaci|le[nñ]ador|woodchop/, 'giro_ruso'],
+  [/crunch|abdominal|sit.?up|rueda|ab wheel|bicho muerto|dead bug/, 'abdominales'],
+  [/plancha|plank|renegado/, 'plancha'],
+  [/granjero|farmer|maleta/, 'granjero'],
+  [/assault|bike|bici|ciclo|spinning|el[ií]ptica/, 'bici'],
+  [/jumping|jacks/, 'jacks'],
+  [/comba|salto|burpee|box jump|skipping/, 'saltos'],
+  [/cinta|correr|carrera|sprint|running|caminar|andar|rodaje|intervalos|siit|hiit|escalera|escaladora|nataci|senderismo|trineo|battle/, 'correr']
+];
+ilPatron = function(nombre, musculo, material){
+  const n = norm(nombre || '').toLowerCase();
+  for (let i = 0; i < IL_REGLAS2.length; i++) if (IL_REGLAS2[i][0].test(n)) {
+    let p = IL_REGLAS2[i][1];
+    if (p === 'remo' && /polea|m[aá]quina|cable/.test(material || '')) p = 'remo_polea';
+    if (p === 'press_banca' && norm(musculo || '') === 'hombro') p = 'press_hombro';
+    if (p === 'sentadilla' && (material === 'mancuerna')) p = 'sentadilla_lados';
+    if (p === 'sentadilla' && (material === 'kettlebell')) p = 'sentadilla_goblet';
+    if (p === 'sentadilla' && material === 'corporal') p = 'sentadilla_libre';
+    return p;
+  }
+  return IL_POR_MUSCULO[norm(musculo || '')] || 'sentadilla_libre';
+};
+/* dibujo v2: rodillos (pd) y barra vista de frente */
+ilSvg = function(patron, material, quieto){
+  const P = IL_PAT[patron] || IL_PAT.sentadilla;
+  const A = P.A, B = ilDe(P.A, P.B || {});
+  let h = P.fondo || '';
+  const manos = P.manos || (P.frente ? ['wL', 'wR'] : ['w']);
+  if (material === 'polea' && manos.length) {
+    if (P.anclas) manos.forEach(function(m, i){ h += ilCable(A, B, m, P.anclas[i] || P.anclas[0], quieto); });
+    else manos.forEach(function(m){ h += ilCable(A, B, m, P.ancla || [112, 12], quieto); });
+  }
+  if (material === 'banda' && manos.length) manos.forEach(function(m){ h += ilCable(A, B, m, P.anclas ? P.anclas[0] : (P.ancla || (P.frente ? [m === 'wL' ? 50 : 70, 84] : (A.f || [64, 84]))), quieto, 'il-cable il-banda'); });
+  if (material === 'multipower' && manos.length && A[manos[0]]) { const w = A[manos[0]]; h += '<line x1="' + (w[0] + 9) + '" y1="2" x2="' + (w[0] + 9) + '" y2="84" class="il-fondo"/>'; }
+  if (P.frente && (material === 'barra' || material === 'multipower') && manos.indexOf('wL') > -1 && manos.indexOf('wR') > -1) h += ilLinea(A, B, 'wL', 'wR', 'il-barra', quieto);
+  (P.frente ? IL_FRENTE : IL_CUERPO).concat(P.extra || []).forEach(function(s){ h += ilLinea(A, B, s[0], s[1], 'il-cuerpo', quieto); });
+  if (P.placa) h += ilLinea(A, B, 'q1', 'q2', 'il-placa', quieto);
+  h += ilCirculo(A, B, 'h', 5.6, 'il-cabeza', 0, 0, quieto);
+  if (A.pd) h += ilCirculo(A, B, 'pd', 3.8, 'il-rodillo', 0, 0, quieto);
+  if (P.pies) h += ilCirculo(A, B, P.pies, 3.4, 'il-peso', 0, 0, quieto);
+  manos.forEach(function(m){
+    if (!A[m]) return;
+    if (material === 'barra' || material === 'multipower') { if (!P.frente) h += ilCirculo(A, B, m, 6.5, 'il-disco', 0, 0, quieto) + ilCirculo(A, B, m, 1.6, 'il-peso', 0, 0, quieto); else h += ilCirculo(A, B, m, 2.2, 'il-peso', 0, 0, quieto); }
+    else if (material === 'mancuerna') h += ilCirculo(A, B, m, 3.8, 'il-peso', 0, 0, quieto);
+    else if (material === 'kettlebell') h += ilCirculo(A, B, m, 4.6, 'il-peso', 0, 5, quieto);
+    else if (material === 'polea' || material === 'banda' || material === 'maquina') h += ilCirculo(A, B, m, 2.6, 'il-peso', 0, 0, quieto);
+  });
+  return '<svg viewBox="0 0 120 90" class="il-svg" role="img" aria-hidden="true" focusable="false">' + h + '</svg>';
+};
