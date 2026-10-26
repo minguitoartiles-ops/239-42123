@@ -1021,7 +1021,7 @@ function renderHoy(){
       if(d===0) cls.push('segui');
       if(d<hechasSem) cls.push('done');
       if(d===i) cls.push('today');
-      h+='<div class="week-day"><span class="lbl"'+(d===i?' style="color:var(--accent)"':'')+'>'+DIAS_L[d]+'</span>'
+      h+='<div class="week-day"><span class="lbl"'+(d===i?' style="color:var(--accent-text)"':'')+'>'+DIAS_L[d]+'</span>'
        +'<div class="'+cls.join(' ')+'">'+(d<hechasSem?'✓':'')+'</div>'
        +'<span class="week-flag">'+(d===0?'SEGUI.':'')+'</span></div>';
     }
