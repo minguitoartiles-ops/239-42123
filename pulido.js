@@ -917,3 +917,49 @@ renderAjustes = (function(orig){
     return r;
   };
 });
+
+/* 26/10 · Seguimiento: «¿Cómo ha sido tu descanso?» con deslizador 1–10 (10 = genial), como el del estrés.
+   Se guarda en el seguimiento como «d»; el texto queda como nota opcional. */
+const SG_CARAS_DESC = ['😫','😫','😣','😟','😐','😐','🙂','🙂','😌','😴'];
+if (typeof SG_RANGOS !== 'undefined' && !SG_RANGOS.some(function(g){ return g[0] === 'rDescanso'; })) SG_RANGOS.push(['rDescanso', 'd', 7]);
+function sgDescVisual(){
+  const out = document.getElementById('rDescanso'); if (!out) return;
+  const fila = out.parentElement, inp = fila.querySelector('input[type=range]');
+  fila.classList.add('sg-estres');
+  let cara = fila.querySelector('.sg-cara');
+  if (!cara) { cara = document.createElement('span'); cara.className = 'sg-cara'; cara.setAttribute('aria-hidden', 'true'); fila.insertBefore(cara, out); }
+  const pinta = function(){ const n = +inp.value; cara.textContent = SG_CARAS_DESC[n - 1] || '😐'; const c = sgTono(n, 1, 10); inp.style.accentColor = c; out.style.color = c; };
+  if (!inp.dataset.sgVis) { inp.dataset.sgVis = 1; inp.addEventListener('input', pinta); }
+  pinta();
+}
+sgDescVisual();
+fsdTras('goTo', function(r, n){ if (n === 'seguimiento') setTimeout(sgDescVisual, 0); });
+guardarSeguimiento = (function(orig){
+  return function(){
+    const k = clienteActual, out = document.getElementById('rDescanso'), val = out ? out.textContent : null;
+    const r0 = orig.apply(this, arguments);
+    try {
+      const r = k && (typeof sgDeEstaSemana === 'function' ? sgDeEstaSemana(k) : (SEGUIMIENTOS[k] || [])[0]);
+      if (r && val) { r.d = val; programarGuardado(); }
+    } catch(e){}
+    setTimeout(sgDescVisual, 0);
+    return r0;
+  };
+})(guardarSeguimiento);
+if (typeof sgRellenar === 'function') sgRellenar = (function(orig){
+  return function(r){
+    const x = orig.apply(this, arguments);
+    const inp = document.querySelector('#view-seguimiento .sg-desc input[type=range]'), n = r && parseInt(r.d, 10);
+    if (inp && n) { inp.value = n; inp.dispatchEvent(new Event('input', { bubbles: true })); }
+    return x;
+  };
+})(sgRellenar);
+/* lo ven Domingo y Fátima: tarjeta del seguimiento, resumen de la pestaña Seguimientos y gráfico */
+if (typeof GR_METRICAS !== 'undefined' && !GR_METRICAS.some(function(m){ return m[0] === 'd'; })) GR_METRICAS.splice(GR_METRICAS.findIndex(function(m){ return m[0] === 'x'; }) + 1, 0, ['d', 'Descanso', '/10']);
+if (typeof tarjetaSeguimiento === 'function') tarjetaSeguimiento = (function(orig){
+  return function(r){
+    let h = orig.apply(this, arguments);
+    if (r && r.d && h.indexOf('>Descanso<') < 0) h = h.replace(/(<span class="segui-lbl">Estrés<\/span><span class="segui-val">[^<]*<\/span><\/div>)/, '$1<div><span class="segui-lbl">Descanso</span><span class="segui-val">' + esc(r.d) + '/10</span></div>');
+    return h;
+  };
+})(tarjetaSeguimiento);

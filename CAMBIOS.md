@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.80.4 (actual)
-Cambios acumulados hacia la 0.81: **9 de 10**
+## Versión 0.81.0 (actual)
+Cambios acumulados hacia la 0.82: **0 de 10**
+
+## Versión 0.80 → 0.81.0
 
 ### Hacia la 0.81
 1. 26/10/2026 11:20 · Plegables siempre plegados al entrar, en toda la app y sin recordar lo que se dejó abierto: comidas del plan (cliente y Fátima, también al abrir el plan en edición; ya no se abre sola «la comida que toca»), días del entreno (también en el creador de rutinas compacto), apartados de la ficha (también al volver del plan o del chat del mismo cliente) y Ajustes (antes se abría el primero y se recordaba). Solo se abre algo solo cuando se llega a propósito: un aviso de pago o alergias, «Suscripción» desde Pagos, una comida tocada desde Hoy o los cambios resaltados de un aviso → **0.80.0-1 (caché)**
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.81: **9 de 10**
 7. 26/10/2026 15:40 · Móvil con el teclado abierto: los buscadores de ejercicios y de alimentos pasan a pantalla completa, con la cabecera compacta (sin el rótulo superior ni «+ Crear…», que vuelve al cerrar el teclado) y la lista de resultados usando todo el hueco que queda encima del teclado → **0.80.3-1 (caché)**
 8. 26/10/2026 15:50 · Aviso de cambios del plan sin saturar la pantalla: una línea de resumen («12 nuevos · 4 cambiados · 1 movido · 3 quitados») con la lista dentro de «Ver detalle» plegado; si cambia la mitad del plan o más, o hay días nuevos, sale «🆕 Te ha preparado un entrenamiento (o plan) nuevo» sin marcar ejercicio a ejercicio; cada día o comida con cambios lleva una etiqueta «N cambios» sin desplegarse, y dentro cada ejercicio su «Nuevo», «Cambiado» o «Movido». Corregido: un ejercicio que solo cambia de día ya no sale como «nuevo» y «quitado» a la vez → **0.80.4**
 9. 26/10/2026 16:20 · Ilustraciones coherentes con el título: la posición sale como dice el nombre (sentado con asiento y respaldo, tumbado, de rodillas, en suelo, en banco) y el material se lee primero del título («en máquina», «en polea», «multipower», «con mancuernas», «banda»…); las máquinas llevan asiento, rodillos y agarres, nunca mancuernas. Dibujos propios nuevos: press en máquina sentado, contractor, pájaros y abducción en máquina, gemelos sentado y en prensa, crunch en máquina y en polea, extensión de tríceps en máquina, dominadas y fondos asistidos, press de suelo, pullover en polea / SkiErg, curl en banco inclinado, concentrado y araña, flexiones con rodillas / inclinadas / declinadas, plancha lateral y con elevación de pierna, zancada lateral, peso muerto a una pierna, remo Seal y renegado, rueda abdominal, dead bug, natación, battle ropes, trineo, saltos al cajón y sentadilla a cajón. Revisados uno a uno los 233 ejercicios → **0.80.4-1 (caché)**
+10. 26/10/2026 16:35 · Seguimiento semanal: «¿Cómo ha sido tu descanso?» con deslizador del 1 (fatal) al 10 (genial), con cara y color como el del estrés (verde arriba) y «antes N» de la semana anterior; el texto queda como nota opcional. Domingo y Fátima lo ven en la tarjeta del seguimiento y como métrica «Descanso» en el gráfico de evolución → **0.81.0**
 
 ## Versión 0.79 → 0.80.0
 

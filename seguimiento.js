@@ -33,7 +33,7 @@ function sgRellenar(r){
   const v = document.getElementById('view-seguimiento'); if (!v || !r) return;
   const escala = function(i, val){ const row = v.querySelectorAll('.esc-row')[i]; const n = parseInt(val, 10); if (!row || !n) return; const b = row.querySelectorAll('.esc-btn')[n - 1]; if (b) b.click(); };
   escala(0, r.agujetas); escala(1, r.m);
-  const rangos = v.querySelectorAll('.sg-range:not(.sg-pasos) input[type=range]');
+  const rangos = v.querySelectorAll('.sg-range:not(.sg-pasos):not(.sg-desc) input[type=range]');
   [['e', 'rEntreno'], ['n', 'rNutri'], ['x', 'rEstres']].forEach(function(p, i){
     const inp = rangos[i], val = parseInt(r[p[0]], 10); if (!inp || !val) return;
     inp.value = val; inp.dispatchEvent(new Event('input', { bubbles: true }));

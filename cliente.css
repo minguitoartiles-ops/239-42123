@@ -1215,3 +1215,4 @@ html.fsd-teclado .pb-btn{display:none !important;}
 .il-respaldo{opacity:.55;}
 .il-cuerda{stroke-width:2.6;opacity:.9;stroke-dasharray:5 3;}
 .il-agua{stroke:var(--accent);opacity:.5;}
+.sg-desc + .sg-text{margin-top:10px;}
