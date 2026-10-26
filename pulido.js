@@ -768,20 +768,30 @@ editarPlan = (function(orig){
 })(editarPlan);
 function pcDiff(nut){
   const a = pcAntes && pcAntes[nut ? 'nut' : 'ent']; if (!a) return null;
-  const d = pcUnidades(nut), cambios = [], quitados = [];
+  const d = pcUnidades(nut), cambios = [], quitados = [], usados = {};
+  const nombre = function(k){ return k.slice(k.indexOf('|') + 1); };
   Object.keys(d).forEach(function(k){
     const x = d[k], y = a[k];
     if (y && y.h === x.h) return;
-    let det = '';
-    if (!y) det = nut ? 'nuevo' : 'nuevo';
-    else if (nut) {
+    let det = '', tipo = 'c';
+    if (!y) {
+      // 26/10 · si el mismo ejercicio estaba en otro día y ya no está allí, es que se ha movido (no «nuevo» + «quitado»)
+      const antes = !nut && Object.keys(a).filter(function(o){ return o !== k && nombre(o) === nombre(k) && !d[o] && !usados[o]; })[0];
+      if (antes) { usados[antes] = true; tipo = 'm'; det = 'movido a «' + x.ses + '»'; }
+      else { tipo = 'n'; det = 'nuevo'; }
+    } else if (nut) {
       const mas = x.chips.filter(function(c){ return y.chips.indexOf(c) === -1; }), menos = y.chips.filter(function(c){ return x.chips.indexOf(c) === -1; });
       det = [mas.length ? 'añadido: ' + mas.join(', ') : '', menos.length ? 'quitado: ' + menos.join(', ') : ''].filter(Boolean).join(' · ') || 'cantidades';
     } else det = (y.pauta && x.pauta && y.pauta !== x.pauta) ? y.pauta + ' → ' + x.pauta : 'detalles';
-    cambios.push({ k: k, t: x.t, d: det, n: !y });
+    cambios.push({ k: k, t: x.t, d: det, n: tipo === 'n', m: tipo === 'm' });
   });
-  Object.keys(a).forEach(function(k){ if (!d[k]) quitados.push(a[k].t); });
-  return (cambios.length || quitados.length) ? { c: cambios.slice(0, 30), q: quitados.slice(0, 15) } : null;
+  Object.keys(a).forEach(function(k){ if (!d[k] && !usados[k]) quitados.push(a[k].t); });
+  if (!cambios.length && !quitados.length) return null;
+  // cambio grande: la mitad o más del plan, o días nuevos / quitados → «entrenamiento (o plan) nuevo»
+  const dias = function(m){ const s = {}; Object.keys(m).forEach(function(k){ s[k.split('|')[0]] = 1; }); return Object.keys(s).length; };
+  const total = Math.max(Object.keys(a).length, Object.keys(d).length, 1);
+  const grande = !Object.keys(a).length || (cambios.length + quitados.length) / total >= 0.5 || (!nut && dias(a) !== dias(d));
+  return { c: cambios.slice(0, 60), q: quitados.slice(0, 40), grande: grande };
 }
 crearAviso = (function(orig){
   return function(dest, tipo, titulo, texto, ir){
@@ -794,37 +804,52 @@ crearAviso = (function(orig){
 
 function pcLimpiar(){
   document.querySelectorAll('.pc-marca').forEach(function(x){ x.classList.remove('pc-marca'); });
-  document.querySelectorAll('.pc-tag, .pc-banner').forEach(function(x){ x.remove(); });
+  document.querySelectorAll('.pc-tag, .pc-banner, .pc-dia').forEach(function(x){ x.remove(); });
 }
+function pcN(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); }
 function pcResaltar(ir){
   pcLimpiar();
   const nut = ir.vista === 'plan', df = ir.cambios; if (!df) return;
-  const marcados = [];
-  df.c.forEach(function(c){
+  const porDia = {};
+  if (!df.grande) df.c.forEach(function(c){
     const i = +c.k.split('|')[0], clave = c.k.slice(c.k.indexOf('|') + 1);
-    let el = null;
+    let el = null, cab = null;
     if (nut) {
       const b = mealBlocks()[i]; if (!b) return;
       el = Array.prototype.slice.call(b.querySelectorAll('.macro-group')).filter(function(g){ return pcTxt(g.querySelector('.macro-label')) === clave; })[0];
-      if (el) { const body = b.querySelector('.meal-body'); if (body && !body.classList.contains('open')) toggleMealBlock(b.querySelector('.meal-head')); }
+      cab = b.querySelector('.meal-head-txt');
     } else {
       const card = contEnt().querySelectorAll('.sesion-card')[i]; if (!card) return;
       el = Array.prototype.slice.call(card.querySelectorAll('.ex-item')).filter(function(it){ return enNombreEj(it) === clave; })[0];
-      if (el && typeof exAbrirSesion === 'function') exAbrirSesion(card, false);
+      cab = card.querySelector('.sesion-title');
     }
     if (!el) return;
     el.classList.add('pc-marca');
-    const tag = document.createElement('span'); tag.className = 'pc-tag'; tag.textContent = c.n ? 'Nuevo' : 'Cambiado';
+    const tag = document.createElement('span'); tag.className = 'pc-tag'; tag.textContent = c.n ? 'Nuevo' : (c.m ? 'Movido' : 'Cambiado');
     el.insertBefore(tag, el.firstChild);
-    marcados.push(el);
+    if (cab) { porDia[i] = porDia[i] || { cab: cab, n: 0 }; porDia[i].n++; }
   });
-  const cont = nut ? contNut() : contEnt();
-  const bn = document.createElement('div'); bn.className = 'pc-banner'; bn.setAttribute('role', 'status');
-  bn.innerHTML = '<b>✨ ' + esc(ir.quien || 'Tu profesional') + ' ha cambiado ' + (nut ? 'tu nutrición' : 'tu entrenamiento') + '</b>'
-    + '<ul>' + df.c.map(function(c){ return '<li><span>' + esc(c.t) + '</span> <em>' + esc(c.d) + '</em></li>'; }).join('')
-    + df.q.map(function(t){ return '<li class="pc-fuera"><span>' + esc(t) + '</span> <em>quitado</em></li>'; }).join('') + '</ul>'
-    + '<button type="button" class="pc-ok">Entendido</button>';
+  // etiqueta en la cabecera de cada día / comida (siguen plegados: se ve dónde están los cambios sin abrir nada)
+  Object.keys(porDia).forEach(function(i){
+    const x = porDia[i], t = document.createElement('span');
+    t.className = 'pc-dia'; t.textContent = pcN(x.n, 'cambio', 'cambios');
+    x.cab.insertAdjacentElement('afterend', t);
+  });
+  const quien = esc(ir.quien || 'Tu profesional');
+  const nN = df.c.filter(function(c){ return c.n; }).length, nM = df.c.filter(function(c){ return c.m; }).length, nC = df.c.length - nN - nM, nQ = df.q.length;
+  const cifras = [nN ? pcN(nN, 'nuevo', 'nuevos') : '', nC ? pcN(nC, 'cambiado', 'cambiados') : '', nM ? pcN(nM, 'movido', 'movidos') : '', nQ ? pcN(nQ, 'quitado', 'quitados') : ''].filter(Boolean).join(' · ');
+  const bn = document.createElement('div'); bn.className = 'pc-banner' + (df.grande ? ' pc-grande' : ''); bn.setAttribute('role', 'status');
+  bn.innerHTML = df.grande
+    ? '<b>🆕 ' + quien + ' te ha preparado ' + (nut ? 'un plan de nutrición nuevo' : 'un entrenamiento nuevo') + '</b>'
+      + '<p class="pc-sub">Échale un vistazo ' + (nut ? 'comida a comida' : 'día a día') + ': abre ' + (nut ? 'cada comida' : 'cada día') + ' para ver ' + (nut ? 'lo que te toca' : 'sus ejercicios') + '.</p>'
+      + '<button type="button" class="pc-ok">Entendido</button>'
+    : '<b>✨ ' + quien + ' ha cambiado ' + (nut ? 'tu nutrición' : 'tu entrenamiento') + '</b>'
+      + '<p class="pc-sub">' + esc(cifras) + (Object.keys(porDia).length ? ' · lo verás marcado en ' + (nut ? 'cada comida' : 'cada día') : '') + '</p>'
+      + '<details class="pc-det"><summary>Ver detalle</summary><ul>' + df.c.map(function(c){ return '<li><span>' + esc(c.t) + '</span> <em>' + esc(c.d) + '</em></li>'; }).join('')
+      + df.q.map(function(t){ return '<li class="pc-fuera"><span>' + esc(t) + '</span> <em>quitado</em></li>'; }).join('') + '</ul></details>'
+      + '<button type="button" class="pc-ok">Entendido</button>';
   bn.querySelector('.pc-ok').onclick = pcLimpiar;
+  const cont = nut ? contNut() : contEnt();
   cont.parentNode.insertBefore(bn, cont);
   setTimeout(function(){ bn.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 120);
 }
