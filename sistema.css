@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Diseño · Fase 3: componentes únicos e iconos.
+   Se carga la última para que cada pieza tenga una sola versión.
+   ========================================================================== */
+
+/* ---------- Iconos de línea ---------- */
+.ico{width:22px;height:22px;flex:none;display:block;}
+.tbi-emo{filter:none !important;color:var(--dim-45);}
+.tbi.active .tbi-emo{color:var(--accent-text);opacity:1;}
+.tbi-emo .ico{width:22px;height:22px;}
+.tbi:not(.active) .tbi-emo{opacity:1;}
+html.esc #coachTabs .tbi-emo .ico{width:20px;height:20px;}
+.acc-btn > span[aria-hidden="true"] .ico{width:22px;height:22px;margin:0 auto;color:var(--accent-text);}
+.list-row > span:first-child{display:inline-flex;align-items:center;gap:12px;}
+.ico-fila{width:20px;height:20px;color:var(--dim-6);}
+
+/* ---------- Botones: principal, secundario y terciario ---------- */
+.btn-primary{height:48px;border-radius:var(--r-ctl);font:600 var(--fs-m) var(--f-body);letter-spacing:0;}
+.btn-eq{border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);color:var(--ink);font:600 var(--fs-s) var(--f-body);}
+.btn-eq:hover{background:var(--wash-soft);}
+.btn-eq.danger{border-color:color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger-text);background:var(--bg);}
+.mini-btn,.sg-ver.sg-ver-btn,.team-chip{min-height:36px;border-radius:var(--r-pill);font:600 var(--fs-s) var(--f-body);}
+.sg-ver.sg-ver-btn{border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);}
+.sg-ver.sg-ver-btn:hover{background:var(--wash-med);color:var(--ink);}
+
+/* ---------- Chips de filtro: uno solo, 36 px, contador en píldora ---------- */
+.ex-filtros button,.ent-filtros button,.sg-filtros .chip,.pu-chat-chips .chip,.pagos-filtros .chip,.gr-chips .chip{
+  height:36px;min-height:36px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;
+  border-radius:var(--r-pill);border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);
+  font:600 var(--fs-s) var(--f-body);letter-spacing:0;text-transform:none;cursor:pointer;white-space:nowrap;}
+.ex-filtros button.sel,.ent-filtros button.sel,.sg-filtros .chip.selected,.pu-chat-chips .chip.selected,.pagos-filtros .chip.selected,.gr-chips .chip.selected,
+.ex-filtros button[aria-pressed="true"],.ent-filtros button[aria-pressed="true"]{
+  background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.ex-filtros button b,.ent-filtros button b,.sg-filtros .chip .sg-fn,.pu-chat-chips .chip b,.pagos-filtros .chip b{
+  display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;margin:0;
+  border-radius:var(--r-pill);background:var(--wash-med);color:inherit;font:600 var(--fs-xs) var(--f-mono);}
+.ex-filtros button.sel b,.ent-filtros button.sel b,.sg-filtros .chip.selected .sg-fn,.pu-chat-chips .chip.selected b,.pagos-filtros .chip.selected b{background:rgba(255,255,255,.4);}
+.ex-filtros button.hay{border-color:color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger-text);}
+.ex-filtros button.hay.sel{background:var(--danger);border-color:var(--danger);color:#fff;}
+
+/* ---------- Etiqueta de estado: 11 px, tres colores ---------- */
+.kc-estado,.plan-est,.pago-est,.chat-fila-est,.kc-pago,.pill{
+  font:600 var(--fs-xs) var(--f-mono);letter-spacing:.04em;text-transform:uppercase;
+  padding:4px 8px;border-radius:var(--r-pill);border:none;line-height:1.3;}
+.kc-estado.ok,.plan-est.ok,.pago-est.ok,.pill.ok{background:color-mix(in srgb, var(--ok) 16%, transparent);color:var(--ok-text);}
+.kc-estado.pend,.plan-est.revisar,.pago-est.amb,.pago-est.nar,.kc-pago.amb,.kc-pago.nar,.pill.pg-amb,.pill.pg-nar,.pill.alg-hay,.chat-fila.nv-amb .chat-fila-est{
+  background:color-mix(in srgb, var(--warn) 18%, transparent);color:var(--warn-text);}
+.plan-est.vacio,.pago-est.roj,.kc-pago.roj,.pill.pg-roj,.pill.alg-diag,.chat-fila.rojo .chat-fila-est,.chat-fila.nv-roj .chat-fila-est{
+  background:color-mix(in srgb, var(--danger) 14%, transparent);color:var(--danger-text);}
+.kc-estado.nuevo,.chat-fila.espera .chat-fila-est{background:var(--accent-wash);color:var(--accent-text);}
+/* Contadores (no son etiquetas de estado) */
+.pill.pill-nuevo{background:var(--danger);color:#fff;font-family:var(--f-mono);}
+.chat-hero-top .pill{background:var(--on-accent);color:var(--accent);}
+
+/* ---------- Plegables: título en Archivo 600 y flecha en círculo ---------- */
+.alta-label.fp-lbl .fp-t,.aj-sec-h{font:600 var(--fs-m) var(--f-body);letter-spacing:0;text-transform:none;}
+.aj-sec-h{color:var(--ink);}
+.aj-sec.abierta .aj-sec-h{color:var(--ink);}
+details > summary{list-style:none;}
+details > summary::-webkit-details-marker{display:none;}
+
+/* ---------- Un solo «Volver» ---------- */
+.back-btn.coach-bar-volver{height:36px;padding:0 16px 0 8px;border-radius:var(--r-pill);background:var(--wash-med);color:var(--ink);border:none;font:600 var(--fs-m) var(--f-body);}
+.back-btn.coach-bar-volver:active{background:var(--wash-strong);}
+
+/* ---------- Avatar sin foto: inicial sobre color ---------- */
+.avatar.av-ini{background:var(--accent-wash);border-color:var(--accent-line);color:var(--accent-text);display:flex;align-items:center;justify-content:center;}
+.avatar.av-ini[data-ini]::after{content:attr(data-ini);font:700 var(--fs-l) var(--f-body);line-height:1;}
+
+/* En el móvil, las filas de chips se desplazan en horizontal en vez de partirse */
+html:not(.esc) .ex-filtros,html:not(.esc) .pagos-filtros,html:not(.esc) .pu-chat-chips,html:not(.esc) .ent-filtros{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+html:not(.esc) .ex-filtros::-webkit-scrollbar,html:not(.esc) .pagos-filtros::-webkit-scrollbar,html:not(.esc) .pu-chat-chips::-webkit-scrollbar,html:not(.esc) .ent-filtros::-webkit-scrollbar{display:none;}
+html:not(.esc) :is(.ex-filtros,.pagos-filtros,.pu-chat-chips,.ent-filtros) > *{flex:none;}
+.mini-btn{white-space:nowrap;}
