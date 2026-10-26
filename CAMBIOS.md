@@ -4,7 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.80.0 (actual)
-Cambios acumulados hacia la 0.81: **0 de 10**
+Cambios acumulados hacia la 0.81: **1 de 10**
+
+### Hacia la 0.81
+1. 26/10/2026 11:20 · Plegables siempre plegados al entrar, en toda la app y sin recordar lo que se dejó abierto: comidas del plan (cliente y Fátima, también al abrir el plan en edición; ya no se abre sola «la comida que toca»), días del entreno (también en el creador de rutinas compacto), apartados de la ficha (también al volver del plan o del chat del mismo cliente) y Ajustes (antes se abría el primero y se recordaba). Solo se abre algo solo cuando se llega a propósito: un aviso de pago o alergias, «Suscripción» desde Pagos, una comida tocada desde Hoy o los cambios resaltados de un aviso → **0.80.0-1 (caché)**
 
 ## Versión 0.79 → 0.80.0
 

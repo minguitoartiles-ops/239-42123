@@ -837,3 +837,58 @@ abrirAviso = (function(orig){
   };
 })(abrirAviso);
 fsdTras('goTo', function(){ if (document.querySelector('.pc-banner')) { const v = typeof vistaActual !== 'undefined' ? vistaActual : ''; const b = document.querySelector('.pc-banner'); if (b && !b.closest('#view-' + v)) pcLimpiar(); } });
+
+/* =========================================================
+   26/10 · Plegables siempre plegados al entrar (toda la app)
+   Cada vez que se entra en una pantalla, sus apartados plegables empiezan cerrados; no se recuerda
+   lo que se dejó abierto. Solo se abre algo solo cuando se llega a propósito a ello (un aviso de pago
+   o de alergias, «Ver suscripción» desde Pagos, tocar una comida concreta desde Hoy).
+   ========================================================= */
+function puPlegarComidas(){
+  try { if (typeof exPlegarComidas === 'function') { exPlegarComidas(-1); return; } } catch(e){}
+  mealBlocks().forEach(function(b){
+    const body = b.querySelector('.meal-body'), ch = b.querySelector('.meal-chevron');
+    if (body) body.classList.remove('open'); if (ch) ch.classList.remove('open');
+  });
+}
+function puPlegarSesiones(){
+  Array.prototype.forEach.call(contEnt().querySelectorAll('.sesion-card'), function(c){
+    const body = c.querySelector('.sesion-body'), head = c.querySelector('.sesion-head');
+    if (body && head && body.style.display !== 'none') toggleSesion(head);
+  });
+}
+goTo = (function(orig){
+  return function(name){
+    const r = orig.apply(this, arguments);
+    try {
+      if (name === 'plan') puPlegarComidas();
+      if (name === 'entreno') puPlegarSesiones();
+    } catch(e){}
+    return r;
+  };
+})(goTo);
+/* ficha del cliente: cada vez que se abre (también al volver de su plan o de su chat), todo plegado */
+goToCliente = (function(orig){ return function(){ try { fpReiniciar(); } catch(e){} return orig.apply(this, arguments); }; })(goToCliente);
+backToCliente = (function(orig){ return function(){ try { fpReiniciar(); } catch(e){} const r = orig.apply(this, arguments); try { fpAplicar(); } catch(e){} return r; }; })(backToCliente);
+/* Ajustes: todos los apartados cerrados y sin recordar cuáles se abrieron */
+if (typeof exAjGuardar === 'function') exAjGuardar = function(){};
+try { sessionStorage.removeItem('fsd_ajustes_abiertos'); } catch(e){}
+renderAjustes = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    Array.prototype.forEach.call(document.querySelectorAll('.aj-sec.abierta'), function(s){
+      s.classList.remove('abierta'); const b = s.querySelector('.aj-sec-h'); if (b) b.setAttribute('aria-expanded', 'false');
+    });
+    return r;
+  };
+})(renderAjustes);
+/* al abrir un plan ya en edición (Entreno / Nutrición del profesional), también plegado */
+['enAbrirPlan', 'enAbrirPlanNutri'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){
+    const r = orig.apply(this, arguments);
+    try { if (vistaActual === 'plan') puPlegarComidas(); else if (vistaActual === 'entreno') puPlegarSesiones(); } catch(e){}
+    return r;
+  };
+});
