@@ -61,7 +61,7 @@
 .coach-edit #sesionesCont .ex-table-row,.coach-edit #sesionesCont .en-ej-acts{user-select:none;-webkit-user-select:none;}
 .ru-drag,.ru-drag *{cursor:grabbing !important;user-select:none !important;-webkit-user-select:none !important;}
 .ex-item.ru-arrastrando{opacity:.45;outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-wash) !important;}
-.ru-fantasma{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;padding:8px 16px;border-radius:var(--r-ctl);background:var(--ink);color:var(--bg);font:700 var(--fs-m) Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
+.ru-fantasma{position:fixed;left:0;top:0;z-index:calc(var(--z-superior) + 1);pointer-events:none;padding:8px 16px;border-radius:var(--r-ctl);background:var(--ink);color:var(--bg);font:700 var(--fs-m) Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
 .ru-fantasma span{opacity:.6;margin-right:4px;}
 .sesion-head.ru-soltar{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-wash);border-radius:var(--r-ctl);}
 
@@ -101,7 +101,7 @@ html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-co
 }
 /* correcciones de la fila del editor */
 .coach-edit #view-entreno .ex-table-row > .ru-asa{flex:none !important;width:26px;text-align:center;}
-.coach-edit #view-entreno .ex-table-row > .ex-name-cell{justify-content:flex-start;text-align:left !important;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell{justify-content:flex-start;text-align:left;}
 .coach-edit #view-entreno .ru-f{flex:1 1 72px !important;}
 html.esc #app.coach-edit #view-entreno .ru-f{flex:0 0 92px !important;}
 #view-entreno .sesion-title{font-size:var(--fs-2xl);}
@@ -154,17 +154,17 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 .ru-ss-cab,.ru-ss-f{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 38px;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) 36px;} .ru-ss-x,.en-ej-btns .en-del{width:36px;height:36px;} }
 /* la × de cada alimento en el editor de nutrición */
-.chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1 !important;
+.chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1;
   font:800 var(--fs-m)/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
 .chip-x::after{content:"";position:absolute;inset:-9px;}         /* zona de toque más grande */
 .chip-x:hover{background:color-mix(in srgb, var(--danger) 80%, #000);}
 /* textos de borrar en rojo */
-.mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del) !important;border-color:var(--del-line) !important;}
+.mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del);border-color:var(--del-line) !important;}
 html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:var(--fs-m) !important;}
 /* Fátima no marca comidas como tomadas: el check solo lo ve el cliente */
 #app.coach-view .meal-eat{display:none !important;}
 
-.ru-linea{position:fixed;z-index:9998;height:4px;border-radius:4px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);pointer-events:none;}
+.ru-linea{position:fixed;z-index:var(--z-superior);height:4px;border-radius:4px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);pointer-events:none;}
 .ru-linea[hidden]{display:none;}
 .ru-linea::before,.ru-linea::after{content:"";position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--accent);}
 .ru-linea::before{left:-6px;} .ru-linea::after{right:-6px;}

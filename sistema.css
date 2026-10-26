@@ -5,7 +5,7 @@
 
 /* ---------- Iconos de línea ---------- */
 .ico{width:22px;height:22px;flex:none;display:block;}
-.tbi-emo{filter:none !important;color:var(--dim-45);}
+.tbi-emo{filter:none;color:var(--dim-45);}
 .tbi.active .tbi-emo{color:var(--accent-text);opacity:1;}
 .tbi-emo .ico{width:22px;height:22px;}
 .tbi:not(.active) .tbi-emo{opacity:1;}
@@ -90,3 +90,14 @@ html.mt-on #escChatCol .h-title{font-size:var(--fs-l) !important;}
 .bubble.card-msg .t,.bubble.card-msg .l{font-size:var(--fs-m);}
 .chat-input input[type=text]{font-size:var(--fs-m);}
 html.esc .composer textarea{font-size:var(--fs-m);}
+
+/* #285 · Alturas de botón en la escala: 28 (mini) · 36 (terciario/icono) · 44 (táctil) · 48 (principal y secundario).
+   No se tocan las filas de series del entreno ni las tarjetas pulsables (no son botones). */
+.btn-eq,.btn-eq-p{height:48px;}
+.view-back,.back-btn,.back-btn.coach-bar-volver,.esc-pie-btn,.mt-vista button,.ex-tabs-coach button,.chat-pend button,.mt-grande,.gr-tabla-btn,.ha-x{height:36px;min-height:36px;}
+.bell,.cmp-ico{width:36px;height:36px;}
+.mt-grande,.ha-x{width:36px;}
+.kc-plan-btn,.cd-edit-nom,.ru-ren{height:28px;min-height:28px;}
+.cd-edit-nom,.ru-ren{width:28px;}
+.btn-primary.sg-rev-btn,.add-sesion-btn,.pg-seg button,.calc-plegar{min-height:44px;height:44px;}
+html.esc #coachTabs .tbi{min-height:44px;height:44px;}

@@ -78,7 +78,7 @@ html.esc #view-coach-recetas .alta-body{padding-left:max(28px, calc((100% - 880p
 .rc-ing-emo{font-size:var(--fs-xl);text-align:center;}
 .rc-ing-k{grid-column:1/-1;margin:-2px 0 2px 36px;font:600 var(--fs-xs) var(--f-mono);color:var(--dim-55);}
 .rc-ing .rc-sin{grid-column:1/-1;}
-.rc-sug{position:absolute;left:0;right:46px;top:46px;z-index:30;max-height:300px;overflow-y:auto;background:var(--card);border:1.5px solid var(--accent-line);border-radius:var(--r-ctl);box-shadow:0 12px 30px rgba(0,0,0,.16);padding:4px;animation:plIn var(--dur-m) var(--ease-sal);}
+.rc-sug{position:absolute;left:0;right:46px;top:46px;z-index:var(--z-barra);max-height:300px;overflow-y:auto;background:var(--card);border:1.5px solid var(--accent-line);border-radius:var(--r-ctl);box-shadow:0 12px 30px rgba(0,0,0,.16);padding:4px;animation:plIn var(--dur-m) var(--ease-sal);}
 .rc-ing.rc-ok .rc-sug{left:36px;}
 .rc-sug-g{position:sticky;top:-4px;background:var(--card);padding:8px 8px 4px;font:700 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
 .rc-sug-it{display:flex;align-items:center;gap:12px;padding:8px;border-radius:var(--r-ctl);cursor:pointer;}

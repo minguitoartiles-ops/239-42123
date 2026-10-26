@@ -3,7 +3,7 @@
    ========================================================= */
 .ru-res,.ru-cambiar,.ru-ren{display:none;}
 .ru-vista-btn{margin:0 0 12px;min-height:38px;padding:0 16px;}
-.ru-vista-btn[hidden]{display:none !important;}
+.ru-vista-btn[hidden]{display:none;}
 html.ru-compacto #app .sc{padding-left:20px !important;padding-right:20px !important;}
 html.ru-compacto #sesionesCont{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,1fr);gap:16px;align-items:start;overflow-x:auto;padding-bottom:12px;}
 html.ru-compacto #sesionesCont .sesion-card{margin:0;min-width:0;}
@@ -83,12 +83,12 @@ html.ru-compacto #sesionesCont::-webkit-scrollbar{height:10px;}
 html.ru-compacto #sesionesCont::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-ctl);}
 /* nombre completo en su línea y la pauta debajo (no se corta el nombre) */
 html.ru-compacto #sesionesCont{grid-auto-columns:minmax(340px,1fr);}
-html.ru-compacto #sesionesCont .ex-item:not(.ru-foco){grid-template-columns:minmax(0,1fr) !important;row-gap:2px;padding:8px 8px 8px 4px !important;}
-html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ex-name-cell{white-space:normal !important;overflow:visible;text-overflow:clip;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco){grid-template-columns:minmax(0,1fr);row-gap:2px;padding:8px 8px 8px 4px !important;}
+html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ex-name-cell{white-space:normal;overflow:visible;text-overflow:clip;}
 html.ru-compacto #sesionesCont .ex-item:not(.ru-foco) .ru-res{padding:0 0 0 46px;justify-content:flex-start;}
 html.ru-compacto .ru-cambiar{min-height:26px;padding:0 8px;font-size:var(--fs-xs);}
 /* casillas que crecen con «8/6/6» */
 html.ru-plegable .ru-q input.ru-q-r,html.ru-plegable .ru-q input.ru-q-i{width:auto;min-width:36px;padding:0 8px;}
 /* «Cambiar» siempre igual */
-html.ru-plegable #sesionesCont .ru-cambiar{background:var(--accent) !important;color:var(--on-accent,#fff) !important;border:1px solid var(--accent) !important;opacity:1 !important;font:700 var(--fs-s) var(--f-body) !important;}
+html.ru-plegable #sesionesCont .ru-cambiar{background:var(--accent) !important;color:var(--on-accent,#fff) !important;border:1px solid var(--accent) !important;opacity:1;font:700 var(--fs-s) var(--f-body) !important;}
 html.ru-plegable #sesionesCont .ru-cambiar:hover{filter:brightness(.95);}
