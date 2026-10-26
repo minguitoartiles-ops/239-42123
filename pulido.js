@@ -1081,3 +1081,30 @@ pbPintar = (function(orig){
   };
 })(pbPintar);
 });
+
+/* =========================================================
+   #291 · Tarjeta de cliente más sencilla (Domingo y Fátima, móvil y ordenador):
+   nombre · «Semana X de 12» · estado solo si hay algo («Pendiente», «Nuevo») ·
+   Global / Entreno / Nutrición · aviso de pago corto. El resto (objetivo, mensajes,
+   seguimientos nuevos…) se ve en la ficha, en Chats y en la campana.
+   ========================================================= */
+function puTarjetasSimples(){
+  document.querySelectorAll('#listaClientes .cliente-card').forEach(function(card){
+    const sub = card.querySelector('.cliente-sub');
+    if (sub && sub.textContent.indexOf(' · ') > -1) { sub.title = sub.textContent; sub.textContent = sub.textContent.split(' · ')[0]; }
+    const est = card.querySelector('.kc-estado.pend');
+    if (est && est.textContent.trim() !== 'Pendiente') { est.title = 'Seguimiento pendiente'; est.textContent = 'Pendiente'; }
+    const p = card.querySelector('.kc-pago');
+    if (p && !p.dataset.corto) {
+      const t = p.textContent; let m, c = null;
+      if (/sin acceso/i.test(t)) { m = t.match(/se borra en (\d+) d/i); c = '🔒 Sin acceso' + (m ? ' · se borra en ' + m[1] + ' d' : ''); }
+      else if (/gracia/i.test(t)) { m = t.match(/quedan? (\d+) d/i); c = '💳 Gracia' + (m ? ' · ' + m[1] + ' d' : ''); }
+      if (c) { p.title = t.trim(); p.textContent = c; p.dataset.corto = '1'; }
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof pintarListaClientes !== 'function') return;
+  pintarListaClientes = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { puTarjetasSimples(); } catch(e){} return r; }; })(pintarListaClientes);
+  try { puTarjetasSimples(); } catch(e){}
+});
