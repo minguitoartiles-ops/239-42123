@@ -173,7 +173,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="wordmark"><span class="a">FITNESS SIN</span><span class="b">DRAMAS</span></div>
       <div class="tagline">Para la vida real</div>
-      <div class="app-version">Versión 0.81.1</div>
+      <div class="app-version">Versión 0.81.2</div>
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
@@ -196,7 +196,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Nueva ficha</div><div class="h-title" style="margin-top:2px;font-size:22px">Alta de cliente</div></div>
+        <div><div class="eyebrow">Nueva ficha</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Alta de cliente</div></div>
       </div>
 
       <div class="alta-body">
@@ -265,7 +265,7 @@ if ('serviceWorker' in navigator) {
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
           <span class="bell-badge hide" id="coachBellBadge">0</span>
         </button>
-        <div style="flex:1"><div class="eyebrow" id="panelWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Clientes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="panelWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Clientes</div></div>
       </div>
 
       <div class="alta-body">
@@ -292,7 +292,7 @@ if ('serviceWorker' in navigator) {
     <!-- SEGUIMIENTOS (pestaña del profesional) -->
     <div id="view-coach-segs" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="segsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Seguimientos</div></div>
+        <div style="flex:1"><div class="eyebrow" id="segsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Seguimientos</div></div>
       </div>
       <div class="alta-body"><div id="segsResumen"></div></div>
     </div>
@@ -300,7 +300,7 @@ if ('serviceWorker' in navigator) {
     <!-- CHATS (pestaña del profesional) -->
     <div id="view-coach-chats" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="chatsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Chats</div></div>
+        <div style="flex:1"><div class="eyebrow" id="chatsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Chats</div></div>
       </div>
       <div class="alta-body"><div id="chatsPro"></div></div>
     </div>
@@ -308,7 +308,7 @@ if ('serviceWorker' in navigator) {
     <!-- PAGOS CLIENTES (pestaña del profesional) -->
     <div id="view-coach-pagos" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="pagosWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Pagos clientes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="pagosWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Pagos clientes</div></div>
       </div>
       <div class="alta-body"><div id="pagosPro"></div></div>
     </div>
@@ -316,7 +316,7 @@ if ('serviceWorker' in navigator) {
     <!-- PLANES (pestaña Entrenos / Nutrición del profesional) -->
     <div id="view-coach-planes" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="planesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px" id="planesTit">Planes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="planesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)" id="planesTit">Planes</div></div>
       </div>
       <div class="alta-body"><div id="planesPro"></div></div>
     </div>
@@ -324,7 +324,7 @@ if ('serviceWorker' in navigator) {
     <!-- MÁS (pestaña del profesional) -->
     <div id="view-coach-mas" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="masWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Más</div></div>
+        <div style="flex:1"><div class="eyebrow" id="masWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Más</div></div>
       </div>
       <div class="alta-body"><div id="masPro"></div></div>
     </div>
@@ -333,7 +333,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-ajustes" style="display:none">
       <div class="alta-top">
         <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div style="flex:1"><div class="eyebrow" id="ajustesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:22px">Ajustes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="ajustesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Ajustes</div></div>
       </div>
       <div class="alta-body"><div id="ajustesCoach"></div></div>
     </div>
@@ -343,15 +343,15 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" id="cd-nombre" style="margin-top:2px;font-size:22px">—</div></div>
+        <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" id="cd-nombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
       </div>
 
       <div class="alta-body">
         <div class="sub" id="cd-meta" style="margin-bottom:16px">—</div>
 
         <div class="stat-row">
-          <div class="stat-card"><div class="lbl">Adherencia entreno</div><div class="val" id="cd-adhE" style="font-size:21px">8/10</div></div>
-          <div class="stat-card"><div class="lbl">Adherencia nutrición</div><div class="val" id="cd-adhN" style="font-size:21px">8/10</div></div>
+          <div class="stat-card"><div class="lbl">Adherencia entreno</div><div class="val" id="cd-adhE" style="font-size:var(--fs-xl)">8/10</div></div>
+          <div class="stat-card"><div class="lbl">Adherencia nutrición</div><div class="val" id="cd-adhN" style="font-size:var(--fs-xl)">8/10</div></div>
         </div>
 
         <div class="tonelaje-card">
@@ -361,8 +361,8 @@ if ('serviceWorker' in navigator) {
         </div>
 
         <div class="stat-row">
-          <div class="stat-card"><div class="lbl">Peso actual</div><div class="val" id="cd-peso" style="font-size:21px">—</div><div class="delta" id="cd-pesoDelta">Sin datos todavía</div></div>
-          <div class="stat-card"><div class="lbl">Próxima revisión</div><div class="val" id="cd-revision" style="font-size:15px;margin-top:12px">—</div></div>
+          <div class="stat-card"><div class="lbl">Peso actual</div><div class="val" id="cd-peso" style="font-size:var(--fs-xl)">—</div><div class="delta" id="cd-pesoDelta">Sin datos todavía</div></div>
+          <div class="stat-card"><div class="lbl">Próxima revisión</div><div class="val" id="cd-revision" style="font-size:var(--fs-m);margin-top:12px">—</div></div>
         </div>
 
         <div class="alta-label">Gestión del cliente</div>
@@ -378,7 +378,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="backToCliente()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Seguimientos</div><div class="h-title" id="seguiNombre" style="margin-top:2px;font-size:22px">—</div></div>
+        <div><div class="eyebrow">Seguimientos</div><div class="h-title" id="seguiNombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
       </div>
       <div class="alta-body" id="seguiList"></div>
         </div>
@@ -488,7 +488,7 @@ if ('serviceWorker' in navigator) {
         <section class="view" id="view-seguimiento">
           <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 6px">
             <div class="eyebrow">Rellenar cada domingo o lunes</div>
-            <div class="h-title" style="font-size:27px">Seguimiento semanal</div>
+            <div class="h-title" style="font-size:var(--fs-3xl)">Seguimiento semanal</div>
             <div class="sub" style="margin-top:8px">Con esto Fátima y Domingo ajustan tu plan. Sé sincero: no hay respuestas malas.</div></div>
           </div>
 
@@ -552,7 +552,7 @@ if ('serviceWorker' in navigator) {
         <section class="view" id="view-entreno">
           <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px">
             <div class="eyebrow" id="entSemana">Tu plan</div>
-            <div class="h-title" style="font-size:29px">Tus sesiones</div>
+            <div class="h-title" style="font-size:var(--fs-3xl)">Tus sesiones</div>
             <div class="sub" id="entSub" style="margin-top:8px">—</div></div>
           </div>
 
@@ -660,8 +660,8 @@ if ('serviceWorker' in navigator) {
             <div id="pgChart"></div>
           </div>
           <div class="stat-row">
-            <div class="stat-card"><div class="lbl">Seguimientos</div><div class="val" id="pgNumSeg" style="font-size:21px">0</div><div class="delta dim">enviados</div></div>
-            <div class="stat-card"><div class="lbl">Cintura</div><div class="val" id="pgCinturaIni" style="font-size:21px">—</div><div class="delta dim">desde el primer seguimiento</div></div>
+            <div class="stat-card"><div class="lbl">Seguimientos</div><div class="val" id="pgNumSeg" style="font-size:var(--fs-xl)">0</div><div class="delta dim">enviados</div></div>
+            <div class="stat-card"><div class="lbl">Cintura</div><div class="val" id="pgCinturaIni" style="font-size:var(--fs-xl)">—</div><div class="delta dim">desde el primer seguimiento</div></div>
           </div>
           <div class="quote-card">
             <div class="q">Para la vida real</div>
@@ -713,8 +713,8 @@ if ('serviceWorker' in navigator) {
           <div class="profile-head"><div class="avatar lg"></div><div><b id="perfNombre">—</b><span id="perfMeta">Sin asesoría activa</span></div></div>
 
           <div class="card-accent" style="display:flex;justify-content:space-between;align-items:center;padding:17px;">
-            <div><div style="font:700 14px Archivo,sans-serif">Seguimiento semanal</div><div style="font:500 12px Archivo,sans-serif;opacity:.75;margin-top:3px">Peso, medidas y cómo te has sentido</div></div>
-            <div onclick="goTo('seguimiento')" style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 12px Archivo,sans-serif;cursor:pointer">Preparar</div>
+            <div><div style="font:700 var(--fs-m) Archivo,sans-serif">Seguimiento semanal</div><div style="font:500 var(--fs-s) Archivo,sans-serif;opacity:.75;margin-top:3px">Peso, medidas y cómo te has sentido</div></div>
+            <div onclick="goTo('seguimiento')" style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer">Preparar</div>
           </div>
 
           <div class="section-lbl">Mi asesoría</div>

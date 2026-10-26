@@ -53,7 +53,7 @@ PANTALLAS_CON_TABS.push('view-coach-recetas');
   const root = document.getElementById('screenRoot');
   const v = document.createElement('div'); v.id = 'view-coach-recetas'; v.style.display = 'none';
   v.innerHTML = '<div class="alta-top"><button class="back-btn rc-volver" onclick="abrirTabPro(\'mas\')"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>'
-    + '<div style="flex:1"><div class="eyebrow">Nutrición · para todos los clientes</div><div class="h-title" style="margin-top:2px;font-size:22px">Recetas</div></div></div>'
+    + '<div style="flex:1"><div class="eyebrow">Nutrición · para todos los clientes</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Recetas</div></div></div>'
     + '<div class="alta-body"><button type="button" class="btn-primary rc-nueva" onclick="rcEditar()">+ Nueva receta</button>'
     + '<p class="rc-ayuda">Crea la receta con sus ingredientes en gramos y envíala a todos con un clic. Cada cliente verá las cantidades ajustadas a la comida en la que la quiera usar.</p>'
     + '<div id="rcLista"></div></div>';
