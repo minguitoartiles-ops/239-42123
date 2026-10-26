@@ -166,7 +166,7 @@ html.esc.esc-mini .esc-pie > :not(.esc-pie-btn){display:none;}
 html.esc .alta-top,html.esc .alta-body{padding-left:max(20px, calc((100% - 1120px) / 2));padding-right:max(20px, calc((100% - 1120px) / 2));}
 /* #122 barra vertical para ajustar el ancho de la lista */
 .esc-divisor{display:none;}
-html.esc .esc-divisor:not([hidden]){display:block;position:fixed;top:0;bottom:0;left:calc(var(--esc-menu) + var(--esc-lista) - 5px);width:10px;cursor:col-resize;z-index:40;touch-action:none;}
+html.esc .esc-divisor:not([hidden]){display:block;position:fixed;top:0;bottom:0;left:calc(var(--esc-menu) + var(--esc-lista) - 5px);width:10px;cursor:col-resize;z-index:calc(var(--z-barra) + 10);touch-action:none;}
 html.esc .esc-divisor::after{content:"";position:absolute;top:0;bottom:0;left:4px;width:2px;background:transparent;transition:background var(--dur-r);}
 html.esc .esc-divisor:hover::after,html.esc .esc-divisor:focus-visible::after,html.esc.esc-arrastrando .esc-divisor::after{background:var(--accent);}
 html.esc .esc-divisor::before{content:"";position:absolute;top:50%;left:1px;width:8px;height:42px;margin-top:-20px;border-radius:5px;background:var(--line-strong);opacity:.0;transition:opacity var(--dur-r);}
@@ -186,7 +186,7 @@ html.esc .screen.esc-dual > .esc-izq{container-type:inline-size;}
 
 /* 21/10 15:00 · Todas las notificaciones en el mismo rojo */
 .tab-badge,.bell-badge,.mj-bell-badge,.tb-badge,.acc-n,.chat-fila-n,#coachTabs .tab-badge{background:var(--danger,var(--danger)) !important;color:#fff !important;}
-.tb-badge{background:var(--danger,var(--danger)) !important;}
+.tb-badge{background:var(--danger,var(--danger));}
 
 /* #120 tiempo con la rutina actual */
 .rut-ficha{margin:8px 0 12px;padding:8px 12px;border-radius:var(--r-ctl);font:500 var(--fs-s)/1.4 var(--f-body);color:var(--ink);background:var(--wash-soft);}
@@ -228,15 +228,15 @@ html:not(.esc) .gr-chips .chip{flex:none;}
 
 /* #135 cada profesional en su área */
 html.esc #coachTabs #ctab-recetas.ar-fuera,#ctab-recetas.ar-fuera{display:none !important;}
-.ar-solo-ver{cursor:default !important;}
-.ar-solo-ver .lnk{color:var(--dim-6) !important;font-weight:500;}
+.ar-solo-ver{cursor:default;}
+.ar-solo-ver .lnk{color:var(--dim-6);font-weight:500;}
 /* Fátima: el registro de pesos y el tonelaje son cosa del entreno */
 html.ar-dietista #fichaEntrenoRes .fe-registro,html.ar-dietista #fichaRegistro,html.ar-dietista #view-coach-cliente .tonelaje-card{display:none !important;}
 
 /* #134 Planes de nutrición (Fátima): buscador, fotos, lista y resumen */
 .pl-busca input{width:100%;height:44px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);padding:0 16px;font:500 var(--fs-m) var(--f-body);margin:4px 0 12px;}
 .pl-busca input:focus{outline:none;border-color:var(--accent);}
-.plan-fila{position:relative;padding-left:64px !important;text-align:left;}
+.plan-fila{position:relative;padding-left:64px;text-align:left;}
 .plan-fila .pl-av{position:absolute;left:12px;top:12px;}
 .pl-av{width:40px;height:40px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font:700 var(--fs-l) Archivo,sans-serif;background-size:cover;background-position:center;}
 .plan-fila.pl-sel{outline:2px solid var(--accent);outline-offset:-2px;}
@@ -268,7 +268,7 @@ html.esc .pl-izq{min-width:0;}
 #view-seguimiento.sg-editando .sg-hecho{background:var(--accent-wash, rgba(120,170,230,.12));border-color:var(--accent-line, var(--accent));}
 #view-seguimiento.sg-ya > :not(.view-top):not(#sgHecho):not(.section-lbl):not(#historialSegui):not(.mj-pdf){display:none !important;}
 /* aviso de versión nueva (app instalada) */
-.fsd-nueva-version{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;padding:12px 20px;border:none;border-radius:var(--r-pill);background:var(--ink);color:var(--bg);font:700 var(--fs-m) var(--f-body);box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;}
+.fsd-nueva-version{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:calc(var(--z-superior) + 1);padding:12px 20px;border:none;border-radius:var(--r-pill);background:var(--ink);color:var(--bg);font:700 var(--fs-m) var(--f-body);box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;}
 
 /* ---------- #140 seguimiento: colores y caras ---------- */
 .esc-row.sg-agujetas .esc-btn{border-color:var(--tono);color:var(--tono);background:color-mix(in srgb, var(--tono) 10%, var(--card, #fff));}
@@ -331,13 +331,13 @@ html.esc #escInstalar{color:var(--accent-text);font-weight:700;}
 .sg-foto-hueco.con{border-style:solid;}
 .sg-foto-hueco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .sg-foto-mas{font-size:var(--fs-2xl);line-height:1;}
-.sg-foto-lbl{font:600 var(--fs-s) var(--f-body);position:relative;z-index:1;}
+.sg-foto-lbl{font:600 var(--fs-s) var(--f-body);position:relative;z-index:var(--z-contenido);}
 .sg-foto-hueco.con .sg-foto-lbl{position:absolute;left:6px;bottom:6px;padding:2px 8px;border-radius:var(--r-ctl);background:rgba(0,0,0,.55);color:#fff;}
-.sg-foto-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:var(--fs-s);cursor:pointer;z-index:2;}
+.sg-foto-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:var(--fs-s);cursor:pointer;z-index:calc(var(--z-contenido) + 1);}
 .sg-fotos-res{display:flex;gap:8px;margin-top:12px;}
 .sg-fr{flex:0 0 72px;padding:0;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:500 var(--fs-xs) var(--f-body);color:var(--dim-6);}
 .sg-fr img{width:72px;height:96px;object-fit:cover;border-radius:var(--r-ctl);background:var(--wash-med);}
-.sg-foto-grande{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;}
+.sg-foto-grande{position:fixed;inset:0;z-index:calc(var(--z-flotante) + 40);background:rgba(0,0,0,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;}
 .sg-foto-grande.show{display:flex;}
 .sg-foto-grande img{max-width:100%;max-height:85vh;border-radius:var(--r-ctl);}
 .sg-foto-grande span{color:#fff;font:500 var(--fs-s) var(--f-body);}
@@ -345,7 +345,7 @@ html.esc #escInstalar{color:var(--accent-text);font-weight:700;}
 #app:not(.coach-view) #enHerr,#app:not(.coach-view) .ses-del,#app:not(.coach-view) .ru-cambiar,#app:not(.coach-view) .ru-ren,#app:not(.coach-view) .calc-card,#app:not(.coach-view) .add-meal-btn,#app:not(.coach-view) .nu-rapido,#app:not(.coach-view) .add-sesion-btn,#app:not(.coach-view) .add-ej-btn,#app:not(.coach-view) .chip-add,#app:not(.coach-view) .chip-x,#app:not(.coach-view) .ex-del,#app:not(.coach-view) .meal-del{display:none !important;}
 /* #163 Entrenamientos de Domingo: lista + entreno a la derecha */
 .ent-lista{display:flex !important;flex-direction:column;gap:8px;}
-.ent-lista .plan-fila{margin:0 !important;}
+.ent-lista .plan-fila{margin:0;}
 .ent-prev-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 12px;}
 .ent-prev-stats > div{padding:12px 12px;border-radius:var(--r-ctl);background:var(--card-hi, var(--wash-soft));border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;}
 .ent-prev-stats small{font:600 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
@@ -380,7 +380,7 @@ html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) .cd-box.cd-edit .cd-mini{d
 
 /* 21/10 · Tarjetas de Clientes sin la casilla «Mensajes» (ya se ven en Chats) */
 .kc-grid > .kc-msgs{display:none !important;}
-.kc-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+.kc-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
 .ex-filtros{flex-wrap:wrap;overflow:visible;}
 .cd-hecho{display:block;margin-top:2px;font:600 var(--fs-s) var(--f-body);color:var(--ok-text);}
 .cd-reg{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:4px;}
@@ -463,7 +463,7 @@ i.n0{background:var(--mu0);} i.n1{background:var(--mu1);} i.n2{background:var(--
 
 /* #174 Completar seguimiento */
 .sg-rev{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
-.sg-rev-btn{width:auto !important;padding:0 16px !important;height:40px !important;margin:0 !important;}
+.sg-rev-btn{width:auto;padding:0 16px !important;height:40px !important;margin:0;}
 .sg-rev.abierto .sg-rev-btn{display:none;}
 .sg-rev-form{display:none;flex:1 1 100%;flex-direction:column;gap:8px;}
 .sg-rev.abierto .sg-rev-form{display:flex;}
@@ -481,7 +481,7 @@ i.n0{background:var(--mu0);} i.n1{background:var(--mu1);} i.n2{background:var(--
 /* #148 emojis en el ordenador */
 html.esc #emojiBtn{display:inline-flex !important;}
 html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;padding:8px 8px 8px;overflow-y:auto;border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.08);}
-.emo-tabs{display:flex;gap:2px;position:sticky;top:-6px;background:var(--card);padding:4px 0;z-index:1;border-bottom:1px solid var(--line);}
+.emo-tabs{display:flex;gap:2px;position:sticky;top:-6px;background:var(--card);padding:4px 0;z-index:var(--z-contenido);border-bottom:1px solid var(--line);}
 .emo-tab{width:38px;height:34px;border:none;border-radius:var(--r-ctl);background:none;font-size:var(--fs-xl);cursor:pointer;opacity:.6;}
 .emo-tab.on{opacity:1;background:var(--accent-wash);}
 .emo-tab:hover{opacity:1;}
@@ -535,10 +535,10 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 /* el RIR solo se despliega en la serie que toca (o al tocar otra); en las demás, su etiqueta */
 #app:not(.coach-edit) #view-entreno .srf:not(.actual):not(:focus-within):not(:has(.srf-opc:not([hidden]))) .srf-l2{display:none;}
 #app:not(.coach-edit) #view-entreno .srf:not(.actual) .srf-rirb{display:block;white-space:nowrap;margin-top:2px;padding:1px 4px;border-radius:var(--r-ctl);font:700 var(--fs-xs)/1.2 var(--f-mono);}
-@media (min-width:700px){ #app:not(.coach-edit) #view-entreno .sr-filas{max-width:620px;} }
+@media (min-width:900px){ #app:not(.coach-edit) #view-entreno .sr-filas{max-width:620px;} }
 
 /* modo pruebas: botón para cambiar de profesional */
-.pb-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);left:10px;z-index:260;height:32px;padding:0 12px;border-radius:var(--r-pill);border:1.5px solid var(--accent);background:var(--card);color:var(--ink);font:700 var(--fs-s) var(--f-body);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);cursor:pointer;}
+.pb-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);left:10px;z-index:var(--z-flotante);height:32px;padding:0 12px;border-radius:var(--r-pill);border:1.5px solid var(--accent);background:var(--card);color:var(--ink);font:700 var(--fs-s) var(--f-body);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);cursor:pointer;}
 .pb-btn:active{transform:scale(.97);}
 @media (min-width:900px){ .pb-btn{top:8px;bottom:auto;left:auto;right:8px;} }
 
@@ -555,7 +555,7 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 .dd-fila{color:var(--v3-text) !important;font-weight:700;}
 
 /* menú de cada mensaje del chat */
-.cm-menu{position:fixed;z-index:310;min-width:210px;padding:8px;border-radius:var(--r-ctl);background:var(--card);border:1px solid var(--line-strong);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);display:flex;flex-direction:column;}
+.cm-menu{position:fixed;z-index:calc(var(--z-flotante) + 50);min-width:210px;padding:8px;border-radius:var(--r-ctl);background:var(--card);border:1px solid var(--line-strong);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);display:flex;flex-direction:column;}
 .cm-menu button{display:flex;align-items:center;gap:16px;height:42px;padding:0 16px;border:none;background:none;border-radius:var(--r-ctl);color:var(--ink);font:500 var(--fs-m) var(--f-body);text-align:left;cursor:pointer;}
 .cm-menu button:hover,.cm-menu button:focus-visible{background:var(--wash-soft);outline:none;}
 .cm-menu button svg{flex:none;color:var(--dim-6);}
@@ -588,7 +588,7 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 .cm-selbar button.peligro{color:var(--danger-text);}
 #chatList.cm-selmodo .bubble{cursor:pointer;}
 #chatList .bubble.sel-on{outline:2.5px solid var(--accent);outline-offset:2px;}
-.cm-fw{position:fixed;inset:0;z-index:320;display:none;align-items:flex-end;justify-content:center;background:rgba(8,10,13,.5);}
+.cm-fw{position:fixed;inset:0;z-index:calc(var(--z-flotante) + 60);display:none;align-items:flex-end;justify-content:center;background:rgba(8,10,13,.5);}
 .cm-fw.show{display:flex;}
 .cm-fw-in{width:100%;max-width:520px;max-height:78vh;display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:var(--r-card) var(--r-card) 0 0;background:var(--bg);color:var(--ink);}
 html.esc .cm-fw{align-items:center;}
@@ -601,7 +601,7 @@ html.esc .cm-fw-in{border-radius:var(--r-card);}
 .cm-fw-lista button:hover{background:var(--wash-soft);}
 
 /* adherencias dentro de su apartado */
-.fp-adh{display:block !important;margin:0 0 12px;}
+.fp-adh{display:block;margin:0 0 12px;}
 .fp-adh .stat-card{width:100%;box-sizing:border-box;}
 .fp-adh.fp-oculto,.fp-adh.sec-oculta{display:none !important;}
 
@@ -651,7 +651,7 @@ html.esc .emoji-panel{max-height:290px;}
 
 /* fotos del chat ampliadas */
 #chatList .bubble img{cursor:zoom-in;}
-.cm-visor{position:fixed;inset:0;z-index:400;background:rgba(8,10,13,.92);display:flex;align-items:center;justify-content:center;padding:64px 12px 24px;animation:cmVisorIn var(--dur-m) var(--ease-sal);}
+.cm-visor{position:fixed;inset:0;z-index:var(--z-visor);background:rgba(8,10,13,.92);display:flex;align-items:center;justify-content:center;padding:64px 12px 24px;animation:cmVisorIn var(--dur-m) var(--ease-sal);}
 @keyframes cmVisorIn{from{opacity:0}to{opacity:1}}
 .cm-visor-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:var(--r-ctl);box-shadow:0 20px 60px rgba(0,0,0,.5);}
 .cm-visor-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 12px 12px;}
@@ -662,7 +662,7 @@ html.esc .emoji-panel{max-height:290px;}
 .cm-visor-volver:hover,.cm-visor-x:hover{background:rgba(255,255,255,.24);}
 
 /* temporizador de descanso (cliente) */
-.ds-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:150;width:min(440px,calc(100% - 24px));border-radius:var(--r-card);background:var(--ink);color:var(--bg);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);overflow:hidden;}
+.ds-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:calc(var(--z-hoja) + 30);width:min(440px,calc(100% - 24px));border-radius:var(--r-card);background:var(--ink);color:var(--bg);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);overflow:hidden;}
 .ds-bar[hidden],.ds-bar.ds-fuera{display:none;}
 .ds-prog{height:4px;background:rgba(255,255,255,.15);}
 .ds-prog i{display:block;height:100%;background:var(--accent);transition:width var(--dur-m) linear;}
@@ -736,7 +736,7 @@ html.esc .ds-bar{bottom:24px;}
 #app:not(.coach-view) #comidasCont .meal-body.open::before{content:'Toca una opción para añadirla o quitarla: puedes combinar hasta 3 por fila y las cantidades se ajustan solas.';display:block;margin:0 0 12px;font:500 var(--fs-s) var(--f-body);color:var(--dim-6);}
 
 /* bienvenida del cliente */
-.ob-capa{position:fixed;inset:0;z-index:330;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 20px calc(24px + env(safe-area-inset-bottom));overflow:auto;}
+.ob-capa{position:fixed;inset:0;z-index:calc(var(--z-flotante) + 70);background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 20px calc(24px + env(safe-area-inset-bottom));overflow:auto;}
 .ob-in{position:relative;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;min-height:min(560px,100%);justify-content:center;}
 .ob-saltar{position:absolute;top:0;right:0;border:none;background:none;color:var(--dim-6);font:600 var(--fs-s) var(--f-body);cursor:pointer;padding:8px;}
 .ob-e{font-size:56px;line-height:1;margin-top:24px;}
@@ -939,7 +939,7 @@ html.chat-pro-movil #app > nav.tb,html.chat-pro-movil #app nav.tb{display:none !
 .chat-nuevos::before,.chat-nuevos::after{content:'';flex:1;height:1px;background:var(--accent);opacity:.5;}
 .chat-nuevos span{font:700 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);}
 #view-chat{position:relative;}
-.chat-bajar{position:absolute;right:18px;bottom:96px;z-index:5;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 var(--fs-xl) var(--f-body);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;}
+.chat-bajar{position:absolute;right:18px;bottom:96px;z-index:calc(var(--z-contenido) + 4);width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 var(--fs-xl) var(--f-body);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;}
 .chat-bajar[hidden]{display:none;}
 
 /* Chat 8 · marcar como resuelto */
@@ -1035,7 +1035,7 @@ html.esc .ficha-accesos{max-width:none;}
 
 /* Pantallas muy anchas (pantalla completa en monitores grandes): sin hueco entre la lista y la ficha,
    contenido pegado a la lista y un poco más grande para que se lea bien */
-@media (min-width:1700px){
+@media (min-width:1600px){
   html.esc .esc-dual > :not(.esc-izq) .alta-top,
   html.esc .esc-dual > :not(.esc-izq) .alta-body{padding-left:40px;padding-right:max(40px, calc(100% - 1560px));}
   html.esc .esc-dual > :not(.esc-izq) .ficha-accesos{max-width:900px;}

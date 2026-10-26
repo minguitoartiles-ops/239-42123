@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.81.4 (actual)
-Cambios acumulados hacia la 0.82: **9 de 10**
+## Versión 0.82.0 (actual)
+Cambios acumulados hacia la 0.83: **0 de 10**
+
+## Versión 0.81 → 0.82.0
 
 ### Hacia la 0.82
 1. 26/10/2026 17:50 · «✓ Completar seguimiento» también dentro de los seguimientos de cada cliente (vista multitarea y ampliada): franja fija bajo el título con el comentario opcional que llega al chat; al completarlo se queda «✓ Revisado… · Deshacer» y el cliente sale de la lista de pendientes → **0.81.0-1 (caché)**
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.82: **9 de 10**
 7. 26/10/2026 20:30 · Hoy (cliente): si el seguimiento de la semana ya está enviado (plazo domingo-lunes), la tarjeta deja de decir «¡Hoy toca rellenarlo!» y muestra «Seguimiento enviado ✓ · El próximo, el lunes d/m» en verde; se repinta al volver a Hoy → **0.81.3-1 (caché)**
 8. 26/10/2026 20:45 · Chat: letra de los mensajes más grande (13 → 15 px) en el móvil y en el escritorio, con algo más de interlineado; también tarjetas dentro del chat y caja de escribir en escritorio. Hora y nombre siguen en 11 px → **0.81.4**
 9. 26/10/2026 20:50 · Pantalla de acceso: «DRAMAS» del logotipo vuelve al azul corporativo (#88B9E6); desde la fase 1 salía con el azul oscuro de texto → **0.81.4-1 (caché)**
+10. 26/10/2026 21:40 · Diseño · orden interno (sin cambios visibles salvo botones): capas (z-index) con 6 niveles con nombre manteniendo el mismo orden de apilado; puntos de corte de 12 a 9 (480→520, 700→900, 1700→1600; los de 360/380/400/420 se quedan porque separan móviles reales y unirlos cambiaba el aspecto en iPhone SE o en Galaxy/Pixel; 1100 se queda porque a 1180 la lista quedaba apretada); 29 reglas «!important» quitadas tras comprobar en 25 pantallas y 5 anchos que no cambian nada (las 188 restantes hacen falta o no se pueden comprobar sin riesgo); botones en la escala 28 · 36 · 44 · 48 px (secundarios a 48, Volver e iconos a 36, botones de acción a 44) → **0.82.0**
 
 ## Versión 0.80 → 0.81.0
 

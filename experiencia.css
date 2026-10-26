@@ -44,7 +44,7 @@
 .ej-res-v{color:var(--accent-text);flex:none;}
 .coach-edit .ej-resumen{display:none;}
 /* barra fina con el progreso de la sesión */
-.ex-barra{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:0 -4px 12px;padding:8px 12px 12px;border-radius:0 0 var(--r-ctl) var(--r-ctl);background:var(--bg);box-shadow:0 6px 14px -10px rgba(0,0,0,.35);font:600 var(--fs-s) var(--f-body);color:var(--ink);overflow:hidden;}
+.ex-barra{position:sticky;top:0;z-index:calc(var(--z-contenido) + 5);display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:0 -4px 12px;padding:8px 12px 12px;border-radius:0 0 var(--r-ctl) var(--r-ctl);background:var(--bg);box-shadow:0 6px 14px -10px rgba(0,0,0,.35);font:600 var(--fs-s) var(--f-body);color:var(--ink);overflow:hidden;}
 .ex-barra[hidden]{display:none;}
 .ex-barra .exb-t{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ex-barra .exb-e,.ex-barra .exb-s{flex:none;font:600 var(--fs-xs) var(--f-mono);color:var(--dim-6);}
@@ -62,10 +62,10 @@
 /* ---------- A5 · Tamaños mínimos de texto y de toque ---------- */
 .tbi{font-size:var(--fs-xs);}
 .coach-tb .tbi{font-size:var(--fs-xs);}
-.week-flag{font-size:var(--fs-xs) !important;}
+.week-flag{font-size:var(--fs-xs);}
 .kc-l,.segui-lbl,.panel-stat .lbl,.m-lbl,.sens-animo span{font-size:var(--fs-xs) !important;}
 .ses-tick,.meal-eat{width:36px;height:36px;font-size:var(--fs-m);}
-.nu-nav{min-width:34px;min-height:36px;font-size:var(--fs-2xl) !important;display:inline-flex !important;align-items:center;justify-content:center;}
+.nu-nav{min-width:34px;min-height:36px;font-size:var(--fs-2xl) !important;display:inline-flex;align-items:center;justify-content:center;}
 .coach-bar button{min-height:36px;}
 .sesion-head{min-height:52px;}
 
@@ -106,7 +106,7 @@
 .coach-edit #view-entreno .ex-desc{max-height:2.9em;overflow:hidden;}
 .coach-edit #view-entreno .ex-desc:focus{max-height:none;}
 /* barra de edición: el nombre del cliente sin cortar tanto */
-@media (max-width:480px){
+@media (max-width:520px){
   .coach-bar{gap:8px;padding-left:12px;padding-right:12px;}
   .coach-bar-volver{font-size:0 !important;padding:0 12px !important;}
   .coach-bar-volver .vb-chev{font-size:var(--fs-l);}
@@ -149,9 +149,9 @@ html.esc #segsResumen > .sg-bloque{grid-column:auto;}
 .sg-paso-barra{display:flex;gap:4px;margin-top:8px;}
 .sg-paso-barra i{flex:1;height:5px;border-radius:var(--r-pill);background:var(--wash-strong);}
 .sg-paso-barra i.on{background:var(--accent);}
-.sg-nav{position:sticky;bottom:0;z-index:5;display:flex;gap:12px;margin:16px -4px 8px;padding:12px 4px;background:var(--bg);box-shadow:0 -8px 14px -12px rgba(0,0,0,.3);}
-.sg-nav > *{flex:1;min-height:46px;margin:0 !important;}
-.sg-nav > [hidden]{display:none !important;}
+.sg-nav{position:sticky;bottom:0;z-index:calc(var(--z-contenido) + 4);display:flex;gap:12px;margin:16px -4px 8px;padding:12px 4px;background:var(--bg);box-shadow:0 -8px 14px -12px rgba(0,0,0,.3);}
+.sg-nav > *{flex:1;min-height:46px;margin:0;}
+.sg-nav > [hidden]{display:none;}
 .sg-por-pasos #sgSave + .alta-hint{display:none;}
 
 /* ---------- C12 · Ordenador ---------- */
@@ -174,7 +174,7 @@ html.esc #listaClientes .kcard .kc-pie{display:none;}
 .aj-sec-c{padding-top:8px;}
 
 /* ---------- Recompensas ---------- */
-.ex-logro{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:160;display:flex;align-items:center;gap:12px;padding:16px 16px;border-radius:var(--r-card);background:#12151A;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity var(--dur-m),transform var(--dur-m);overflow:hidden;}
+.ex-logro{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:calc(var(--z-hoja) + 40);display:flex;align-items:center;gap:12px;padding:16px 16px;border-radius:var(--r-card);background:#12151A;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity var(--dur-m),transform var(--dur-m);overflow:hidden;}
 .ex-logro.show{opacity:1;transform:none;pointer-events:auto;cursor:pointer;}
 .exl-ico{font-size:var(--fs-3xl);line-height:1;flex:none;}
 .ex-logro.show .exl-ico{animation:exSalto .6s ease;}
@@ -211,7 +211,7 @@ html.esc-cliente .ex-logro,html.esc .ex-logro{max-width:420px;margin:0 auto;}
 .exg-vacio{margin:12px 0 0;font:400 var(--fs-s)/1.45 var(--f-body);color:var(--dim-6);}
 /* A5 · etiquetas de al menos 11 px (la tipografía no cambia) */
 .week-flag,.segui-aviso-lbl,.plan-resumen-lbl,.macro-label,.tonelaje-label,.sesion-num,.srf-rir-l,.lbl,.sender,.sg-cat,.sens-animo small,#view-progreso .card span,#view-progreso .l,.ring-card .l{font-size:var(--fs-xs) !important;}
-.bar-val,.bar-lbl,.menu-badge{font-size:var(--fs-xs) !important;}
+.bar-val,.bar-lbl,.menu-badge{font-size:var(--fs-xs);}
 
 /* Entreno en móviles pequeños: el RIR solo en la serie que toca (o al tocar S1/editar la serie) */
 .srf-rirb{display:none;}
