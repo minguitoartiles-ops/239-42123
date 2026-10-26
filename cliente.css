@@ -1066,3 +1066,58 @@ html.fsd-teclado .tb{display:none !important;}
 .pc-banner li.pc-fuera span{text-decoration:line-through;color:var(--dim-6);}
 .pc-ok{padding:8px 16px;border-radius:99px;border:0;background:var(--accent);color:#fff;font:600 13px var(--f-body);cursor:pointer;}
 .pc-banner{scroll-margin-top:84px;}
+
+/* ===== 0.79.4 · #259 vista multitarea del escritorio (lista · contenido · chat) ===== */
+.mt-vista{display:none;}
+html.esc .mt-vista{display:flex;gap:4px;padding:4px;margin-bottom:8px;border-radius:12px;background:var(--wash-med);}
+html.esc .mt-vista button{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:7px 6px;border:0;border-radius:9px;background:none;color:var(--dim-6);font:600 12px var(--f-body);cursor:pointer;}
+html.esc .mt-vista button:hover{color:var(--ink);}
+html.esc .mt-vista button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(18,21,26,.12);}
+html.esc .mt-vista button.mt-estrecha{opacity:.55;}
+html.esc.esc-mini .mt-vista{flex-direction:column;}
+html.esc.esc-mini .mt-vista span{display:none;}
+/* columna del chat */
+.esc-chat-col{display:none;}
+html.esc .esc-chat-col.on{display:flex;flex-direction:column;flex:0 0 clamp(340px, 27vw, 440px);min-width:0;height:100%;order:99;border-left:1px solid var(--line);background:var(--bg);}
+html.esc .esc-chat-col .mt-cab{flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px 12px;border-bottom:1px solid var(--line);}
+html.esc .esc-chat-col .mt-av{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--accent);color:var(--on-accent);font:700 15px var(--f-body);}
+html.esc .esc-chat-col .mt-av img{width:100%;height:100%;object-fit:cover;}
+html.esc .esc-chat-col .mt-cab-txt{flex:1;min-width:0;display:flex;flex-direction:column;}
+html.esc .esc-chat-col .mt-cab-txt small{font:500 10.5px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;}
+html.esc .esc-chat-col .mt-cab-txt b{font:700 15px var(--f-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+html.esc .esc-chat-col .mt-grande{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);font-size:16px;cursor:pointer;}
+html.esc .esc-chat-col .mt-grande:hover{border-color:var(--accent);}
+html.esc .esc-chat-col #view-chat{display:flex !important;flex-direction:column;flex:1 1 0;min-height:0;height:auto;padding:0 12px !important;animation:none;}
+html.esc .esc-chat-col #view-chat > .view-top,html.esc .esc-chat-col #view-chat > .team-row{display:none !important;}
+html.esc .esc-chat-col #chatList{flex:1 1 0;min-height:0;overflow-y:auto;padding-top:12px;}
+html.esc .esc-chat-col .composer{flex:none;padding-bottom:12px;}
+/* con tres columnas el contenido central usa su ancho sin márgenes enormes */
+html.esc.mt-con-chat .screen > [id^="view-"]:not(.esc-izq) .alta-top,
+html.esc.mt-con-chat .screen > [id^="view-"]:not(.esc-izq) .alta-body{padding-left:28px !important;padding-right:28px !important;}
+html.esc.mt-con-chat #app .sc{padding-left:24px;padding-right:24px;}
+/* izquierda = lista de seguimientos, compacta: solo nombre, nota y estado */
+html.esc #view-coach-segs.esc-izq .sg-bloque > :not(.sg-cab),
+html.esc #view-coach-segs.esc-izq .panel-stats,
+html.esc #view-coach-segs.esc-izq .segui-leyenda{display:none !important;}
+html.esc #view-coach-segs.esc-izq .sg-bloque{padding:10px 12px;margin-bottom:8px;cursor:pointer;}
+html.esc #view-coach-segs.esc-izq .sg-cab{cursor:pointer;}
+html.esc #view-coach-segs.esc-izq .sg-bloque.esc-sel{outline:2px solid var(--accent);outline-offset:-1px;background:var(--wash-soft);}
+/* izquierda = lista de planes (Entrenamientos / Nutrición): sin la vista previa */
+html.esc #view-coach-planes.esc-izq .pl-split,html.esc #view-coach-planes.esc-izq .ent-split{display:block;}
+html.esc #view-coach-planes.esc-izq .pl-der,
+html.esc #view-coach-planes.esc-izq .panel-stats{display:none !important;}
+html.esc #view-coach-segs.esc-izq .sg-cab{flex-wrap:wrap;margin-bottom:0;}
+html.esc #view-coach-segs.esc-izq .sg-cab .cliente-info{flex:1 1 calc(100% - 64px);min-width:0;}
+html.esc #view-coach-segs.esc-izq .sg-cab-der{width:100%;padding-left:52px;justify-content:flex-start;}
+html.esc.mt-con-chat #coachBar [data-mt-chat]{display:none !important;}
+@media (min-width:900px){ html.esc.mt-con-chat .pb-btn{top:auto;bottom:12px;right:calc(clamp(340px, 27vw, 440px) + 16px);} }
+html.esc.mt-con-chat #coachBar{flex-wrap:wrap;row-gap:6px;}
+html.esc.mt-con-chat #coachBar button[onclick*="tab-chat"]{display:none !important;}
+/* centro estrecho (tres columnas): la calculadora de nutrición pasa encima en vez de al lado */
+html.esc.mt-con-chat #app{container-type:inline-size;container-name:mtcentro;}
+@container mtcentro (max-width: 900px){
+  html.esc #app.coach-edit #view-plan.active{display:block;}
+  html.esc #app.coach-edit #view-plan.active > #calcCard{position:static;max-height:none;overflow:visible;margin:12px 0 16px;}
+}
+html.esc.mt-con-chat #coachBar .coach-bar-left{flex:0 0 auto;min-width:max-content;}
+html.esc.mt-con-chat #coachBar #coachBarLabel,html.esc.mt-con-chat #coachBar #coachBarName{display:none;}
