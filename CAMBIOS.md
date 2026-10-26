@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.81.4 (actual)
-Cambios acumulados hacia la 0.82: **8 de 10**
+Cambios acumulados hacia la 0.82: **9 de 10**
 
 ### Hacia la 0.82
 1. 26/10/2026 17:50 · «✓ Completar seguimiento» también dentro de los seguimientos de cada cliente (vista multitarea y ampliada): franja fija bajo el título con el comentario opcional que llega al chat; al completarlo se queda «✓ Revisado… · Deshacer» y el cliente sale de la lista de pendientes → **0.81.0-1 (caché)**
@@ -15,6 +15,7 @@ Cambios acumulados hacia la 0.82: **8 de 10**
 6. 26/10/2026 20:10 · Diseño · Fase 4 (escritorio y movimiento): en escritorio los títulos pasan a 28 px y desaparece el rótulo «DOMINGO · ENTRENADOR» repetido sobre cada título (ya lo dice el menú lateral); en multitarea solo la columna central lleva título grande; títulos de pantalla del cliente y del profesional igualados (24 px en el móvil); movimiento con 3 duraciones (0,12 · 0,2 · 0,3 s) y una curva de salida suave para transiciones, plegables y cambios de pestaña; avisos de cambios con un solo pulso de 1,2 s. Queda pendiente el orden interno (capas, puntos de corte, !important) → **0.81.3**
 7. 26/10/2026 20:30 · Hoy (cliente): si el seguimiento de la semana ya está enviado (plazo domingo-lunes), la tarjeta deja de decir «¡Hoy toca rellenarlo!» y muestra «Seguimiento enviado ✓ · El próximo, el lunes d/m» en verde; se repinta al volver a Hoy → **0.81.3-1 (caché)**
 8. 26/10/2026 20:45 · Chat: letra de los mensajes más grande (13 → 15 px) en el móvil y en el escritorio, con algo más de interlineado; también tarjetas dentro del chat y caja de escribir en escritorio. Hora y nombre siguen en 11 px → **0.81.4**
+9. 26/10/2026 20:50 · Pantalla de acceso: «DRAMAS» del logotipo vuelve al azul corporativo (#88B9E6); desde la fase 1 salía con el azul oscuro de texto → **0.81.4-1 (caché)**
 
 ## Versión 0.80 → 0.81.0
 

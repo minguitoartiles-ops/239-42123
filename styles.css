@@ -134,7 +134,7 @@
   .screen.light .logo-light-img{display:block;}
   .wordmark{font-family:var(--f-display);font-size:var(--fs-3xl);line-height:1.06;text-align:center;letter-spacing:.5px;}
   .wordmark .a{color:var(--ink);}
-  .wordmark .b{color:var(--accent-text);display:block;}
+  .wordmark .b{color:var(--accent);display:block;}  /* logotipo: azul corporativo (los logotipos no siguen la norma de contraste) */
   .tagline{font-family:var(--f-script);font-size:var(--fs-xl);color:var(--dim-6);margin:8px 0 24px;}
   .login-card{width:100%;background:var(--card);border-radius:var(--r-card);padding:20px;margin-top:auto;}
   .field{margin-bottom:12px;}
