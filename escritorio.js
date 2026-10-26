@@ -262,9 +262,16 @@ function escAgruparFicha(){
   let grid = document.getElementById('escFichaGrid');
   if (!escActivo()) {
     if (grid) {
-      Array.prototype.forEach.call(grid.querySelectorAll('.esc-grupo'), function(g){
-        while (g.firstChild) body.insertBefore(g.firstChild, grid);
-      });
+      // #289 · devolver TODO a la ficha antes de quitar la rejilla: el contenido de cada grupo y también lo que
+      // va suelto en las columnas (p. ej. la fila «Peso actual · Próxima revisión»). Antes esa fila se perdía al
+      // pasar de ordenador a móvil (ventana estrecha) y, sin ella, abrir cualquier cliente fallaba hasta recargar.
+      const sacar = function(cont){
+        Array.prototype.slice.call(cont.children).forEach(function(n){
+          if (n.classList.contains('esc-col') || n.classList.contains('esc-grupo')) sacar(n);
+          else body.insertBefore(n, grid);
+        });
+      };
+      sacar(grid);
       grid.remove();
     }
     return;

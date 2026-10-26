@@ -101,3 +101,7 @@ html.esc .composer textarea{font-size:var(--fs-m);}
 .cd-edit-nom,.ru-ren{width:28px;}
 .btn-primary.sg-rev-btn,.add-sesion-btn,.pg-seg button,.calc-plegar{min-height:44px;height:44px;}
 html.esc #coachTabs .tbi{min-height:44px;height:44px;}
+
+/* #289 · botón del modo pruebas dentro del pie del menú lateral (escritorio) */
+html.esc .pb-btn.pb-en-pie{position:static;display:flex;align-items:center;justify-content:center;width:100%;height:36px;margin:0 0 8px;font-size:var(--fs-s);}
+html.esc .pb-btn.pb-en-pie{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}

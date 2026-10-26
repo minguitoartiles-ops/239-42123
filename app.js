@@ -1448,17 +1448,18 @@ function goToCliente(key){
   guardarPlan();
   clienteActual=key;
   cargarPlan(key);
-  document.getElementById('cd-nombre').textContent=d.nombre;
-  document.getElementById('cd-meta').textContent='Semana '+d.semana+' · '+d.objetivo;
-  document.getElementById('cd-adhE').textContent=(d.adhE!==null?d.adhE+'/10':'—');
-  document.getElementById('cd-adhN').textContent=(d.adhN!==null?d.adhN+'/10':'—');
-  document.getElementById('cd-tonelaje').textContent=d.tonelaje;
+  // #289 · si falta algún hueco de la ficha no se corta la navegación (antes un hueco perdido bloqueaba abrir clientes)
+  const pon=function(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; };
+  pon('cd-nombre',d.nombre);
+  pon('cd-meta','Semana '+d.semana+' · '+d.objetivo);
+  pon('cd-adhE',(d.adhE!==null?d.adhE+'/10':'—'));
+  pon('cd-adhN',(d.adhN!==null?d.adhN+'/10':'—'));
+  pon('cd-tonelaje',d.tonelaje);
   const tdEl=document.getElementById('cd-tonelajeDelta');
-  tdEl.textContent=d.tonelajeDelta;
-  tdEl.className='tonelaje-delta'+(d.tonelajeDelta.startsWith('+')?' up':'');
-  document.getElementById('cd-peso').textContent=d.peso;
-  document.getElementById('cd-pesoDelta').textContent=d.pesoDelta;
-  document.getElementById('cd-revision').textContent=d.revision;
+  if(tdEl){ tdEl.textContent=d.tonelajeDelta; tdEl.className='tonelaje-delta'+(String(d.tonelajeDelta||'').startsWith('+')?' up':''); }
+  pon('cd-peso',d.peso);
+  pon('cd-pesoDelta',d.pesoDelta);
+  pon('cd-revision',d.revision);
   showScreen('view-coach-cliente');
 }
 function isCoachView(){ return document.getElementById('app').classList.contains('coach-view'); }

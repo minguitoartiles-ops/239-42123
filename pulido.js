@@ -1066,3 +1066,18 @@ renderHoy = (function(orig){
 })(renderHoy);
 // Al volver a Hoy (por ejemplo, tras enviar el seguimiento) se repinta la tarjeta.
 fsdTras('goTo', function(r, n){ if (n === 'hoy' && !isCoachView()) renderHoy(); });
+
+/* #289 · En el ordenador, el botón del modo pruebas («🧪 Domingo → Fátima») va en el pie del menú lateral
+   en vez de flotar encima de los paneles (tapaba botones como «Entrenamiento» o los de abajo a la derecha). */
+document.addEventListener('DOMContentLoaded', function(){ if (typeof pbPintar !== 'function') return;
+pbPintar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const b = document.getElementById('pbBtn'); if (!b) return r;
+    const pie = document.getElementById('escPie'), esc = document.documentElement.classList.contains('esc');
+    if (esc && pie) { if (b.parentNode !== pie) pie.insertBefore(b, pie.firstChild); b.classList.add('pb-en-pie'); }
+    else if (b.classList.contains('pb-en-pie')) { b.classList.remove('pb-en-pie'); (document.getElementById('screenRoot') || document.body).appendChild(b); }
+    return r;
+  };
+})(pbPintar);
+});
