@@ -105,3 +105,38 @@ html.esc #coachTabs .tbi{min-height:44px;height:44px;}
 /* #289 · botón del modo pruebas dentro del pie del menú lateral (escritorio) */
 html.esc .pb-btn.pb-en-pie{position:static;display:flex;align-items:center;justify-content:center;width:100%;height:36px;margin:0 0 8px;font-size:var(--fs-s);}
 html.esc .pb-btn.pb-en-pie{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+/* ==========================================================================
+   #290 · Marca en la portada (sutil): degradado azul, la pesa en blanco como
+   marca de agua, anillos, burbujas y la cuadrícula de puntos del mural.
+   ========================================================================== */
+#view-splash{position:relative;isolation:isolate;overflow-x:hidden;min-height:100%;box-sizing:border-box;}
+.sp-deco{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;}
+.sp-deco::before{content:'';position:absolute;left:-110px;top:-10px;width:300px;height:367px;background:url(assets/marca_agua.png) center/contain no-repeat;opacity:.75;}
+.sp-anillo{position:absolute;left:50%;border-radius:50%;border:2px solid rgba(255,255,255,.95);}
+.sp-a1{width:300px;height:300px;margin-left:-150px;top:20px;}
+.sp-a2{width:230px;height:230px;margin-left:-115px;top:55px;opacity:.7;}
+.sp-burbuja{position:absolute;border-radius:50%;background:color-mix(in srgb, var(--accent) 30%, transparent);}
+.sp-b1{width:150px;height:150px;right:-50px;top:-40px;}
+.sp-b2{width:64px;height:64px;left:-18px;bottom:32%;}
+.sp-puntos{position:absolute;right:22px;bottom:22px;width:100px;height:80px;background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 80%, transparent) 2.2px, transparent 2.6px);background-size:20px 20px;}
+#view-splash .tagline .real{color:var(--accent);}
+/* tema claro */
+.screen.light #view-splash{background:radial-gradient(90% 60% at 50% 30%, #FFFFFF 0%, #F3F8FD 45%, #CFE3F7 100%);}
+.screen.light #view-splash .login-card{background:#fff;box-shadow:0 10px 30px -14px rgba(43,103,163,.35);border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);}
+.screen.light #view-splash .pro-btn{background:#fff;}
+/* tema oscuro: lo mismo, mucho más tenue */
+.screen:not(.light) #view-splash{background:radial-gradient(90% 60% at 50% 30%, #1A1F26 0%, #12161B 50%, #0E1013 100%);}
+.screen:not(.light) .sp-deco::before{opacity:.05;}
+.screen:not(.light) .sp-anillo{border-color:rgba(255,255,255,.08);}
+.screen:not(.light) .sp-burbuja{background:color-mix(in srgb, var(--accent) 10%, transparent);}
+.screen:not(.light) .sp-puntos{opacity:.35;}
+/* ordenador: la marca de agua y los anillos más grandes */
+@media (min-width:900px){
+  .sp-deco::before{left:-140px;top:-20px;width:520px;height:636px;}
+  .sp-a1{width:420px;height:420px;margin-left:-210px;top:-20px;}
+  .sp-a2{width:320px;height:320px;margin-left:-160px;top:30px;}
+  .sp-b1{width:260px;height:260px;right:-80px;top:-80px;}
+  .sp-b2{width:110px;height:110px;left:-30px;bottom:30%;}
+  .sp-puntos{right:48px;bottom:48px;width:140px;height:100px;}
+}
