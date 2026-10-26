@@ -18,7 +18,7 @@
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc{display:block;}
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc:empty{display:none !important;}
 #app:not(.coach-edit) #view-entreno .ex-desc{margin:6px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:10px;background:var(--accent-wash);color:var(--ink);font:500 13px/1.45 Archivo,sans-serif;}
-#app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 11px var(--f-mono);color:var(--accent);letter-spacing:.02em;}
+#app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 11px var(--f-mono);color:var(--accent-text);letter-spacing:.02em;}
 .coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 13px/1.45 Archivo,sans-serif;color:var(--ink);margin:8px 0;}
 .coach-edit #view-entreno .ex-desc:empty::before{content:attr(data-ph);color:var(--dim-45);font-style:italic;}
 
@@ -47,7 +47,7 @@
 /* con el asa, el nombre comparte la primera línea */
 .coach-edit #view-entreno .ex-table-row:has(> .ru-asa) > .ex-name-cell{flex:1 1 calc(100% - 40px);}
 .coach-edit #view-entreno .ru-f{flex:1 1 0;order:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;min-width:0;}
-.coach-edit #view-entreno .ru-f::before{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.coach-edit #view-entreno .ru-f::before{font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
 .coach-edit #view-entreno .ru-se::before{content:"Series";}
 .coach-edit #view-entreno .ru-re::before{content:"Reps";}
 .coach-edit #view-entreno .ru-ri::before{content:"RIR";}
@@ -96,7 +96,7 @@ html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-co
 @media (max-width:380px){
   .srf .srf-n{min-width:44px;padding:0 4px;}
   .srf-n-t{flex-direction:column;align-items:center;gap:0;line-height:1.05;}
-  .srf-n-t span{font-size:10px;letter-spacing:.02em;}
+  .srf-n-t span{font-size:11px;letter-spacing:.02em;}
   .srf-n-t b{font-size:16px;}
 }
 /* correcciones de la fila del editor */
@@ -124,16 +124,16 @@ html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center
 .coach-edit #view-entreno .ru-f{display:none !important;}
 .ru-ss{margin:8px 0 6px;max-width:440px;}
 .ru-ss-cab,.ru-ss-f{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 34px;gap:8px;align-items:center;}
-.ru-ss-cab span{font:700 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.ru-ss-cab span{font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
 .ru-ss-cab span:first-child{text-align:left;}
 .ru-ss-l{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 .ru-ss-n{font:700 13px var(--f-mono);color:var(--ink);white-space:nowrap;}
 .ru-ss-f input{width:100%;min-width:0;height:40px;border:1.5px solid var(--accent-line);border-radius:10px;background:var(--wash-soft);text-align:center;font:700 16px var(--f-mono);color:var(--ink);}
 .ru-ss-f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);}
 .ru-ss-f input::placeholder{color:var(--dim-45);}
-.ru-ss-x{width:34px;height:34px;border-radius:9px;border:1px solid rgba(217,80,63,.3);background:none;color:var(--danger);cursor:pointer;font-size:13px;}
+.ru-ss-x{width:34px;height:34px;border-radius:9px;border:1px solid rgba(217,80,63,.3);background:none;color:var(--danger-text);cursor:pointer;font-size:13px;}
 .ru-ss-x:disabled{opacity:.25;cursor:default;}
-.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 14px;border-radius:10px;border:1px dashed var(--accent-line);background:none;color:var(--accent);font:700 12.5px Archivo,sans-serif;cursor:pointer;}
+.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 14px;border-radius:10px;border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 12.5px Archivo,sans-serif;cursor:pointer;}
 .ru-ss-mas:hover{background:var(--accent-wash);}
 .ru-ss-rir.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:6px;} .ru-ss-n{font-size:12px;} }

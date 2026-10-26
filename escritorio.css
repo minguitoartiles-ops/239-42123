@@ -22,7 +22,7 @@ html.esc #coachTabs #ctab-ajustes{order:5;}
 html.esc .esc-logo{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;margin-bottom:6px;border-bottom:1px solid var(--line);}
 html.esc .esc-logo img{width:40px;height:40px;border-radius:50%;flex:none;}
 html.esc .esc-logo b{display:block;font:700 13.5px var(--f-body);color:var(--ink);}
-html.esc .esc-logo span{display:block;font:500 10.5px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+html.esc .esc-logo span{display:block;font:500 11px var(--f-mono);color:var(--accent-text);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
 html.esc .esc-pie{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);order:9;}
 html.esc .esc-pie-btn{position:relative;display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:none;border-radius:12px;background:none;color:var(--dim-6);font:600 13px var(--f-body);cursor:pointer;text-align:left;}
 html.esc .esc-pie-btn:hover{background:var(--wash-med);color:var(--ink);}
@@ -53,7 +53,7 @@ html.esc .chat-fila{cursor:pointer;}
 html.esc .chat-fila.esc-sel{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-wash);}
 /* lista estrecha: tarjetas compactas */
 html.esc .esc-izq .panel-stats{gap:8px;}
-html.esc .esc-izq .panel-stat .lbl{font-size:10px;}
+html.esc .esc-izq .panel-stat .lbl{font-size:11px;}
 html.esc #view-coach-panel:not(.esc-izq) .alta-body{max-width:none;}
 
 /* ---------- 3 · ficha en columnas ---------- */
@@ -82,7 +82,7 @@ html.esc #app.coach-edit .ex-item:hover .ex-desc-restore,html.esc #app.coach-edi
 html.esc #app.coach-edit .ex-item:focus-within .ex-desc-restore,html.esc #app.coach-edit .ex-item:focus-within .ex-video-row,html.esc #app.coach-edit .ex-item:focus-within .en-ej-acts{opacity:1;}
 html.esc #app.coach-edit .en-ej-acts{flex-direction:row;flex-wrap:wrap;align-items:center;}
 html.esc #app.coach-edit .en-pautas{flex-wrap:wrap;overflow:visible;}
-html.esc #app.coach-edit .en-pautas button,html.esc #app.coach-edit .en-ej-btns button{height:26px;font-size:10.5px;padding:0 7px;min-width:28px;}
+html.esc #app.coach-edit .en-pautas button,html.esc #app.coach-edit .en-ej-btns button{height:26px;font-size:11px;padding:0 7px;min-width:28px;}
 /* casillas de serie con ancho fijo, como celdas */
 html.esc #app .ex-series-inputs,html.esc #app .sr-plan,html.esc #app .sr-hechas{flex-wrap:nowrap;justify-content:flex-start;}
 html.esc #app .sr-cel,html.esc #app .serie-in{flex:0 0 78px;min-width:0;}
@@ -105,7 +105,7 @@ html.esc #app.coach-view .tb .tbi{flex:0 0 auto;}
 html.esc .esc-tabla-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 18px;}
 html.esc .esc-tabla{border-collapse:collapse;width:100%;font:500 12.5px var(--f-mono);}
 html.esc .esc-tabla th,html.esc .esc-tabla td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;}
-html.esc .esc-tabla thead th{font:600 10.5px var(--f-mono);color:var(--dim-45);text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;background:var(--card);}
+html.esc .esc-tabla thead th{font:600 11px var(--f-mono);color:var(--dim-45);text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;background:var(--card);}
 html.esc .esc-tabla tbody th{font:600 12.5px var(--f-body);color:var(--ink);}
 html.esc .esc-tabla tbody tr:hover{background:var(--wash-soft);}
 html.esc .esc-tabla tbody tr:last-child > *{border-bottom:none;}
@@ -137,7 +137,7 @@ html.esc .fsd-toast{bottom:28px;left:calc(50% + var(--esc-menu) / 2);}
 .esc-sm-card h2{font:400 26px/1.15 var(--f-display);margin:16px 0 10px;}
 .esc-sm-card p{font:400 14.5px/1.5 var(--f-body);color:var(--dim-6);margin:0 0 16px;}
 .esc-sm-qr{display:block;margin:6px auto 10px;width:180px;height:180px;border-radius:12px;border:1px solid var(--line-strong);image-rendering:pixelated;background:#fff;}
-.esc-sm-url{font:600 12.5px var(--f-mono);color:var(--accent);margin-bottom:16px;word-break:break-all;}
+.esc-sm-url{font:600 12.5px var(--f-mono);color:var(--accent-text);margin-bottom:16px;word-break:break-all;}
 .esc-sm-card .esc-sm-nota{font-size:12.5px;color:var(--dim-45);}
 .esc-sm-card .btn-primary{width:100%;max-width:260px;}
 
@@ -152,7 +152,7 @@ html.esc .esc-tabla th,html.esc .esc-tabla td{padding:8px 10px;}
 .esc-sm-form[hidden]{display:none;}
 .esc-sm-quien{display:flex;gap:8px;justify-content:center;}
 .esc-sm-form input{height:42px;border-radius:12px;border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);padding:0 14px;font:500 15px var(--f-body);}
-.esc-sm-err{min-height:16px;font:500 12.5px var(--f-body);color:var(--danger);text-align:center;}
+.esc-sm-err{min-height:16px;font:500 12.5px var(--f-body);color:var(--danger-text);text-align:center;}
 html.esc-cliente body{background:#E7ECF2 !important;align-items:center;}
 html.esc-cliente .phone{width:430px;max-width:100%;box-shadow:0 0 0 1px rgba(0,0,0,.08), 0 20px 60px rgba(0,0,0,.12);background:var(--bg);}
 .esc-cli-pill{position:fixed;top:14px;left:14px;z-index:300;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:99px;background:#12151A;color:#fff;font:500 12.5px Archivo,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.18);}

@@ -1,0 +1,3 @@
+Archivo, Archivo Black, Caveat e IBM Plex Mono se distribuyen bajo la
+SIL Open Font License 1.1 (https://openfontlicense.org).
+Archivos woff2 (subconjunto latino) obtenidos de Fontsource.
