@@ -1233,3 +1233,7 @@ html.esc .sg-rev-centro{padding-left:28px;padding-right:28px;}
 html:not(.esc) :is(.srf-q,.srf-nota-b,.bell,.cmp-ico,.view-back,.pu-gal-chip,.srf-ok,.srf-n,.nh-vaso,.nh-agua-mas,.rir-n,.srf-peso>button){position:relative;}
 html:not(.esc) :is(.srf-q,.srf-nota-b,.bell,.cmp-ico,.view-back,.pu-gal-chip,.srf-ok,.srf-n)::before{content:'';position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%);}
 html:not(.esc) :is(.nh-vaso,.nh-agua-mas,.rir-n,.srf-peso>button)::before{content:'';position:absolute;left:0;right:0;top:50%;height:max(100%,44px);transform:translateY(-50%);}
+
+/* #284 · Seguimiento de la semana ya enviado */
+.segui-aviso.hecho{background:color-mix(in srgb, var(--ok) 10%, transparent);border-color:color-mix(in srgb, var(--ok) 35%, transparent);}
+.segui-aviso.hecho .segui-aviso-main{color:var(--ok-text);}

@@ -1024,3 +1024,45 @@ pintarSegsResumen = (function(orig){
     return r;
   };
 })(pintarSegsResumen);
+
+/* =========================================================
+   #284 · Hoy: si el seguimiento de esta semana ya está enviado,
+   la tarjeta deja de decir «¡Hoy toca rellenarlo!».
+   Plazo: domingo y lunes. Cuenta cualquier envío desde el domingo
+   anterior al lunes que toca (hoy si es lunes, si no el próximo).
+   ========================================================= */
+function puSeguiHecho(){
+  const k = (typeof clienteActual !== 'undefined') ? clienteActual : null;
+  if (!k || typeof SEGUIMIENTOS === 'undefined') return null;
+  const ult = (SEGUIMIENTOS[k] || [])[0];
+  if (!ult || !ult.fecha) return null;
+  const hoy = new Date(); hoy.setHours(12, 0, 0, 0);
+  const i = (hoy.getDay() + 6) % 7;
+  const lunes = new Date(hoy); lunes.setDate(hoy.getDate() + (i === 0 ? 0 : 7 - i));
+  const desde = new Date(lunes); desde.setDate(lunes.getDate() - 1); desde.setHours(0, 0, 0, 0);
+  if (new Date(ult.fecha) < desde) return null;
+  const prox = new Date(lunes); prox.setDate(lunes.getDate() + 7);
+  return prox;
+}
+renderHoy = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const av = document.getElementById('seguiAviso');
+    if (av) {
+      const prox = puSeguiHecho();
+      av.classList.toggle('hecho', !!prox);
+      const sub = av.querySelector('.segui-aviso-sub');
+      if (sub && !sub.dataset.orig) sub.dataset.orig = sub.textContent;
+      if (prox) {
+        av.classList.remove('hoy');
+        const main = document.getElementById('seguiCuando'), cta = document.getElementById('seguiCta');
+        if (main) main.textContent = 'Seguimiento enviado ✓';
+        if (cta) cta.textContent = 'Ver';
+        if (sub) sub.textContent = 'El próximo, el lunes ' + prox.getDate() + '/' + (prox.getMonth() + 1);
+      } else if (sub && sub.dataset.orig) sub.textContent = sub.dataset.orig;
+    }
+    return r;
+  };
+})(renderHoy);
+// Al volver a Hoy (por ejemplo, tras enviar el seguimiento) se repinta la tarjeta.
+fsdTras('goTo', function(r, n){ if (n === 'hoy' && !isCoachView()) renderHoy(); });
