@@ -1171,3 +1171,22 @@ html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
   html.esc #calcCard .nu-rapido,html.esc #calcCard .nu-plantillas{display:inline-flex;align-items:center;justify-content:center;width:calc(50% - 4px);height:42px;margin:4px 0 12px;vertical-align:top;}
   html.esc #calcCard .nu-rapido{margin-right:8px;}
 }
+/* 26/10 · #234 ilustraciones de los ejercicios (cliente) */
+.il-box{display:flex;align-items:center;gap:12px;margin:8px 0 10px;}
+.il-fig{flex:none;width:92px;height:70px;padding:2px;border:1px solid var(--line);border-radius:12px;background:var(--wash-soft);cursor:zoom-in;color:var(--ink);transition:width .2s ease, height .2s ease;}
+.il-box.il-grande{flex-direction:column;align-items:stretch;}
+.il-box.il-grande .il-fig{width:100%;height:190px;cursor:zoom-out;}
+.il-svg{display:block;width:100%;height:100%;}
+.il-txt{margin:0;font:400 12.5px/1.4 var(--f-body);color:var(--dim-6);}
+.il-txt-suave{font-style:italic;}
+.il-cuerpo{stroke:currentColor;stroke-width:3.4;stroke-linecap:round;fill:none;}
+.il-cabeza{fill:currentColor;}
+.il-disco{fill:none;stroke:var(--accent);stroke-width:3;}
+.il-peso{fill:var(--accent);}
+.il-placa{stroke:var(--accent);stroke-width:4;stroke-linecap:round;}
+.il-cable{stroke:var(--accent);stroke-width:1.4;opacity:.7;}
+.il-banda{stroke-dasharray:3 2;}
+.il-mueble{stroke:var(--dim-45, #9aa3ad);stroke-width:3;stroke-linecap:round;fill:var(--line);}
+.il-fondo{stroke:var(--line-strong);stroke-width:1.6;stroke-linecap:round;fill:none;}
+#app.coach-view .il-box{display:none;}
+.il-mueble.il-sin{fill:none;}

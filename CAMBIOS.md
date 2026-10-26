@@ -4,13 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.80.2 (actual)
-Cambios acumulados hacia la 0.81: **4 de 10**
+Cambios acumulados hacia la 0.81: **5 de 10**
 
 ### Hacia la 0.81
 1. 26/10/2026 11:20 · Plegables siempre plegados al entrar, en toda la app y sin recordar lo que se dejó abierto: comidas del plan (cliente y Fátima, también al abrir el plan en edición; ya no se abre sola «la comida que toca»), días del entreno (también en el creador de rutinas compacto), apartados de la ficha (también al volver del plan o del chat del mismo cliente) y Ajustes (antes se abría el primero y se recordaba). Solo se abre algo solo cuando se llega a propósito: un aviso de pago o alergias, «Suscripción» desde Pagos, una comida tocada desde Hoy o los cambios resaltados de un aviso → **0.80.0-1 (caché)**
 2. 26/10/2026 11:15 · Ficha en el ordenador también en la vista ampliada y a pantalla completa (Fátima y Domingo): una sola columna centrada (máx. 860 px), sin repartirse en dos columnas, y los accesos con el mismo ancho que las tarjetas → **0.80.1**
 3. 26/10/2026 11:25 · Multitarea con el centro estrecho: barra del plan ordenada (Volver · ‹ › · pestaña · Deshacer en una línea y «Guardar cambios y notificar» a todo el ancho debajo); «Plan rápido» y «Plantillas» lado a lado; la casilla «Kcal objetivo» alineada con las de % → **0.80.1-1 (caché)**
 4. 26/10/2026 11:40 · Recetas con foto: Fátima puede añadir (cámara o galería), cambiar o quitar una foto en cada receta; se reduce a 1000 px antes de guardarla. Se ve como portada en su lista de recetas, en miniatura en «Receta de la semana» (Hoy) y en el recetario del cliente, y grande arriba al abrir la receta → **0.80.2**
+5. 26/10/2026 14:55 · Entreno del cliente con ilustraciones propias (sin derechos de terceros): debajo del nombre de cada ejercicio, un dibujo animado del movimiento (29 patrones: sentadilla, bisagra, hip thrust, zancada, prensa, press, flexiones, fondos, remo, jalón, dominadas, curl, tríceps, elevaciones, plancha, abdominales, cardio…) con su material (barra, mancuernas, kettlebell, polea, banda, máquina, banco) y una indicación técnica corta; tocarlo lo amplía. Solo se mueve mientras se ve y queda quieto con «reducir movimiento». No se guarda en el plan → **0.80.2-1 (caché)**
 
 ## Versión 0.79 → 0.80.0
 
