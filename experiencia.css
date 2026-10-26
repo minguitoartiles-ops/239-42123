@@ -48,7 +48,7 @@
 .ex-barra[hidden]{display:none;}
 .ex-barra .exb-t{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ex-barra .exb-e,.ex-barra .exb-s{flex:none;font:600 var(--fs-xs) var(--f-mono);color:var(--dim-6);}
-.ex-barra > i{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .3s;}
+.ex-barra > i{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width var(--dur-l);}
 .ses-tick.ex-latido{animation:exLatido 0.8s ease-in-out 3;border-color:var(--accent);}
 @keyframes exLatido{0%,100%{transform:scale(1);}50%{transform:scale(1.25);box-shadow:0 0 0 6px var(--accent-wash);}}
 
@@ -168,13 +168,13 @@ html.esc #listaClientes .kcard .kc-pie{display:none;}
 /* ---------- C13 · Ajustes plegables ---------- */
 .aj-sec{margin:0 0 8px;}
 .aj-sec-h{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:16px 4px;border:none;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:700 var(--fs-s) var(--f-mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-align:left;}
-.aj-sec-v{font-size:var(--fs-l);color:var(--accent-text);transition:transform .2s;}
+.aj-sec-v{font-size:var(--fs-l);color:var(--accent-text);transition:transform var(--dur-m);}
 .aj-sec.abierta .aj-sec-v{transform:rotate(180deg);}
 .aj-sec:not(.abierta) .aj-sec-c{display:none;}
 .aj-sec-c{padding-top:8px;}
 
 /* ---------- Recompensas ---------- */
-.ex-logro{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:160;display:flex;align-items:center;gap:12px;padding:16px 16px;border-radius:var(--r-card);background:#12151A;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .25s,transform .25s;overflow:hidden;}
+.ex-logro{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:160;display:flex;align-items:center;gap:12px;padding:16px 16px;border-radius:var(--r-card);background:#12151A;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity var(--dur-m),transform var(--dur-m);overflow:hidden;}
 .ex-logro.show{opacity:1;transform:none;pointer-events:auto;cursor:pointer;}
 .exl-ico{font-size:var(--fs-3xl);line-height:1;flex:none;}
 .ex-logro.show .exl-ico{animation:exSalto .6s ease;}

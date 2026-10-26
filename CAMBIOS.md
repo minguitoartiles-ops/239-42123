@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.81.2 (actual)
-Cambios acumulados hacia la 0.82: **5 de 10**
+## Versión 0.81.3 (actual)
+Cambios acumulados hacia la 0.82: **6 de 10**
 
 ### Hacia la 0.82
 1. 26/10/2026 17:50 · «✓ Completar seguimiento» también dentro de los seguimientos de cada cliente (vista multitarea y ampliada): franja fija bajo el título con el comentario opcional que llega al chat; al completarlo se queda «✓ Revisado… · Deshacer» y el cliente sale de la lista de pendientes → **0.81.0-1 (caché)**
@@ -12,6 +12,7 @@ Cambios acumulados hacia la 0.82: **5 de 10**
 3. 26/10/2026 18:40 · Diseño · Fase 1 (legibilidad): las cuatro fuentes (Archivo, Archivo Black, IBM Plex Mono y Caveat, sin cambiarlas) van ahora dentro de la app y ya no se piden a Google, así se ven igual sin conexión; todas las reglas de letra tienen fuente de reserva; el azul de marca usado como texto pasa a un azul más oscuro de la misma familia (también proteína, carbohidrato, grasa y rojo de aviso en tema claro); ningún texto baja de 11 px; pesos 800/900 reales en vez de negrita inventada; zonas táctiles de 44 px en el móvil (vasos de agua, «?» del RIR, −/+ de las series, RIR, nota, Volver, campana) sin cambiar el dibujo. Textos con contraste bajo: de 446 a 176 → **0.81.1-1 (caché)**
 4. 26/10/2026 19:00 · Diseño · Fase 2 (sistema base): 8 tamaños de letra con variable propia (11 · 13 · 15 · 17 · 20 · 24 · 28 · 40), espacios en escala de base 4, dos radios (12 px controles, 20 px tarjetas) más píldoras, tres colores de estado (bien, aviso, peligro) con versión de relleno y de texto que sustituyen a los rojos, verdes y naranjas sueltos, escala de puntuación 1-5 legible en tema claro y grises de texto con contraste suficiente. Textos con contraste bajo (midiendo también la transparencia): 40 → **0.81.2**
 5. 26/10/2026 19:40 · Diseño · Fase 3 (componentes e iconos): iconos de línea (Lucide, licencia ISC) en las pestañas, el menú lateral, la lista «Más» y los accesos de la ficha; Nutrición deja la pizza por cubiertos; emojis solo donde aportan emoción. Botones en tres variantes (principal 48 px, secundario de contorno fino, terciario de 36 px), un solo chip de filtro de 36 px con contador en píldora (en el móvil se desplazan en horizontal), una sola etiqueta de estado de 11 px con los tres colores, plegables con título en Archivo 600, un solo «Volver» (también en la barra del plan) y avatares sin foto con la inicial sobre color → **0.81.2-1 (caché)**
+6. 26/10/2026 20:10 · Diseño · Fase 4 (escritorio y movimiento): en escritorio los títulos pasan a 28 px y desaparece el rótulo «DOMINGO · ENTRENADOR» repetido sobre cada título (ya lo dice el menú lateral); en multitarea solo la columna central lleva título grande; títulos de pantalla del cliente y del profesional igualados (24 px en el móvil); movimiento con 3 duraciones (0,12 · 0,2 · 0,3 s) y una curva de salida suave para transiciones, plegables y cambios de pestaña; avisos de cambios con un solo pulso de 1,2 s. Queda pendiente el orden interno (capas, puntos de corte, !important) → **0.81.3**
 
 ## Versión 0.80 → 0.81.0
 

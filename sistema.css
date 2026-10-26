@@ -72,3 +72,15 @@ html:not(.esc) .ex-filtros,html:not(.esc) .pagos-filtros,html:not(.esc) .pu-chat
 html:not(.esc) .ex-filtros::-webkit-scrollbar,html:not(.esc) .pagos-filtros::-webkit-scrollbar,html:not(.esc) .pu-chat-chips::-webkit-scrollbar,html:not(.esc) .ent-filtros::-webkit-scrollbar{display:none;}
 html:not(.esc) :is(.ex-filtros,.pagos-filtros,.pu-chat-chips,.ent-filtros) > *{flex:none;}
 .mini-btn{white-space:nowrap;}
+
+/* ==========================================================================
+   Diseño · Fase 4: escritorio y movimiento
+   ========================================================================== */
+/* Escala propia de escritorio: títulos de 28 px y texto base de 15 px */
+html.esc{--fs-2xl:28px;}
+/* El menú lateral ya dice quién eres: fuera el rótulo repetido sobre cada título */
+html.esc .eyebrow[id$="Who"]{display:none;}
+html.esc #view-coach-panel .h-title,html.esc .screen .alta-top .h-title{margin-top:0;}
+/* Multitarea: un solo título grande, el de la columna central */
+html.mt-on .esc-izq .h-title{font-size:var(--fs-xl) !important;}
+html.mt-on #escChatCol .h-title{font-size:var(--fs-l) !important;}

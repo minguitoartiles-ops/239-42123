@@ -145,7 +145,7 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 .ses-del,.meal-del,.en-ej-btns .en-del,.ru-ss-x{
   align-items:center;justify-content:center;flex:none;width:38px;height:38px;padding:0 !important;border-radius:var(--r-ctl);
   border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;
-  font:800 var(--fs-l)/1 Archivo,sans-serif !important;cursor:pointer;transition:background .12s,color .12s,transform .08s;}
+  font:800 var(--fs-l)/1 Archivo,sans-serif !important;cursor:pointer;transition:background var(--dur-r),color var(--dur-r),transform var(--dur-r);}
 .coach-edit .ses-del,.coach-edit .meal-del{display:inline-flex;}
 .en-ej-btns .en-del,.ru-ss-x{display:inline-flex;}
 .ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;}
