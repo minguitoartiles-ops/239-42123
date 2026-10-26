@@ -1216,3 +1216,9 @@ html.fsd-teclado .pb-btn{display:none !important;}
 .il-cuerda{stroke-width:2.6;opacity:.9;stroke-dasharray:5 3;}
 .il-agua{stroke:var(--accent);opacity:.5;}
 .sg-desc + .sg-text{margin-top:10px;}
+/* 26/10 · «Completar seguimiento» en los seguimientos del cliente */
+.sg-rev-centro{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--wash-soft);}
+html.esc .sg-rev-centro{padding-left:28px;padding-right:28px;}
+.sg-rev-centro .sg-rev-btn{width:auto;padding:0 18px;}
+.sg-rev-centro .sg-rev-de{font:500 12.5px var(--f-body);color:var(--dim-6);}
+.sg-rev-centro .sg-rev-form{flex:1 1 100%;}

@@ -963,3 +963,30 @@ if (typeof tarjetaSeguimiento === 'function') tarjetaSeguimiento = (function(ori
     return h;
   };
 })(tarjetaSeguimiento);
+
+/* 26/10 · «✓ Completar seguimiento» también en los seguimientos de cada cliente (vista multitarea y ampliada):
+   franja fija bajo el título, con el mismo comentario opcional al chat. */
+function sgRevCentro(){
+  const v = document.getElementById('view-coach-seguimientos'); if (!v || !coachActivo) return;
+  const k = clienteActual, r = k && (SEGUIMIENTOS[k] || [])[0];
+  let f = document.getElementById('sgRevCentro');
+  if (!r) { if (f) f.remove(); return; }
+  if (!f) { f = document.createElement('div'); f.id = 'sgRevCentro'; const top = v.querySelector('.alta-top'); v.insertBefore(f, top ? top.nextSibling : v.firstChild); }
+  f.className = 'sg-rev sg-rev-centro';
+  const mio = r.rev && r.rev[sgYo()], otros = r.rev ? Object.keys(r.rev).filter(function(x){ return x !== sgYo(); }) : [];
+  const nom = esc(((clientesData[k] || {}).nombre || '').split(' ')[0]);
+  f.innerHTML = mio
+    ? '<span class="sg-rev-ok">✓ Revisado el ' + fechaCorta(mio.f) + (mio.c ? ' · «' + esc(mio.c.length > 60 ? mio.c.slice(0, 59) + '…' : mio.c) + '»' : '') + '</span><button type="button" class="mini-btn" onclick="sgRevDeshacer(\'' + k + '\')">Deshacer</button>'
+    : '<button type="button" class="btn-primary sg-rev-btn" onclick="sgRevAbrir(this)">✓ Completar seguimiento</button>'
+      + '<span class="sg-rev-de">' + esc(r.s || '') + '</span>'
+      + (otros.length ? '<span class="sg-rev-otro">Ya lo revisó ' + otros.map(function(x){ return x.charAt(0).toUpperCase() + x.slice(1); }).join(' y ') + '</span>' : '')
+      + '<div class="sg-rev-form"><label for="sgcCentro">Comentario para ' + nom + ' (opcional · le llegará al chat)</label>'
+      + '<textarea id="sgcCentro" rows="3" class="sg-text" placeholder="¡Buena semana! Esta semana subimos un poco el peso en…"></textarea>'
+      + '<div class="sg-rev-acts"><button type="button" class="btn-eq" onclick="sgRevCancelar(this)">Cancelar</button><button type="button" class="btn-primary" onclick="sgRevCompletar(this,\'' + k + '\')">Completar</button></div></div>';
+}
+fsdTras('goToSeguimientos', function(){ setTimeout(sgRevCentro, 0); });
+['sgRevCompletar', 'sgRevDeshacer'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){ const r = orig.apply(this, arguments); try { sgRevCentro(); } catch(e){} return r; };
+});
