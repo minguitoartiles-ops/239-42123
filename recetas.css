@@ -98,3 +98,18 @@ html.esc #view-coach-recetas .alta-body{padding-left:max(28px, calc((100% - 880p
 .rc-video:active{transform:scale(.98);}
 .rc-video-ayuda{display:block;margin-top:4px;font-size:12px;color:var(--dim-55);}
 #rcVideo.rc-mal{border-color:var(--danger);}
+/* 26/10 · foto de la receta */
+.rc-foto-box{display:flex;flex-direction:column;gap:8px;}
+.rc-foto-vacia{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;aspect-ratio:16/9;max-height:220px;border:1.5px dashed var(--accent-line);border-radius:14px;background:var(--wash-soft);color:var(--ink);cursor:pointer;text-align:center;padding:12px;}
+.rc-foto-vacia > span{font-size:28px;}
+.rc-foto-vacia b{font:700 14px var(--f-body);}
+.rc-foto-vacia small{font:400 12px var(--f-body);color:var(--dim-6);max-width:260px;}
+.rc-foto-prev{width:100%;aspect-ratio:16/9;max-height:240px;border-radius:14px;background:var(--wash-med) center/cover no-repeat;}
+.rc-foto-acc{display:flex;gap:8px;}
+.rc-foto-acc .btn-eq{flex:1;}
+.rc-foto-quitar{color:var(--danger, #c0392b);}
+.rc-portada{display:block;margin:-14px -16px 12px;aspect-ratio:16/9;max-height:220px;border-radius:16px 16px 0 0;background:var(--wash-med) center/cover no-repeat;}
+.rc-card.rc-con-foto{overflow:hidden;}
+.rc-hoy-foto{flex:none;width:64px;height:64px;border-radius:14px;background:var(--wash-med) center/cover no-repeat;box-shadow:0 2px 8px -3px rgba(0,0,0,.25);}
+.rc-it-foto{flex:none;width:56px;height:56px;border-radius:12px;background:var(--wash-med) center/cover no-repeat;}
+.rc-ver-foto{width:100%;aspect-ratio:4/3;max-height:300px;margin:0 0 12px;border-radius:16px;background:var(--wash-med) center/cover no-repeat;flex-shrink:0;}
