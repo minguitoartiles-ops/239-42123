@@ -84,3 +84,9 @@ html.esc #view-coach-panel .h-title,html.esc .screen .alta-top .h-title{margin-t
 /* Multitarea: un solo título grande, el de la columna central */
 html.mt-on .esc-izq .h-title{font-size:var(--fs-xl) !important;}
 html.mt-on #escChatCol .h-title{font-size:var(--fs-l) !important;}
+
+/* #286 · Chat: letra de los mensajes más grande (13 → 15 px) en móvil y escritorio */
+.bubble{font-size:var(--fs-m);line-height:1.45;}
+.bubble.card-msg .t,.bubble.card-msg .l{font-size:var(--fs-m);}
+.chat-input input[type=text]{font-size:var(--fs-m);}
+html.esc .composer textarea{font-size:var(--fs-m);}
