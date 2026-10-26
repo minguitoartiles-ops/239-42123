@@ -1210,3 +1210,8 @@ html.fsd-teclado .pb-btn{display:none !important;}
 .pc-banner .pc-det ul{max-height:220px;overflow-y:auto;}
 .pc-dia{display:inline-block;margin:4px 0 0;padding:2px 9px;border-radius:99px;background:var(--accent);color:#fff;font:700 10.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;}
 .meal-head-txt .pc-dia{margin-left:0;}
+.il-mango{fill:none;stroke:var(--accent);stroke-width:2.4;}
+.il-balon{fill:var(--accent);opacity:.85;}
+.il-respaldo{opacity:.55;}
+.il-cuerda{stroke-width:2.6;opacity:.9;stroke-dasharray:5 3;}
+.il-agua{stroke:var(--accent);opacity:.5;}
