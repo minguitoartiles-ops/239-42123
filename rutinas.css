@@ -4,11 +4,11 @@
    ========================================================= */
 
 /* ---------- jerarquía: día > ejercicio ---------- */
-#view-entreno .sesion-num{font-size:11px;}
-#view-entreno .sesion-title{font:800 20px/1.2 Archivo,sans-serif;letter-spacing:-.01em;margin-top:3px;}
-#view-entreno .sesion-card.open > .sesion-head{padding-bottom:10px;}
-#app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 16px/1.25 Archivo,sans-serif;}
-#app:not(.coach-edit) #view-entreno .ex-item{padding-top:6px;}
+#view-entreno .sesion-num{font-size:var(--fs-xs);}
+#view-entreno .sesion-title{font:800 var(--fs-xl)/1.2 Archivo,sans-serif;letter-spacing:-.01em;margin-top:4px;}
+#view-entreno .sesion-card.open > .sesion-head{padding-bottom:12px;}
+#app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 var(--fs-l)/1.25 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-item{padding-top:8px;}
 
 /* ---------- el profesional no marca sesiones como hechas ---------- */
 #app.coach-view .ses-tick{display:none !important;}
@@ -17,16 +17,16 @@
 .ex-desc-restore,.ex-desc-tag{display:none !important;}
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc{display:block;}
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc:empty{display:none !important;}
-#app:not(.coach-edit) #view-entreno .ex-desc{margin:6px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:10px;background:var(--accent-wash);color:var(--ink);font:500 13px/1.45 Archivo,sans-serif;}
-#app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 11px var(--f-mono);color:var(--accent-text);letter-spacing:.02em;}
-.coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 13px/1.45 Archivo,sans-serif;color:var(--ink);margin:8px 0;}
+#app:not(.coach-edit) #view-entreno .ex-desc{margin:8px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:var(--r-ctl);background:var(--accent-wash);color:var(--ink);font:500 var(--fs-s)/1.45 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 var(--fs-xs) var(--f-mono);color:var(--accent-text);letter-spacing:.02em;}
+.coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 var(--fs-s)/1.45 Archivo,sans-serif;color:var(--ink);margin:8px 0;}
 .coach-edit #view-entreno .ex-desc:empty::before{content:attr(data-ph);color:var(--dim-45);font-style:italic;}
 
 /* ---------- vídeo de ejemplo ---------- */
-.ex-video{font:700 13px Archivo,sans-serif;padding:7px 12px;border-radius:10px;border:1px solid var(--accent-line);background:var(--accent-wash);}
+.ex-video{font:700 var(--fs-s) Archivo,sans-serif;padding:8px 12px;border-radius:var(--r-ctl);border:1px solid var(--accent-line);background:var(--accent-wash);}
 .coach-edit .ex-video{display:none !important;}
-.coach-edit .ex-link-btn{font-size:12px;padding:8px 12px;min-height:36px;}
-.ru-video{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:0 0 12px;border-radius:12px;overflow:hidden;background:#000;}
+.coach-edit .ex-link-btn{font-size:var(--fs-s);padding:8px 12px;min-height:36px;}
+.ru-video{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:0 0 12px;border-radius:var(--r-ctl);overflow:hidden;background:#000;}
 .ru-video.ig{aspect-ratio:auto;height:560px;max-width:400px;background:var(--wash-soft);}
 .ru-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
@@ -34,24 +34,24 @@
 .coach-edit #view-entreno .ex-table-head{display:none !important;}
 .coach-edit #view-entreno .sr-plan{display:none !important;}
 .coach-edit #view-entreno .sesion-body{counter-reset:ej;}
-.coach-edit #view-entreno .ex-item{counter-increment:ej;margin:10px 0;padding:10px 12px 4px;border:1px solid var(--line-strong);border-radius:14px;background:var(--bg);}
+.coach-edit #view-entreno .ex-item{counter-increment:ej;margin:12px 0;padding:12px 12px 4px;border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);}
 .coach-edit #view-entreno .ex-item + .ex-item{border-top:1px solid var(--line-strong);}
-.coach-edit #view-entreno .ex-table-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 10px;padding:2px 0 4px;}
-.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 100%;order:0;display:flex;align-items:baseline;gap:8px;font:700 17px/1.25 Archivo,sans-serif;color:var(--ink);text-align:left;border-bottom:none;}
-.coach-edit #view-entreno .ex-table-row > .ex-name-cell::before{content:counter(ej, decimal-leading-zero);flex:none;font:700 13px var(--f-mono);color:var(--dim-45);}
-.coach-edit #view-entreno .ex-table-row > .ex-name-cell::after{font-size:12px;}
+.coach-edit #view-entreno .ex-table-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 12px;padding:2px 0 4px;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 100%;order:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-l)/1.25 Archivo,sans-serif;color:var(--ink);text-align:left;border-bottom:none;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell::before{content:counter(ej, decimal-leading-zero);flex:none;font:700 var(--fs-s) var(--f-mono);color:var(--dim-45);}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell::after{font-size:var(--fs-s);}
 .coach-edit #view-entreno .ex-table-row > .ru-asa{order:-1;}
 .ru-asa{display:none;}
-.coach-edit .ru-asa{display:flex;align-items:center;justify-content:center;flex:none;width:26px;height:30px;margin:0 -4px 0 -6px;border-radius:8px;color:var(--dim-45);font-size:18px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
+.coach-edit .ru-asa{display:flex;align-items:center;justify-content:center;flex:none;width:26px;height:30px;margin:0 -4px 0 -8px;border-radius:var(--r-ctl);color:var(--dim-45);font-size:var(--fs-xl);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
 .coach-edit .ru-asa:hover{background:var(--wash-med);color:var(--ink);}
 /* con el asa, el nombre comparte la primera línea */
 .coach-edit #view-entreno .ex-table-row:has(> .ru-asa) > .ex-name-cell{flex:1 1 calc(100% - 40px);}
-.coach-edit #view-entreno .ru-f{flex:1 1 0;order:1;display:flex;flex-direction:column;align-items:stretch;gap:3px;min-width:0;}
-.coach-edit #view-entreno .ru-f::before{font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.coach-edit #view-entreno .ru-f{flex:1 1 0;order:1;display:flex;flex-direction:column;align-items:stretch;gap:4px;min-width:0;}
+.coach-edit #view-entreno .ru-f::before{font:700 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
 .coach-edit #view-entreno .ru-se::before{content:"Series";}
 .coach-edit #view-entreno .ru-re::before{content:"Reps";}
 .coach-edit #view-entreno .ru-ri::before{content:"RIR";}
-.coach-edit #view-entreno .ru-f .rx-field{width:100%;height:42px;font:700 17px var(--f-mono);border-radius:10px;}
+.coach-edit #view-entreno .ru-f .rx-field{width:100%;height:42px;font:700 var(--fs-l) var(--f-mono);border-radius:var(--r-ctl);}
 /* la técnica y las acciones, más limpias */
 .coach-edit #view-entreno .ex-video-row{padding:0 0 8px;}
 .coach-edit #view-entreno .ex-series{margin:0;}
@@ -61,15 +61,15 @@
 .coach-edit #sesionesCont .ex-table-row,.coach-edit #sesionesCont .en-ej-acts{user-select:none;-webkit-user-select:none;}
 .ru-drag,.ru-drag *{cursor:grabbing !important;user-select:none !important;-webkit-user-select:none !important;}
 .ex-item.ru-arrastrando{opacity:.45;outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-wash) !important;}
-.ru-fantasma{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;padding:9px 14px;border-radius:12px;background:var(--ink);color:var(--bg);font:700 14px Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
+.ru-fantasma{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;padding:8px 16px;border-radius:var(--r-ctl);background:var(--ink);color:var(--bg);font:700 var(--fs-m) Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
 .ru-fantasma span{opacity:.6;margin-right:4px;}
-.sesion-head.ru-soltar{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-wash);border-radius:14px;}
+.sesion-head.ru-soltar{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-wash);border-radius:var(--r-ctl);}
 
 /* ---------- ordenador: el ejercicio en una fila ---------- */
-html.esc #app.coach-edit #view-entreno .ex-item{display:block;padding:12px 16px 6px;}
+html.esc #app.coach-edit #view-entreno .ex-item{display:block;padding:12px 16px 8px;}
 html.esc #app.coach-edit #view-entreno .ex-item > *{grid-column:auto;}
-html.esc #app.coach-edit #view-entreno .ex-table-row{flex-wrap:nowrap;align-items:flex-end;gap:14px;}
-html.esc #app.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 auto;align-self:center;font-size:17px;}
+html.esc #app.coach-edit #view-entreno .ex-table-row{flex-wrap:nowrap;align-items:flex-end;gap:16px;}
+html.esc #app.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 auto;align-self:center;font-size:var(--fs-l);}
 html.esc #app.coach-edit #view-entreno .ru-f{flex:0 0 92px;}
 html.esc #app.coach-edit #view-entreno .ex-desc{max-width:760px;white-space:normal !important;}
 html.esc #app.coach-edit #view-entreno .ex-video-row,html.esc #app.coach-edit #view-entreno .en-ej-acts{opacity:1;}
@@ -90,62 +90,62 @@ html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-co
 
 /* ---------- «Serie 1» en las filas del cliente ---------- */
 .srf .srf-n{width:auto;min-width:72px;padding:0 8px;}
-.srf-n-t{display:flex;align-items:baseline;gap:4px;white-space:nowrap;font:700 13px var(--f-mono);}
-.srf-n-t b{font-size:15px;}
+.srf-n-t{display:flex;align-items:baseline;gap:4px;white-space:nowrap;font:700 var(--fs-s) var(--f-mono);}
+.srf-n-t b{font-size:var(--fs-m);}
 .srf-n small{flex-basis:100%;}
 @media (max-width:380px){
   .srf .srf-n{min-width:44px;padding:0 4px;}
   .srf-n-t{flex-direction:column;align-items:center;gap:0;line-height:1.05;}
-  .srf-n-t span{font-size:11px;letter-spacing:.02em;}
-  .srf-n-t b{font-size:16px;}
+  .srf-n-t span{font-size:var(--fs-xs);letter-spacing:.02em;}
+  .srf-n-t b{font-size:var(--fs-l);}
 }
 /* correcciones de la fila del editor */
 .coach-edit #view-entreno .ex-table-row > .ru-asa{flex:none !important;width:26px;text-align:center;}
 .coach-edit #view-entreno .ex-table-row > .ex-name-cell{justify-content:flex-start;text-align:left !important;}
 .coach-edit #view-entreno .ru-f{flex:1 1 72px !important;}
 html.esc #app.coach-edit #view-entreno .ru-f{flex:0 0 92px !important;}
-#view-entreno .sesion-title{font-size:22px;}
+#view-entreno .sesion-title{font-size:var(--fs-2xl);}
 html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center;}
 @media (max-width:400px){
   .coach-edit #view-entreno .ru-f{flex:1 1 52px !important;}
-  .coach-edit #view-entreno .ex-item{padding:10px 10px 4px;}
-  .coach-edit #view-entreno .en-ej-btns{flex-wrap:wrap;gap:5px;}
-  .coach-edit #view-entreno .en-ej-btns button,.coach-edit #view-entreno .en-tec-btn{white-space:nowrap;flex:none;padding:0 6px;width:auto;min-width:32px;}
+  .coach-edit #view-entreno .ex-item{padding:12px 12px 4px;}
+  .coach-edit #view-entreno .en-ej-btns{flex-wrap:wrap;gap:4px;}
+  .coach-edit #view-entreno .en-ej-btns button,.coach-edit #view-entreno .en-tec-btn{white-space:nowrap;flex:none;padding:0 8px;width:auto;min-width:32px;}
 }
 @media (max-width:400px){
   .coach-edit #view-entreno .en-ej-btns button:not(.en-tec-btn){min-width:32px;width:32px;padding:0;}
 }
 @media (max-width:400px){
-  .coach-edit #view-entreno .en-ej-btns{gap:3px;justify-content:space-between;}
-  .coach-edit #view-entreno .en-tec-btn{font-size:12px !important;padding:0 4px !important;}
+  .coach-edit #view-entreno .en-ej-btns{gap:4px;justify-content:space-between;}
+  .coach-edit #view-entreno .en-tec-btn{font-size:var(--fs-s) !important;padding:0 4px !important;}
 }
 
 /* ---------- pauta serie a serie (forma principal de escribirla) ---------- */
 .coach-edit #view-entreno .ru-f{display:none !important;}
-.ru-ss{margin:8px 0 6px;max-width:440px;}
+.ru-ss{margin:8px 0 8px;max-width:440px;}
 .ru-ss-cab,.ru-ss-f{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 34px;gap:8px;align-items:center;}
-.ru-ss-cab span{font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
+.ru-ss-cab span{font:700 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);text-align:center;}
 .ru-ss-cab span:first-child{text-align:left;}
-.ru-ss-l{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
-.ru-ss-n{font:700 13px var(--f-mono);color:var(--ink);white-space:nowrap;}
-.ru-ss-f input{width:100%;min-width:0;height:40px;border:1.5px solid var(--accent-line);border-radius:10px;background:var(--wash-soft);text-align:center;font:700 16px var(--f-mono);color:var(--ink);}
+.ru-ss-l{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.ru-ss-n{font:700 var(--fs-s) var(--f-mono);color:var(--ink);white-space:nowrap;}
+.ru-ss-f input{width:100%;min-width:0;height:40px;border:1.5px solid var(--accent-line);border-radius:var(--r-ctl);background:var(--wash-soft);text-align:center;font:700 var(--fs-l) var(--f-mono);color:var(--ink);}
 .ru-ss-f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);}
 .ru-ss-f input::placeholder{color:var(--dim-45);}
-.ru-ss-x{width:34px;height:34px;border-radius:9px;border:1px solid rgba(217,80,63,.3);background:none;color:var(--danger-text);cursor:pointer;font-size:13px;}
+.ru-ss-x{width:34px;height:34px;border-radius:var(--r-ctl);border:1px solid color-mix(in srgb, var(--danger) 30%, transparent);background:none;color:var(--danger-text);cursor:pointer;font-size:var(--fs-s);}
 .ru-ss-x:disabled{opacity:.25;cursor:default;}
-.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 14px;border-radius:10px;border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 12.5px Archivo,sans-serif;cursor:pointer;}
+.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 16px;border-radius:var(--r-ctl);border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer;}
 .ru-ss-mas:hover{background:var(--accent-wash);}
 .ru-ss-rir.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
-@media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:6px;} .ru-ss-n{font-size:12px;} }
+@media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:8px;} .ru-ss-n{font-size:var(--fs-s);} }
 .srf-cab .srf-rir-v{padding:0 4px;border-radius:5px;}
 html.esc #app.coach-edit .ru-ss{max-width:520px;}
 
 /* ---------- botones de eliminar: más grandes y en rojo (toda la app) ---------- */
 :root{--del:#D93A2B;--del-wash:rgba(217,58,43,.10);--del-line:rgba(217,58,43,.45);}
 .ses-del,.meal-del,.en-ej-btns .en-del,.ru-ss-x{
-  align-items:center;justify-content:center;flex:none;width:38px;height:38px;padding:0 !important;border-radius:11px;
+  align-items:center;justify-content:center;flex:none;width:38px;height:38px;padding:0 !important;border-radius:var(--r-ctl);
   border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;
-  font:800 17px/1 Archivo,sans-serif !important;cursor:pointer;transition:background .12s,color .12s,transform .08s;}
+  font:800 var(--fs-l)/1 Archivo,sans-serif !important;cursor:pointer;transition:background .12s,color .12s,transform .08s;}
 .coach-edit .ses-del,.coach-edit .meal-del{display:inline-flex;}
 .en-ej-btns .en-del,.ru-ss-x{display:inline-flex;}
 .ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;}
@@ -155,12 +155,12 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) 36px;} .ru-ss-x,.en-ej-btns .en-del{width:36px;height:36px;} }
 /* la × de cada alimento en el editor de nutrición */
 .chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1 !important;
-  font:800 14px/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
+  font:800 var(--fs-m)/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
 .chip-x::after{content:"";position:absolute;inset:-9px;}         /* zona de toque más grande */
-.chip-x:hover{background:#A9271B;}
+.chip-x:hover{background:color-mix(in srgb, var(--danger) 80%, #000);}
 /* textos de borrar en rojo */
 .mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del) !important;border-color:var(--del-line) !important;}
-html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15px !important;}
+html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:var(--fs-m) !important;}
 /* Fátima no marca comidas como tomadas: el check solo lo ve el cliente */
 #app.coach-view .meal-eat{display:none !important;}
 
@@ -170,6 +170,6 @@ html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:15
 .ru-linea::before{left:-6px;} .ru-linea::after{right:-6px;}
 
 /* #232 variantes bajo su ejercicio principal */
-#pickerList .picker-item.ex-var{margin-left:18px;border-left:2px solid var(--accent-line);border-top-left-radius:0;border-bottom-left-radius:0;}
+#pickerList .picker-item.ex-var{margin-left:20px;border-left:2px solid var(--accent-line);border-top-left-radius:0;border-bottom-left-radius:0;}
 #pickerList .picker-item.ex-var .picker-item-name::before{content:'↳ ';color:var(--dim-55);}
-.ex-var-de{display:block;font:500 11px var(--f-mono);color:var(--dim-55);margin-top:1px;}
+.ex-var-de{display:block;font:500 var(--fs-xs) var(--f-mono);color:var(--dim-55);margin-top:1px;}

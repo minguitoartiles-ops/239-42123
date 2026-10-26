@@ -748,9 +748,9 @@ function exportarSeguimientosPDF(k){
     return '<div class="n"><b>' + esc(r.s) + '</b>' + (r.prog ? '<p><i>Progreso:</i> ' + esc(r.prog) + '</p>' : '') + (r.obs ? '<p><i>Obstáculos:</i> ' + esc(r.obs) + '</p>' : '') + '</div>';
   }).join('');
   const html = '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Seguimientos de ' + esc(d.nombre) + '</title><style>'
-    + 'body{font:12px/1.45 Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0}h2{font-size:14px;margin:22px 0 8px}.m{color:#555;margin:4px 0 16px}'
-    + 'table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 6px;text-align:left}th{background:#EAF2FB;font-size:11px}'
-    + '.n{margin:0 0 10px;page-break-inside:avoid}.n p{margin:2px 0}footer{margin-top:24px;color:#777;font-size:11px}</style></head><body>'
+    + 'body{font:var(--fs-s)/1.45 Arial,sans-serif;color:#111;margin:24px}h1{font-size:var(--fs-xl);margin:0}h2{font-size:var(--fs-m);margin:22px 0 8px}.m{color:#555;margin:4px 0 16px}'
+    + 'table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:5px 6px;text-align:left}th{background:#EAF2FB;font-size:var(--fs-xs)}'
+    + '.n{margin:0 0 10px;page-break-inside:avoid}.n p{margin:2px 0}footer{margin-top:24px;color:#777;font-size:var(--fs-xs)}</style></head><body>'
     + '<h1>Seguimientos · ' + esc(d.nombre) + '</h1><div class="m">' + esc(d.objetivo || '') + ' · Semana ' + esc(d.semana || '') + ' · alta el ' + fechaCorta(d.fechaAlta) + '</div>'
     + t + (notas ? '<h2>Notas</h2>' + notas : '')
     + '<footer>Fitnessindramas · generado el ' + fechaCorta(new Date().toISOString()) + '. Contiene datos de salud: guárdalo en un lugar seguro.</footer></body></html>';
