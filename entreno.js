@@ -1091,25 +1091,7 @@ function enLapizNombre(){
   showScreen = function(id){ sh(id); if (id === 'view-coach-cliente') enPintarFicha(); if (id === 'view-coach-planes') enPintarPlanes(); };
 })();
 goToCliente = (function(orig){ return function(k){ const cambia = k !== clienteActual; orig(k); if (cambia) enSeccion = 'todo'; enPintarFicha(); }; })(goToCliente);
-/* tarjeta de cada cliente: botón directo a su plan */
-pintarListaClientes = (function(orig){
-  return function(){
-    orig();
-    if (!coachActivo) return;
-    const claves = Object.keys(clientesData), nutri = coachActivo.rol === 'dietista';
-    Array.prototype.forEach.call(document.querySelectorAll('#listaClientes .cliente-card'), function(card, i){
-      const k = claves[i]; if (!k || mjEsBaja(clientesData[k])) return;
-      if (card.querySelector('.kc-plan-btn')) return;
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'kc-plan-btn';
-      b.textContent = nutri ? '🍽️ Plan' : '🏋️ Entreno';
-      b.onclick = function(e){ e.stopPropagation(); if (nutri) { goToCliente(k); enAbrirPlanNutri(); } else enAbrirPlan(k); };
-      const est = card.querySelector('.kc-estado, .adh-badge');
-      const top = card.querySelector('.kc-top') || card;
-      top.appendChild(b);
-    });
-  };
-})(pintarListaClientes);
+/* 26/10 · fuera el botón «🏋️ Entreno / 🍽️ Plan» de la tarjeta: se entra por la tarjeta (ficha) y sus accesos */
 actualizarPanel();
 
 /* =========================================================
