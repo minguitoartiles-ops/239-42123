@@ -1157,3 +1157,8 @@ html.esc.mt-on .esc-dual > :not(.esc-izq) .ficha-accesos{max-width:none;}
 html.esc.mt-on .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 100%;}
 html.esc.mt-on #view-coach-cliente:not(.esc-izq) .alta-body,
 html.esc.mt-on #view-coach-cliente:not(.esc-izq) .alta-top{padding-left:max(28px, calc((100% - 860px) / 2)) !important;padding-right:max(28px, calc((100% - 860px) / 2)) !important;}
+/* 26/10 · también en la vista ampliada (y a pantalla completa): ficha en una columna, centrada, sin hueco ni saltos */
+html.esc .esc-ficha-grid.pu-cols > .esc-col{flex:1 1 100%;}
+html.esc #view-coach-cliente:not(.esc-izq) .alta-body,
+html.esc #view-coach-cliente:not(.esc-izq) .alta-top{padding-left:max(28px, calc((100% - 860px) / 2)) !important;padding-right:max(28px, calc((100% - 860px) / 2)) !important;}
+html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
