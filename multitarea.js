@@ -246,3 +246,60 @@ if (typeof coachLogout === 'function') coachLogout = (function(orig){
   return function(){ mtOrigen = null; mtDevolverChat(); return orig.apply(this, arguments); };
 })(coachLogout);
 mtSelector();
+
+/* ---------- 26/10 · barras verticales arrastrables en multitarea ----------
+   · La de la lista (izquierda) ya existía: ahora respeta también el ancho del chat.
+   · Nueva barra entre el contenido y el chat: arrastrar, ← → con el teclado, doble clic = ancho normal.
+   · Los anchos se recuerdan para cada profesional en este dispositivo. */
+const MT_CHAT_KEY = 'fsd_mt_chat', MT_CENTRO_MIN = 380;
+function mtMenuW(){ return document.documentElement.classList.contains('esc-mini') ? 72 : 232; }
+function mtListaW(){ const izq = document.querySelector('.screen.esc-dual > .esc-izq'); return izq ? izq.getBoundingClientRect().width : 0; }
+function mtChatW(){ const c = document.getElementById('escChatCol'); return c && c.classList.contains('on') ? c.getBoundingClientRect().width : 0; }
+function mtChatGuardado(){ try { const o = JSON.parse(localStorage.getItem(MT_CHAT_KEY) || '{}'); return coachActivo ? o[norm(coachActivo.u)] : null; } catch(e){ return null; } }
+function mtChatGuardar(px){ try { const o = JSON.parse(localStorage.getItem(MT_CHAT_KEY) || '{}'); if (coachActivo) { if (px) o[norm(coachActivo.u)] = px; else delete o[norm(coachActivo.u)]; } localStorage.setItem(MT_CHAT_KEY, JSON.stringify(o)); } catch(e){} }
+function mtChatPoner(px){
+  const r = document.documentElement.style;
+  if (!px) { r.removeProperty('--mt-chat'); return; }
+  const max = Math.max(300, window.innerWidth - mtMenuW() - mtListaW() - MT_CENTRO_MIN);
+  r.setProperty('--mt-chat', Math.min(max, Math.max(300, Math.round(px))) + 'px');
+}
+/* la lista no puede comerse el centro cuando hay chat a la derecha */
+if (typeof escListaLimites === 'function') escListaLimites = (function(orig){
+  return function(){
+    const l = orig.apply(this, arguments), ch = mtChatW();
+    if (ch) l.max = Math.max(l.min, Math.round(window.innerWidth - mtMenuW() - ch - MT_CENTRO_MIN));
+    return l;
+  };
+})(escListaLimites);
+function mtDivisor(){
+  let d = document.getElementById('mtDivisor');
+  if (!d) {
+    d = document.createElement('div'); d.id = 'mtDivisor'; d.className = 'esc-divisor mt-divisor';
+    d.setAttribute('role', 'separator'); d.setAttribute('aria-orientation', 'vertical'); d.tabIndex = 0;
+    d.title = 'Arrastra para cambiar el ancho del chat · doble clic: ancho normal';
+    d.setAttribute('aria-label', 'Ancho del chat');
+    document.body.appendChild(d);
+    let x0 = 0, w0 = 0, arr = false;
+    d.addEventListener('pointerdown', function(e){
+      arr = true; x0 = e.clientX; w0 = mtChatW(); d.setPointerCapture(e.pointerId);
+      document.documentElement.classList.add('esc-arrastrando'); e.preventDefault();
+    });
+    d.addEventListener('pointermove', function(e){ if (arr) mtChatPoner(w0 - (e.clientX - x0)); });   // hacia la izquierda = chat más ancho
+    const fin = function(){ if (!arr) return; arr = false; document.documentElement.classList.remove('esc-arrastrando'); mtChatGuardar(Math.round(mtChatW())); window.dispatchEvent(new Event('resize')); };
+    d.addEventListener('pointerup', fin); d.addEventListener('pointercancel', fin);
+    d.addEventListener('dblclick', function(){ mtChatGuardar(null); mtChatPoner(null); window.dispatchEvent(new Event('resize')); });
+    d.addEventListener('keydown', function(e){
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); mtChatPoner(mtChatW() + (e.key === 'ArrowLeft' ? 24 : -24)); mtChatGuardar(Math.round(mtChatW()));
+    });
+  }
+  d.hidden = !mtChatW();
+}
+mtAplicar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    if (!document.documentElement.classList.contains('esc-arrastrando')) mtChatPoner(mtChatGuardado());
+    mtDivisor();
+    return r;
+  };
+})(mtAplicar);

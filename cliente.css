@@ -1121,3 +1121,32 @@ html.esc.mt-con-chat #app{container-type:inline-size;container-name:mtcentro;}
 }
 html.esc.mt-con-chat #coachBar .coach-bar-left{flex:0 0 auto;min-width:max-content;}
 html.esc.mt-con-chat #coachBar #coachBarLabel,html.esc.mt-con-chat #coachBar #coachBarName{display:none;}
+/* ===== 0.79.4-1 · barras verticales de la multitarea y contenido que se adapta a su ancho ===== */
+html.esc .esc-chat-col.on{flex:0 0 var(--mt-chat, clamp(340px, 27vw, 440px));}
+html.esc .mt-divisor:not([hidden]){left:auto;right:calc(var(--mt-chat, clamp(340px, 27vw, 440px)) - 5px);}
+@media (min-width:900px){ html.esc.mt-con-chat .pb-btn{right:calc(var(--mt-chat, clamp(340px, 27vw, 440px)) + 16px);} }
+/* asa siempre visible (suave) para que se sepa que se puede mover */
+html.esc.mt-on .esc-divisor::before{opacity:.85;}
+html.esc.mt-on .esc-divisor:hover::before,html.esc.mt-on.esc-arrastrando .esc-divisor::before{opacity:1;}
+/* el centro se adapta a SU ancho (no al de la ventana) */
+html.esc.mt-on .screen > [id^="view-"]:not(.esc-izq){container-type:inline-size;container-name:mtcentro;}
+html.esc.mt-on #app{container-type:inline-size;container-name:mtcentro;}
+html.esc.mt-on .esc-chat-col{container-type:inline-size;container-name:mtchat;}
+@container mtcentro (max-width: 760px){
+  html.esc .pl-split{display:block;}
+  html.esc .pl-der{position:static;margin-top:14px;}
+  html.esc .ent-split .pl-der{max-height:none;}
+}
+@container mtcentro (max-width: 620px){
+  html.esc .ficha-accesos{grid-template-columns:repeat(2,1fr);}
+  html.esc .panel-stats{flex-wrap:wrap;}
+  html.esc .panel-stat{flex:1 1 40%;}
+  html.esc .alta-top,html.esc .alta-body{padding-left:16px !important;padding-right:16px !important;}
+  html.esc #app .sc{padding-left:14px !important;padding-right:14px !important;}
+}
+@container mtchat (max-width: 360px){
+  html.esc .esc-chat-col #view-chat .bubble{max-width:86%;}
+}
+@container mtchat (min-width: 560px){
+  html.esc .esc-chat-col #view-chat .bubble{max-width:70%;}
+}
