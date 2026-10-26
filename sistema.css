@@ -160,3 +160,7 @@ html.esc .esc-logo b i{font-style:normal;color:var(--accent);}
 html.esc .alta-top:has(> div > .eyebrow[id$="Who"]),html.esc .alta-top:has(.eyebrow[id$="Who"]){position:relative;}
 html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;pointer-events:none;right:72px;top:10px;width:84px;height:44px;
   background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent) 1.8px, transparent 2.2px);background-size:14px 14px;}
+
+/* #291 · Tarjeta de cliente más sencilla */
+#listaClientes .kc-estado.ok,#listaClientes .kc-info,#listaClientes .kc-motivos{display:none;}
+#listaClientes .kc.dest{border-color:transparent !important;box-shadow:none !important;}
