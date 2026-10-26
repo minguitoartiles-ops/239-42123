@@ -496,3 +496,100 @@ rcAbrir = (function(orig){
     return r0;
   };
 })(rcAbrir);
+
+/* =========================================================
+   26/10 · Foto de la receta (Fátima): entra por los ojos
+   · En el editor: «📷 Añadir foto» (cámara o galería), con vista previa, «Cambiar» y «Quitar».
+   · Se reduce a 1000 px (JPEG) antes de guardarla para no llenar la memoria del móvil.
+   · Se ve en la lista de recetas de Fátima, en «Receta de la semana» (Hoy), en el recetario del
+     cliente y arriba del todo al abrir la receta.
+   ========================================================= */
+function rcFotoOk(u){ return typeof u === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(u) && u.length < 700000; }
+function rcFotoPintar(){
+  const box = document.getElementById('rcFotoBox'); if (!box || !rcBorr) return;
+  const f = rcFotoOk(rcBorr.foto) ? rcBorr.foto : '';
+  box.innerHTML = f
+    ? '<div class="rc-foto-prev" style="background-image:url(&quot;' + f + '&quot;)" role="img" aria-label="Foto de la receta"></div>'
+      + '<div class="rc-foto-acc"><button type="button" class="btn-eq" onclick="rcFotoElegir()">📷 Cambiar foto</button><button type="button" class="btn-eq rc-foto-quitar" onclick="rcFotoQuitar()">Quitar</button></div>'
+    : '<button type="button" class="rc-foto-vacia" onclick="rcFotoElegir()"><span aria-hidden="true">📷</span><b>Añadir foto</b><small>Una buena foto hace que la prueben. Desde la cámara o la galería.</small></button>';
+}
+function rcFotoElegir(){
+  let i = document.getElementById('rcFotoInput');
+  if (!i) {
+    i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.id = 'rcFotoInput'; i.hidden = true;
+    i.addEventListener('change', function(){
+      const f = i.files && i.files[0]; if (!f) return;
+      if (!/^image\//.test(f.type)) { toast('Elige una imagen'); return; }
+      toast('Preparando la foto…');
+      reducirImagen(f, 1000, 0.72, function(d){
+        const fin = function(x){
+          if (!rcFotoOk(x)) { toast('No se ha podido usar esa foto'); return; }
+          if (rcBorr) { rcBorr.foto = x; rcFotoPintar(); toast('Foto añadida'); }
+        };
+        if (d && d.length > 380000) reducirImagen(f, 800, 0.62, fin); else fin(d);
+      });
+    });
+    document.body.appendChild(i);
+  }
+  i.value = ''; i.click();
+}
+function rcFotoQuitar(){ if (!rcBorr) return; delete rcBorr.foto; rcFotoPintar(); }
+function rcFotoHtml(r, cls){ return r && rcFotoOk(r.foto) ? '<span class="' + cls + '" style="background-image:url(&quot;' + r.foto + '&quot;)" aria-hidden="true"></span>' : ''; }
+rcEditar = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const o = document.getElementById('rcHoja'); if (!o || o.querySelector('#rcFotoBox')) return r;
+    const nom = o.querySelector('#rcNom'), campo = nom && nom.closest('.field');
+    if (campo) campo.insertAdjacentHTML('afterend', '<div class="field"><label>Foto de la receta (opcional)</label><div id="rcFotoBox" class="rc-foto-box"></div></div>');
+    rcFotoPintar();
+    return r;
+  };
+})(rcEditar);
+rcLimpia = (function(orig){
+  return function(r){ const x = orig.apply(this, arguments); if (rcFotoOk(r.foto)) x.foto = r.foto; else delete x.foto; return x; };
+})(rcLimpia);
+/* lista de Fátima: la foto como portada de cada receta */
+rcPintarLista = (function(orig){
+  return function(){
+    const r0 = orig.apply(this, arguments);
+    const c = document.getElementById('rcLista'); if (!c) return r0;
+    Array.prototype.forEach.call(c.querySelectorAll('.rc-card'), function(card){
+      const b = card.querySelector('[onclick^="rcEditar"]'), m = b && (b.getAttribute('onclick') || '').match(/'([^']+)'/);
+      const r = m && rcPorId(m[1]);
+      if (r && rcFotoOk(r.foto) && !card.querySelector('.rc-portada')) { card.insertAdjacentHTML('afterbegin', rcFotoHtml(r, 'rc-portada')); card.classList.add('rc-con-foto'); }
+    });
+    return r0;
+  };
+})(rcPintarLista);
+/* cliente: miniatura en «Receta de la semana» y en el recetario */
+rcPintarHoy = (function(orig){
+  return function(){
+    const r0 = orig.apply(this, arguments);
+    const c = document.getElementById('rcHoy'), r = c && rcDestacada();
+    if (c && r && rcFotoOk(r.foto)) { const ico = c.querySelector('.rc-hoy-ico'); if (ico) ico.outerHTML = rcFotoHtml(r, 'rc-hoy-foto'); c.classList.add('rc-con-foto'); }
+    return r0;
+  };
+})(rcPintarHoy);
+rcPintarRecetario = (function(orig){
+  return function(){
+    const r0 = orig.apply(this, arguments);
+    const c = document.getElementById('rcRecetario'); if (!c) return r0;
+    Array.prototype.forEach.call(c.querySelectorAll('.rc-it'), function(b){
+      const m = (b.getAttribute('onclick') || '').match(/'([^']+)'/), r = m && rcPorId(m[1]);
+      if (r && rcFotoOk(r.foto) && !b.querySelector('.rc-it-foto')) b.insertAdjacentHTML('afterbegin', rcFotoHtml(r, 'rc-it-foto'));
+    });
+    return r0;
+  };
+})(rcPintarRecetario);
+/* al abrir la receta: la foto grande arriba */
+rcAbrir = (function(orig){
+  return function(id){
+    const r0 = orig.apply(this, arguments);
+    const r = rcPorId(id), o = document.getElementById('rcVer');
+    if (r && rcFotoOk(r.foto) && o && !o.querySelector('.rc-ver-foto')) {
+      const head = o.querySelector('.sheet-head');
+      if (head) head.insertAdjacentHTML('afterend', '<div class="rc-ver-foto" style="background-image:url(&quot;' + r.foto + '&quot;)" role="img" aria-label="' + esc(r.nombre) + '"></div>');
+    }
+    return r0;
+  };
+})(rcAbrir);
