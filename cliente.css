@@ -1192,3 +1192,14 @@ html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
 .il-mueble.il-sin{fill:none;}
 .il-rodillo{fill:var(--accent);stroke:var(--bg, #fff);stroke-width:1;}
 .il-barra{stroke:var(--accent);stroke-width:3;stroke-linecap:round;}
+/* 26/10 · móvil con el teclado abierto: los buscadores (ejercicios, alimentos…) a pantalla completa,
+   cabecera compacta y la lista usando todo el hueco que queda encima del teclado */
+html.fsd-teclado .picker-overlay{align-items:stretch;}
+html.fsd-teclado .picker-overlay .picker-sheet{height:100%;max-height:none;border-radius:0;border-top:0;padding:10px 14px 8px;}
+html.fsd-teclado .picker-overlay .picker-head{margin-bottom:8px;align-items:center;}
+html.fsd-teclado .picker-overlay .picker-eyebrow{display:none;}
+html.fsd-teclado .picker-overlay .picker-title{font-size:16px;line-height:1.2;}
+html.fsd-teclado .picker-overlay .picker-filters{margin-bottom:6px;flex-wrap:nowrap;overflow-x:auto;}
+html.fsd-teclado .picker-overlay .picker-new-btn{display:none;}
+html.fsd-teclado .picker-overlay .picker-list{flex:1 1 0;min-height:0;}
+html.fsd-teclado .pb-btn{display:none !important;}
