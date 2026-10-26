@@ -96,6 +96,14 @@ enterApp = (function(orig){
       const cod = (document.getElementById('accessCode').value || '').trim();
       if (!cod) { orig(); return; }                                // que salga el aviso normal de «introduce tu código»
       document.getElementById('loginError').textContent = '';
+      // 26/10 · Ordenador de confianza del equipo («Sin contraseña en este dispositivo»): entra directo a la vista de cliente
+      if (typeof pbActivo === 'function' && pbActivo()) {
+        try { sessionStorage.setItem(ESC_EQUIPO_KEY, '1'); } catch(e){}
+        orig();
+        if (window.fsdSesionCliente) escVistaCliente();
+        else { try { sessionStorage.removeItem(ESC_EQUIPO_KEY); } catch(e){} }
+        return;
+      }
       escSoloMovil(false); return;
     }
     orig();
