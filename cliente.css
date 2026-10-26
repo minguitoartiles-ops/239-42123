@@ -1190,3 +1190,5 @@ html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
 .il-fondo{stroke:var(--line-strong);stroke-width:1.6;stroke-linecap:round;fill:none;}
 #app.coach-view .il-box{display:none;}
 .il-mueble.il-sin{fill:none;}
+.il-rodillo{fill:var(--accent);stroke:var(--bg, #fff);stroke-width:1;}
+.il-barra{stroke:var(--accent);stroke-width:3;stroke-linecap:round;}

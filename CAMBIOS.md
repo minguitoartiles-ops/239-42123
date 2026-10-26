@@ -3,8 +3,8 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.80.2 (actual)
-Cambios acumulados hacia la 0.81: **5 de 10**
+## Versión 0.80.3 (actual)
+Cambios acumulados hacia la 0.81: **6 de 10**
 
 ### Hacia la 0.81
 1. 26/10/2026 11:20 · Plegables siempre plegados al entrar, en toda la app y sin recordar lo que se dejó abierto: comidas del plan (cliente y Fátima, también al abrir el plan en edición; ya no se abre sola «la comida que toca»), días del entreno (también en el creador de rutinas compacto), apartados de la ficha (también al volver del plan o del chat del mismo cliente) y Ajustes (antes se abría el primero y se recordaba). Solo se abre algo solo cuando se llega a propósito: un aviso de pago o alergias, «Suscripción» desde Pagos, una comida tocada desde Hoy o los cambios resaltados de un aviso → **0.80.0-1 (caché)**
@@ -12,6 +12,7 @@ Cambios acumulados hacia la 0.81: **5 de 10**
 3. 26/10/2026 11:25 · Multitarea con el centro estrecho: barra del plan ordenada (Volver · ‹ › · pestaña · Deshacer en una línea y «Guardar cambios y notificar» a todo el ancho debajo); «Plan rápido» y «Plantillas» lado a lado; la casilla «Kcal objetivo» alineada con las de % → **0.80.1-1 (caché)**
 4. 26/10/2026 11:40 · Recetas con foto: Fátima puede añadir (cámara o galería), cambiar o quitar una foto en cada receta; se reduce a 1000 px antes de guardarla. Se ve como portada en su lista de recetas, en miniatura en «Receta de la semana» (Hoy) y en el recetario del cliente, y grande arriba al abrir la receta → **0.80.2**
 5. 26/10/2026 14:55 · Entreno del cliente con ilustraciones propias (sin derechos de terceros): debajo del nombre de cada ejercicio, un dibujo animado del movimiento (29 patrones: sentadilla, bisagra, hip thrust, zancada, prensa, press, flexiones, fondos, remo, jalón, dominadas, curl, tríceps, elevaciones, plancha, abdominales, cardio…) con su material (barra, mancuernas, kettlebell, polea, banda, máquina, banco) y una indicación técnica corta; tocarlo lo amplía. Solo se mueve mientras se ve y queda quieto con «reducir movimiento». No se guarda en el plan → **0.80.2-1 (caché)**
+6. 26/10/2026 15:30 · Ilustraciones de ejercicios afinadas según la biomecánica: banco plano, inclinado o declinado según el press; en la bajada del press el codo va hacia la cadera, por debajo del pecho, y la barra al esternón; patada de glúteo a cuatro apoyos con la polea desde atrás y abajo; curl femoral tumbado, sentado y de pie con el rodillo detrás del tobillo y la carga en su sentido real; barra de la sentadilla trasera a la espalda. 42 movimientos propios (antes 29): peso muerto desde el suelo, hiperextensión, remo a una mano en banco, remo invertido, fondos en banco, press francés, patada de tríceps, curl predicador, colgado, búlgara, step up, nórdico, abducción, pájaros, face pull, remo al mentón, aperturas tumbado, pullover, swing, thruster, giro ruso, Pallof, escalador, jumping jacks, granjero… Revisados los 233 ejercicios del catálogo → **0.80.3**
 
 ## Versión 0.79 → 0.80.0
 
