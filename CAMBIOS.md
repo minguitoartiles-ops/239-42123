@@ -4,13 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.82.2 (actual)
-Cambios acumulados hacia la 0.83: **4 de 10**
+Cambios acumulados hacia la 0.83: **5 de 10**
 
 ### Hacia la 0.83
 1. 26/10/2026 21:45 · Ordenador del equipo: en un dispositivo marcado «Sin contraseña en este dispositivo», el código de un cliente entra directo a su app (vista de cliente con «👀 Vista de cliente · Salir»), sin el aviso de «solo móvil» ni la contraseña; sigue dentro al recargar hasta «Salir». En cualquier otro ordenador todo sigue igual (aviso y contraseña del profesional) → **0.82.0-1 (caché)**
 2. 26/10/2026 22:40 · Escritorio · botones que dejaban de responder: al pasar la ventana de ordenador a móvil (estrecharla por debajo de 900 px, media pantalla) o al salir del modo ordenador, se perdía la fila «Peso actual · Próxima revisión» de la ficha y, sin ella, abrir cualquier cliente fallaba en silencio hasta recargar. Ahora se devuelve todo a la ficha al quitar la rejilla y, aunque faltara algún hueco, abrir la ficha ya no se corta. Además, el botón «🧪 Domingo → Fátima» del modo pruebas va en el pie del menú lateral en vez de flotar encima de los paneles (tapaba «Entrenamiento» y botones de abajo a la derecha) → **0.82.1**
 3. 26/10/2026 22:45 · Marca (1 de varios pasos) · Portada: fondo azul degradado como en las fotos de marca, la pesa del logo en blanco como marca de agua, dos anillos detrás del logo, burbujas, la cuadrícula de puntos del mural, tarjetas blancas y «Para la vida real» con «real» en azul. En tema oscuro, la misma decoración muy tenue; en el ordenador, más grande → **0.82.1-1 (caché)**
 4. 26/10/2026 23:05 · Marca (paso 2) · Menú lateral del ordenador: degradado azul suave (oscuro en tema oscuro), la pesa en blanco como marca de agua en el hueco central, «Fitnessindramas» con la letra de los títulos y «dramas» en azul, y la cuadrícula de puntos del mural junto al título de cada pestaña (Clientes, Seguimientos, Chats…). En el menú estrecho de iconos no sale la marca de agua → **0.82.2**
+5. 26/10/2026 23:15 · Tarjeta de cliente: fuera el botón «🏋️ Entreno» (Domingo) / «🍽️ Plan» (Fátima), que se confundía con una etiqueta de estado; se entra por la propia tarjeta → **0.82.2-1 (caché)**
 
 ## Versión 0.81 → 0.82.0
 
