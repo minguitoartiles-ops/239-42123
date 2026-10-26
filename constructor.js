@@ -161,8 +161,8 @@ function ruCabeceras(cont, compacta){
       tit.parentNode.insertBefore(b, tit.nextSibling);
     }
     if (head) head.setAttribute('aria-expanded', c.classList.contains('open') ? 'true' : 'false');
-    /* en la vista compacta los días empiezan abiertos (después se pliegan a mano) */
-    if (compacta && !ruVistos.has(c)) { ruVistos.add(c); const body = c.querySelector('.sesion-body'); if (body && body.style.display !== 'block' && head) toggleSesion(head); }
+    /* 26/10 · los días empiezan plegados también en la vista compacta (se despliegan a mano) */
+    if (compacta && !ruVistos.has(c)) ruVistos.add(c);
   });
 }
 const ruVistos = new WeakSet(), ruNuevos = new WeakSet();
