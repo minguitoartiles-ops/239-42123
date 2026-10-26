@@ -990,3 +990,37 @@ fsdTras('goToSeguimientos', function(){ setTimeout(sgRevCentro, 0); });
   const orig = window[n];
   window[n] = function(){ const r = orig.apply(this, arguments); try { sgRevCentro(); } catch(e){} return r; };
 });
+
+/* 26/10 · Pestaña Seguimientos: buscador de clientes (se combina con los filtros y se mantiene al repintar) */
+let sgBusca = '';
+function sgBuscarAplicar(){
+  const q = norm(sgBusca || '');
+  const cont = document.getElementById('segsResumen'); if (!cont) return;
+  let n = 0;
+  cont.querySelectorAll(':scope > .sg-bloque').forEach(function(bl){
+    const nom = norm(((bl.querySelector('.cliente-name') || {}).textContent) || '');
+    const fuera = !!q && nom.indexOf(q) < 0;
+    bl.classList.toggle('sg-busca-oculto', fuera);
+    if (!fuera && !bl.hidden) n++;
+  });
+  let v = document.getElementById('sgBuscaVacio');
+  if (q && !n) { if (!v) { v = document.createElement('div'); v.id = 'sgBuscaVacio'; v.className = 'picker-empty'; cont.appendChild(v); } v.textContent = 'Ningún cliente coincide con «' + sgBusca + '».'; }
+  else if (v) v.remove();
+}
+pintarSegsResumen = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const fil = document.getElementById('sgFiltros');
+    if (fil && !document.getElementById('sgBuscar')) {
+      const i = document.createElement('input');
+      i.type = 'search'; i.id = 'sgBuscar'; i.className = 'esc-buscar sg-buscar'; i.placeholder = 'Buscar cliente…';
+      i.setAttribute('aria-label', 'Buscar cliente en seguimientos'); i.autocomplete = 'off';
+      i.addEventListener('input', function(){ sgBusca = this.value; sgBuscarAplicar(); });
+      const ref = document.getElementById('sgPorRev') || fil;
+      ref.parentNode.insertBefore(i, ref);
+    }
+    const i = document.getElementById('sgBuscar'); if (i && i.value !== sgBusca) i.value = sgBusca;
+    sgBuscarAplicar();
+    return r;
+  };
+})(pintarSegsResumen);

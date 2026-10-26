@@ -3,11 +3,12 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.81.0 (actual)
-Cambios acumulados hacia la 0.82: **1 de 10**
+## Versión 0.81.1 (actual)
+Cambios acumulados hacia la 0.82: **2 de 10**
 
 ### Hacia la 0.82
 1. 26/10/2026 17:50 · «✓ Completar seguimiento» también dentro de los seguimientos de cada cliente (vista multitarea y ampliada): franja fija bajo el título con el comentario opcional que llega al chat; al completarlo se queda «✓ Revisado… · Deshacer» y el cliente sale de la lista de pendientes → **0.81.0-1 (caché)**
+2. 26/10/2026 18:00 · Pestaña Seguimientos: buscador de clientes por nombre encima de los filtros; se combina con ellos (Todos, Al día, Pendientes…), se mantiene al cambiar de filtro y también sale en la lista compacta de la multitarea → **0.81.1**
 
 ## Versión 0.80 → 0.81.0
 
