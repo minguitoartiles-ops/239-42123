@@ -359,7 +359,10 @@ pintarSegsResumen = (function(orig){
       cont.insertBefore(fil, ley || bloques[0]);
     }
     const n = { todos: datos.length, aldia: datos.filter(function(x){ return !x.pend; }).length, pend: datos.filter(function(x){ return x.pend; }).length };
-    fil.innerHTML = SG_FILTROS.map(function(f){
+    /* 27/10 · limpieza: «Al día» / «Pendientes» con 0 no se muestran */
+    const sgOp = SG_FILTROS.filter(function(f){ return f[0] === 'todos' || n[f[0]] == null || n[f[0]] > 0; });
+    if (!sgOp.some(function(f){ return f[0] === sgFiltro; })) sgFiltro = 'todos';
+    fil.innerHTML = sgOp.map(function(f){
       const c = n[f[0]] != null ? ' <span class="sg-fn">' + n[f[0]] + '</span>' : '';
       return '<button type="button" role="tab" aria-selected="' + (sgFiltro === f[0]) + '" class="chip protein' + (sgFiltro === f[0] ? ' selected' : '') + '" onclick="sgFiltrar(\'' + f[0] + '\')">' + f[1] + c + '</button>';
     }).join('');
