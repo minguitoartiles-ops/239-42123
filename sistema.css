@@ -164,3 +164,7 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
 /* #291 · Tarjeta de cliente más sencilla */
 #listaClientes .kc-estado.ok,#listaClientes .kc-info,#listaClientes .kc-motivos{display:none;}
 #listaClientes .kc.dest{border-color:transparent !important;box-shadow:none !important;}
+
+/* #294 · pantalla «¡Enviado!» del cuestionario: sin franja gris detrás de los botones y botones a la misma altura */
+.cq-fin .cq-acts{background:transparent;padding-top:0;align-items:stretch;}
+.cq-fin .cq-acts .btn-primary{margin-top:0;}
