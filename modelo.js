@@ -46,10 +46,10 @@ function fsdMdLimpio(o){                      // quita claves vacías para que l
        series: [ { reps, rir, kg, prev, hechas, tipo, nota, rirHecho, ok } ],
        extra } ] } ] }
    ========================================================= */
-const FSD_EJ_DATA = ['v2', 'video', 'tec', 'tec-p', 'grupo', 'grupo-t', 'grupo-p', 'grupo-min', 'rondas', 'lbl',
+const FSD_EJ_DATA = ['fid', 'v2', 'video', 'tec', 'tec-p', 'grupo', 'grupo-t', 'grupo-p', 'grupo-min', 'rondas', 'lbl',
   'cardio', 'cd-min', 'cd-int', 'cd-trab', 'cd-desc', 'cd-rondas', 'cd-ok', 'cd-id'];
 const FSD_SERIE_DATA = ['reps', 'rir', 'prev', 'tipo', 'nota', 'rirh', 'ok'];
-const FSD_SES_DATA = ['hecha'];
+const FSD_SES_DATA = ['fid', 'hecha'];
 
 function fsdEntLeerEj(it){
   const d = it.dataset;
@@ -58,6 +58,7 @@ function fsdEntLeerEj(it){
   const f = it.querySelectorAll('.ex-table-row .rx-field');
   const hech = it.querySelectorAll('.sr-hechas .sr-h');
   const ej = {
+    id: fsdMdAttr(it, 'data-fid'),
     nombre: fsdMdTxt(nom).replace(/\s*✎\s*$/, '').trim(),
     musculo: fsdMdAttr(nom, 'data-muscle'),
     nota: desc ? desc.textContent : '',
@@ -88,6 +89,7 @@ function fsdEntLeer(html){
     v: FSD_MODELO_V,
     sesiones: Array.prototype.map.call(t.querySelectorAll('.sesion-card'), function(c){
       return fsdMdLimpio({
+        id: fsdMdAttr(c, 'data-fid'),
         titulo: fsdMdTxt(c.querySelector('.sesion-title')),
         hecha: c.classList.contains('hecha') ? '1' : '',
         hechaFecha: fsdMdAttr(c, 'data-hecha'),
@@ -108,6 +110,7 @@ function fsdEntPintarEj(e){
   const t = fsdMdDiv(filaEjercicio(e.nombre || '', e.musculo || '', se, p.reps != null ? p.reps : '', p.rir != null ? p.rir : ''));
   const it = t.firstElementChild;
   if (!e.v2) it.removeAttribute('data-v2');
+  fsdMdPonerData(it, 'fid', e.id);
   const f = it.querySelectorAll('.ex-table-row .rx-field');
   [p.series != null ? p.series : '', p.reps != null ? p.reps : '', p.rir != null ? p.rir : ''].forEach(function(v, i){ if (f[i]) f[i].setAttribute('value', v); });
   const desc = it.querySelector('.ex-desc');
@@ -151,6 +154,7 @@ function fsdEntPintar(datos){
     c.classList.remove('open');
     const ch = c.querySelector('.sesion-chevron'); if (ch) ch.classList.remove('open');
     const body = c.querySelector('.sesion-body'); body.style.display = 'none';
+    fsdMdPonerData(c, 'fid', s.id);
     c.querySelector('.sesion-title').textContent = s.titulo || '';
     if (s.hecha) c.classList.add('hecha');
     fsdMdPonerData(c, 'hecha', s.hechaFecha);
@@ -170,12 +174,13 @@ function fsdEntPintar(datos){
    El objetivo diario (kcal y macros) vive en la ficha del cliente, no aquí.
    ========================================================= */
 const FSD_NUT_GRUPOS = [['protein', 'p'], ['carb', 'c'], ['fat', 'g']];
-const FSD_MEAL_DATA = ['mp', 'mc', 'mf', 'tomada'];
-const FSD_CHIP_DATA = ['fijo'];
+const FSD_MEAL_DATA = ['fid', 'mp', 'mc', 'mf', 'tomada'];
+const FSD_CHIP_DATA = ['fid', 'fijo'];
 function fsdNutLeerChip(ch){
   const q = ch.querySelector('.chip-qty');
   const g = q ? (q.textContent.match(/(\d+(?:[.,]\d+)?)\s*g/) || [])[1] : '';
   return fsdMdLimpio({
+    id: fsdMdAttr(ch, 'data-fid'),
     nombre: Array.prototype.filter.call(ch.childNodes, function(n){ return n.nodeType === 3; }).map(function(n){ return n.textContent; }).join('').trim(),
     gramos: g || '',
     fijo: fsdMdAttr(ch, 'data-fijo'),
@@ -197,6 +202,7 @@ function fsdNutLeer(html){
         if (cl && chips.length) grupos[cl[1]] = chips;
       });
       return fsdMdLimpio({
+        id: fsdMdAttr(b, 'data-fid'),
         titulo: fsdMdTxt(ti),
         tituloPropio: fsdMdAttr(ti, 'data-custom'),
         tomada: b.classList.contains('eaten') ? '1' : '',
@@ -215,7 +221,7 @@ function fsdNutPintar(datos){
     const cols = [['protein', 'Proteína', '🥩', 'p'], ['carb', 'Carbohidrato', '🍚', 'c'], ['fat', 'Grasa', '🥑', 'g']];
     const mt = m.metas || {};
     const b = document.createElement('div'); b.className = 'meal-block' + (m.tomada ? ' eaten' : '');
-    fsdMdPonerData(b, 'mp', mt.p); fsdMdPonerData(b, 'mc', mt.c); fsdMdPonerData(b, 'mf', mt.g); fsdMdPonerData(b, 'tomada', m.tomadaFecha);
+    fsdMdPonerData(b, 'fid', m.id); fsdMdPonerData(b, 'mp', mt.p); fsdMdPonerData(b, 'mc', mt.c); fsdMdPonerData(b, 'mf', mt.g); fsdMdPonerData(b, 'tomada', m.tomadaFecha);
     fsdMdPonerExtra(b, m.extra);
     b.innerHTML = '<div class="meal-head" onclick="toggleMealBlock(this)">'
       + '<div class="meal-head-txt"><div class="meal-block-title" onclick="titleClick(event)" oninput="titleEdited(this)" onblur="titleBlur(this)" onkeydown="titleKey(event,this)"' + (m.tituloPropio ? ' data-custom="' + fsdEsc(m.tituloPropio) + '"' : '') + '>' + fsdEsc(m.titulo || '') + '</div><div class="meal-summary"></div></div>'
@@ -227,7 +233,7 @@ function fsdNutPintar(datos){
             + lista.map(function(a){
                 const ch = document.createElement('div'); ch.className = 'chip ' + c[0] + (a.elegido ? ' selected' : '');
                 ch.textContent = a.nombre || '';
-                fsdMdPonerData(ch, 'fijo', a.fijo); fsdMdPonerExtra(ch, a.extra);
+                fsdMdPonerData(ch, 'fid', a.id); fsdMdPonerData(ch, 'fijo', a.fijo); fsdMdPonerExtra(ch, a.extra);
                 if (a.gramos) ch.insertAdjacentHTML('beforeend', '<span class="chip-qty">· ' + fsdEsc(a.gramos) + ' g</span>');
                 return ch.outerHTML;
               }).join('')
@@ -243,7 +249,8 @@ function fsdNutPintar(datos){
    vuelta a datos sin perder nada. No envía nada a ningún sitio. */
 function fsdMdComprobar(){
   const r = { clientes: 0, mal: [], raros: [] };
-  const vuelta = function(leer, pintar, h){ const d = leer(h); return JSON.stringify(leer(pintar(d))) === JSON.stringify(d) ? d : null; };
+  const vuelta = function(leer, pintar, h){ const d = leer(h); return fsdMdIgual(leer(pintar(d)), d) ? d : null; };
+  const parte = { 'entreno': [fsdEntSeparar, fsdEntUnir], 'nutrición': [fsdNutSeparar, fsdNutUnir] };
   Object.keys(PLANES).forEach(function(k){
     const p = PLANES[k] || {}, nom = (clientesData[k] || {}).nombre || k;
     r.clientes++;
@@ -252,6 +259,7 @@ function fsdMdComprobar(){
       partes.forEach(function(x){
         const d = vuelta(x[1], x[2], x[3]);
         if (!d) { r.mal.push(nom + ' · ' + x[0]); return; }
+        const sp = parte[x[0]]; if (sp) { const y = sp[0](d); if (!fsdMdIgual(sp[1](y.pauta, y.registro), d)) { r.mal.push(nom + ' · ' + x[0] + ' (pauta y registro)'); return; } }
         const j = JSON.stringify(d);
         if (j.indexOf('"extra":') > -1 || j.indexOf('"desconocido":') > -1) r.raros.push(nom + ' · ' + x[0]);
       });
@@ -282,14 +290,14 @@ function fsdMdInforme(){
    El mensaje fijado y las dudas viven en la ficha del cliente (chatFijo, dudas), no aquí.
    ========================================================= */
 const FSD_MSG_CLASES = ['bubble', 'in', 'out', 'mencion', 'msg-del'];
-const FSD_MSG_DATA = ['ts', 'hora'];
+const FSD_MSG_DATA = ['fid', 'ts', 'hora'];
 const FSD_MSG_PIEZAS = '.sender, .rp-q, .fw-tag, .mencion-tag, img, .audio-b, .msg-del-t';
 function fsdChatLeerMsg(b){
-  const m = { lado: b.classList.contains('in') ? 'in' : 'out' };
+  const m = { id: fsdMdAttr(b, 'data-fid'), lado: b.classList.contains('in') ? 'in' : 'out' };
   const s = b.querySelector(':scope > .sender'); if (s) m.de = s.textContent;
   m.ts = fsdMdAttr(b, 'data-ts'); m.hora = fsdMdAttr(b, 'data-hora');
   const q = b.querySelector(':scope > .rp-q');
-  if (q) m.cita = fsdMdLimpio({ n: fsdMdAttr(q, 'data-n'), t: fsdMdAttr(q, 'data-t'), quien: fsdMdTxt(q.querySelector('b')), vista: fsdMdTxt(q.querySelector('span')) });
+  if (q) m.cita = fsdMdLimpio({ id: fsdMdAttr(q, 'data-mid'), n: fsdMdAttr(q, 'data-n'), t: fsdMdAttr(q, 'data-t'), quien: fsdMdTxt(q.querySelector('b')), vista: fsdMdTxt(q.querySelector('span')) });
   if (b.querySelector(':scope > .fw-tag')) m.reenviado = '1';
   const mt = b.querySelector(':scope > .mencion-tag'); if (mt) m.mencion = mt.textContent;
   const img = b.querySelector(':scope > img');
@@ -328,11 +336,11 @@ function fsdChatPintar(datos){
     if (m.mencion != null) b.classList.add('mencion');
     if (m.tipo === 'eliminado') b.classList.add('msg-del');
     (m.clases || '').split(' ').filter(Boolean).forEach(function(c){ b.classList.add(c); });
-    fsdMdPonerData(b, 'ts', m.ts); fsdMdPonerData(b, 'hora', m.hora); fsdMdPonerExtra(b, m.extra);
+    fsdMdPonerData(b, 'fid', m.id); fsdMdPonerData(b, 'ts', m.ts); fsdMdPonerData(b, 'hora', m.hora); fsdMdPonerExtra(b, m.extra);
     if (m.de != null) { const s = document.createElement('div'); s.className = 'sender'; s.textContent = m.de; b.appendChild(s); }
     if (m.cita) {
       const q = document.createElement('div'); q.className = 'rp-q';
-      fsdMdPonerData(q, 'n', m.cita.n); q.setAttribute('data-t', m.cita.t || '');
+      fsdMdPonerData(q, 'mid', m.cita.id); fsdMdPonerData(q, 'n', m.cita.n); q.setAttribute('data-t', m.cita.t || '');
       q.innerHTML = '<b>' + fsdEsc(m.cita.quien || '') + '</b><span>' + fsdEsc(m.cita.vista || '') + '</span>';
       b.appendChild(q);
     }
@@ -352,3 +360,192 @@ function fsdChatPintar(datos){
     return b.outerHTML;
   }).join('');
 }
+
+/* =========================================================
+   4 · IDENTIFICADORES FIJOS (fase 2b, 27/10/2026)
+   Cada sesión, ejercicio, comida, alimento del plan y mensaje lleva data-fid. Se pone a lo que no lo
+   tenga (también a lo ya creado) y se renueva si dos elementos comparten id (al duplicar se copia).
+   Mover algo conserva su id. No cambia nada de lo que se ve.
+   ========================================================= */
+const FSD_FID_SEL = ['.sesion-card', '.ex-item', '.meal-block', '.macro-group .chip:not(.chip-add)', '.bubble'];
+function fsdMdNuevoId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function fsdMdIds(raiz){
+  if (!raiz) return 0;
+  let n = 0;
+  FSD_FID_SEL.forEach(function(sel){
+    const vistos = {};
+    Array.prototype.forEach.call(raiz.querySelectorAll(sel), function(el){
+      let id = el.getAttribute('data-fid');
+      if (!id || vistos[id]) { id = fsdMdNuevoId(); el.setAttribute('data-fid', id); n++; }
+      vistos[id] = 1;
+    });
+  });
+  return n;
+}
+function fsdMdIdsHtml(html){ const t = fsdMdDiv(html); return fsdMdIds(t) ? t.innerHTML : html; }
+/* al guardar: lo que está en pantalla recibe sus ids antes de convertirse en HTML guardado */
+guardarPlan = (function(orig){
+  return function(){
+    try { fsdMdIds(contEnt()); fsdMdIds(contNut()); } catch(e){}
+    return orig.apply(this, arguments);
+  };
+})(guardarPlan);
+guardarChat = (function(orig){
+  return function(){
+    try { fsdMdIds(document.getElementById('chatList')); } catch(e){}
+    return orig.apply(this, arguments);
+  };
+})(guardarChat);
+/* los planes y chats de clientes que no están abiertos también reciben ids, una vez, al arrancar */
+function fsdMdIdsTodos(){
+  let cambio = false;
+  Object.keys(PLANES || {}).forEach(function(k){
+    const p = PLANES[k]; if (!p || k === clienteActual) return;
+    ['ent', 'nut', 'chat'].forEach(function(c){
+      if (typeof p[c] !== 'string' || !p[c]) return;
+      const h = fsdMdIdsHtml(p[c]); if (h !== p[c]) { p[c] = h; cambio = true; }
+    });
+  });
+  if (cambio) { try { guardarTodo(); } catch(e){} }
+}
+window.addEventListener('load', function(){ setTimeout(function(){ try { fsdMdIdsTodos(); } catch(e){} }, 1500); });
+
+/* ---------- referencias a mensajes por id (fijado, dudas, respuestas citadas) ----------
+   Se guarda el id junto a lo de antes (posición y texto), y al buscar se usa primero el id. */
+function fsdMdMsgPorId(id){ if (!id) return null; const l = document.getElementById('chatList'); return l ? l.querySelector('.bubble[data-fid="' + String(id).replace(/["\\]/g, '') + '"]') : null; }
+function fsdMdIdDe(b){ if (!b) return ''; if (!b.getAttribute('data-fid')) b.setAttribute('data-fid', fsdMdNuevoId()); return b.getAttribute('data-fid'); }
+if (typeof cmFijar === 'function') cmFijar = (function(orig){
+  return function(b){
+    const r = orig.apply(this, arguments);
+    const d = clientesData[clienteActual]; if (d && d.chatFijo) { d.chatFijo.mid = fsdMdIdDe(b); try { guardarTodo(); } catch(e){} }
+    return r;
+  };
+})(cmFijar);
+if (typeof cmFijoDe === 'function') cmFijoDe = (function(orig){
+  return function(b){
+    const f = (clientesData[clienteActual] || {}).chatFijo;
+    if (f && f.mid && b) return b.getAttribute('data-fid') === f.mid;
+    return orig.apply(this, arguments);
+  };
+})(cmFijoDe);
+if (typeof ddCrearDuda === 'function') ddCrearDuda = (function(orig){
+  return function(b){
+    const k = clienteActual, mid = fsdMdIdDe(b), antes = ddLista(k).length;
+    const r = orig.apply(this, arguments);
+    const l = ddLista(k); if (l.length > antes) { l[l.length - 1].mid = mid; try { guardarTodo(); } catch(e){} }
+    return r;
+  };
+})(ddCrearDuda);
+if (typeof ddBuscar === 'function') ddBuscar = (function(orig){
+  return function(du, bs){
+    if (du && du.mid) { const b = fsdMdMsgPorId(du.mid); if (b) return b; }
+    return orig.apply(this, arguments);
+  };
+})(ddBuscar);
+/* respuesta citada: la cita guarda el id del mensaje original */
+if (typeof cmResponder === 'function') cmResponder = (function(orig){
+  return function(b){ const r = orig.apply(this, arguments); if (cmReply) cmReply.mid = fsdMdIdDe(b); return r; };
+})(cmResponder);
+sendMsg = (function(orig){
+  return function(){
+    const mid = typeof cmReply !== 'undefined' && cmReply ? cmReply.mid : '';
+    const l = document.getElementById('chatList'), antes = l ? l.querySelectorAll('.bubble').length : 0;
+    const r = orig.apply(this, arguments);
+    if (mid && l) {
+      const bs = l.querySelectorAll('.bubble'), b = bs.length > antes ? bs[bs.length - 1] : null, q = b && b.querySelector('.rp-q');
+      if (q && !q.getAttribute('data-mid')) { q.setAttribute('data-mid', mid); try { guardarChat(); guardarTodo(); } catch(e){} }
+    }
+    return r;
+  };
+})(sendMsg);
+document.addEventListener('click', function(e){
+  const q = e.target.closest && e.target.closest('#chatList .rp-q[data-mid]'); if (!q) return;
+  const o = fsdMdMsgPorId(q.getAttribute('data-mid'));
+  if (o && typeof cmFlash === 'function') { e.stopImmediatePropagation(); cmFlash(o); }
+}, true);
+/* al borrar un mensaje: el fijado, las dudas y las citas que lo señalan por id también lo sueltan */
+if (typeof cmBorrar === 'function') cmBorrar = (function(orig){
+  return function(b){
+    const mid = b && b.getAttribute('data-fid'), d = clientesData[clienteActual];
+    const r = orig.apply(this, arguments);
+    if (mid && d) {
+      if (d.chatFijo && d.chatFijo.mid === mid) d.chatFijo = null;
+      if (Array.isArray(d.dudas)) d.dudas = d.dudas.filter(function(x){ return x.mid !== mid; });
+      Array.prototype.forEach.call(document.querySelectorAll('#chatList .rp-q[data-mid="' + mid + '"]'), function(q){ q.dataset.t = ''; const sp = q.querySelector('span'); if (sp) sp.textContent = '🚫 Mensaje eliminado'; });
+    }
+    return r;
+  };
+})(cmBorrar);
+
+/* =========================================================
+   5 · PAUTA (la escribe el profesional) Y REGISTRO (lo apunta el cliente), por separado
+   En Firebase irán a documentos distintos (planes/entreno · registroEntreno, planes/nutricion · diario)
+   para que el servidor pueda impedir que el cliente toque la pauta y que el profesional pise lo apuntado.
+   unir(separar(datos)) devuelve exactamente los mismos datos.
+   ========================================================= */
+const FSD_SERIE_CLIENTE = ['kg', 'prev', 'hechas', 'rirHecho', 'ok'];
+function fsdMdCopia(o){ return JSON.parse(JSON.stringify(o || {})); }
+function fsdMdClave(o, alt){ return (o && o.id) || alt; }
+function fsdEntSeparar(datos){
+  const pauta = fsdMdCopia(datos), reg = { v: FSD_MODELO_V, sesiones: {}, ejercicios: {} };
+  (pauta.sesiones || []).forEach(function(s, i){
+    const ks = fsdMdClave(s, 's' + i);
+    const rs = fsdMdLimpio({ hecha: s.hecha, hechaFecha: s.hechaFecha });
+    delete s.hecha; delete s.hechaFecha;
+    if (Object.keys(rs).length) reg.sesiones[ks] = rs;
+    (s.ejercicios || []).forEach(function(e, j){
+      const ke = fsdMdClave(e, ks + 'e' + j), re = {};
+      if (e.cardio && e.cardio.hecho) { re.cardioHecho = e.cardio.hecho; delete e.cardio.hecho; if (!Object.keys(e.cardio).length) delete e.cardio; }
+      const ser = (e.series || []).map(function(x){
+        const o = {}; FSD_SERIE_CLIENTE.forEach(function(c){ if (x[c] != null) { o[c] = x[c]; delete x[c]; } }); return o;
+      });
+      if (ser.some(function(o){ return Object.keys(o).length; })) re.series = ser;
+      if (Object.keys(re).length) reg.ejercicios[ke] = re;
+    });
+  });
+  return { pauta: pauta, registro: reg };
+}
+function fsdEntUnir(pauta, reg){
+  const d = fsdMdCopia(pauta); reg = reg || {};
+  (d.sesiones || []).forEach(function(s, i){
+    const ks = fsdMdClave(s, 's' + i), rs = (reg.sesiones || {})[ks];
+    if (rs) { if (rs.hecha) s.hecha = rs.hecha; if (rs.hechaFecha) s.hechaFecha = rs.hechaFecha; }
+    (s.ejercicios || []).forEach(function(e, j){
+      const re = (reg.ejercicios || {})[fsdMdClave(e, ks + 'e' + j)]; if (!re) return;
+      if (re.cardioHecho) { e.cardio = e.cardio || {}; e.cardio.hecho = re.cardioHecho; }
+      (re.series || []).forEach(function(o, n){ const x = (e.series || [])[n]; if (x) FSD_SERIE_CLIENTE.forEach(function(c){ if (o[c] != null) x[c] = o[c]; }); });
+    });
+  });
+  return d;
+}
+function fsdNutSeparar(datos){
+  const pauta = fsdMdCopia(datos), reg = { v: FSD_MODELO_V, comidas: {}, elegidos: {} };
+  (pauta.comidas || []).forEach(function(m, i){
+    const km = fsdMdClave(m, 'm' + i);
+    const rm = fsdMdLimpio({ tomada: m.tomada, tomadaFecha: m.tomadaFecha });
+    delete m.tomada; delete m.tomadaFecha;
+    if (Object.keys(rm).length) reg.comidas[km] = rm;
+    Object.keys(m.grupos || {}).forEach(function(g){
+      m.grupos[g].forEach(function(a, j){ if (a.elegido) { reg.elegidos[fsdMdClave(a, km + g + j)] = a.elegido; delete a.elegido; } });
+    });
+  });
+  return { pauta: pauta, registro: reg };
+}
+function fsdNutUnir(pauta, reg){
+  const d = fsdMdCopia(pauta); reg = reg || {};
+  (d.comidas || []).forEach(function(m, i){
+    const km = fsdMdClave(m, 'm' + i), rm = (reg.comidas || {})[km];
+    if (rm) { if (rm.tomada) m.tomada = rm.tomada; if (rm.tomadaFecha) m.tomadaFecha = rm.tomadaFecha; }
+    Object.keys(m.grupos || {}).forEach(function(g){
+      m.grupos[g].forEach(function(a, j){ const v = (reg.elegidos || {})[fsdMdClave(a, km + g + j)]; if (v) a.elegido = v; });
+    });
+  });
+  return d;
+}
+/* comparación de datos sin depender del orden de las claves */
+function fsdMdOrden(o){
+  if (Array.isArray(o)) return o.map(fsdMdOrden);
+  if (o && typeof o === 'object') { const r = {}; Object.keys(o).sort().forEach(function(k){ r[k] = fsdMdOrden(o[k]); }); return r; }
+  return o;
+}
+function fsdMdIgual(a, b){ return JSON.stringify(fsdMdOrden(a)) === JSON.stringify(fsdMdOrden(b)); }
