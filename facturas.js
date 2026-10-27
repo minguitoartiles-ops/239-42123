@@ -52,7 +52,7 @@ function fcNumerar(k, i){
 
 /* ---------- PDF propio (A4, Helvetica, texto en WinAnsi) ---------- */
 const FC_W = { ' ': 278, ',': 278, '.': 278, '-': 333, '–': 556, '/': 278, '€': 556, '%': 889 };
-function fcAncho(s, tam){ let w = 0; for (const c of String(s)) w += (/[0-9]/.test(c) ? 556 : (FC_W[c] || 556)); return w * tam / 1000; }
+function fcAncho(s, tam){ let w = 0; for (const c of String(s)) w += (/[0-9]/.test(c) ? 556 : (FC_W[c] || (/[A-ZÁÉÍÓÚÑ]/.test(c) ? 700 : 556))); return w * tam / 1000; }
 function fcTxt(s){
   // a WinAnsi: Latin-1 tal cual, más el euro y la raya; lo demás, «?»
   let r = '';
@@ -73,11 +73,12 @@ function fcPagina(f){
   const linea = function(y, g){ L.push((g || '0.85 0.88 0.92') + ' RG 0.8 w ' + M + ' ' + y + ' m ' + D + ' ' + y + ' l S'); };
   const caja = function(x, y, w, h, col){ L.push(col + ' rg ' + x + ' ' + y + ' ' + w + ' ' + h + ' re f'); };
   // cabecera
-  caja(0, 800, W, 42, '0.533 0.725 0.902');
-  txt(M, 812, 'FACTURA', 20, true);
-  der(D, 818, 'Nº ' + f.num, 12, true); der(D, 805, 'Fecha: ' + mjFecha(f.fecha), 10);
+  caja(0, 782, W, 60, '0.533 0.725 0.902');
+  if (f.logo) L.push('q 44 0 0 44 ' + M + ' 790 cm /Logo Do Q');
+  txt(f.logo ? M + 56 : M, 805, 'FACTURA', 20, true);
+  der(D, 816, 'Nº ' + f.num, 12, true); der(D, 801, 'Fecha: ' + mjFecha(f.fecha), 10);
   // emisor
-  let y = 770;
+  let y = 752;
   txt(M, y, f.em.nombre || '', 11, true); y -= 14;
   if (f.em.nif) { txt(M, y, 'NIF ' + f.em.nif, 10); y -= 13; }
   if (f.em.dir) { txt(M, y, f.em.dir, 10); y -= 13; }
@@ -114,10 +115,11 @@ function fcPDF(lista){
   const f1 = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
   const f2 = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
   const kids = [];
+  const logo = fcLogo ? add('<< /Type /XObject /Subtype /Image /Width ' + fcLogo.w + ' /Height ' + fcLogo.h + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + fcLogo.bin.length + ' >>\nstream\n' + fcLogo.bin + '\nendstream') : 0;
   lista.forEach(function(f){
-    const cont = fcPagina(f);
+    const cont = fcPagina(Object.assign({ logo: !!logo }, f));
     const c = add('<< /Length ' + cont.length + ' >>\nstream\n' + cont + '\nendstream');
-    kids.push(add('<< /Type /Page /Parent ' + paginas + ' 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ' + f1 + ' 0 R /F2 ' + f2 + ' 0 R >> >> /Contents ' + c + ' 0 R >>'));
+    kids.push(add('<< /Type /Page /Parent ' + paginas + ' 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ' + f1 + ' 0 R /F2 ' + f2 + ' 0 R >>' + (logo ? ' /XObject << /Logo ' + logo + ' 0 R >>' : '') + ' >> /Contents ' + c + ' 0 R >>'));
   });
   objs[catalogo - 1] = '<< /Type /Catalog /Pages ' + paginas + ' 0 R >>';
   objs[paginas - 1] = '<< /Type /Pages /Kids [' + kids.map(function(k){ return k + ' 0 R'; }).join(' ') + '] /Count ' + kids.length + ' >>';
@@ -130,8 +132,19 @@ function fcPDF(lista){
   for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 255;
   return new Blob([bytes], { type: 'application/pdf' });
 }
+/* logo de la cabecera (JPEG con el fondo azul de la franja); se carga una vez */
+let fcLogo = null;
+const fcLogoListo = fetch('assets/logo_factura.jpg').then(function(r){ return r.ok ? r.arrayBuffer() : null; }).then(function(b){
+  if (!b) return;
+  const u = new Uint8Array(b); let bin = '';
+  for (let i = 0; i < u.length; i += 8192) bin += String.fromCharCode.apply(null, u.subarray(i, i + 8192));
+  fcLogo = { bin: bin, w: 240, h: 240 };
+}).catch(function(){});
 function fcDescargar(lista, nombre){
   if (!lista.length) { toast('No hay facturas que descargar'); return; }
+  fcLogoListo.then(function(){ fcDescargarYa(lista, nombre); });
+}
+function fcDescargarYa(lista, nombre){
   const url = URL.createObjectURL(fcPDF(lista));
   const a = document.createElement('a'); a.href = url; a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
