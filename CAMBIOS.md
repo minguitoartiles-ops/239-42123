@@ -16,6 +16,7 @@ Cambios acumulados hacia la 0.83: **9 de 10**
 7. 27/10/2026 09:55 · Cuestionario enviado: fuera el aviso de mandar 3 fotos por el chat (ya se suben en el cuestionario); ahora agradece la confianza e invita a saludar por el chat para darle la bienvenida (botón «Saludar en el chat»). Sin la franja gris detrás de los botones y con los dos a la misma altura → **0.82.3-1 (caché)**
 8. 27/10/2026 10:50 · Pagos · facturas más fáciles (sin pasarela de pago): nueva pestaña «📄 Facturas» junto a Clientes y Movimientos, con «N pagos sin factura · Facturar los N» (numera por orden de fecha con los datos fiscales del cuestionario), lista de facturas emitidas con buscador y filtro por año o trimestre, y «Descargar todas» en un solo PDF. El PDF se descarga directamente (generado en la propia app, sin librerías externas) también desde el historial de pagos de cada cliente; «Imprimir» queda como opción. IGIC 7 % incluido. Los datos del emisor siguen guardándose solo en el dispositivo. Que el cliente vea sus facturas en su app queda para Supabase → **0.82.4**
 9. 27/10/2026 11:05 · Facturas con el logo de Fitnessindramas en la cabecera (junto a «FACTURA», sobre la franja azul) → **0.82.4-1 (caché)**
+10. 27/10/2026 18:45 · La app estrena dirección propia: app.fitnessindramas.com. El código QR y la dirección del aviso «Abre la app en el móvil» del ordenador apuntan ya al nuevo dominio → **0.82.4-2 (caché)**
 
 ## Versión 0.81 → 0.82.0
 
