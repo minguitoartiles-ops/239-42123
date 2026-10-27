@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.82.4 (actual)
-Cambios acumulados hacia la 0.83: **13 de 10**
+Cambios acumulados hacia la 0.83: **14 de 10**
 
 ### Hacia la 0.83
 1. 26/10/2026 21:45 · Ordenador del equipo: en un dispositivo marcado «Sin contraseña en este dispositivo», el código de un cliente entra directo a su app (vista de cliente con «👀 Vista de cliente · Salir»), sin el aviso de «solo móvil» ni la contraseña; sigue dentro al recargar hasta «Salir». En cualquier otro ordenador todo sigue igual (aviso y contraseña del profesional) → **0.82.0-1 (caché)**
@@ -20,6 +20,7 @@ Cambios acumulados hacia la 0.83: **13 de 10**
 11. 27/10/2026 19:05 · Nutrición (Fátima): la tarjeta del cliente en «Planes de nutrición» se pone al día en cuanto se guarda el plan (antes seguía en «Sin plan · 0 comidas» hasta salir y volver a la pestaña). Y si el cliente ha dicho que no tiene alergias, intolerancias ni problemas digestivos, el aviso del plan sale con ✓ y borde gris en vez de en rojo → **0.82.4-3 (caché)**
 12. 27/10/2026 19:25 · Limpieza visual: los filtros con 0 ya no se muestran («Necesitan atención 0», «Sin plan 0», «Con duda 0»…) en Clientes, Planes, Chats y Seguimientos. Si solo quedaría «Todos», la fila de filtros desaparece. Aparecen solos en cuanto hay algo → **0.82.4-4 (caché)**
 13. 27/10/2026 22:10 · Backend · fase 1 (datos limpios): nuevo módulo que convierte entrenos, planes de nutrición y chats de «trozo de pantalla» a datos ordenados (días, ejercicios, series; comidas, alimentos, gramos; mensajes con autor y hora) y vuelve a construir la pantalla a partir de ellos. Probado con los 40 clientes de prueba más planes con técnicas, superseries, EMOM, cardio, series distintas, cantidades fijadas, comidas tomadas, fotos, notas de voz, respuestas, reenvíos y mensajes borrados: 0 diferencias de pantalla y de datos, en ordenador y móvil. Nada cambia todavía en lo que se guarda ni en lo que se ve. Nuevo en Ajustes → Copias de seguridad (profesionales): «Comprobar datos para la migración», que revisa los clientes de ese dispositivo sin tocar nada → **0.82.4-5 (caché)**
+14. 27/10/2026 22:05 · Comprobar datos para la migración: el emoji de cada alimento (🥚, 🍞…) ya no sale como «dato que no se reconoce»; la app lo calcula sola a partir del nombre, así que no hace falta guardarlo → **0.82.4-6 (caché)**
 
 ## Versión 0.81 → 0.82.0
 
