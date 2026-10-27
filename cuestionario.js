@@ -303,9 +303,9 @@ function cqEnviar(){
   });
   const o = document.getElementById('cqHoja');
   o.innerHTML = '<div class="fsd-sheet full cq-sheet cq-fin"><div class="cq-e" aria-hidden="true">🎉</div><h3>¡Enviado!</h3>'
-    + '<p>Domingo y Fátima ya tienen tu cuestionario y van a preparar tu plan. Te avisaremos cuando esté listo.</p>'
-    + '<p class="cq-aviso">📸 Último detalle: mándanos por el chat 3 fotos (de frente, de perfil y de espaldas), con buena luz y ropa ajustada.</p>'
-    + '<div class="cq-acts"><button type="button" class="btn-eq" onclick="cqCerrar()">Cerrar</button><button type="button" class="btn-primary" onclick="cqCerrar();goTo(\'chat\')">Ir al chat</button></div></div>';
+    + '<p>Gracias por confiar en nosotros. Domingo y Fátima ya tienen tu cuestionario y van a preparar tu plan; te avisaremos cuando esté listo.</p>'
+    + '<p class="cq-aviso">👋 Mientras tanto, salúdanos por el chat: nos encantará darte la bienvenida.</p>'
+    + '<div class="cq-acts"><button type="button" class="btn-eq" onclick="cqCerrar()">Cerrar</button><button type="button" class="btn-primary" onclick="cqCerrar();goTo(\'chat\')">Saludar en el chat</button></div></div>';
   delete o.dataset.capaSucia;
   try { mjAvisoAlergiasHoy(); } catch(e){}
 }
