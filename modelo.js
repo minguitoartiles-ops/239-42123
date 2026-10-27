@@ -15,13 +15,15 @@ function fsdMdAttr(el, a){ const v = el && el.getAttribute(a); return v == null 
 function fsdMdVal(el){ return el ? fsdMdAttr(el, 'value') : ''; }
 function fsdMdTxt(el){ return el ? el.textContent : ''; }
 /* data-* que no conocemos: se guardan en «extra» para no perder nada (y la prueba los señala) */
+/* atributos que la app calcula sola al pintar (emoji del alimento, icono, marcas de edición): no son datos */
+const FSD_MD_DERIVADOS = ['emo', 'ico', 'edit-ready', 'ph'];
 function fsdMdExtra(el, conocidos){
   const x = {};
   if (!el) return x;
   Array.prototype.forEach.call(el.attributes, function(a){
     if (a.name.indexOf('data-') !== 0) return;
     const k = a.name.slice(5);
-    if (conocidos.indexOf(k) < 0) x[k] = a.value;
+    if (conocidos.indexOf(k) < 0 && FSD_MD_DERIVADOS.indexOf(k) < 0) x[k] = a.value;
   });
   return x;
 }
