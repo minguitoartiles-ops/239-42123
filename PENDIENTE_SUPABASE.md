@@ -23,5 +23,6 @@ Se activarán cuando Domingo decida montar el servidor. Cada entrada indica de d
 | 10 | **Pasos medios semanales automáticos** en el seguimiento (Salud, Health Connect, Samsung Health, Garmin) | Ahora el cliente los indica con un deslizador; leerlos solos necesita app nativa (o servidor para Garmin) | 20/10/2026 |
 | 17 | **Alojamiento de los datos en Supabase** (base de datos y usuarios en la nube en lugar de guardarlo todo en cada dispositivo) | Hoy los datos viven en el navegador de cada móvil u ordenador y no se comparten | 22/10/2026 |
 | 18 | **Quitar el acceso sin contraseña** («Entrar sin contraseña en este dispositivo» / modo pruebas) | Hoy es aceptable porque los datos solo viven en cada dispositivo. Con datos en la nube, cualquiera con ese móvil entraría como profesional: sustituir por sesión con caducidad o huella/Face ID | 25/10/2026 |
+| 19 | **Facturas visibles para el cliente** («Mis facturas» en sus Ajustes, con descarga del PDF) | Hoy cada factura se crea y se guarda en el dispositivo de quien factura (Fátima); el cliente no la recibe en su app. Los datos fiscales del emisor, en una tabla privada solo del profesional | 27/10/2026 |
 
 **Aparte (no es Supabase, necesita app nativa):** Apple Salud, Samsung Health y Health Connect solo se pueden leer desde una app instalada desde App Store o Google Play.
