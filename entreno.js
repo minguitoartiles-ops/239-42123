@@ -1596,3 +1596,8 @@ mjCambioDeSemana = (function(orig){
     return r;
   };
 })(mjCambioDeSemana);
+
+/* 27/10 · lista «Planes» al día en cuanto se guarda un plan (en multitarea la lista sigue a la vista) */
+function enRefrescarPlanes(){ setTimeout(function(){ try { const c = document.getElementById('planesPro'); if (c && c.offsetParent) enPintarPlanes(); } catch(e){} }, 0); }
+fsdTras('guardarPlan', enRefrescarPlanes);
+fsdTras('editarPlan', enRefrescarPlanes);
