@@ -265,7 +265,7 @@ function fsdMdInforme(){
   abrirDialogo({
     titulo: ok ? '✓ Datos listos para la migración' : 'Revisión de datos para la migración',
     texto: ok
-      ? 'Se han revisado los ' + r.clientes + ' clientes de este dispositivo: entrenos, planes de nutrición y chats se convierten a datos sin perder nada.'
+      ? (r.clientes === 1 ? 'Se ha revisado el único cliente' : 'Se han revisado los ' + r.clientes + ' clientes') + ' de este dispositivo: entrenos, planes de nutrición y chats se convierten a datos sin perder nada.'
       : 'Clientes revisados: ' + r.clientes + '.'
         + (r.mal.length ? '\n\nNo hacen bien la conversión (' + r.mal.length + '):\n· ' + r.mal.slice(0, 12).join('\n· ') : '')
         + (r.raros.length ? '\n\nTienen algún dato que la conversión aún no reconoce, aunque no se pierde (' + r.raros.length + '):\n· ' + r.raros.slice(0, 12).join('\n· ') : '')
