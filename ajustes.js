@@ -446,6 +446,7 @@ function htmlAjustes(rol){
   } else {
     h += fila('Descargar copia completa', chev(), 'descargarCopiaCompleta()');
     h += fila('Restaurar una copia', chev(), 'elegirCopia()');
+    h += fila('Comprobar datos para la migración', chev(), 'fsdMdInforme()');
     h += fila('Borrar datos de este dispositivo', '', 'borrarDatosDispositivo()', 'danger');
   }
   h += '</div><p class="ajx-note">' + (cliente
