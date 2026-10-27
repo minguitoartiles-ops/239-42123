@@ -339,7 +339,10 @@ function exPintarFiltros(){
     const b = document.getElementById('escBuscar');
     lista.parentNode.insertBefore(f, b ? b.nextSibling : lista);
   }
-  const op = [['todos', 'Todos', claves.length], ['atencion', '⚠️ Necesitan atención', nAt], ['sinplan', 'Sin plan', nSin]];
+  /* 27/10 · limpieza: un filtro con 0 no se muestra; si solo queda «Todos», fuera la fila */
+  let op = [['todos', 'Todos', claves.length], ['atencion', '⚠️ Necesitan atención', nAt], ['sinplan', 'Sin plan', nSin]].filter(function(o){ return o[0] === 'todos' || o[2] > 0; });
+  if (!op.some(function(o){ return o[0] === exFiltro; })) exFiltro = 'todos';
+  f.hidden = op.length < 2;
   f.innerHTML = op.map(function(o){ return '<button type="button" role="tab" aria-selected="' + (exFiltro === o[0]) + '" class="' + (exFiltro === o[0] ? 'sel' : '') + (o[0] === 'atencion' && o[2] ? ' hay' : '') + '" onclick="exFiltrar(\'' + o[0] + '\')">' + o[1] + ' <b>' + o[2] + '</b></button>'; }).join('');
   exAplicarFiltro();
 }

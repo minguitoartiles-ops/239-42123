@@ -377,9 +377,12 @@ pintarChatsPro = (function(orig){
     const cont = document.getElementById('chatsPro'); if (!cont || !cont.querySelector('.chat-fila')) return r;
     const filas = Array.prototype.slice.call(cont.querySelectorAll('.chat-fila'));
     const n = {}; PU_CHAT_FILTROS.forEach(function(x){ n[x[0]] = filas.filter(function(f){ return puChatCumple(f, x[0]); }).length; });
+    /* 27/10 · limpieza: filtros con 0 fuera; si solo queda «Todos», no se muestran */
+    const chOp = PU_CHAT_FILTROS.filter(function(x){ return x[0] === 'todos' || n[x[0]] > 0; });
+    if (!chOp.some(function(x){ return x[0] === puChatFiltro; })) puChatFiltro = 'todos';
     const barra = document.createElement('div'); barra.className = 'pu-chat-barra';
     barra.innerHTML = '<input type="search" id="puChatQ" class="pu-chat-q" placeholder="Buscar cliente" aria-label="Buscar chat por nombre" autocomplete="off" value="' + esc(puChatQ) + '">'
-      + '<div class="chips pu-chat-chips" id="puChatChips" role="tablist">' + PU_CHAT_FILTROS.map(function(x){
+      + '<div class="chips pu-chat-chips" id="puChatChips" role="tablist"' + (chOp.length < 2 ? ' hidden' : '') + '>' + chOp.map(function(x){
           return '<button type="button" role="tab" class="chip protein" data-v="' + x[0] + '" onclick="puChatElegir(\'' + x[0] + '\')">' + x[1] + (x[0] !== 'todos' && n[x[0]] ? ' <span class="sg-fn">' + n[x[0]] + '</span>' : '') + '</button>'; }).join('') + '</div>';
     const stats = cont.querySelector('.chats-stats');
     if (stats) stats.insertAdjacentElement('afterend', barra); else cont.insertBefore(barra, cont.firstChild);
