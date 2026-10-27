@@ -899,7 +899,11 @@ function pintarAlergiasPlan(){
     top.parentNode.insertBefore(box, top.nextSibling);
   }
   box.hidden = false;
-  box.innerHTML = '<div class="alg-banner-t">⚠️ Alergias e intolerancias</div>' + htmlAlergiasPro(clienteActual, true);
+  /* 27/10 · si el cliente ha dicho que no tiene nada (ni digestivo), aviso neutro en vez de rojo */
+  const a = alergiasDe(clienteActual), g = a && a.gastro;
+  const limpio = !!(a && a.fecha && a.ninguna && (!g || (!g.items.length && !g.txt)));
+  box.classList.toggle('limpio', limpio);
+  box.innerHTML = '<div class="alg-banner-t">' + (limpio ? '✓' : '⚠️') + ' Alergias e intolerancias</div>' + htmlAlergiasPro(clienteActual, true);
 }
 goTo = (function(orig){
   return function(n, s){ orig(n, s); if (n === 'perfil') pintarPerfilAlergias(); if (n === 'plan') pintarAlergiasPlan(); };

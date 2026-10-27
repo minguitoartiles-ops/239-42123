@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.82.4 (actual)
-Cambios acumulados hacia la 0.83: **9 de 10**
+Cambios acumulados hacia la 0.83: **11 de 10**
 
 ### Hacia la 0.83
 1. 26/10/2026 21:45 · Ordenador del equipo: en un dispositivo marcado «Sin contraseña en este dispositivo», el código de un cliente entra directo a su app (vista de cliente con «👀 Vista de cliente · Salir»), sin el aviso de «solo móvil» ni la contraseña; sigue dentro al recargar hasta «Salir». En cualquier otro ordenador todo sigue igual (aviso y contraseña del profesional) → **0.82.0-1 (caché)**
@@ -17,6 +17,7 @@ Cambios acumulados hacia la 0.83: **9 de 10**
 8. 27/10/2026 10:50 · Pagos · facturas más fáciles (sin pasarela de pago): nueva pestaña «📄 Facturas» junto a Clientes y Movimientos, con «N pagos sin factura · Facturar los N» (numera por orden de fecha con los datos fiscales del cuestionario), lista de facturas emitidas con buscador y filtro por año o trimestre, y «Descargar todas» en un solo PDF. El PDF se descarga directamente (generado en la propia app, sin librerías externas) también desde el historial de pagos de cada cliente; «Imprimir» queda como opción. IGIC 7 % incluido. Los datos del emisor siguen guardándose solo en el dispositivo. Que el cliente vea sus facturas en su app queda para Supabase → **0.82.4**
 9. 27/10/2026 11:05 · Facturas con el logo de Fitnessindramas en la cabecera (junto a «FACTURA», sobre la franja azul) → **0.82.4-1 (caché)**
 10. 27/10/2026 18:45 · La app estrena dirección propia: app.fitnessindramas.com. El código QR y la dirección del aviso «Abre la app en el móvil» del ordenador apuntan ya al nuevo dominio → **0.82.4-2 (caché)**
+11. 27/10/2026 19:05 · Nutrición (Fátima): la tarjeta del cliente en «Planes de nutrición» se pone al día en cuanto se guarda el plan (antes seguía en «Sin plan · 0 comidas» hasta salir y volver a la pestaña). Y si el cliente ha dicho que no tiene alergias, intolerancias ni problemas digestivos, el aviso del plan sale con ✓ y borde gris en vez de en rojo → **0.82.4-3 (caché)**
 
 ## Versión 0.81 → 0.82.0
 
