@@ -16,7 +16,8 @@
    · editar los datos de un cliente se guarda en el servidor
    · el cliente entra la primera vez con su código y crea su cuenta (correo y contraseña);
      después entra con «Ya tengo cuenta»
-   · planes, seguimientos, chat, pagos y bajas siguen en el dispositivo: llegan en los siguientes pasos
+   · planes: los sincroniza servidor-planes.js (paso 3)
+   · seguimientos, chat, pagos y bajas siguen en el dispositivo: llegan en los siguientes pasos
    ========================================================= */
 
 function svEntorno(){ return window.FSD_MODO_SERVIDOR || null; }
@@ -133,7 +134,7 @@ entrarComo = (function(orig){
 coachLogout = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo()) { svPararSincro(); if (window.fsdDatos) fsdDatos.auth.salir(); }
+    if (svActivo()) { svPararSincro(); window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos) fsdDatos.auth.salir(); }
     return r;
   };
 })(coachLogout);
@@ -202,6 +203,7 @@ function svSincronizar(){
     try { mjRefrescarSemanas(); } catch(e){}
     guardarTodo();
     actualizarPanel();
+    window.dispatchEvent(new Event('fsd:lista-servidor'));             // servidor-planes.js trae los planes
   }).catch(function(e){
     try { toast(svMensaje(e, 'No se ha podido traer la lista de clientes del servidor')); } catch(_){}
   }).finally(function(){ svSincronizando = null; });
@@ -480,6 +482,7 @@ function svEntrarCliente(f){
     delete ficha.codigo; input.value = '';
     guardarTodo();
   }
+  if (window.fsdSesionCliente) window.dispatchEvent(new Event('fsd:cliente-dentro'));
 }
 
 enterApp = (function(orig){
@@ -501,7 +504,7 @@ enterApp = (function(orig){
 cerrarSesionCliente = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo() && window.fsdDatos) fsdDatos.auth.salir();
+    if (svActivo()) { window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos) fsdDatos.auth.salir(); }
     return r;
   };
 })(cerrarSesionCliente);
@@ -541,7 +544,11 @@ if (svActivo()) {
   svCargar().then(function(d){
     if (!restaurado) return d.auth.salir();
     return d.clientes.miFicha().then(function(f){
-      if (f && svClaveDe(f.id) === k0) { svAsegurarFicha(f); guardarTodo(); try { pintarCliente(); } catch(e){} return; }
+      if (f && svClaveDe(f.id) === k0) {
+        svAsegurarFicha(f); guardarTodo(); try { pintarCliente(); } catch(e){}
+        window.dispatchEvent(new Event('fsd:cliente-dentro'));
+        return;
+      }
       d.auth.salir();
       svEcharCliente();
     }, function(){
