@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
 
-      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1.7.3
+      - uses: supabase/setup-cli@d239d1052f6f024a8d746d7e5aeddead63b9cb53 # v3.1.0
         with:
           version: 2.122.0
 
@@ -39,11 +39,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           persist-credentials: false
 
-      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1.7.3
+      - uses: supabase/setup-cli@d239d1052f6f024a8d746d7e5aeddead63b9cb53 # v3.1.0
         with:
           version: 2.122.0
 
@@ -60,7 +60,7 @@ jobs:
       - name: Secretos de prueba (aleatorios en cada ejecución)
         run: |
           umask 077
-          printf 'CODIGO_PEPPER=%s\nORIGENES_PERMITIDOS=https://app.fitnessindramas.com\n' "$(openssl rand -hex 32)" > supabase/functions/.env
+          printf 'CODIGO_PEPPER=%s\nLIMPIEZA_TOKEN=%s\nORIGENES_PERMITIDOS=https://app.fitnessindramas.com\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > supabase/functions/.env
 
       - name: Servir las funciones
         run: |
@@ -75,7 +75,8 @@ jobs:
       - name: Pruebas de las funciones
         run: |
           eval "$(supabase status -o env)"
-          export API_URL ANON_KEY SERVICE_ROLE_KEY
+          LIMPIEZA_TOKEN=$(grep '^LIMPIEZA_TOKEN=' supabase/functions/.env | cut -d= -f2)
+          export API_URL ANON_KEY SERVICE_ROLE_KEY LIMPIEZA_TOKEN
           deno test --allow-net --allow-env pruebas/funciones_test.ts
 
       - name: Registro de las funciones (solo si algo falla)

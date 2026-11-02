@@ -7,6 +7,7 @@ import { assert, assertEquals } from 'jsr:@std/assert@1';
 const API = Deno.env.get('API_URL')!;
 const ANON = Deno.env.get('ANON_KEY')!;
 const SERVICIO = Deno.env.get('SERVICE_ROLE_KEY')!;
+const LIMPIEZA = Deno.env.get('LIMPIEZA_TOKEN')!;
 const FUNCIONES = `${API}/functions/v1`;
 
 const admin = createClient(API, SERVICIO, { auth: { persistSession: false } });
@@ -103,10 +104,11 @@ Deno.test('Funciones del servidor', async (t) => {
     assertEquals(r.estado, 400);
   });
 
-  await t.step('La limpieza solo la lanza el servidor', async () => {
+  await t.step('La limpieza solo la lanza la tarea, con su llave propia', async () => {
     assertEquals((await llamar('limpieza-diaria', {}, ANON)).estado, 401);
     assertEquals((await llamar('limpieza-diaria', {}, tDomingo)).estado, 401);
-    const r = await llamar('limpieza-diaria', {}, SERVICIO);
+    assertEquals((await llamar('limpieza-diaria', {}, SERVICIO)).estado, 401);
+    const r = await llamar('limpieza-diaria', {}, LIMPIEZA);
     assertEquals(r.estado, 200);
   });
 

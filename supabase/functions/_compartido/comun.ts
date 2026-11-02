@@ -2,6 +2,7 @@
 // Secretos (se configuran en Supabase → Edge Functions → Secrets, nunca en el código):
 //   CODIGO_PEPPER        clave aleatoria larga para las huellas de códigos e IP
 //   ORIGENES_PERMITIDOS  direcciones desde las que la app puede llamar (separadas por comas)
+//   LIMPIEZA_TOKEN       llave propia de la tarea de limpieza (solo sirve para lanzarla)
 // Supabase añade solo: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY.
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.117.3';
 
@@ -9,6 +10,7 @@ const URL = Deno.env.get('SUPABASE_URL') ?? '';
 const ANON = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 const SERVICIO = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const PEPPER = Deno.env.get('CODIGO_PEPPER') ?? '';
+const LIMPIEZA = Deno.env.get('LIMPIEZA_TOKEN') ?? '';
 const ORIGENES = (Deno.env.get('ORIGENES_PERMITIDOS') ?? 'https://app.fitnessindramas.com')
   .split(',').map((o) => o.trim()).filter(Boolean);
 
@@ -88,10 +90,11 @@ export async function usuarioQueLlama(req: Request): Promise<{ id: string } | nu
   return { id: data.user.id };
 }
 
-// ¿Llama el propio servidor (tarea programada) con la clave secreta?
-export function llamaElServidor(req: Request): boolean {
+// ¿Llama la tarea programada con su llave propia? (no se usa la clave maestra del servidor
+// para esto: si la llave se filtrara, solo serviría para lanzar la limpieza)
+export function llamaLaTarea(req: Request): boolean {
   const auth = req.headers.get('Authorization') ?? '';
-  return SERVICIO.length > 0 && iguales(auth, `Bearer ${SERVICIO}`);
+  return LIMPIEZA.length >= 32 && iguales(auth, `Bearer ${LIMPIEZA}`);
 }
 
 function iguales(a: string, b: string): boolean {
