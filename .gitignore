@@ -1,0 +1,3 @@
+node_modules/
+# Se construye al publicar (ver .github/workflows/publicar.yml)
+backend.js

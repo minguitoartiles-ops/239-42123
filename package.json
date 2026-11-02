@@ -1,0 +1,15 @@
+{
+  "name": "fitnessindramas-app",
+  "private": true,
+  "type": "module",
+  "description": "Empaqueta backend/ (con la librería de Supabase) en backend.js al publicar la app",
+  "scripts": {
+    "construir": "esbuild backend/index.js --bundle --format=esm --minify --target=es2020 --legal-comments=none --outfile=backend.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
