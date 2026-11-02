@@ -1,0 +1,36 @@
+# Pasa las pruebas de permisos de la base de datos en cada cambio.
+# Si alguna falla, el cambio queda marcado en rojo y (con la protección de rama
+# activada en GitHub) no se puede unir a main ni publicar.
+name: Pruebas de la base de datos
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pruebas-bd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  permisos:
+    name: Permisos y políticas RLS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1.7.3
+        with:
+          version: 2.122.0
+
+      - name: Arrancar la base de datos local con las migraciones
+        run: supabase db start
+
+      - name: Pruebas pgTAP
+        run: supabase test db
