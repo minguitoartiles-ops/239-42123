@@ -4,10 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.83 (actual)
-Cambios acumulados hacia la 0.84: **0 de 10**
+Cambios acumulados hacia la 0.84: **1 de 10**
 
 ### Hacia la 0.84
-_(todavía ninguno)_
+1. 02/11/2026 21:30 · Supabase · paso 2 · Clientes desde el servidor (solo en modo servidor de pruebas, `?servidor=pruebas`; sin activarlo todo sigue igual). El alta la hace el servidor: crea la ficha con duración, tarifa y precio, calcula hasta cuándo tiene acceso (con el primer pago: el periodo de su tarifa; sin él: hasta hoy; «Sin tarifa»: toda la duración del programa) y da el código, que vale 3 días y no se guarda en el dispositivo (en la ficha, «Nuevo» crea otro si no tiene cuenta todavía). La lista de clientes sale del servidor y se actualiza sola cuando el otro profesional da de alta o cambia algo; «Editar datos del cliente» se guarda en el servidor. El cliente entra la primera vez con su código y crea su cuenta (correo y contraseña de 12+ caracteres con mayúsculas, minúsculas y números); después, «Ya tengo cuenta». Los datos del modo servidor van en un cajón aparte del dispositivo: los de siempre no se tocan. Planes, seguimientos, chat, pagos y bajas siguen en el dispositivo hasta los siguientes pasos (en modo servidor, baja, pagos, tarifa y acceso manual avisan de que llegan después) → **0.83.0-1 (caché)**
 
 ## Versión 0.82 → 0.83.0
 

@@ -1,4 +1,4 @@
-// Inicio de sesión de los profesionales con Supabase Auth.
+// Inicio de sesión de los profesionales y de los clientes con Supabase Auth.
 // No conoce la pantalla: recibe el cliente de Supabase y devuelve promesas.
 
 const MENSAJES = {
@@ -42,6 +42,28 @@ export function crearAuth(sb) {
         throw new ErrorAcceso('Esta cuenta no es de un profesional del equipo.');
       }
       return { nombre: papel.nombre, rol: papel.rol, email: data.user.email };
+    },
+
+    // Correo y contraseña → { id, nombre } de su ficha, si es un cliente con acceso
+    async entrarCliente(email, password) {
+      const correo = String(email || '').trim().toLowerCase();
+      if (!correo || !password) throw new ErrorAcceso('Escribe tu correo y tu contraseña.');
+      const { data, error } = await sb.auth.signInWithPassword({ email: correo, password });
+      if (error || !data?.user) throw new ErrorAcceso(mensajeDe(error));
+      let papel;
+      try { papel = await miPapel(data.user.id); } catch (e) { await sb.auth.signOut({ scope: 'local' }); throw e; }
+      if (papel) {
+        await sb.auth.signOut({ scope: 'local' });
+        throw new ErrorAcceso('Esta cuenta es de un profesional: entra por «Acceso profesionales».');
+      }
+      const { data: ficha, error: e } = await sb.from('clientes').select('id, nombre')
+        .eq('user_id', data.user.id).maybeSingle();
+      if (e || !ficha) {
+        await sb.auth.signOut({ scope: 'local' });
+        throw new ErrorAcceso(e ? 'No se ha podido comprobar tu cuenta. Inténtalo de nuevo.'
+          : 'Esta cuenta no tiene acceso ahora mismo. Si crees que es un error, habla con tu entrenador.');
+      }
+      return { id: ficha.id, nombre: ficha.nombre };
     },
 
     // Cierra la sesión en este dispositivo (y borra el token guardado)
