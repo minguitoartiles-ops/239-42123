@@ -1,0 +1,83 @@
+# Sube el backend (tablas, permisos y funciones del servidor) a un proyecto de Supabase.
+#
+# Solo se lanza a mano (Actions → «Desplegar en Supabase» → Run workflow), solo desde la
+# rama principal y, con el entorno de GitHub protegido, solo tras aprobarlo Domingo.
+#
+# Cada entorno de GitHub (de momento solo «pruebas») guarda:
+#   Secrets:   SUPABASE_ACCESS_TOKEN  token de la cuenta de Supabase
+#              SUPABASE_DB_PASSWORD   contraseña de la base de datos de ese proyecto
+#   Variables: SUPABASE_PROJECT_REF   identificador del proyecto (no es secreto)
+name: Desplegar en Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      entorno:
+        description: Proyecto de Supabase
+        required: true
+        type: choice
+        options:
+          - pruebas
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desplegar-${{ inputs.entorno }}
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    name: Desplegar en ${{ inputs.entorno }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ inputs.entorno }}
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROYECTO: ${{ vars.SUPABASE_PROJECT_REF }}
+    steps:
+      - name: Solo desde la rama principal
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Solo se despliega desde la rama principal (main)."
+          exit 1
+
+      - name: Comprobar que están las claves
+        run: |
+          falta=0
+          [ -n "$SUPABASE_ACCESS_TOKEN" ] || { echo "Falta el secreto SUPABASE_ACCESS_TOKEN"; falta=1; }
+          [ -n "$SUPABASE_DB_PASSWORD" ] || { echo "Falta el secreto SUPABASE_DB_PASSWORD"; falta=1; }
+          echo "$PROYECTO" | grep -Eq '^[a-z0-9]{20}$' || { echo "Falta o no es válida la variable SUPABASE_PROJECT_REF"; falta=1; }
+          exit $falta
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: supabase/setup-cli@d239d1052f6f024a8d746d7e5aeddead63b9cb53 # v3.1.0
+        with:
+          version: 2.122.0
+
+      - name: Conectar con el proyecto
+        run: supabase link --project-ref "$PROYECTO"
+
+      - name: Migraciones que se van a aplicar
+        run: supabase db push --dry-run
+
+      - name: Aplicar las migraciones
+        run: supabase db push
+
+      - name: Subir las funciones del servidor
+        run: supabase functions deploy --project-ref "$PROYECTO"
+
+      - name: Comprobar que las funciones responden
+        run: |
+          base="https://$PROYECTO.supabase.co/functions/v1"
+          for f in limpieza-diaria alta-cliente canjear-codigo; do
+            estado=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$base/$f" -H 'Content-Type: application/json' -d '{}')
+            echo "$f → $estado"
+          done
+          # Sin llave, la limpieza debe contestar 401: si contesta 500, faltan los secretos de las funciones
+          [ "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$base/limpieza-diaria")" = "401" ] || {
+            echo "La función de limpieza no responde como debe. ¿Están los secretos CODIGO_PEPPER y LIMPIEZA_TOKEN en Supabase?"; exit 1; }

@@ -4,7 +4,8 @@ import { assert, assertEquals, assertNotEquals } from 'jsr:@std/assert@1';
 
 Deno.env.set('CODIGO_PEPPER', 'clave-de-prueba-'.repeat(4));
 Deno.env.set('ORIGENES_PERMITIDOS', 'https://app.fitnessindramas.com');
-Deno.env.set('SUPABASE_SERVICE_ROLE_KEY', 'secreta-de-prueba');
+Deno.env.set('SUPABASE_SERVICE_ROLE_KEY', 'clave-maestra-de-prueba');
+Deno.env.set('LIMPIEZA_TOKEN', 'llave-de-limpieza-de-prueba-0123456789');
 const m = await import('../supabase/functions/_compartido/comun.ts');
 
 Deno.test('El código tiene 8 símbolos sin caracteres confusos', () => {
@@ -52,12 +53,13 @@ Deno.test('Solo la web de la app recibe permiso CORS', () => {
   assertEquals(ajena.get('Cache-Control'), 'no-store');
 });
 
-Deno.test('Solo la clave secreta del servidor cuenta como «el servidor»', () => {
+Deno.test('La limpieza solo acepta su llave propia, ni siquiera la clave maestra', () => {
   const con = (v?: string) => new Request('http://x', v === undefined ? {} : { headers: { Authorization: v } });
-  assertEquals(m.llamaElServidor(con('Bearer secreta-de-prueba')), true);
-  assertEquals(m.llamaElServidor(con('Bearer secreta-de-prueb')), false);
-  assertEquals(m.llamaElServidor(con('secreta-de-prueba')), false);
-  assertEquals(m.llamaElServidor(con()), false);
+  assertEquals(m.llamaLaTarea(con('Bearer llave-de-limpieza-de-prueba-0123456789')), true);
+  assertEquals(m.llamaLaTarea(con('Bearer llave-de-limpieza-de-prueba-012345678')), false);
+  assertEquals(m.llamaLaTarea(con('Bearer clave-maestra-de-prueba')), false);
+  assertEquals(m.llamaLaTarea(con('llave-de-limpieza-de-prueba-0123456789')), false);
+  assertEquals(m.llamaLaTarea(con()), false);
 });
 
 Deno.test('Las respuestas de error de la base de datos no filtran detalles internos', async () => {
