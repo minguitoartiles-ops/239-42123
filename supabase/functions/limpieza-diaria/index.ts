@@ -1,16 +1,16 @@
 // Limpieza diaria: borra los archivos y las cuentas de los clientes que la base de datos
 // ya borró (15 días de baja o 15 días sin acceso por impago).
-// Solo la puede llamar el propio servidor, con la clave secreta (tarea programada).
+// Solo la puede llamar la tarea programada, con su llave propia (secreto LIMPIEZA_TOKEN).
 //
 // POST → { "procesados": n, "fallos": n }
-import { cabeceras, clienteServidor, error, llamaElServidor, responder } from '../_compartido/comun.ts';
+import { cabeceras, clienteServidor, error, llamaLaTarea, responder } from '../_compartido/comun.ts';
 
 const CARPETAS = ['fotos', 'audios', 'documentos'];
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cabeceras(req) });
   if (req.method !== 'POST') return error(req, 405, 'Método no permitido.');
-  if (!llamaElServidor(req)) return error(req, 401, 'No autorizado.');
+  if (!llamaLaTarea(req)) return error(req, 401, 'No autorizado.');
 
   const servidor = clienteServidor();
   const { data: pendientes, error: e } = await servidor.rpc('borrados_por_procesar');
