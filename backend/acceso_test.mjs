@@ -70,3 +70,85 @@ test('Acceso de profesionales', async (t) => {
     assert.deepEqual(data ?? [], []);
   });
 });
+
+// ---------------------------------------------------------------------
+// Paso 2 · Fichas de clientes desde el servidor (backend/clientes.js)
+// ---------------------------------------------------------------------
+import { crearClientes } from './clientes.js';
+
+test('Clientes desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const domingo = await crearUsuario(`domingo-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert({ user_id: domingo, nombre: 'Domingo', rol: 'entrenador' });
+    if (error) throw error;
+  }
+  // Cada prueba «llega» desde una dirección distinta: así no cuenta para el límite de canjes de las otras pruebas
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const otroDispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+
+  const equipo = otroDispositivo();
+  await crearAuth(equipo).entrar(`domingo-${s}@prueba.local`, CLAVE);
+  const fichas = crearClientes(equipo);
+  let alta;
+
+  await t.test('El equipo da de alta y el servidor calcula el acceso', async () => {
+    alta = await fichas.crear({ nombre: `Ana ${s}`, objetivo: 'Perder grasa', telefono: '612 345 678',
+      programa_semanas: 16, tarifa: 'mensual', precio: 60, pagado: true });
+    assert.match(alta.codigo, /^[A-Z0-9]{4}-[A-Z0-9]{4}$/);
+    const dias = (Date.parse(alta.acceso_hasta) - Date.parse(new Date().toISOString().slice(0, 10))) / 864e5;
+    assert.ok(dias >= 28 && dias <= 31, `mensual: ${alta.acceso_hasta}`);
+    const lista = await fichas.listar();
+    const ana = lista.find((x) => x.id === alta.id);
+    assert.ok(ana, 'aparece en la lista');
+    assert.equal(ana.telefono, '612345678');
+    assert.equal(ana.programa_semanas, 16);
+    assert.equal(ana.user_id, null);
+  });
+
+  await t.test('Un correo mal escrito se rechaza con un mensaje claro', async () => {
+    await assert.rejects(fichas.crear({ nombre: 'X', email: 'sin-arroba' }), /no es válido/);
+  });
+
+  await t.test('El equipo edita la ficha; lo que no se puede tocar se ignora', async () => {
+    await fichas.actualizar(alta.id, { nombre: `Ana María ${s}`, programa_semanas: 24, acceso_hasta: '2099-01-01', user_id: domingo });
+    const { data } = await admin.from('clientes').select('nombre, programa_semanas, acceso_hasta, user_id').eq('id', alta.id).single();
+    assert.equal(data.nombre, `Ana María ${s}`);
+    assert.equal(data.programa_semanas, 24);
+    assert.equal(data.acceso_hasta, alta.acceso_hasta);
+    assert.equal(data.user_id, null);
+    await assert.rejects(fichas.actualizar(alta.id, { email: 'mal' }), /no es válido/);
+  });
+
+  await t.test('El cliente canjea su código, crea su cuenta y entra', async () => {
+    const movil = otroDispositivo();
+    const suyas = crearClientes(movil);
+    await suyas.canjear(alta.codigo.toLowerCase(), ` Ana-${s}@Prueba.local `, CLAVE);
+    const quien = await crearAuth(movil).entrarCliente(`ana-${s}@prueba.local`, CLAVE);
+    assert.equal(quien.id, alta.id);
+    const f = await suyas.miFicha();
+    assert.equal(f.id, alta.id);
+    const lista = await suyas.listar();
+    assert.deepEqual(lista.map((x) => x.id), [alta.id], 'un cliente solo ve su ficha');
+    await suyas.actualizar(alta.id, { nombre: 'Me lo cambio' }).catch(() => {});
+    const { data } = await admin.from('clientes').select('nombre').eq('id', alta.id).single();
+    assert.notEqual(data.nombre, 'Me lo cambio', 'un cliente no se cambia su ficha');
+  });
+
+  await t.test('El código ya canjeado no vale otra vez, ni se crea otro código para quien ya tiene cuenta', async () => {
+    await assert.rejects(crearClientes(otroDispositivo()).canjear(alta.codigo, `otra-${s}@prueba.local`, CLAVE), /no válido o caducado/);
+    await assert.rejects(fichas.nuevoCodigo(alta.id));
+  });
+
+  await t.test('Un profesional no entra como cliente, y una cuenta sin ficha tampoco', async () => {
+    await assert.rejects(crearAuth(otroDispositivo()).entrarCliente(`domingo-${s}@prueba.local`, CLAVE), /es de un profesional/);
+    await crearUsuario(`suelto-${s}@prueba.local`);
+    const sb = otroDispositivo();
+    await assert.rejects(crearAuth(sb).entrarCliente(`suelto-${s}@prueba.local`, CLAVE), /no tiene acceso/);
+    const { data } = await sb.auth.getSession();
+    assert.equal(data.session, null, 'sin sesión tras el rechazo');
+  });
+});

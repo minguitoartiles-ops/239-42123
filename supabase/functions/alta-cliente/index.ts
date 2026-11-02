@@ -1,15 +1,19 @@
 // Alta de cliente y códigos de acceso. Solo el equipo (Domingo y Fátima).
 //
 // POST, con la sesión del profesional:
-//   { "nombre": "…", "objetivo"?: "…", "email"?: "…", "telefono"?: "…", "acceso_hasta": "AAAA-MM-DD" }
-//     → { "id": "<cliente>", "codigo": "ABCD-EFGH" }      alta nueva
+//   { "nombre": "…", "objetivo"?, "email"?, "telefono"?,
+//     "programa_semanas"?: 1-52, "tarifa"?: mensual|trimestral|semestral|anual|ninguna,
+//     "precio"?: número, "pagado"?: true|false }
+//     → { "id": "<cliente>", "codigo": "ABCD-EFGH", "acceso_hasta": "AAAA-MM-DD" }      alta nueva
+//   (el acceso pagado lo calcula el servidor con la tarifa; ver accesoHasta en comun.ts.
+//    Por compatibilidad también se acepta "acceso_hasta" explícito.)
 //   { "cliente_id": "<cliente>" }
 //     → { "id": "<cliente>", "codigo": "ABCD-EFGH" }      código nuevo (si el anterior caducó)
 //
 // El código se enseña una sola vez: en la base de datos solo queda su huella.
 import {
-  clienteServidor, error, errorBD, huellaCodigo, leerJSON, mostrarCodigo, nuevoCodigo,
-  responder, usuarioQueLlama, cabeceras,
+  accesoHasta, clienteServidor, error, errorBD, huellaCodigo, leerJSON, mostrarCodigo, nuevoCodigo,
+  responder, TARIFAS, type Tarifa, usuarioQueLlama, cabeceras,
 } from '../_compartido/comun.ts';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -47,9 +51,16 @@ Deno.serve(async (req) => {
 
   // Alta nueva
   const nombre = texto(cuerpo.nombre, 80);
-  const acceso = typeof cuerpo.acceso_hasta === 'string' && FECHA.test(cuerpo.acceso_hasta) ? cuerpo.acceso_hasta : undefined;
   if (!nombre) return error(req, 400, 'Falta el nombre del cliente.');
-  if (!acceso) return error(req, 400, 'Falta la fecha hasta la que está pagado.');
+
+  const tarifa = (typeof cuerpo.tarifa === 'string' && (TARIFAS as readonly string[]).includes(cuerpo.tarifa)
+    ? cuerpo.tarifa : 'mensual') as Tarifa;
+  const semanas = Number.isInteger(cuerpo.programa_semanas) && (cuerpo.programa_semanas as number) >= 1
+    && (cuerpo.programa_semanas as number) <= 52 ? cuerpo.programa_semanas as number : 12;
+  const precio = typeof cuerpo.precio === 'number' && Number.isFinite(cuerpo.precio) && cuerpo.precio >= 0 && cuerpo.precio < 100000
+    ? Math.round(cuerpo.precio * 100) / 100 : undefined;
+  const acceso = typeof cuerpo.acceso_hasta === 'string' && FECHA.test(cuerpo.acceso_hasta)
+    ? cuerpo.acceso_hasta : accesoHasta(tarifa, semanas, cuerpo.pagado === true);
 
   const { data, error: e } = await servidor.rpc('alta_cliente', {
     p_por: quien.id,
@@ -58,10 +69,13 @@ Deno.serve(async (req) => {
       objetivo: texto(cuerpo.objetivo, 40),
       email: texto(cuerpo.email, 254),
       telefono: texto(cuerpo.telefono, 20),
+      programa_semanas: String(semanas),
+      tarifa,
+      precio: precio === undefined ? undefined : precio.toFixed(2),
     },
     p_acceso_hasta: acceso,
     p_huella: huella,
   });
   if (e) return errorBD(req, e);
-  return responder(req, 200, { id: data, codigo: mostrarCodigo(codigo) });
+  return responder(req, 200, { id: data, codigo: mostrarCodigo(codigo), acceso_hasta: acceso });
 });

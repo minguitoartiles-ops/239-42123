@@ -74,6 +74,30 @@ Deno.test('Funciones del servidor', async (t) => {
     assertEquals(data?.nombre, 'Cliente Prueba');
   });
 
+  await t.step('El servidor calcula el acceso pagado según la tarifa', async () => {
+    const hoy = new Date().toISOString().slice(0, 10);
+    const pagado = await llamar('alta-cliente', { nombre: 'Trimestral pagado', tarifa: 'trimestral', precio: 149.9, pagado: true, programa_semanas: 24 }, tDomingo);
+    assertEquals(pagado.estado, 200);
+    const dias = (Date.parse(String(pagado.json.acceso_hasta)) - Date.parse(hoy)) / 864e5;
+    assert(dias >= 89 && dias <= 92, `trimestral: ${pagado.json.acceso_hasta}`);
+    const { data } = await admin.from('clientes').select('tarifa, precio, programa_semanas, acceso_hasta').eq('id', String(pagado.json.id)).single();
+    assertEquals(data?.tarifa, 'trimestral');
+    assertEquals(Number(data?.precio), 149.9);
+    assertEquals(data?.programa_semanas, 24);
+    assertEquals(data?.acceso_hasta, pagado.json.acceso_hasta);
+
+    const sinPagar = await llamar('alta-cliente', { nombre: 'Mensual sin pagar', tarifa: 'mensual', pagado: false }, tDomingo);
+    assertEquals(sinPagar.json.acceso_hasta, hoy);
+    const sinTarifa = await llamar('alta-cliente', { nombre: 'Sin tarifa', tarifa: 'ninguna', programa_semanas: 8 }, tDomingo);
+    assertEquals((Date.parse(String(sinTarifa.json.acceso_hasta)) - Date.parse(hoy)) / 864e5, 56);
+  });
+
+  await t.step('Un correo mal escrito no enseña detalles de la base de datos', async () => {
+    const r = await llamar('alta-cliente', { nombre: 'Correo malo', email: 'sin-arroba' }, tDomingo);
+    assertEquals(r.estado, 400);
+    assert(!String(r.json.error).includes('clientes_'), String(r.json.error));
+  });
+
   await t.step('Un código inventado no sirve', async () => {
     const r = await llamar('canjear-codigo', { codigo: 'ZZZZ-ZZZZ', email: `c-${sufijo}@prueba.local`, password: CLAVE });
     assertEquals(r.estado, 400);

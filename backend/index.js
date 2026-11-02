@@ -4,8 +4,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { PROYECTOS } from './config.js';
 import { crearAuth, ErrorAcceso } from './auth.js';
+import { crearClientes, ErrorServidor } from './clientes.js';
 
-const entorno = window.FSD_SERVIDOR;
+const entorno = window.FSD_MODO_SERVIDOR;   // lo fija servidor-inicio.js al abrir la app
 const proyecto = PROYECTOS[entorno];
 
 if (proyecto) {
@@ -21,7 +22,9 @@ if (proyecto) {
     entorno,
     nombre: proyecto.nombre,
     auth: crearAuth(sb),
-    esErrorAcceso: (e) => e instanceof ErrorAcceso,
+    clientes: crearClientes(sb),
+    // ¿El mensaje del error está pensado para enseñarse tal cual?
+    esErrorAcceso: (e) => e instanceof ErrorAcceso || e instanceof ErrorServidor,
   });
   window.dispatchEvent(new Event('fsd:servidor-listo'));
 }
