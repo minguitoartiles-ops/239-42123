@@ -1,7 +1,7 @@
 # Publica la app en GitHub Pages (app.fitnessindramas.com) cada vez que cambia la rama principal.
 #
 # Antes se publicaba el repositorio tal cual. Ahora:
-#   1. se construye backend.js (la conexión con Supabase) a partir de backend/
+#   1. se construye backend.js (la conexión con Supabase) a partir de backend/ (con su propio package.json)
 #   2. se publican SOLO los archivos de la app: nada de supabase/, pruebas/, .github/ ni documentos
 #
 # Requiere en Settings → Pages → Source: «GitHub Actions».
@@ -34,12 +34,15 @@ jobs:
           node-version: 22
 
       - name: Dependencias exactas (las del package-lock.json, sin scripts)
+        working-directory: backend
         run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Firmas de los paquetes descargados
+        working-directory: backend
         run: npm audit signatures
 
       - name: Construir backend.js
+        working-directory: backend
         run: npm run construir
 
       - name: Ninguna clave secreta dentro de la app

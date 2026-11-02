@@ -48,6 +48,7 @@ jobs:
           node-version: 22
 
       - name: Dependencias exactas (las del package-lock.json, sin scripts)
+        working-directory: backend
         run: |
           if [ ! -f package-lock.json ]; then
             npm install --package-lock-only --ignore-scripts --no-audit --no-fund
@@ -58,9 +59,11 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Firmas de los paquetes descargados
+        working-directory: backend
         run: npm audit signatures
 
       - name: Construir backend.js
+        working-directory: backend
         run: npm run construir
 
       - name: Ninguna clave secreta dentro de la app
@@ -116,17 +119,18 @@ jobs:
           deno test --allow-net --allow-env pruebas/funciones_test.ts
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        if: hashFiles('package-lock.json') != ''
+        if: hashFiles('backend/package-lock.json') != ''
         with:
           node-version: 22
 
       - name: Pruebas del acceso de profesionales (backend/ de la app)
-        if: hashFiles('package-lock.json') != ''
+        if: hashFiles('backend/package-lock.json') != ''
         run: |
-          npm ci --ignore-scripts --no-audit --no-fund
           eval "$(supabase status -o env)"
           export API_URL ANON_KEY SERVICE_ROLE_KEY
-          node --test pruebas/backend_test.mjs
+          cd backend
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run probar
 
       - name: Registro de las funciones (solo si algo falla)
         if: failure()
