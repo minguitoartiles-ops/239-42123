@@ -1,0 +1,69 @@
+// Pruebas del código común de las funciones (no necesitan Supabase).
+// deno test --allow-env pruebas/comun_test.ts
+import { assert, assertEquals, assertNotEquals } from 'jsr:@std/assert@1';
+
+Deno.env.set('CODIGO_PEPPER', 'clave-de-prueba-'.repeat(4));
+Deno.env.set('ORIGENES_PERMITIDOS', 'https://app.fitnessindramas.com');
+Deno.env.set('SUPABASE_SERVICE_ROLE_KEY', 'secreta-de-prueba');
+const m = await import('../supabase/functions/_compartido/comun.ts');
+
+Deno.test('El código tiene 8 símbolos sin caracteres confusos', () => {
+  for (let i = 0; i < 2000; i++) {
+    const c = m.nuevoCodigo();
+    assert(/^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{8}$/.test(c), c);
+  }
+});
+
+Deno.test('Los códigos no se repiten', () => {
+  const vistos = new Set<string>();
+  for (let i = 0; i < 5000; i++) vistos.add(m.nuevoCodigo());
+  assertEquals(vistos.size, 5000);
+});
+
+Deno.test('Todos los símbolos salen con la misma frecuencia (sin sesgo)', () => {
+  const cuenta = new Map<string, number>();
+  for (let i = 0; i < 20000; i++) for (const s of m.nuevoCodigo()) cuenta.set(s, (cuenta.get(s) ?? 0) + 1);
+  const esperado = (20000 * 8) / 31;
+  for (const [s, n] of cuenta) assert(Math.abs(n - esperado) / esperado < 0.08, `${s}: ${n}`);
+  assertEquals(cuenta.size, 31);
+});
+
+Deno.test('El código se acepta con guion, espacios o minúsculas', () => {
+  assertEquals(m.normalizarCodigo('abcd-efgh'), 'ABCDEFGH');
+  assertEquals(m.normalizarCodigo(' AB CD EF GH '), 'ABCDEFGH');
+  assertEquals(m.normalizarCodigo('ABCD-EFG0'), null);   // el 0 no existe en el alfabeto
+  assertEquals(m.normalizarCodigo('ABC'), null);
+  assertEquals(m.normalizarCodigo(12345678), null);
+});
+
+Deno.test('La huella depende del secreto y no deja ver el código', async () => {
+  const h = await m.huellaCodigo('ABCDEFGH');
+  assert(/^[0-9a-f]{64}$/.test(h));
+  assert(!h.includes('ABCDEFGH'));
+  assertEquals(h, await m.huellaCodigo('ABCDEFGH'));
+  assertNotEquals(h, await m.huellaCodigo('ABCDEFGJ'));
+});
+
+Deno.test('Solo la web de la app recibe permiso CORS', () => {
+  const propia = m.cabeceras(new Request('http://x', { headers: { Origin: 'https://app.fitnessindramas.com' } }));
+  assertEquals(propia.get('Access-Control-Allow-Origin'), 'https://app.fitnessindramas.com');
+  const ajena = m.cabeceras(new Request('http://x', { headers: { Origin: 'https://web-ajena.example' } }));
+  assertEquals(ajena.get('Access-Control-Allow-Origin'), null);
+  assertEquals(ajena.get('Cache-Control'), 'no-store');
+});
+
+Deno.test('Solo la clave secreta del servidor cuenta como «el servidor»', () => {
+  const con = (v?: string) => new Request('http://x', v === undefined ? {} : { headers: { Authorization: v } });
+  assertEquals(m.llamaElServidor(con('Bearer secreta-de-prueba')), true);
+  assertEquals(m.llamaElServidor(con('Bearer secreta-de-prueb')), false);
+  assertEquals(m.llamaElServidor(con('secreta-de-prueba')), false);
+  assertEquals(m.llamaElServidor(con()), false);
+});
+
+Deno.test('Las respuestas de error de la base de datos no filtran detalles internos', async () => {
+  const req = new Request('http://x');
+  const r = m.errorBD(req, { code: 'XX000', message: 'detalle interno con datos' });
+  assertEquals(r.status, 500);
+  assert(!(await r.text()).includes('detalle interno'));
+  assertEquals(m.errorBD(req, { code: '42501', message: 'No' }).status, 403);
+});
