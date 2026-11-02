@@ -47,6 +47,19 @@ Deno.test('Contraseñas: al menos 12 caracteres, con minúsculas, mayúsculas y 
   assertEquals(m.contrasenaValida(123456789012), false);
 });
 
+Deno.test('Acceso pagado al dar de alta, según la tarifa', () => {
+  const hoy = new Date('2026-01-31T10:00:00Z');
+  assertEquals(m.accesoHasta('mensual', 12, true, hoy), '2026-02-28');      // fin de mes
+  assertEquals(m.accesoHasta('trimestral', 12, true, hoy), '2026-04-30');
+  assertEquals(m.accesoHasta('semestral', 12, true, hoy), '2026-07-31');
+  assertEquals(m.accesoHasta('anual', 12, true, hoy), '2027-01-31');
+  assertEquals(m.accesoHasta('mensual', 12, false, hoy), '2026-01-31');     // sin pagar: hasta hoy
+  assertEquals(m.accesoHasta('anual', 12, false, hoy), '2026-01-31');
+  assertEquals(m.accesoHasta('ninguna', 12, false, hoy), '2026-04-25');     // sin tarifa: 12 semanas
+  assertEquals(m.accesoHasta('ninguna', 4, true, hoy), '2026-02-28');
+  assertEquals(m.accesoHasta('mensual', 12, true, new Date('2028-01-31T00:00:00Z')), '2028-02-29');   // bisiesto
+});
+
 Deno.test('La huella depende del secreto y no deja ver el código', async () => {
   const h = await m.huellaCodigo('ABCDEFGH');
   assert(/^[0-9a-f]{64}$/.test(h));
@@ -78,4 +91,7 @@ Deno.test('Las respuestas de error de la base de datos no filtran detalles inter
   assertEquals(r.status, 500);
   assert(!(await r.text()).includes('detalle interno'));
   assertEquals(m.errorBD(req, { code: '42501', message: 'No' }).status, 403);
+  const regla = m.errorBD(req, { code: '23514', message: 'new row for relation "clientes" violates check constraint "clientes_email_check"' });
+  assertEquals(regla.status, 400);
+  assertEquals((await regla.json()).error.includes('clientes'), false);
 });
