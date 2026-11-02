@@ -34,6 +34,42 @@ jobs:
       - name: Pruebas pgTAP
         run: supabase test db
 
+  app:
+    name: Construir la app
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Dependencias exactas (las del package-lock.json, sin scripts)
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+            echo "Falta package-lock.json en el repositorio. Generado (base64) entre las marcas:"
+            echo "=== INICIO LOCK ==="; base64 -w0 package-lock.json; echo; echo "=== FIN LOCK ==="
+            exit 1
+          fi
+          npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Firmas de los paquetes descargados
+        run: npm audit signatures
+
+      - name: Construir backend.js
+        run: npm run construir
+
+      - name: Ninguna clave secreta dentro de la app
+        run: |
+          if grep -rIl --exclude-dir=node_modules --exclude-dir=.git -E 'sb_secret_[A-Za-z0-9_-]{10,}' . ; then
+            echo "::error::Hay una clave secreta de Supabase en los archivos de la app"; exit 1
+          fi
+          echo "backend.js: $(wc -c < backend.js) bytes"
+
   funciones:
     name: Funciones del servidor
     runs-on: ubuntu-latest
@@ -78,6 +114,19 @@ jobs:
           LIMPIEZA_TOKEN=$(grep '^LIMPIEZA_TOKEN=' supabase/functions/.env | cut -d= -f2)
           export API_URL ANON_KEY SERVICE_ROLE_KEY LIMPIEZA_TOKEN
           deno test --allow-net --allow-env pruebas/funciones_test.ts
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: hashFiles('package-lock.json') != ''
+        with:
+          node-version: 22
+
+      - name: Pruebas del acceso de profesionales (backend/ de la app)
+        if: hashFiles('package-lock.json') != ''
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          eval "$(supabase status -o env)"
+          export API_URL ANON_KEY SERVICE_ROLE_KEY
+          node --test pruebas/backend_test.mjs
 
       - name: Registro de las funciones (solo si algo falla)
         if: failure()
