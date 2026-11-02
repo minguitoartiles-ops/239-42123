@@ -25,5 +25,14 @@ enable_signup = false
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 
-[auth.email]
-enable_signup = false
+# Ojo: no poner [auth.email] enable_signup = false: desactiva el inicio de sesión con correo.
+# El registro ya queda cerrado con [auth] enable_signup = false.
+
+# Funciones del servidor. alta-cliente exige sesión (lo comprueba Supabase y la propia función).
+# canjear-codigo se llama sin sesión (está limitada por intentos) y limpieza-diaria
+# comprueba ella misma la clave secreta del servidor.
+[functions.canjear-codigo]
+verify_jwt = false
+
+[functions.limpieza-diaria]
+verify_jwt = false
