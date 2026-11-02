@@ -1,6 +1,5 @@
-# Pasa las pruebas de permisos de la base de datos en cada cambio.
-# Si alguna falla, el cambio queda marcado en rojo y (con la protección de rama
-# activada en GitHub) no se puede unir a main ni publicar.
+# Pasa todas las pruebas del servidor en cada cambio. Si alguna falla, el cambio queda
+# en rojo y la protección de la rama principal impide unirlo y publicarlo.
 name: Pruebas de la base de datos
 
 on:
@@ -34,3 +33,51 @@ jobs:
 
       - name: Pruebas pgTAP
         run: supabase test db
+
+  funciones:
+    name: Funciones del servidor
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1.7.3
+        with:
+          version: 2.122.0
+
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: v2.x
+
+      - name: Pruebas del código común (sin Supabase)
+        run: deno test --allow-env pruebas/comun_test.ts
+
+      - name: Arrancar Supabase local
+        run: supabase start -x studio,imgproxy
+
+      - name: Secretos de prueba (aleatorios en cada ejecución)
+        run: |
+          umask 077
+          printf 'CODIGO_PEPPER=%s\nORIGENES_PERMITIDOS=https://app.fitnessindramas.com\n' "$(openssl rand -hex 32)" > supabase/functions/.env
+
+      - name: Servir las funciones
+        run: |
+          nohup supabase functions serve --env-file supabase/functions/.env > funciones.log 2>&1 &
+          for i in $(seq 1 90); do
+            estado=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:54321/functions/v1/limpieza-diaria || true)
+            if [ "$estado" = "401" ]; then echo "Funciones listas"; exit 0; fi
+            sleep 2
+          done
+          echo "Las funciones no arrancaron (último estado: $estado)"; tail -n 50 funciones.log; exit 1
+
+      - name: Pruebas de las funciones
+        run: |
+          eval "$(supabase status -o env)"
+          export API_URL ANON_KEY SERVICE_ROLE_KEY
+          deno test --allow-net --allow-env pruebas/funciones_test.ts
+
+      - name: Registro de las funciones (solo si algo falla)
+        if: failure()
+        run: tail -n 100 funciones.log || true
