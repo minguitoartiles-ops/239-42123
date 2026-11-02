@@ -1,0 +1,16 @@
+{
+  "name": "fitnessindramas-app",
+  "private": true,
+  "type": "module",
+  "description": "Empaqueta esta carpeta (con la librería de Supabase) en ../backend.js al publicar la app. Vive aquí y no en la raíz para no interferir con Deno ni con las funciones de Supabase.",
+  "scripts": {
+    "construir": "esbuild index.js --bundle --format=esm --minify --target=es2020 --legal-comments=none --outfile=../backend.js",
+    "probar": "node --test acceso_test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

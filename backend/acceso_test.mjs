@@ -1,10 +1,10 @@
 // Pruebas del acceso de profesionales de la app (backend/auth.js) contra Supabase local.
-// Se ejecutan en GitHub Actions: node --test pruebas/backend_test.mjs
+// Se ejecutan en GitHub Actions, desde backend/: npm run probar
 // Variables: API_URL, ANON_KEY, SERVICE_ROLE_KEY (de `supabase status`).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClient } from '@supabase/supabase-js';
-import { crearAuth } from '../backend/auth.js';
+import { crearAuth } from './auth.js';
 
 const API = process.env.API_URL;
 const ANON = process.env.ANON_KEY;
