@@ -37,6 +37,16 @@ Deno.test('El código se acepta con guion, espacios o minúsculas', () => {
   assertEquals(m.normalizarCodigo(12345678), null);
 });
 
+Deno.test('Contraseñas: al menos 12 caracteres, con minúsculas, mayúsculas y números', () => {
+  assertEquals(m.contrasenaValida('Clave-de-prueba-123'), true);
+  assertEquals(m.contrasenaValida('Corta1'), false);
+  assertEquals(m.contrasenaValida('sinmayusculas123'), false);
+  assertEquals(m.contrasenaValida('SINMINUSCULAS123'), false);
+  assertEquals(m.contrasenaValida('SinNumerosNinguno'), false);
+  assertEquals(m.contrasenaValida('A1a' + 'x'.repeat(70)), false);   // más de 72
+  assertEquals(m.contrasenaValida(123456789012), false);
+});
+
 Deno.test('La huella depende del secreto y no deja ver el código', async () => {
   const h = await m.huellaCodigo('ABCDEFGH');
   assert(/^[0-9a-f]{64}$/.test(h));

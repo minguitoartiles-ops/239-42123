@@ -79,9 +79,11 @@ Deno.test('Funciones del servidor', async (t) => {
     assertEquals(r.estado, 400);
   });
 
-  await t.step('Contraseña corta rechazada', async () => {
-    const r = await llamar('canjear-codigo', { codigo, email: `c-${sufijo}@prueba.local`, password: 'corta' });
-    assertEquals(r.estado, 400);
+  await t.step('Contraseña débil rechazada', async () => {
+    for (const password of ['corta', 'sinmayusculas123', 'SinNumerosNinguno']) {
+      const r = await llamar('canjear-codigo', { codigo, email: `c-${sufijo}@prueba.local`, password });
+      assertEquals(r.estado, 400, password);
+    }
   });
 
   await t.step('El cliente canjea su código y entra a su ficha', async () => {
