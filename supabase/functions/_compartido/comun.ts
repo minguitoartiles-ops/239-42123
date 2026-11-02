@@ -47,13 +47,13 @@ export function error(req: Request, estado: number, mensaje: string): Response {
 }
 
 // Errores de la base de datos → respuesta. Solo se enseñan los mensajes que escribimos
-// nosotros (códigos 42501, 22023, 23514, 23505); el resto, genérico.
+// nosotros (códigos 42501 y 22023). Los de las reglas de las tablas (23514, 23505) los
+// redacta PostgreSQL y nombran tablas y columnas: se cambian por uno genérico.
 export function errorBD(req: Request, e: { code?: string; message?: string } | null): Response {
   const codigo = e?.code ?? '';
   if (codigo === '42501') return error(req, 403, e?.message ?? 'No tienes permiso para hacer esto.');
-  if (codigo === '22023' || codigo === '23514' || codigo === '23505') {
-    return error(req, 400, e?.message ?? 'Algún dato no es válido.');
-  }
+  if (codigo === '22023') return error(req, 400, e?.message ?? 'Algún dato no es válido.');
+  if (codigo === '23514' || codigo === '23505') return error(req, 400, 'Algún dato no es válido. Revisa el correo y el teléfono.');
   console.error('Error de base de datos', codigo);   // sin datos personales
   return error(req, 500, 'No se ha podido completar. Inténtalo de nuevo.');
 }
@@ -132,6 +132,29 @@ export function normalizarCodigo(v: unknown): string | null {
 export function contrasenaValida(p: unknown): p is string {
   return typeof p === 'string' && p.length >= 12 && p.length <= 72
     && /[a-z]/.test(p) && /[A-Z]/.test(p) && /[0-9]/.test(p);
+}
+
+// ---------- Acceso pagado al dar de alta ----------
+// Reglas acordadas con Domingo (2/11/2026):
+//   · con el primer pago recibido: hoy + el periodo de la tarifa (1, 3, 6 o 12 meses)
+//   · sin el primer pago: hasta hoy (desde mañana el cliente solo ve «cómo pagar» y el chat)
+//   · «Sin tarifa»: toda la duración del programa
+export const TARIFAS = ['mensual', 'trimestral', 'semestral', 'anual', 'ninguna'] as const;
+export type Tarifa = typeof TARIFAS[number];
+const MESES: Record<string, number> = { mensual: 1, trimestral: 3, semestral: 6, anual: 12 };
+
+export function accesoHasta(tarifa: Tarifa, semanas: number, pagado: boolean, hoy: Date = new Date()): string {
+  const d = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate()));
+  if (tarifa === 'ninguna') {
+    d.setUTCDate(d.getUTCDate() + semanas * 7);
+  } else if (pagado) {
+    const dia = d.getUTCDate();
+    d.setUTCDate(1);
+    d.setUTCMonth(d.getUTCMonth() + MESES[tarifa]);
+    const ultimo = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+    d.setUTCDate(Math.min(dia, ultimo));                 // 31 de enero + 1 mes → 28 (o 29) de febrero
+  }
+  return d.toISOString().slice(0, 10);
 }
 
 export function mostrarCodigo(c: string): string {
