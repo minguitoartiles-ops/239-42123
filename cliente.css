@@ -537,10 +537,6 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 #app:not(.coach-edit) #view-entreno .srf:not(.actual) .srf-rirb{display:block;white-space:nowrap;margin-top:2px;padding:1px 4px;border-radius:var(--r-ctl);font:700 var(--fs-xs)/1.2 var(--f-mono);}
 @media (min-width:900px){ #app:not(.coach-edit) #view-entreno .sr-filas{max-width:620px;} }
 
-/* modo pruebas: botón para cambiar de profesional */
-.pb-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);left:10px;z-index:var(--z-flotante);height:32px;padding:0 12px;border-radius:var(--r-pill);border:1.5px solid var(--accent);background:var(--card);color:var(--ink);font:700 var(--fs-s) var(--f-body);box-shadow:0 4px 14px -6px rgba(0,0,0,.35);cursor:pointer;}
-.pb-btn:active{transform:scale(.97);}
-@media (min-width:900px){ .pb-btn{top:8px;bottom:auto;left:auto;right:8px;} }
 
 /* dudas entre profesionales en el chat */
 .dd-chip{display:flex;margin:8px 0 -2px;max-width:100%;}
@@ -879,11 +875,6 @@ html.esc .esc-ficha-grid.pu-cols > .esc-col:not(:has(> .esc-grupo:not([hidden]):
 html.esc .pg-panel{padding:16px 20px 16px;}
 @media (prefers-reduced-motion:reduce){ .pg-panel{animation:none;} }
 
-/* acceso directo sin contraseña (modo pruebas) */
-.pb-recordar{display:flex;gap:12px;align-items:flex-start;margin:4px 0 12px;font-size:var(--fs-s);line-height:1.3;cursor:pointer;}
-.pb-recordar input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:var(--accent);}
-.pb-recordar small{display:block;color:var(--dim-45,#888);font-size:var(--fs-xs);margin-top:2px;}
-.pb-marca{text-align:center;font-size:var(--fs-s);margin:-2px 0 8px;color:var(--dim-45,#888);}
 
 /* #227 chat del ordenador sin nombre repetido ni «Volver» */
 html.esc-chat-pro #coachBar .coach-bar-left{display:none;}
@@ -1110,7 +1101,6 @@ html.esc #view-coach-segs.esc-izq .sg-cab{flex-wrap:wrap;margin-bottom:0;}
 html.esc #view-coach-segs.esc-izq .sg-cab .cliente-info{flex:1 1 calc(100% - 64px);min-width:0;}
 html.esc #view-coach-segs.esc-izq .sg-cab-der{width:100%;padding-left:52px;justify-content:flex-start;}
 html.esc.mt-con-chat #coachBar [data-mt-chat]{display:none !important;}
-@media (min-width:900px){ html.esc.mt-con-chat .pb-btn{top:auto;bottom:12px;right:calc(clamp(340px, 27vw, 440px) + 16px);} }
 html.esc.mt-con-chat #coachBar{flex-wrap:wrap;row-gap:8px;}
 html.esc.mt-con-chat #coachBar button[onclick*="tab-chat"]{display:none !important;}
 /* centro estrecho (tres columnas): la calculadora de nutrición pasa encima en vez de al lado */
@@ -1124,7 +1114,6 @@ html.esc.mt-con-chat #coachBar #coachBarLabel,html.esc.mt-con-chat #coachBar #co
 /* ===== 0.79.4-1 · barras verticales de la multitarea y contenido que se adapta a su ancho ===== */
 html.esc .esc-chat-col.on{flex:0 0 var(--mt-chat, clamp(340px, 27vw, 440px));}
 html.esc .mt-divisor:not([hidden]){left:auto;right:calc(var(--mt-chat, clamp(340px, 27vw, 440px)) - 5px);}
-@media (min-width:900px){ html.esc.mt-con-chat .pb-btn{right:calc(var(--mt-chat, clamp(340px, 27vw, 440px)) + 16px);} }
 /* asa siempre visible (suave) para que se sepa que se puede mover */
 html.esc.mt-on .esc-divisor::before{opacity:.85;}
 html.esc.mt-on .esc-divisor:hover::before,html.esc.mt-on.esc-arrastrando .esc-divisor::before{opacity:1;}
@@ -1202,7 +1191,6 @@ html.fsd-teclado .picker-overlay .picker-title{font-size:var(--fs-l);line-height
 html.fsd-teclado .picker-overlay .picker-filters{margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;}
 html.fsd-teclado .picker-overlay .picker-new-btn{display:none;}
 html.fsd-teclado .picker-overlay .picker-list{flex:1 1 0;min-height:0;}
-html.fsd-teclado .pb-btn{display:none !important;}
 /* 26/10 · aviso de cambios compacto */
 .pc-banner .pc-sub{margin:0 0 12px;font:500 var(--fs-s)/1.4 var(--f-body);color:var(--dim-6);}
 .pc-banner .pc-det{margin:0 0 12px;}
