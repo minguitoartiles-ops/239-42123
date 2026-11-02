@@ -7,7 +7,6 @@
    En modo servidor:
    · Domingo y Fátima entran con el correo y la contraseña de su cuenta de Supabase
    · el papel (entrenador o dietista) lo dice el servidor, no el botón que se pulse
-   · no existe «entrar sin contraseña en este dispositivo» ni el cambio rápido de profesional
    · al cerrar sesión (también el cierre automático por inactividad) se cierra en el servidor
    · cada vez que se abre la app, los profesionales tienen que volver a entrar
    Paso 2 (clientes desde el servidor):
@@ -75,15 +74,12 @@ function svDialogo(){
       + '<input type="email" id="svEmail" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email">';
     pass.parentNode.insertBefore(fila, pass);
   }
-  const rec = document.getElementById('pbRecordarFila'); if (rec) rec.hidden = true;
-  const cb = document.getElementById('pbRecordar'); if (cb) cb.checked = false;
 }
 
 pedirPassPro = (function(orig){
   return function(usuario){
     if (!svActivo()) return orig.apply(this, arguments);
-    // Se abre el diálogo directamente, sin pasar por las versiones anteriores
-    // (así el «entrar sin contraseña» del modo pruebas no puede saltárselo)
+    // Se abre el diálogo directamente, sin pasar por las versiones anteriores (contraseñas antiguas)
     proPendiente = usuario;
     document.getElementById('proPassInput').value = '';
     document.getElementById('proPassErr').textContent = '';
@@ -132,15 +128,6 @@ entrarComo = (function(orig){
     return orig.apply(this, arguments);
   };
 })(entrarComo);
-
-if (typeof pbCambiar === 'function') {
-  pbCambiar = (function(orig){
-    return function(){
-      if (svActivo()) { try { toast('En modo servidor, cada profesional entra con su propia cuenta'); } catch(e){} return; }
-      return orig.apply(this, arguments);
-    };
-  })(pbCambiar);
-}
 
 /* Cerrar sesión (a mano o por inactividad) también la cierra en el servidor */
 coachLogout = (function(orig){
@@ -503,7 +490,7 @@ enterApp = (function(orig){
     if (!cod) { err.textContent = 'Introduce tu código de acceso, o entra con «Ya tengo cuenta».'; return; }
     if (!/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/.test(cod)) { err.textContent = 'El código tiene 8 letras y números, como ABCD-2345.'; return; }
     // En el ordenador la app del cliente no se usa: sale el aviso de siempre antes de crear nada
-    if (typeof escEsOrdenador === 'function' && escEsOrdenador() && !(typeof pbActivo === 'function' && pbActivo())) return orig.apply(this, arguments);
+    if (typeof escEsOrdenador === 'function' && escEsOrdenador()) return orig.apply(this, arguments);
     err.textContent = '';
     svAbrirHojaCliente('canje');
     svCodigoCanje = cod;
