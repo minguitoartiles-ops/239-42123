@@ -64,3 +64,10 @@ function fsdEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, functi
     }
   } catch(e){}
 })();
+
+/* 2/11/2026 · Fuera el «modo pruebas» (entrar sin contraseña, #pruebas, botón «🧪 Domingo → Fátima»):
+   ahora hay cuentas de verdad y era una puerta trasera. Se borra la marca de los aparatos donde estaba activado. */
+(function(){
+  try { localStorage.removeItem('fsd_pruebas'); } catch(e){}
+  if (/^#pruebas(-off)?$/i.test(location.hash || '')) { try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} }
+})();
