@@ -23,6 +23,9 @@ site_url = "http://127.0.0.1:8080"
 # Registro cerrado: las cuentas solo se crean desde la función de alta
 enable_signup = false
 jwt_expiry = 3600
+# Igual que en los proyectos reales: 12 caracteres o más, con minúsculas, mayúsculas y números
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits"
 enable_refresh_token_rotation = true
 
 # Ojo: no poner [auth.email] enable_signup = false: desactiva el inicio de sesión con correo.
@@ -30,7 +33,7 @@ enable_refresh_token_rotation = true
 
 # Funciones del servidor. alta-cliente exige sesión (lo comprueba Supabase y la propia función).
 # canjear-codigo se llama sin sesión (está limitada por intentos) y limpieza-diaria
-# comprueba ella misma la clave secreta del servidor.
+# comprueba ella misma su llave propia (LIMPIEZA_TOKEN).
 [functions.canjear-codigo]
 verify_jwt = false
 

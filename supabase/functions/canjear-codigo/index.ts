@@ -7,7 +7,7 @@
 //
 // Los mensajes de error no dicen si el código existe: siempre «no válido o caducado».
 import {
-  cabeceras, clienteServidor, error, huellaCodigo, huellaOrigen, leerJSON, normalizarCodigo, responder,
+  cabeceras, clienteServidor, contrasenaValida, error, huellaCodigo, huellaOrigen, leerJSON, normalizarCodigo, responder,
 } from '../_compartido/comun.ts';
 
 const EMAIL = /^[^@\s]{1,64}@[^@\s]{1,189}\.[^@\s]{2,}$/;
@@ -33,8 +33,8 @@ Deno.serve(async (req) => {
   const password = typeof cuerpo?.password === 'string' ? cuerpo.password : '';
   if (!codigo) return error(req, 400, NO_VALIDO);
   if (!EMAIL.test(email) || email.length > 254) return error(req, 400, 'Escribe un correo válido.');
-  if (password.length < 10 || password.length > 72) {
-    return error(req, 400, 'La contraseña debe tener entre 10 y 72 caracteres.');
+  if (!contrasenaValida(password)) {
+    return error(req, 400, 'La contraseña debe tener al menos 12 caracteres, con minúsculas, mayúsculas y números.');
   }
 
   // 3 · ¿Código válido? (todavía no se gasta)

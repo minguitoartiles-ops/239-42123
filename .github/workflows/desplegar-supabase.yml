@@ -63,10 +63,10 @@ jobs:
         run: supabase link --project-ref "$PROYECTO"
 
       - name: Migraciones que se van a aplicar
-        run: supabase db push --dry-run
+        run: supabase db push --linked --dry-run
 
       - name: Aplicar las migraciones
-        run: supabase db push
+        run: supabase db push --linked
 
       - name: Subir las funciones del servidor
         run: supabase functions deploy --project-ref "$PROYECTO"
