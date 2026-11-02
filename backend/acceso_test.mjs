@@ -152,3 +152,81 @@ test('Clientes desde el servidor', async (t) => {
     assert.equal(data.session, null, 'sin sesión tras el rechazo');
   });
 });
+
+// ---------------------------------------------------------------------
+// Paso 3 · Pautas y registros desde el servidor (backend/planes.js)
+// ---------------------------------------------------------------------
+import { crearPlanes } from './planes.js';
+
+test('Planes desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`dom-${s}@prueba.local`);
+  const fat = await crearUsuario(`fat-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert([
+      { user_id: dom, nombre: 'Domingo', rol: 'entrenador' },
+      { user_id: fat, nombre: 'Fátima', rol: 'dietista' },
+    ]);
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`dom-${s}@prueba.local`, CLAVE);
+  const sbF = dispositivo(); await crearAuth(sbF).entrar(`fat-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Lucía ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `lucia-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`lucia-${s}@prueba.local`, CLAVE);
+  const pD = crearPlanes(sbD), pF = crearPlanes(sbF), pC = crearPlanes(sbC);
+  t.after(() => { for (const x of [sbD, sbF, sbC]) x.realtime.disconnect(); });   // que no quede nada abierto al terminar
+  const id = alta.id, semana = '2026-W45', desde = '2026-W40';
+
+  await t.test('Cada profesional guarda la pauta de su área, y solo la suya', async () => {
+    await pD.guardarPauta('ent', id, { v: 1, sesiones: [{ id: 's1', titulo: 'Día 1' }] });
+    await assert.rejects(pD.guardarPauta('nut', id, { v: 1, comidas: [] }), /permiso/);
+    await pF.guardarPauta('nut', id, { v: 1, comidas: [{ id: 'm1', titulo: 'Desayuno' }] });
+    await assert.rejects(pF.guardarPauta('ent', id, { v: 1, sesiones: [] }), /permiso/);
+  });
+
+  await t.test('El cliente ve sus pautas y apunta su semana', async () => {
+    const r = await pC.traer([id], desde);
+    assert.equal(r[id].ent.pauta.sesiones[0].titulo, 'Día 1');
+    assert.equal(r[id].nut.pauta.comidas[0].titulo, 'Desayuno');
+    await pC.guardarRegistro('ent', id, semana, { v: 1, sesiones: { s1: { hecha: '1' } }, ejercicios: {} });
+    await pC.guardarRegistro('ent', id, semana, { v: 1, sesiones: { s1: { hecha: '1', hechaFecha: '2026-11-02' } }, ejercicios: {} });
+    await pC.guardarRegistro('nut', id, semana, { v: 1, comidas: { m1: { tomada: '1' } }, elegidos: {} });
+    await assert.rejects(pC.guardarPauta('ent', id, { v: 1, sesiones: [] }), /permiso/);
+  });
+
+  await t.test('El equipo ve lo que ha apuntado el cliente, pero no puede cambiarlo', async () => {
+    const r = await pD.traer(null, desde);
+    assert.equal(r[id].ent.semana, semana);
+    assert.equal(r[id].ent.registro.sesiones.s1.hechaFecha, '2026-11-02');
+    assert.equal(r[id].nut.registro.comidas.m1.tomada, '1');
+    await assert.rejects(pD.guardarRegistro('ent', id, semana, {}), /permiso/);
+  });
+
+  await t.test('Se trae solo la semana más reciente', async () => {
+    await pC.guardarRegistro('ent', id, '2026-W44', { v: 1, viejo: true });
+    const r = await pC.traer([id], desde);
+    assert.equal(r[id].ent.semana, semana);
+    assert.equal(r[id].ent.registro.viejo, undefined);
+  });
+
+  await t.test('Datos no válidos se rechazan antes de llegar al servidor', async () => {
+    await assert.rejects(pC.traer(['no-es-un-id'], desde), /no válido/);
+    await assert.rejects(pC.guardarRegistro('ent', id, 'semana 45', {}), /no válida/);
+    await assert.rejects(pC.guardarRegistro('otra', id, semana, {}), /no válido/);
+  });
+
+  await t.test('En tiempo real: el equipo se entera cuando el cliente apunta algo', async () => {
+    const recibido = new Promise((ok) => { const fuera = pD.escuchar((x) => { if (x === id) { fuera(); ok(x); } }); });
+    await new Promise((ok) => setTimeout(ok, 2500));                 // que la suscripción quede lista
+    await pC.guardarRegistro('nut', id, semana, { v: 1, comidas: { m1: { tomada: '1' } }, elegidos: { a1: '1' } });
+    const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 10000))]);
+    assert.equal(r, id);
+  });
+});
