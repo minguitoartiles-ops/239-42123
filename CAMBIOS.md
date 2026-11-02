@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.82.4 (actual)
-Cambios acumulados hacia la 0.83: **16 de 10**
+## Versión 0.83 (actual)
+Cambios acumulados hacia la 0.84: **0 de 10**
+
+### Hacia la 0.84
+_(todavía ninguno)_
+
+## Versión 0.82 → 0.83.0
 
 ### Hacia la 0.83
 1. 26/10/2026 21:45 · Ordenador del equipo: en un dispositivo marcado «Sin contraseña en este dispositivo», el código de un cliente entra directo a su app (vista de cliente con «👀 Vista de cliente · Salir»), sin el aviso de «solo móvil» ni la contraseña; sigue dentro al recargar hasta «Salir». En cualquier otro ordenador todo sigue igual (aviso y contraseña del profesional) → **0.82.0-1 (caché)**
@@ -23,6 +28,7 @@ Cambios acumulados hacia la 0.83: **16 de 10**
 14. 27/10/2026 22:05 · Comprobar datos para la migración: el emoji de cada alimento (🥚, 🍞…) ya no sale como «dato que no se reconoce»; la app lo calcula sola a partir del nombre, así que no hace falta guardarlo → **0.82.4-6 (caché)**
 15. 27/10/2026 22:05 · Comprobar datos para la migración: con un solo cliente dice «el único cliente» en vez de «los 1 clientes» → **0.82.4-7 (caché)**
 16. 27/10/2026 23:00 · Backend · fase 2b: cada sesión, ejercicio, comida, alimento del plan y mensaje lleva un identificador fijo (nuevo al crear o duplicar, el mismo al mover). El mensaje fijado, las dudas y las respuestas citadas lo usan, así que no se descolocan aunque cambie el orden de los mensajes; borrar el mensaje fijado lo suelta. El conversor separa la pauta (Domingo y Fátima) de lo que apunta el cliente (kilos, repeticiones, series y sesiones hechas, comidas tomadas, opción elegida). Probado: 13 comprobaciones nuevas, ida y vuelta de entreno, nutrición y chat en los 40 clientes (0 diferencias) y multitarea 16/16. Sin cambios visibles → **0.82.4-8 (caché)**
+17. 02/11/2026 20:45 · Conexión con el servidor · paso 1 (inicio de sesión real): nuevo «modo servidor» que solo se activa abriendo la app con ?servidor=pruebas (se apaga con ?servidor=no) y muestra la marca «Servidor de pruebas». En ese modo, Domingo y Fátima entran con el correo y la contraseña de su cuenta de Supabase; el papel (entrenador o dietista) lo da el servidor; no hay «entrar sin contraseña» ni cambio rápido de profesional; cerrar sesión (también por inactividad) la cierra en el servidor, y al abrir la app hay que volver a entrar. Sin el modo activado, la app funciona exactamente igual. Los datos siguen en el dispositivo. La app pasa a publicarse con GitHub Actions: se construye la conexión con Supabase y se publican solo los archivos de la app → **0.83 (02/11/2026 21:00, a petición de Domingo: 17 cambios acumulados)**
 
 ## Versión 0.81 → 0.82.0
 

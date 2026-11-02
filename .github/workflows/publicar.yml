@@ -1,0 +1,82 @@
+# Publica la app en GitHub Pages (app.fitnessindramas.com) cada vez que cambia la rama principal.
+#
+# Antes se publicaba el repositorio tal cual. Ahora:
+#   1. se construye backend.js (la conexión con Supabase) a partir de backend/ (con su propio package.json)
+#   2. se publican SOLO los archivos de la app: nada de supabase/, pruebas/, .github/ ni documentos
+#
+# Requiere en Settings → Pages → Source: «GitHub Actions».
+name: Publicar la app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    name: Construir la app
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Dependencias exactas (las del package-lock.json, sin scripts)
+        working-directory: backend
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Firmas de los paquetes descargados
+        working-directory: backend
+        run: npm audit signatures
+
+      - name: Construir backend.js
+        working-directory: backend
+        run: npm run construir
+
+      - name: Ninguna clave secreta dentro de la app
+        run: |
+          if grep -rIl --exclude-dir=node_modules --exclude-dir=.git -E 'sb_secret_[A-Za-z0-9_-]{10,}' . ; then
+            echo "::error::Hay una clave secreta de Supabase en los archivos de la app"; exit 1
+          fi
+
+      - name: Reunir solo los archivos de la app
+        run: |
+          mkdir _site
+          rsync -a ./ _site/ \
+            --exclude '.git/' --exclude '.github/' --exclude 'node_modules/' \
+            --exclude 'backend/' --exclude 'supabase/' --exclude 'pruebas/' \
+            --exclude 'package.json' --exclude 'package-lock.json' --exclude '.gitignore' \
+            --exclude '*.md' --exclude '_site/'
+          test -f _site/index.html && test -f _site/backend.js && test -f _site/CNAME
+          echo "Archivos publicados: $(find _site -type f | wc -l)"
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  publicar:
+    name: Publicar en GitHub Pages
+    needs: construir
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacion.outputs.page_url }}
+    steps:
+      - id: publicacion
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
