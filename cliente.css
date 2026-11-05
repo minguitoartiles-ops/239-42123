@@ -1304,3 +1304,29 @@ html.esc .esc-chat-col .mt-cab-txt[data-ficha] small{font:400 var(--fs-xs) var(-
 html.esc #view-chat > .chat-cab .chat-cab-t b{font-size:var(--fs-l);}
 /* 5/11 · Ordenador: en el chat ancho sobra la barra «Entrenamiento / Chat» de arriba (la cabecera del grupo ya dice dónde estás) */
 html.esc #app:has(#view-chat.active) > #coachBar{display:none !important;}
+/* 5/11 · «Recursos» plegado en Entreno */
+.recursos-plegable{margin-top:20px;border:1px solid var(--line);border-radius:var(--r-card, 16px);background:var(--wash-soft);overflow:hidden;}
+.recursos-plegable > summary{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;list-style:none;font:600 var(--fs-m) var(--f-body);color:var(--ink);}
+.recursos-plegable > summary::-webkit-details-marker{display:none;}
+.recursos-plegable .rp-t{flex:1;}
+.recursos-plegable .rp-n{font:400 var(--fs-xs) var(--f-body);color:var(--dim-55);}
+.recursos-plegable .rp-chev{font-size:var(--fs-xl);color:var(--dim-55);transition:transform var(--dur-r, .2s);}
+.recursos-plegable[open] .rp-chev{transform:rotate(90deg);}
+.recursos-plegable > .card{margin:0 12px 4px;}
+.recursos-plegable > .alta-hint{margin:8px 16px 14px !important;}
+/* ===== 5/11 · Chat: cada persona con su color ===== */
+#view-chat #chatList .bubble.msg-otro{color:var(--ink);font-weight:400;}
+#view-chat #chatList .bubble.msg-otro.aut-ent{background:color-mix(in srgb, var(--accent) 20%, var(--card));}
+#view-chat #chatList .bubble.msg-otro.aut-nut{background:color-mix(in srgb, var(--fat) 26%, var(--card));}
+#view-chat #chatList .bubble.msg-otro.aut-cli{background:var(--card);}
+#view-chat #chatList .bubble.msg-otro.aut-aviso{background:color-mix(in srgb, var(--carb) 16%, var(--card));border:1px dashed color-mix(in srgb, var(--carb) 60%, transparent);}
+#view-chat #chatList .bubble.msg-otro .sender{opacity:1;}
+#view-chat #chatList .bubble.msg-otro.aut-ent .sender{color:var(--accent-text);}
+#view-chat #chatList .bubble.msg-otro.aut-nut .sender{color:color-mix(in srgb, var(--fat) 55%, var(--ink));}
+#view-chat #chatList .bubble.msg-otro.aut-cli .sender{color:var(--dim-55);}
+#view-chat #chatList .bubble.msg-otro.aut-aviso .sender{color:color-mix(in srgb, var(--carb) 55%, var(--ink));}
+/* profesional: los mensajes de tu compañero/a van a la izquierda con su color (antes iban azules a la derecha, como los tuyos) */
+.coach-view #view-chat #chatList .bubble.in.msg-otro{align-self:flex-start;border-radius:var(--r-card) var(--r-card) var(--r-card) var(--r-ctl);}
+.coach-view #view-chat #chatList .bubble.in.msg-otro .rp-q{background:rgba(0,0,0,.05);border-left-color:currentColor;}
+.coach-view #view-chat #chatList .bubble.in.msg-otro .rp-q b{color:inherit;}
+.coach-view #view-chat #chatList .bubble.in.msg-otro .audio-play{background:var(--accent);color:var(--on-accent);}
