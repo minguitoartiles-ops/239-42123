@@ -252,6 +252,14 @@ html.ar-dietista #fichaEntrenoRes .fe-registro,html.ar-dietista #fichaRegistro,h
 .pl-prev-vacio b{color:var(--ink);font-size:var(--fs-m);}
 .pl-der{display:none;}
 html.esc .pl-split{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:20px;align-items:start;}
+/* 5/11 · barra para cambiar el ancho de la lista (la pone multitarea.js entre la lista y el resumen) */
+.pl-div{display:none;}
+html.esc .pl-split:has(> .pl-div){grid-template-columns:var(--pl-lista, minmax(300px,420px)) 0 minmax(0,1fr);}
+html.esc .pl-split > .pl-div{display:block;position:relative;align-self:stretch;width:10px;margin-left:-5px;min-height:160px;cursor:col-resize;touch-action:none;}
+html.esc .pl-split > .pl-div::after{content:"";position:absolute;top:0;bottom:0;left:4px;width:2px;background:transparent;transition:background var(--dur-r);}
+html.esc .pl-split > .pl-div::before{content:"";position:sticky;display:block;top:calc(50vh - 120px);margin:120px 0 0 2px;width:6px;height:48px;border-radius:4px;background:var(--line-strong);box-shadow:0 0 0 2px var(--bg);opacity:.85;transition:background var(--dur-r), height var(--dur-r);}
+html.esc .pl-split > .pl-div:hover::after,html.esc .pl-split > .pl-div:focus-visible::after,html.esc.esc-arrastrando .pl-split > .pl-div::after{background:var(--accent);}
+html.esc .pl-split > .pl-div:hover::before,html.esc .pl-split > .pl-div:focus-visible::before,html.esc.esc-arrastrando .pl-split > .pl-div::before{background:var(--accent);height:64px;opacity:1;}
 html.esc .pl-der{display:block;position:sticky;top:12px;padding:16px;border:1px solid var(--line);border-radius:var(--r-card);background:var(--card);}
 html.esc .pl-izq{min-width:0;}
 .pl-prev-movil .pl-prev-h{display:none;}
@@ -1095,6 +1103,7 @@ html.esc #view-coach-segs.esc-izq .sg-cab{cursor:pointer;}
 html.esc #view-coach-segs.esc-izq .sg-bloque.esc-sel{outline:2px solid var(--accent);outline-offset:-1px;background:var(--wash-soft);}
 /* izquierda = lista de planes (Entrenamientos / Nutrición): sin la vista previa */
 html.esc #view-coach-planes.esc-izq .pl-split,html.esc #view-coach-planes.esc-izq .ent-split{display:block;}
+html.esc #view-coach-planes.esc-izq .pl-div{display:none !important;}
 html.esc #view-coach-planes.esc-izq .pl-der,
 html.esc #view-coach-planes.esc-izq .panel-stats{display:none !important;}
 html.esc #view-coach-segs.esc-izq .sg-cab{flex-wrap:wrap;margin-bottom:0;}
@@ -1123,6 +1132,7 @@ html.esc.mt-on #app{container-type:inline-size;container-name:mtcentro;}
 html.esc.mt-on .esc-chat-col{container-type:inline-size;container-name:mtchat;}
 @container mtcentro (max-width: 760px){
   html.esc .pl-split{display:block;}
+  html.esc .pl-split > .pl-div{display:none;}
   html.esc .pl-der{position:static;margin-top:16px;}
   html.esc .ent-split .pl-der{max-height:none;}
 }
