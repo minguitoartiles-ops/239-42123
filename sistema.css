@@ -190,3 +190,43 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
 .fc-fila-s small{flex:none;font:400 var(--fs-xs) var(--f-mono);color:var(--dim-6);}
 .fc-fila .fc-pdf{grid-area:b;}
 .ex-filtros[hidden],.ent-filtros[hidden],.pu-chat-chips[hidden]{display:none !important;}
+
+/* =========================================================
+   5/11/2026 · Auditoría de movimiento (0.84.0-1)
+   ========================================================= */
+/* 1 · Ventanas: entran y salen con suavidad (en el móvil la hoja sube; los diálogos y el ordenador, con una ligera ampliación) */
+@keyframes fsdFondoIn{from{opacity:0}to{opacity:1}}
+@keyframes fsdFondoOut{from{opacity:1}to{opacity:0}}
+@keyframes fsdHojaIn{from{transform:translateY(48px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes fsdHojaOut{from{transform:none;opacity:1}to{transform:translateY(40px);opacity:0}}
+@keyframes fsdCajaIn{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+@keyframes fsdCajaOut{from{transform:none;opacity:1}to{transform:scale(.97);opacity:0}}
+.fsd-overlay.show,.noti-pop.show,.picker-overlay.show{animation:fsdFondoIn var(--dur-m) ease-out;}
+.fsd-overlay.show > .fsd-sheet,.picker-overlay.show > .picker-sheet{animation:fsdHojaIn var(--dur-l) var(--ease-sal);}
+.fsd-overlay.show > .fsd-sheet.dlg,html.esc .fsd-overlay.show > .fsd-sheet,.noti-pop.show > .noti-card{animation:fsdCajaIn var(--dur-m) var(--ease-sal);}
+.fsd-cerrando{display:flex !important;pointer-events:none;animation:fsdFondoOut .15s ease-in forwards !important;}
+.fsd-cerrando > .fsd-sheet,.fsd-cerrando > .picker-sheet{animation:fsdHojaOut .15s ease-in forwards !important;}
+.fsd-cerrando > .fsd-sheet.dlg,html.esc .fsd-cerrando > .fsd-sheet,.fsd-cerrando > .noti-card{animation:fsdCajaOut .15s ease-in forwards !important;}
+
+/* 3 · Todo lo tocable responde al pulsar (y en el ordenador, al pasar el ratón) */
+:is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,.cliente-card,#sendBtn,.cmp-main){transition:transform var(--dur-r), filter var(--dur-r), box-shadow var(--dur-r), background-color var(--dur-r);}
+:is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,#sendBtn,.cmp-main):not(:disabled):active{transform:scale(.97);filter:brightness(.94);}
+.cliente-card:active{transform:scale(.99);filter:brightness(.97);}
+:is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn,.alta-label.fp-lbl,.view-back,.back-btn){transition:background-color var(--dur-r), transform var(--dur-r);}
+:is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn,.alta-label.fp-lbl):active{background-color:var(--wash-med) !important;}
+@media (hover:hover) and (pointer:fine){
+  :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,#sendBtn):not(:disabled):hover{filter:brightness(.96);cursor:pointer;}
+  .cliente-card:hover{box-shadow:0 4px 16px -8px rgba(0,0,0,.25);}
+  :is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn:hover{background-color:var(--wash-soft) !important;cursor:pointer;}
+  :is(.cd-edit-nom,.list-row.danger,.cmp-ico):hover{filter:brightness(.95);}
+}
+
+/* 4 · Chat: el mensaje nuevo entra con suavidad */
+@keyframes msgEntra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#chatList .bubble.msg-nuevo{animation:msgEntra var(--dur-m) var(--ease-sal);}
+
+@media (prefers-reduced-motion: reduce){
+  .fsd-overlay.show,.noti-pop.show,.picker-overlay.show,.fsd-overlay.show > .fsd-sheet,.picker-overlay.show > .picker-sheet,.noti-pop.show > .noti-card,#chatList .bubble.msg-nuevo{animation:none !important;}
+  .fsd-cerrando{display:none !important;}
+  :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,.cliente-card,#sendBtn,.cmp-main):active{transform:none;}
+}

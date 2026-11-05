@@ -121,6 +121,7 @@ function svChOcupado(){
   return (typeof cmSel !== 'undefined' && cmSel) || !!document.getElementById('cmMenu') || !!document.getElementById('cmFw');
 }
 let svChDiferido = {};
+const svChVistos = {};              // mensajes ya pintados en pantalla, por chat
 function svChPintar(k){
   if (!SV_CH[k] || !clientesData[k]) return;
   const html = fsdLimpiarHtml(fsdChatPintar(svChModelo(k)));
@@ -135,6 +136,13 @@ function svChPintar(k){
   const antes = l.scrollTop;
   const nuevos = l.querySelector('.chat-nuevos'), trasNuevos = nuevos && nuevos.nextElementSibling && nuevos.nextElementSibling.getAttribute('data-fid');
   l.innerHTML = html;
+  // 5/11 · lo que no estaba antes en pantalla (mensaje nuevo) entra con suavidad
+  const vistos = svChVistos[k], ids = Array.prototype.map.call(l.querySelectorAll('.bubble[data-fid]'), function(b){ return b.getAttribute('data-fid'); });
+  if (vistos) {
+    const nuevosB = Array.prototype.filter.call(l.querySelectorAll('.bubble[data-fid]'), function(b){ return !vistos[b.getAttribute('data-fid')]; });
+    if (nuevosB.length <= 5) nuevosB.forEach(function(b){ b.classList.add('msg-nuevo'); });
+  }
+  svChVistos[k] = {}; ids.forEach(function(i){ svChVistos[k][i] = 1; });
   if (nuevos && trasNuevos) { const b = l.querySelector('.bubble[data-fid="' + trasNuevos.replace(/["\\]/g, '') + '"]'); if (b) b.parentNode.insertBefore(nuevos, b); }
   try { decorarChat(); } catch(e){}
   try { puChatFechas(); } catch(e){}
@@ -162,6 +170,9 @@ function svChTraer(k){
   const d = clientesData[k];
   if (!svChSesion() || !d || !d.sid) return Promise.resolve();
   if (svChTrayendo[k]) return svChTrayendo[k];
+  // 5/11 · mientras llega la conversación, no decir «Aún no hay mensajes»
+  const vacio = !SV_CH[k] && k === clienteActual && document.getElementById('chatVacio');
+  if (vacio) vacio.textContent = 'Cargando la conversación…';
   svChTrayendo[k] = svChPreparar().then(function(x){ return x.chat.traer(d.sid); }).then(function(r){
     SV_CH[k] = { mensajes: r.mensajes.map(svChFila), fijado: r.fijado, dudas: r.dudas.map(svChFila), cargado: true };
     svChLimpiarPend(k);
@@ -169,6 +180,8 @@ function svChTraer(k){
     guardarTodo();
     if (svChVisible(k)) svChLeer(k);
   }).catch(function(e){
+    const v = document.getElementById('chatVacio');
+    if (v && /Cargando/.test(v.textContent)) v.textContent = (window.fsdDatos && fsdDatos.sinConexion(e)) ? 'Sin conexión: la conversación se cargará al volver internet.' : 'Aún no hay mensajes. Escribe el primero.';
     if (!(window.fsdDatos && fsdDatos.sinConexion(e))) { try { toast(svMensaje(e, 'No se ha podido cargar el chat')); } catch(_){} }
   }).finally(function(){ delete svChTrayendo[k]; });
   return svChTrayendo[k];
