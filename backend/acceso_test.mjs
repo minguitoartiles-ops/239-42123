@@ -407,13 +407,13 @@ test('Seguimientos desde el servidor', async (t) => {
     await assert.rejects(sD.guardarHistorial(id, {}), /permiso/);
   });
 
-  await t.test('Un seguimiento nuevo llega en tiempo real', async () => {
+  await t.test('Los cambios del historial llegan en tiempo real', async () => {
     const llegado = new Promise((bien) => {
       const parar = sD.escuchar((tabla, cid, ev) => { if (tabla === 'historial' && cid === id) { parar(); bien(ev); } });
     });
     await new Promise((r) => setTimeout(r, 1500));
     await sC.guardarHistorial(id, { ton: [] });
     const ev = await Promise.race([llegado, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 10000))]);
-    assert.equal(ev, 'UPDATE');
+    assert.ok(['INSERT', 'UPDATE'].includes(ev));     // el «upsert» puede llegar como cualquiera de los dos
   });
 });
