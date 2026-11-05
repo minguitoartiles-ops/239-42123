@@ -1255,6 +1255,25 @@ html.con-teclado .sv-marca{display:none !important;}
 
 /* ===== 5/11/2026 · Chat del cliente en el móvil: cabecera tipo Telegram y sin barra de desplazamiento encima ===== */
 .chat-cab{display:none;}
+/* ordenador (vista de profesional): la misma cabecera en el chat a pantalla ancha */
+html.esc #view-chat > .chat-cab{display:flex;align-items:center;gap:4px;flex:none;margin:0 -22px 4px;padding:10px 16px 10px 8px;border-bottom:1px solid var(--line);background:var(--bg);}
+html.esc #view-chat > .chat-cab ~ .view-top,html.esc #view-chat > .chat-cab ~ .team-row{display:none !important;}
+html.esc .esc-chat-col #view-chat > .chat-cab{display:none !important;}
+html.esc .esc-chat-col .mt-cab-txt[data-ficha]{cursor:pointer;border-radius:var(--r-ctl);}
+html.esc .esc-chat-col .mt-cab-txt[data-ficha]:hover b{text-decoration:underline;}
+html.esc #chatList{scrollbar-width:thin;padding-right:6px;}
+.chat-cab-panel{display:none;flex:none;width:40px;height:40px;border:0;background:none;color:var(--dim-6);cursor:pointer;border-radius:50%;align-items:center;justify-content:center;}
+.chat-cab-panel:hover{background:var(--wash-soft);color:var(--ink);}
+html.esc .chat-cab-panel{display:flex;}
+html.esc .chat-cab-av{display:none;}
+html.esc .chat-cab-volver{display:none;}
+.chat-cab-volver{flex:none;width:40px;height:40px;border:0;background:none;color:var(--ink);font:400 30px/1 var(--f-body);cursor:pointer;border-radius:50%;}
+.chat-cab-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;padding:2px 4px;text-align:left;cursor:pointer;color:var(--ink);border-radius:var(--r-ctl);}
+.chat-cab-info:hover{background:var(--wash-soft);}
+.chat-cab-av{flex:none;width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--accent-wash);}
+.chat-cab-t{min-width:0;display:flex;flex-direction:column;}
+.chat-cab-t b{font:700 var(--fs-m) var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-cab-t small{font:400 var(--fs-xs) var(--f-body);color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 @media (max-width:700px){
   html:not(.esc) #app:not(.coach-view) .chat-cab{display:flex;align-items:center;gap:4px;flex:none;margin:0 -22px;padding:6px 12px 8px 6px;border-bottom:1px solid var(--line);background:var(--bg);}
   html:not(.esc) #app:not(.coach-view) #view-chat > .view-top,
@@ -1279,3 +1298,7 @@ html.con-teclado .sv-marca{display:none !important;}
 .chat-ficha-n small{font:400 var(--fs-xs) var(--f-body);color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70vw;}
 /* la marca «Servidor de pruebas» no tapa el nombre del grupo: en el chat del móvil, arriba a la derecha */
 @media (max-width:700px){ html:not(.esc):has(#view-chat.active) .sv-marca{left:auto;right:8px;transform:none;} }
+/* ordenador: como Telegram, el nombre arriba y «3 miembros» debajo, en letra normal */
+html.esc .esc-chat-col .mt-cab-txt[data-ficha]{display:flex;flex-direction:column-reverse;}
+html.esc .esc-chat-col .mt-cab-txt[data-ficha] small{font:400 var(--fs-xs) var(--f-body) !important;letter-spacing:0 !important;text-transform:none !important;color:var(--dim-55) !important;}
+html.esc #view-chat > .chat-cab .chat-cab-t b{font-size:var(--fs-l);}
