@@ -160,6 +160,7 @@ import { crearPlanes } from './planes.js';
 import { crearChat } from './chat.js';
 import { crearSeguimientos } from './seguimientos.js';
 import { crearArchivos } from './archivos.js';
+import { crearPerfiles } from './perfiles.js';
 
 test('Planes desde el servidor', async (t) => {
   const s = Math.random().toString(36).slice(2, 8);
@@ -392,6 +393,34 @@ test('Chat desde el servidor', async (t) => {
     await cC.vaciar(mf);
     await aC.quitar('fotos', rutaFoto);
     await assert.rejects(aD.descargar('fotos', rutaFoto), /disponible|descargar/);
+  });
+
+  // ---------- Fotos de perfil ----------
+  const pC = crearPerfiles(sbC), pD = crearPerfiles(sbD), pF = crearPerfiles(sbF);
+  const cara = new Blob([new Uint8Array([255, 216, 255, 224, 9, 9, 9])], { type: 'image/jpeg' });
+
+  await t.test('Fotos de perfil: la del cliente la ve el equipo', async () => {
+    const r = await pC.poner(cara);
+    const f = (await pF.lista()).find((x) => x.cliente_id === id);
+    assert.equal(f.ruta, r);
+    assert.equal((await pF.descargar(r)).size, cara.size);
+  });
+
+  await t.test('Fotos de perfil: la de Domingo la ve el cliente; cada uno solo cambia la suya', async () => {
+    const r = await pD.poner(cara);
+    const l = await pC.lista();
+    assert.ok(l.some((x) => x.user_id === dom && x.ruta === r));
+    assert.equal((await pC.descargar(r)).size, cara.size);
+    const { data } = await sbC.from('fotos_perfil').update({ ruta: null }).eq('user_id', dom).select('user_id');
+    assert.equal(data.length, 0);
+    await assert.rejects(pC.poner(new Blob([new Uint8Array(300 * 1024 + 1)], { type: 'image/jpeg' })), /grande/);
+    const r2 = await sbC.storage.from('perfiles').upload(`${dom}/${nuevo()}.jpg`, cara, { contentType: 'image/jpeg' });
+    assert.ok(r2.error, 'no sube a la carpeta de Domingo');
+  });
+
+  await t.test('Fotos de perfil: quitar la suya', async () => {
+    await pC.quitar();
+    assert.equal((await pD.lista()).find((x) => x.cliente_id === id).ruta, null);
   });
 });
 
