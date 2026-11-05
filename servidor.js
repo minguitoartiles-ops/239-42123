@@ -562,6 +562,20 @@ if (svActivo()) {
   });
 }
 
+/* 5/11 · Al volver a la app (tras tenerla en segundo plano o con la pantalla apagada) o al recuperar
+   internet: el móvil puede haber cortado la conexión en directo, así que cada parte se pone al día
+   (planes, chat, seguimientos y, en el equipo, la lista de clientes). */
+if (svActivo()) {
+  let svOculta = 0;
+  const svAlVolver = function(){ window.dispatchEvent(new Event('fsd:al-volver')); if (coachActivo) svSincronizar(); };
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') { svOculta = Date.now(); return; }
+    if (svOculta && Date.now() - svOculta > 4000) svAlVolver();
+    svOculta = 0;
+  });
+  window.addEventListener('pageshow', function(e){ if (e.persisted) svAlVolver(); });
+}
+
 (function(){
   const s = document.createElement('style');
   s.textContent = '.sv-marca{position:fixed;left:50%;top:max(6px,env(safe-area-inset-top));transform:translateX(-50%);z-index:9998;'

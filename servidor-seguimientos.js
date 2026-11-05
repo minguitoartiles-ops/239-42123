@@ -300,4 +300,9 @@ if (svActivo()) {
     svSgSubir().then(function(){ return svSgTraer(svSgCliente() ? [d && d.sid] : null); });
   });
   setInterval(function(){ if (svSgSesion()) svSgSubir(); }, 15000);
+  window.addEventListener('fsd:al-volver', function(){
+    if (!svSgSesion()) return;
+    const d = clienteActual && clientesData[clienteActual];
+    svSgSubir().then(function(){ return svSgTraer(svSgCliente() ? [d && d.sid] : null); });
+  });
 }
