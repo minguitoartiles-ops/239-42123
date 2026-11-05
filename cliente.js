@@ -1090,11 +1090,31 @@ function chCabPintar(){
     c.innerHTML = '<button type="button" class="chat-cab-volver" onclick="volverAtras()" aria-label="Volver">‹</button>'
       + '<button type="button" class="chat-cab-info" onclick="chFichaAbrir()" aria-label="Información del grupo">'
       + '<img class="chat-cab-av" src="assets/logo_fsd.png" alt="">'
-      + '<span class="chat-cab-t"><b></b><small></small></span></button>';
+      + '<span class="chat-cab-t"><b></b><small></small></span></button>'
+      + '<button type="button" class="chat-cab-panel" onclick="chFichaAbrir()" aria-label="Información del grupo" title="Información del grupo">'
+      + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>';
     v.insertBefore(c, v.firstChild);
   }
   c.querySelector('.chat-cab-t b').textContent = chCabNombre();
-  c.querySelector('.chat-cab-t small').textContent = COACHES.map(function(x){ return x.u; }).reverse().join(', ') + ' y tú';
+  c.querySelector('.chat-cab-t small').textContent = chCabMiembros();
+  // ordenador en «Multitarea»: la cabecera de la columna del chat dice lo mismo y abre la misma ficha
+  const mn = document.getElementById('mtNombre'), mc = document.querySelector('.esc-chat-col .mt-cab-txt');
+  if (mn && mc && clienteActual) {
+    mn.textContent = chCabNombre();
+    const sm = mc.querySelector('small'); if (sm) sm.textContent = chCabMiembros();
+    if (!mc.dataset.ficha) { mc.dataset.ficha = '1'; mc.setAttribute('role', 'button'); mc.tabIndex = 0; mc.title = 'Información del grupo';
+      mc.addEventListener('click', chFichaAbrir); mc.addEventListener('keydown', function(e){ if (e.key === 'Enter') chFichaAbrir(); }); }
+  }
+}
+/* «Fátima, Domingo y tú» para el cliente; «Paco, Fátima y tú» para Domingo */
+function chEsPro(){ return !!coachActivo && typeof isCoachView === 'function' && isCoachView(); }
+function chCabMiembros(){
+  // ordenador: como Telegram de escritorio, «3 miembros»
+  if (document.documentElement.classList.contains('esc')) return (COACHES.length + 1) + ' miembros';
+  if (!chEsPro()) return COACHES.map(function(x){ return x.u; }).reverse().join(', ') + ' y tú';
+  const d = clienteActual && clientesData[clienteActual], cli = ((d && d.nombre) || 'Cliente').split(' ')[0];
+  const otros = COACHES.filter(function(x){ return norm(x.u) !== norm(coachActivo.u); }).map(function(x){ return x.u; });
+  return [cli].concat(otros).join(', ') + ' y tú';
 }
 function chAvatar(nombre, foto){
   return '<span class="chat-ficha-av' + (foto ? ' con-foto' : '') + '"' + (foto ? ' style="background-image:url(&quot;' + esc(foto) + '&quot;)"' : '') + '>'
@@ -1105,18 +1125,25 @@ function chFichaAbrir(){
   const o = mjHoja('chatFicha'); o.classList.add('chat-ficha');
   const ROL = { entrenador: 'Entrenador', dietista: 'Dietista-nutricionista' };
   let fotos = 0; try { fotos = puFotosChat().length; } catch(e){}
+  const l = document.getElementById('chatList');
+  const voz = l ? l.querySelectorAll('.bubble .audio-b').length : 0;
+  let enlaces = 0; if (l) Array.prototype.forEach.call(l.querySelectorAll('.bubble'), function(b){ const m = (b.textContent || '').match(/https?:\/\/\S+/g); if (m) enlaces += m.length; });
+  const cuenta = function(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); };
   const fijo = d.chatFijo;
   let h = '<div class="fsd-sheet"><div class="sheet-head"><h3>Información del grupo</h3><button class="x-btn" onclick="mjCerrarHoja(\'chatFicha\')" aria-label="Cerrar">×</button></div>'
     + '<div class="chat-ficha-top"><img src="assets/logo_fsd.png" alt=""><b>' + esc(chCabNombre()) + '</b><small>' + (COACHES.length + 1) + ' miembros</small></div>'
-    + '<div class="section-lbl">Miembros</div><div class="list-group">'
-    + '<div class="list-row chat-ficha-fila">' + chAvatar(d.nombre, (function(){ try { return fotoDe('cliente:' + k); } catch(e){ return ''; } })()) + '<span class="chat-ficha-n"><b>' + esc(d.nombre || 'Tú') + '</b><small>Tú</small></span></div>';
+    + '<div class="list-group chat-ficha-cont">'
+    + '<div class="list-row" onclick="mjCerrarHoja(\'chatFicha\');puGaleria()"><span>🖼️ ' + cuenta(fotos, 'foto', 'fotos') + '</span><span class="chev">›</span></div>'
+    + '<div class="list-row"><span>🎤 ' + cuenta(voz, 'mensaje de voz', 'mensajes de voz') + '</span></div>'
+    + '<div class="list-row"><span>🔗 ' + cuenta(enlaces, 'enlace', 'enlaces') + '</span></div>'
+    + (fijo ? '<div class="list-row" onclick="chIrAlFijado()"><span class="chat-ficha-n"><b>📌 Mensaje fijado</b><small>' + esc(fijo.vista || fijo.t || '') + '</small></span><span class="chev">›</span></div>' : '')
+    + '</div><div class="section-lbl">👥 ' + (COACHES.length + 1) + ' miembros</div><div class="list-group">'
+    + '<div class="list-row chat-ficha-fila">' + chAvatar(d.nombre, (function(){ try { return fotoDe('cliente:' + k); } catch(e){ return ''; } })()) + '<span class="chat-ficha-n"><b>' + esc(d.nombre || 'Cliente') + '</b><small>' + (chEsPro() ? 'Cliente' : 'Tú') + '</small></span></div>';
   COACHES.slice().reverse().forEach(function(x){
     let f = ''; try { f = fotoDe(x.u); } catch(e){}
-    h += '<div class="list-row chat-ficha-fila">' + chAvatar(x.u, f) + '<span class="chat-ficha-n"><b>' + esc(x.u) + '</b><small>' + (ROL[x.rol] || '') + '</small></span></div>';
+    const yo = chEsPro() && norm(x.u) === norm(coachActivo.u);
+    h += '<div class="list-row chat-ficha-fila">' + chAvatar(x.u, f) + '<span class="chat-ficha-n"><b>' + esc(x.u) + '</b><small>' + (ROL[x.rol] || '') + (yo ? ' · Tú' : '') + '</small></span></div>';
   });
-  h += '</div><div class="section-lbl">Contenido del chat</div><div class="list-group">'
-    + '<div class="list-row" onclick="mjCerrarHoja(\'chatFicha\');puGaleria()"><span>🖼️ Fotos</span><span class="ajx-acts">' + (fotos ? '<span class="pill">' + fotos + '</span>' : '') + '<span class="chev">›</span></span></div>';
-  if (fijo) h += '<div class="list-row" onclick="chIrAlFijado()"><span class="chat-ficha-n"><b>📌 Mensaje fijado</b><small>' + esc(fijo.vista || fijo.t || '') + '</small></span><span class="chev">›</span></div>';
   h += '</div></div>';
   o.innerHTML = h;
   o.classList.add('show');
@@ -1128,4 +1155,9 @@ function chIrAlFijado(){
 goTo = (function(orig){
   return function(n){ const r = orig.apply(this, arguments); if (n === 'chat') { try { chCabPintar(); } catch(e){} } return r; };
 })(goTo);
+['abrirVistaCliente', 'abrirChatPro', 'mtPonerChat', 'goToCliente'].forEach(function(n){
+  if (typeof window[n] !== 'function') return;
+  const orig = window[n];
+  window[n] = function(){ const r = orig.apply(this, arguments); try { chCabPintar(); } catch(e){} return r; };
+});
 try { chCabPintar(); } catch(e){}
