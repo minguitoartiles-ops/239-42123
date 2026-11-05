@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.83 (actual)
-Cambios acumulados hacia la 0.84: **9 de 10**
+## Versión 0.84 (actual)
+Cambios acumulados hacia la 0.85: **0 de 10**
+
+## Versión 0.83 → 0.84.0
 
 ### Hacia la 0.84
 1. 02/11/2026 21:30 · Supabase · paso 2 · Clientes desde el servidor (solo en modo servidor de pruebas, `?servidor=pruebas`; sin activarlo todo sigue igual). El alta la hace el servidor: crea la ficha con duración, tarifa y precio, calcula hasta cuándo tiene acceso (con el primer pago: el periodo de su tarifa; sin él: hasta hoy; «Sin tarifa»: toda la duración del programa) y da el código, que vale 3 días y no se guarda en el dispositivo (en la ficha, «Nuevo» crea otro si no tiene cuenta todavía). La lista de clientes sale del servidor y se actualiza sola cuando el otro profesional da de alta o cambia algo; «Editar datos del cliente» se guarda en el servidor. El cliente entra la primera vez con su código y crea su cuenta (correo y contraseña de 12+ caracteres con mayúsculas, minúsculas y números); después, «Ya tengo cuenta». Los datos del modo servidor van en un cajón aparte del dispositivo: los de siempre no se tocan. Planes, seguimientos, chat, pagos y bajas siguen en el dispositivo hasta los siguientes pasos (en modo servidor, baja, pagos, tarifa y acceso manual avisan de que llegan después) → **0.83.0-1 (caché)**
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.84: **9 de 10**
 7. 05/11/2026 · Arreglos en el móvil (probados por Domingo como cliente): (1) un plan nuevo ya llega aunque el móvil tuviera la app en segundo plano o la pantalla apagada: al volver a la app, planes, chat, seguimientos y lista de clientes se ponen al día solos (antes había que cerrar y abrir la app); y al cliente le llega el aviso «Tu entrenamiento / Tu plan de nutrición se ha actualizado» en la campana. (2) Seguimiento: con el teclado abierto se esconden el botón «Siguiente» y la barra de abajo, y la casilla en la que escribes se coloca a la vista; al cerrar el teclado vuelve todo. (3) Chat en el móvil: cabecera en una línea, botones del equipo más pequeños en una fila, mensaje fijado en una línea fina, mensajes con menos relleno y sin tu inicial al lado de tus mensajes → **0.83.3-1 (caché)**
 8. 05/11/2026 · Chat del cliente en el móvil, tipo Telegram: arriba una barra con el logo, «Asesoría Nombre Apellidos» y «Fátima, Domingo y tú»; al tocarla se abre la información del grupo (miembros con su papel, fotos del chat y mensaje fijado). Fuera el título grande y la fila de botones, y la barra de desplazamiento ya no se pone encima de los mensajes → **0.83.4**
 9. 05/11/2026 · Chat en el ordenador (Domingo y Fátima), como Telegram de escritorio: arriba «Asesoría Nombre Apellidos» y «3 miembros», con un botón a la derecha para la información del grupo (también tocando el nombre, en la columna de «Multitarea» y en el chat ancho). La información del grupo, en móvil y ordenador, muestra primero el contenido (fotos, mensajes de voz, enlaces y mensaje fijado) y después los 3 miembros con su papel (tú marcado). Barra de desplazamiento fina que no tapa los mensajes → **0.83.4-1 (caché)**. Y en el chat ancho del ordenador desaparece la barra de arriba «Entrenamiento / Chat», que repetía lo mismo (sigue al editar planes, donde está «Guardar cambios») → **0.83.4-2 (caché)**
+10. 05/11/2026 · Entreno: «📚 Recursos» (glosario, RIR, calentamiento) sale plegado, en la app del cliente y en la vuestra; se despliega al tocarlo. Chat: cada persona con su color, como un grupo de Telegram: lo tuyo a la derecha en azul; lo de los demás a la izquierda, Domingo en azul claro, Fátima en verde claro, el cliente en gris y los avisos automáticos en ámbar con borde discontinuo, con el nombre en su color. En vuestro chat, los mensajes del compañero ya no salen a la derecha como los tuyos → **0.84**
 
 ## Versión 0.82 → 0.83.0
 
