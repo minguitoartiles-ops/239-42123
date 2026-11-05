@@ -330,12 +330,15 @@ pintarChatsPro = (function(orig){
     Array.prototype.forEach.call(cont.querySelectorAll('.chat-fila'), function(f){
       const m = (f.getAttribute('onclick') || '').match(/abrirChatPro\('([^']+)'\)/); const x = m && datos[m[1]]; if (!x) return;
       f.classList.remove('rojo', 'espera', 'nv-amb', 'nv-roj');
-      const t = f.querySelector('.chat-fila-t'), est = f.querySelector('.chat-fila-est:not(.dd-fila)');
+      let t = f.querySelector('.chat-fila-t'), est = f.querySelector('.chat-fila-est:not(.dd-fila)');
       if (!x.esp) return;
       const nivel = x.h >= ESPERA_ROJA_H ? 'nv-roj' : (x.h >= PU_CHAT_AMBAR_H ? 'nv-amb' : 'espera');
       f.classList.add(nivel);
+      /* 5/11 · el aviso «Esperando tu respuesta» ya no sale (basta el aviso de mensaje nuevo y el número rojo): solo el retraso de +24 h */
+      if (nivel === 'espera') { if (est) est.remove(); return; }
       if (t) t.textContent = '';                                     // el tiempo ya va en el aviso
-      if (est) est.textContent = nivel === 'espera' ? 'Esperando tu respuesta · ' + textoEspera(x.h) : (nivel === 'nv-roj' ? '⚠️ ' : '⏱ ') + 'Sin contestar · ' + textoEspera(x.h).replace('hace ', '');
+      if (!est) { est = document.createElement('div'); est.className = 'chat-fila-est'; const tx = f.querySelector('.chat-fila-txt'); if (tx) tx.appendChild(est); }
+      est.textContent = (nivel === 'nv-roj' ? '⚠️ ' : '⏱ ') + 'Sin contestar · ' + textoEspera(x.h).replace('hace ', '');
     });
     return r;
   };
@@ -533,10 +536,10 @@ function puPendPintar(){
   const barra = document.getElementById('emojiPanel') || document.getElementById('composer'); if (!barra) return;
   let b = document.getElementById('chatPend');
   const k = clienteActual, esp = k && coachActivo && isCoachView() ? esperaDesde(k) : null;
-  if (!esp) { if (b) b.hidden = true; return; }
+  if (!esp || horasDesde(esp) < PU_CHAT_AMBAR_H) { if (b) b.hidden = true; return; }     // «Esperando respuesta» ya no se avisa; solo +24 h
   if (!b) { b = document.createElement('div'); b.id = 'chatPend'; b.className = 'chat-pend'; barra.parentNode.insertBefore(b, barra); }
   b.hidden = false;
-  b.innerHTML = '<span>⏳ Esperando respuesta · ' + esc(textoEspera(horasDesde(esp))) + '</span><button type="button" onclick="puResolver()">✓ Marcar como resuelto</button>';
+  b.innerHTML = '<span>⏳ Sin contestar · ' + esc(textoEspera(horasDesde(esp))) + '</span><button type="button" onclick="puResolver()">✓ Marcar como resuelto</button>';
 }
 ['abrirChatPro', 'verConversacion', 'sendMsg', 'goTo'].forEach(function(n){
   if (typeof window[n] !== 'function') return;
@@ -1096,3 +1099,53 @@ document.addEventListener('DOMContentLoaded', function(){
   pintarListaClientes = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { puTarjetasSimples(); } catch(e){} return r; }; })(pintarListaClientes);
   try { puTarjetasSimples(); } catch(e){}
 });
+
+/* chat 13 · clic derecho (o pulsación larga en el móvil) sobre un chat de la lista → «Marcar como no leído» (5/11) */
+function chMarcarNoLeido(k){
+  if (!coachActivo || !clientesData[k]) return;
+  const a = sinLeerDe(clavePro(coachActivo.u));
+  a[k] = Math.max(1, a[k] || 0);
+  guardarAvisos();
+  try { pintarCampanas(); } catch(e){}
+  try { pintarBadgeChats(); } catch(e){}
+  try { pintarChatsPro(); } catch(e){}
+  toast('Marcado como no leído');
+}
+function chMenuCerrar(){ const m = document.getElementById('chMenu'); if (m) m.remove(); }
+function chMenuAbrir(k, x, y, fila){
+  chMenuCerrar();
+  const m = document.createElement('div');
+  m.id = 'chMenu'; m.className = 'ch-menu'; m.setAttribute('role', 'menu');
+  const b = document.createElement('button');
+  b.type = 'button'; b.setAttribute('role', 'menuitem'); b.textContent = '✉️ Marcar como no leído';
+  b.addEventListener('click', function(){ chMenuCerrar(); chMarcarNoLeido(k); });
+  m.appendChild(b);
+  ((fila && fila.closest('.screen')) || document.body).appendChild(m);   // dentro de su pantalla: así lleva sus colores (claro u oscuro)
+  m.style.left = Math.max(8, Math.min(x, window.innerWidth - m.offsetWidth - 8)) + 'px';
+  m.style.top = Math.max(8, Math.min(y, window.innerHeight - m.offsetHeight - 8)) + 'px';
+  b.focus();
+}
+(function(){
+  const clave = function(f){ const m = (f.getAttribute('onclick') || '').match(/abrirChatPro\('([^']+)'\)/); return m && m[1]; };
+  document.addEventListener('contextmenu', function(e){
+    const f = e.target.closest && e.target.closest('#chatsPro .chat-fila'); const k = f && coachActivo && clave(f);
+    if (!k) return;
+    e.preventDefault(); chMenuAbrir(k, e.clientX, e.clientY, f);
+  });
+  /* móvil: pulsación larga (0,6 s) sin mover el dedo */
+  let tp = null, pos = null, largo = false;
+  document.addEventListener('touchstart', function(e){
+    const f = e.target.closest && e.target.closest('#chatsPro .chat-fila'); const k = f && coachActivo && clave(f);
+    clearTimeout(tp); largo = false; if (!k || !e.touches[0]) return;
+    pos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    tp = setTimeout(function(){ largo = true; chMenuAbrir(k, pos.x, pos.y, f); }, 600);
+  }, { passive: true });
+  document.addEventListener('touchmove', function(e){
+    const t = e.touches[0]; if (tp && pos && t && (Math.abs(t.clientX - pos.x) > 10 || Math.abs(t.clientY - pos.y) > 10)) { clearTimeout(tp); tp = null; }
+  }, { passive: true });
+  ['touchend', 'touchcancel'].forEach(function(n){ document.addEventListener(n, function(e){ clearTimeout(tp); tp = null; if (largo) { if (e.cancelable) e.preventDefault(); setTimeout(function(){ largo = false; }, 400); } }); });
+  document.addEventListener('click', function(e){ if (largo) { largo = false; e.stopPropagation(); e.preventDefault(); return; } if (!e.target.closest || !e.target.closest('#chMenu')) chMenuCerrar(); }, true);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') chMenuCerrar(); });
+  window.addEventListener('scroll', chMenuCerrar, true);
+  window.addEventListener('resize', chMenuCerrar);
+})();
