@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
   if (!codigo) return error(req, 400, NO_VALIDO);
   if (!EMAIL.test(email) || email.length > 254) return error(req, 400, 'Escribe un correo válido.');
   if (!contrasenaValida(password)) {
-    return error(req, 400, 'La contraseña debe tener al menos 12 caracteres, con minúsculas, mayúsculas y números.');
+    return error(req, 400, 'La contraseña debe tener al menos 6 caracteres.');
   }
 
   // 3 · ¿Código válido? (todavía no se gasta)

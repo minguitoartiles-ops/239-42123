@@ -1793,3 +1793,59 @@ guardarChat = (function(orig){
   };
 })(guardarChat);
 prepararAudios();
+
+/* =========================================================
+   5/11/2026 · 👁 Mostrar u ocultar la contraseña
+   En todas las casillas de contraseña (también las que se crean después, como «Crea tu cuenta»).
+   Por seguridad se vuelve a ocultar sola al enviar el formulario y al cerrar su ventana.
+   ========================================================= */
+const FSD_OJO_SVG = function(p){ return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; };
+const FSD_OJO_VER = FSD_OJO_SVG('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>');
+const FSD_OJO_TAPAR = FSD_OJO_SVG('<path d="M3 3l18 18"/><path d="M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1"/><path d="M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a9.8 9.8 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>');
+function fsdOjoPoner(b, ver){
+  b.setAttribute('aria-pressed', ver ? 'true' : 'false');
+  b.setAttribute('aria-label', ver ? 'Ocultar contraseña' : 'Mostrar contraseña');
+  b.title = ver ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  b.innerHTML = ver ? FSD_OJO_TAPAR : FSD_OJO_VER;
+}
+function fsdOjoTapar(raiz){
+  Array.prototype.forEach.call((raiz || document).querySelectorAll('input[data-ojo]'), function(i){
+    if (i.type !== 'password') i.type = 'password';
+    const b = i.parentNode && i.parentNode.querySelector('.ojo-btn'); if (b) fsdOjoPoner(b, false);
+  });
+}
+const fsdOjoVentanas = window.MutationObserver ? new MutationObserver(function(rs){
+  rs.forEach(function(r){ if (!r.target.classList.contains('show')) fsdOjoTapar(r.target); });
+}) : null;
+function fsdOjo(i){
+  if (!i || i.dataset.ojo || !i.parentNode) return;
+  i.dataset.ojo = '1';
+  const w = document.createElement('span'); w.className = 'ojo-wrap';
+  i.parentNode.insertBefore(w, i); w.appendChild(i);
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'ojo-btn';
+  fsdOjoPoner(b, false);
+  b.addEventListener('mousedown', function(e){ e.preventDefault(); });          // no quita el foco de la casilla
+  b.addEventListener('click', function(){ const ver = i.type === 'password'; i.type = ver ? 'text' : 'password'; fsdOjoPoner(b, ver); });
+  w.appendChild(b);
+  const v = i.closest('.fsd-overlay');
+  if (v && fsdOjoVentanas && !v.dataset.ojoVigila) { v.dataset.ojoVigila = '1'; fsdOjoVentanas.observe(v, { attributes: true, attributeFilter: ['class'] }); }
+}
+function fsdOjos(){ Array.prototype.forEach.call(document.querySelectorAll('input[type="password"]:not([data-ojo])'), fsdOjo); }
+document.addEventListener('submit', function(e){ setTimeout(function(){ fsdOjoTapar(e.target); }, 0); }, true);
+(function(){
+  const s = document.createElement('style');
+  s.textContent = '.ojo-wrap{position:relative;display:block}.ojo-wrap input{padding-right:48px!important}'
+    + '.ojo-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:none;color:var(--dim-55);'
+    + 'display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;padding:0}'
+    + '.ojo-btn:hover{color:var(--ink)}.ojo-btn:focus-visible{outline:1.5px solid var(--accent)}'
+    + 'input::-ms-reveal,input::-ms-clear{display:none}';
+  document.head.appendChild(s);
+  fsdOjos();
+  if (window.MutationObserver) {
+    let pend = false;
+    new MutationObserver(function(){
+      if (pend) return; pend = true;
+      requestAnimationFrame(function(){ pend = false; if (document.querySelector('input[type="password"]:not([data-ojo])')) fsdOjos(); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+})();

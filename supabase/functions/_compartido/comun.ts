@@ -128,10 +128,9 @@ export function normalizarCodigo(v: unknown): string | null {
   return /^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{8}$/.test(c) ? c : null;
 }
 
-// Igual que la regla de Supabase Auth: 12 a 72 caracteres, con minúsculas, mayúsculas y números
+// Igual que la regla de Supabase Auth (decisión de Domingo, 5/11/2026): de 6 a 72 caracteres, sin más reglas
 export function contrasenaValida(p: unknown): p is string {
-  return typeof p === 'string' && p.length >= 12 && p.length <= 72
-    && /[a-z]/.test(p) && /[A-Z]/.test(p) && /[0-9]/.test(p);
+  return typeof p === 'string' && p.length >= 6 && p.length <= 72;
 }
 
 // ---------- Acceso pagado al dar de alta ----------
