@@ -1161,3 +1161,45 @@ goTo = (function(orig){
   window[n] = function(){ const r = orig.apply(this, arguments); try { chCabPintar(); } catch(e){} return r; };
 });
 try { chCabPintar(); } catch(e){}
+
+/* =========================================================
+   5/11/2026 · Entreno: «Recursos» plegado (cliente y profesionales). Se despliega al tocarlo.
+   ========================================================= */
+(function(){
+  const v = document.getElementById('view-entreno'); if (!v) return;
+  const lbl = Array.prototype.filter.call(v.querySelectorAll(':scope > .section-lbl'), function(e){ return /^\s*Recursos\s*$/.test(e.textContent); })[0];
+  if (!lbl) return;
+  const card = lbl.nextElementSibling, hint = card && card.nextElementSibling && card.nextElementSibling.classList.contains('alta-hint') ? card.nextElementSibling : null;
+  if (!card) return;
+  const d = document.createElement('details'); d.className = 'recursos-plegable';
+  const n = card.querySelectorAll('.menu-row').length;
+  const s = document.createElement('summary');
+  s.innerHTML = '<span class="rp-t">📚 Recursos</span><span class="rp-n">' + n + (n === 1 ? ' documento' : ' documentos') + '</span><span class="rp-chev" aria-hidden="true">›</span>';
+  d.appendChild(s);
+  lbl.parentNode.insertBefore(d, lbl);
+  lbl.remove();
+  d.appendChild(card);
+  if (hint) d.appendChild(hint);
+})();
+
+/* =========================================================
+   5/11/2026 · Chat: cada persona con su color, como en un grupo de Telegram.
+   Lo tuyo a la derecha en azul; lo de los demás a la izquierda: Domingo en azul claro, Fátima en
+   verde claro, el cliente en gris y los avisos automáticos en ámbar. El nombre, en su color.
+   ========================================================= */
+['aut-ent', 'aut-nut', 'aut-cli', 'aut-aviso'].forEach(function(c){ if (MARCAS_CHAT.indexOf(c) < 0) MARCAS_CHAT.push(c); });
+decorarChat = (function(orig){
+  return function(){
+    const r = orig.apply(this, arguments);
+    const l = document.getElementById('chatList'); if (!l) return r;
+    Array.prototype.forEach.call(l.querySelectorAll('.bubble'), function(b){
+      b.classList.remove('aut-ent', 'aut-nut', 'aut-cli', 'aut-aviso');
+      const a = autorBurbuja(b);
+      const c = b.classList.contains('sv-aviso') || /^aviso autom/i.test(a.nombre) ? 'aut-aviso'
+        : a.tipo === 'cliente' ? 'aut-cli' : (norm(a.nombre) === 'fatima' ? 'aut-nut' : 'aut-ent');
+      b.classList.add(c);
+    });
+    return r;
+  };
+})(decorarChat);
+try { decorarChat(); } catch(e){}
