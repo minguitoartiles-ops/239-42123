@@ -31,9 +31,11 @@ function svChId(){
 const SV_CH_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function svChClave(sid){ return svClaveDe(sid); }
 function svChVisible(k){
+  if (!k || document.visibilityState !== 'visible') return false;
+  // ordenador en «Multitarea»: el chat del cliente abierto se ve a la derecha
+  if (document.documentElement.classList.contains('mt-con-chat') && typeof mtChatDe !== 'undefined' && mtChatDe === k) return true;
   const v = document.getElementById('view-chat'), app = document.getElementById('app');
-  return !!k && k === clienteActual && !!v && v.classList.contains('active') && document.visibilityState === 'visible'
-    && !!app && app.style.display !== 'none';
+  return k === clienteActual && !!v && v.classList.contains('active') && !!app && app.style.display !== 'none';
 }
 function svChNombre(uid){
   const e = (svChEquipo || []).filter(function(x){ return x.user_id === uid; })[0];
@@ -536,6 +538,15 @@ if (svActivo()) {
       return r;
     };
   })(goTo);
+
+  /* ordenador en «Multitarea»: al abrir la ficha, el chat de la derecha también se carga del servidor */
+  if (typeof mtPonerChat === 'function') mtPonerChat = (function(orig){
+    return function(k){
+      const r = orig.apply(this, arguments);
+      if (svChSesion() && k && clientesData[k]) { if (SV_CH[k]) { svChPintar(k); svChLeer(k); } else svChTraer(k); }   // luego lo pone al día el tiempo real
+      return r;
+    };
+  })(mtPonerChat);
 
   window.addEventListener('fsd:lista-servidor', function(){
     svChPreparar().then(function(x){
