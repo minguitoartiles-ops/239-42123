@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.84 (actual)
-Cambios acumulados hacia la 0.85: **8 de 10**
+Cambios acumulados hacia la 0.85: **9 de 10**
 
 ### Hacia la 0.85
 1. 05/11/2026 · Movimiento y respuesta (auditoría de experiencia de uso del 5/11): las ventanas aparecen y se van con suavidad (en el móvil la hoja sube desde abajo; diálogos y ordenador, con una ligera ampliación); las informativas (privacidad, información del grupo, fotos del chat, notificaciones) se cierran tocando fuera y con Esc, los diálogos de confirmación y los formularios no; botones, filtros, tarjetas, filas y cabeceras responden al pulsar (y en el ordenador al pasar el ratón); en el chat el mensaje nuevo entra con suavidad y, mientras se carga una conversación, pone «Cargando la conversación…» en vez de «Aún no hay mensajes». Todo respeta «Reducir movimiento» → **0.84.0-1 (caché)**
@@ -15,6 +15,7 @@ Cambios acumulados hacia la 0.85: **8 de 10**
 6. 05/11/2026 · Supabase · Fotos de perfil desde el servidor (pedido por Domingo; solo en modo servidor de pruebas). Antes la foto de perfil se quedaba en el aparato de quien la ponía. Ahora la del cliente la veis Domingo y Fátima junto a sus mensajes, en la cabecera del chat, en la lista de chats y en la de clientes; y las vuestras las ve el cliente en su chat (decisión de Domingo). Se pone y se quita en Ajustes como siempre y llega a los demás al momento. Cada uno solo cambia la suya y un cliente nunca ve la foto de otro cliente (lo comprueba el servidor). Servidor: carpeta privada «perfiles» (fotos de como mucho 300 KB), tabla de quién tiene qué foto y limpieza diaria de las que ya no usa nadie → **0.84.3**
 7. 05/11/2026 · Chat de los profesionales: se quita el aviso «Esperando tu respuesta» (pedido por Domingo): basta con el aviso de que el cliente ha escrito y el número rojo de mensajes sin leer. La lista de chats solo marca el retraso a partir de 24 h («Sin contestar», en ámbar y en rojo a las 48 h) y la barra sobre el cuadro de escribir solo sale a partir de las 24 h → **0.84.3-1 (caché)**
 8. 05/11/2026 · Chat de los profesionales: clic derecho sobre un chat de la lista (en el móvil, pulsación larga) → **«Marcar como no leído»**, para dejarlo pendiente (pedido por Domingo). Sale con el número rojo (1 como mínimo) hasta que lo abres y lo lees. En modo servidor se guarda en el servidor para cada profesional: sale igual en el móvil y en el ordenador, y el otro profesional no lo ve (cada uno tiene el suyo). Si ya tienes ese chat abierto, avisa en vez de marcarlo → **0.84.4**
+9. 05/11/2026 · Textos legales (privacidad, cookies y la ventana del consentimiento de salud) actualizados para la app con servidor: datos en Supabase, en la UE (Irlanda), cifrados y sin enlaces públicos; proveedores y transferencias fuera de la UE (cláusulas contractuales tipo y Marco de Privacidad UE-EE. UU.); datos técnicos de acceso; borrado automático de archivos sin usar; seguridad y brechas (arts. 33 y 34 RGPD). Se quita Google Fonts (las letras van dentro de la app) y se añade YouTube. Marcados como **provisionales, pendientes de revisión por el asesor de protección de datos** (pedido por Domingo) → **0.84.4-1 (caché)**
 
 ## Versión 0.83 → 0.84.0
 
