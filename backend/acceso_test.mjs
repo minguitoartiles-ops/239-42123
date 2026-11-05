@@ -157,6 +157,7 @@ test('Clientes desde el servidor', async (t) => {
 // Paso 3 · Pautas y registros desde el servidor (backend/planes.js)
 // ---------------------------------------------------------------------
 import { crearPlanes } from './planes.js';
+import { crearChat } from './chat.js';
 
 test('Planes desde el servidor', async (t) => {
   const s = Math.random().toString(36).slice(2, 8);
@@ -228,5 +229,110 @@ test('Planes desde el servidor', async (t) => {
     await pC.guardarRegistro('nut', id, semana, { v: 1, comidas: { m1: { tomada: '1' } }, elegidos: { a1: '1' } });
     const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 10000))]);
     assert.equal(r, id);
+  });
+});
+
+test('Chat desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`cdom-${s}@prueba.local`);
+  const fat = await crearUsuario(`cfat-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert([
+      { user_id: dom, nombre: 'Domingo', rol: 'entrenador' },
+      { user_id: fat, nombre: 'Fátima', rol: 'dietista' },
+    ]);
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`cdom-${s}@prueba.local`, CLAVE);
+  const sbF = dispositivo(); await crearAuth(sbF).entrar(`cfat-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Marta ${s}`, tarifa: 'mensual', pagado: true });
+  const otra = await crearClientes(sbD).crear({ nombre: `Nora ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `marta-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`marta-${s}@prueba.local`, CLAVE);
+  const cD = crearChat(sbD), cF = crearChat(sbF), cC = crearChat(sbC);
+  t.after(() => { for (const x of [sbD, sbF, sbC]) x.realtime.disconnect(); });
+  const id = alta.id;
+  const nuevo = () => crypto.randomUUID();
+  const m1 = nuevo(), m2 = nuevo();
+
+  await t.test('El cliente escribe; reintentar el mismo mensaje no lo duplica', async () => {
+    await cC.enviar({ id: m1, clienteId: id, lado: 'out', texto: 'Hola, tengo una duda con la cena' });
+    await cC.enviar({ id: m1, clienteId: id, lado: 'out', texto: 'Hola, tengo una duda con la cena' });
+    const r = await cC.traer(id);
+    assert.equal(r.mensajes.length, 1);
+    assert.equal(r.dudas.length, 0);
+  });
+
+  await t.test('El equipo responde citando; el cliente sabe quién le escribe', async () => {
+    await cD.enviar({ id: m2, clienteId: id, lado: 'in', texto: 'Te lo miro', citaDe: m1 });
+    const r = await cC.traer(id);
+    assert.equal(r.mensajes[1].cita_de, m1);
+    const eq = await cC.equipo();
+    assert.equal(eq.find((x) => x.user_id === r.mensajes[1].autor).nombre, 'Domingo');
+  });
+
+  await t.test('El cliente no escribe en otro chat ni como equipo', async () => {
+    await assert.rejects(cC.enviar({ id: nuevo(), clienteId: otra.id, lado: 'out', texto: 'Hola' }), /permiso/);
+    await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'in', texto: 'Soy Domingo' }), /permiso/);
+  });
+
+  await t.test('Fijar y quitar el fijado', async () => {
+    await cC.fijar(id, m2);
+    assert.equal((await cD.traer(id)).fijado.mensaje_id, m2);
+    await cD.fijar(id, null);
+    assert.equal((await cC.traer(id)).fijado, null);
+  });
+
+  await t.test('Dudas: solo entre profesionales', async () => {
+    await cD.nuevaDuda(id, m1, fat);
+    await assert.rejects(cD.nuevaDuda(id, m1, fat), /pendiente/);
+    const r = await cF.traer(id);
+    assert.equal(r.dudas.length, 1);
+    assert.equal((await cC.traer(id)).dudas.length, 0);
+    await assert.rejects(cD.cerrarDuda(r.dudas[0].id, 'resuelta'), /permiso|pendiente/);
+    await cF.cerrarDuda(r.dudas[0].id, 'resuelta');
+    assert.equal((await cD.traer(id)).dudas[0].estado, 'resuelta');
+  });
+
+  await t.test('Sin leer y respuesta pendiente en el resumen', async () => {
+    let r = (await cF.resumen()).find((x) => x.cliente_id === id);
+    assert.equal(r.sin_leer, 1);
+    assert.equal(r.espera_desde, null);                       // Domingo ya contestó
+    await cF.leido(id);
+    r = (await cF.resumen()).find((x) => x.cliente_id === id);
+    assert.equal(r.sin_leer, 0);
+    r = (await cC.resumen());
+    assert.equal(r.length, 1);
+    assert.equal(r[0].sin_leer, 1);                           // la respuesta de Domingo
+  });
+
+  await t.test('Eliminar: solo el autor', async () => {
+    await assert.rejects(cD.vaciar(m1), /propios/);
+    await cC.vaciar(m1);
+    const r = await cD.traer(id);
+    assert.equal(r.mensajes[0].eliminado, true);
+    assert.equal(r.mensajes[0].texto, null);
+  });
+
+  await t.test('El mensaje nuevo llega en tiempo real', async () => {
+    const llegado = new Promise((bien) => {
+      const parar = cD.escuchar((tabla, fila) => { if (tabla === 'mensajes' && fila.texto === 'En directo') { parar(); bien(fila); } });
+    });
+    await new Promise((r) => setTimeout(r, 1500));            // que la suscripción esté lista
+    await cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: 'En directo' });
+    const f = await Promise.race([llegado, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el mensaje')), 10000))]);
+    assert.equal(f.cliente_id, id);
+  });
+
+  await t.test('Datos no válidos se rechazan antes de llegar al servidor', async () => {
+    await assert.rejects(cC.enviar({ id: 'x', clienteId: id, lado: 'out', texto: 'Hola' }), /no válido/);
+    await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: '   ' }), /vacío/);
+    await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: 'x'.repeat(4001) }), /largo/);
   });
 });
