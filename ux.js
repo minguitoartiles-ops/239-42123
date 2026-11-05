@@ -997,7 +997,7 @@ function formatoAudio(){
   for (let i = 0; i < opciones.length; i++) if (MediaRecorder.isTypeSupported(opciones[i])) return opciones[i];
   return '';
 }
-const MAX_AUDIO_SEG = 60;
+const MAX_AUDIO_SEG = 120;                 // 5/11 · notas de voz de hasta 2 minutos (decisión de Domingo)
 toggleMic = function(){
   if (mediaRec && mediaRec.state === 'recording') { mediaRec.stop(); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) {

@@ -136,6 +136,8 @@ Deno.test('Funciones del servidor', async (t) => {
     assertEquals((await llamar('limpieza-diaria', {}, SERVICIO)).estado, 401);
     const r = await llamar('limpieza-diaria', {}, LIMPIEZA);
     assertEquals(r.estado, 200);
+    assertEquals(r.json.fallos, 0);              // también lee los archivos sin usar sin error
+    assertEquals(typeof r.json.sinUsar, 'number');
   });
 
   await t.step('Tras 10 intentos por hora desde el mismo origen, se bloquea', async () => {
