@@ -1302,3 +1302,5 @@ html.esc .chat-cab-volver{display:none;}
 html.esc .esc-chat-col .mt-cab-txt[data-ficha]{display:flex;flex-direction:column-reverse;}
 html.esc .esc-chat-col .mt-cab-txt[data-ficha] small{font:400 var(--fs-xs) var(--f-body) !important;letter-spacing:0 !important;text-transform:none !important;color:var(--dim-55) !important;}
 html.esc #view-chat > .chat-cab .chat-cab-t b{font-size:var(--fs-l);}
+/* 5/11 · Ordenador: en el chat ancho sobra la barra «Entrenamiento / Chat» de arriba (la cabecera del grupo ya dice dónde estás) */
+html.esc #app:has(#view-chat.active) > #coachBar{display:none !important;}
