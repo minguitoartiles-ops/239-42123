@@ -10,6 +10,9 @@
    ========================================================= */
 
 const MT_KEY = 'fsd_vista_esc', MT_MIN = 1200;
+/* 5/11 · Antes, ⤢ dejaba el ordenador en «Ampliada» sin querer (y entonces, desde Seguimientos o
+   Entrenamientos, el chat no salía). Una sola vez, cada ordenador vuelve a «Multitarea». */
+try { if (!localStorage.getItem('fsd_vista_esc_2')) { localStorage.removeItem(MT_KEY); localStorage.setItem('fsd_vista_esc_2', '1'); } } catch(e){}
 let mtOrigen = null;               // apartado desde el que se revisa: 'segs', 'planes' o null (Clientes)
 let mtChatDe = null;               // cliente cuyo chat se ve a la derecha
 let mtPusoCoach = false;           // la columna puso «coach-view» en #app (para quitarlo luego)
@@ -110,14 +113,14 @@ function mtLeido(k){
     if (habia && typeof actualizarPanel === 'function') actualizarPanel();
   } catch(e){}
 }
+/* 5/11 · ⤢ abre el chat en grande solo esta vez: ya no cambia la vista a «Ampliada» para siempre
+   (al volver a la ficha, Seguimientos o Entrenamientos, el chat vuelve a salir a la derecha) */
 function mtChatGrande(){
   const k = mtChatDe; if (!k) return;
-  try { localStorage.setItem(MT_KEY, 'ampliada'); } catch(e){}
   mtDevolverChat();
   if (clienteActual !== k) goToCliente(k);
   verConversacion();
   mtSelector();
-  if (typeof toast === 'function') toast('Vista ampliada · vuelve a «Multitarea» en el menú cuando quieras');
 }
 /* cambia el cliente cargado sin moverse de pantalla (pestaña Entrenamientos / Nutrición) */
 function mtCargar(k){
