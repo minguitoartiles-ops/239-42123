@@ -140,7 +140,15 @@ export function crearChat(sb) {
     async leido(clienteId, hasta) {
       id(clienteId, 'Chat');
       const { error } = await sb.from('chat_lecturas')
-        .upsert({ cliente_id: clienteId, hasta: hasta || new Date().toISOString() }, { onConflict: 'user_id,cliente_id' });
+        .upsert({ cliente_id: clienteId, hasta: hasta || new Date().toISOString(), no_leido: false }, { onConflict: 'user_id,cliente_id' });
+      if (error) throw errorDe(error);
+    },
+
+    // Equipo: deja el chat como pendiente («marcar como no leído»); al leerlo se quita (no cambia «leído hasta»)
+    async noLeido(clienteId) {
+      id(clienteId, 'Chat');
+      const { error } = await sb.from('chat_lecturas')
+        .upsert({ cliente_id: clienteId, no_leido: true }, { onConflict: 'user_id,cliente_id' });
       if (error) throw errorDe(error);
     },
 
