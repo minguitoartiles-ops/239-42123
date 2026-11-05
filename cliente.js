@@ -711,7 +711,7 @@ function escDivisor(){
     d.setAttribute('role', 'separator'); d.setAttribute('aria-orientation', 'vertical'); d.tabIndex = 0;
     d.title = 'Arrastra para cambiar el ancho de la lista · doble clic: ancho normal';
     d.setAttribute('aria-label', 'Ancho de la lista');
-    document.body.appendChild(d);
+    (document.getElementById('screenRoot') || document.body).appendChild(d);   // 5/11 · dentro de la app, para que tenga sus colores (fuera era invisible)
     let x0 = 0, w0 = 0, arr = false;
     const ancho = function(){ const izq = document.querySelector('.screen.esc-dual > .esc-izq'); return izq ? izq.getBoundingClientRect().width : 360; };
     d.addEventListener('pointerdown', function(e){
