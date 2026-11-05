@@ -278,7 +278,7 @@ function mtDivisor(){
     d.setAttribute('role', 'separator'); d.setAttribute('aria-orientation', 'vertical'); d.tabIndex = 0;
     d.title = 'Arrastra para cambiar el ancho del chat · doble clic: ancho normal';
     d.setAttribute('aria-label', 'Ancho del chat');
-    document.body.appendChild(d);
+    (document.getElementById('screenRoot') || document.body).appendChild(d);   // 5/11 · dentro de la app, para que tenga sus colores (fuera era invisible)
     let x0 = 0, w0 = 0, arr = false;
     d.addEventListener('pointerdown', function(e){
       arr = true; x0 = e.clientX; w0 = mtChatW(); d.setPointerCapture(e.pointerId);
