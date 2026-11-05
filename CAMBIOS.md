@@ -4,7 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.84 (actual)
-Cambios acumulados hacia la 0.85: **0 de 10**
+Cambios acumulados hacia la 0.85: **1 de 10**
+
+### Hacia la 0.85
+1. 05/11/2026 · Movimiento y respuesta (auditoría de experiencia de uso del 5/11): las ventanas aparecen y se van con suavidad (en el móvil la hoja sube desde abajo; diálogos y ordenador, con una ligera ampliación); las informativas (privacidad, información del grupo, fotos del chat, notificaciones) se cierran tocando fuera y con Esc, los diálogos de confirmación y los formularios no; botones, filtros, tarjetas, filas y cabeceras responden al pulsar (y en el ordenador al pasar el ratón); en el chat el mensaje nuevo entra con suavidad y, mientras se carga una conversación, pone «Cargando la conversación…» en vez de «Aún no hay mensajes». Todo respeta «Reducir movimiento» → **0.84.0-1 (caché)**
 
 ## Versión 0.83 → 0.84.0
 

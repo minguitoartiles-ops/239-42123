@@ -63,3 +63,66 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
 })();
+
+/* =========================================================
+   5/11/2026 · Auditoría de movimiento (0.84.0-1)
+   1 · Al cerrar una ventana se deja un momento para su animación de salida.
+   2 · Las ventanas informativas se cierran tocando fuera y con Esc (los diálogos de confirmación
+       y los formularios, no: así nadie pierde nada por un toque sin querer).
+   4 · Chat: el mensaje que llega o se envía entra con suavidad.
+   ========================================================= */
+(function(){
+  const VENTANAS = '.fsd-overlay, .noti-pop, .picker-overlay';
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (window.MutationObserver && !reduce) {
+    new MutationObserver(function(rs){
+      rs.forEach(function(r){
+        const el = r.target;
+        if (!el.matches || !el.matches(VENTANAS)) return;
+        const antes = /(^|\s)show(\s|$)/.test(r.oldValue || ''), ahora = el.classList.contains('show');
+        if (antes && !ahora) {
+          el.classList.add('fsd-cerrando');
+          clearTimeout(el._fsdCierre);
+          el._fsdCierre = setTimeout(function(){ el.classList.remove('fsd-cerrando'); }, 160);
+        } else if (ahora && el.classList.contains('fsd-cerrando')) {
+          clearTimeout(el._fsdCierre); el.classList.remove('fsd-cerrando');
+        }
+      });
+    }).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true });
+  }
+
+  /* cerrar tocando fuera / con Esc: solo las informativas */
+  const CERRAR = {
+    legalOverlay: function(){ cerrarLegal(); },
+    chatFicha: function(){ mjCerrarHoja('chatFicha'); },
+    chatGaleria: function(){ mjCerrarHoja('chatGaleria'); },
+    notiPop: function(){ cerrarNotis(); },
+    notiPopCoach: function(){ cerrarNotisCoach(); }
+  };
+  document.addEventListener('click', function(e){
+    const o = e.target;
+    if (!o || !o.id || !CERRAR[o.id] || !o.classList.contains('show')) return;   // solo el fondo, no lo de dentro
+    e.stopPropagation();
+    try { CERRAR[o.id](); } catch(_){ o.classList.remove('show'); }
+  }, true);
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    const abiertas = Object.keys(CERRAR).map(function(id){ return document.getElementById(id); }).filter(function(o){ return o && o.classList.contains('show'); });
+    if (!abiertas.length) return;
+    try { CERRAR[abiertas[abiertas.length - 1].id](); } catch(_){}
+  });
+
+  /* mensajes nuevos del chat (los que se añaden sin rehacer la lista) */
+  if (typeof MARCAS_CHAT !== 'undefined' && MARCAS_CHAT.indexOf('msg-nuevo') < 0) MARCAS_CHAT.push('msg-nuevo');
+  const l = document.getElementById('chatList');
+  if (l && window.MutationObserver && !reduce) {
+    new MutationObserver(function(rs){
+      rs.forEach(function(r){
+        if (r.removedNodes.length) return;
+        const nuevos = Array.prototype.filter.call(r.addedNodes, function(n){ return n.nodeType === 1 && n.classList.contains('bubble'); });
+        if (nuevos.length && nuevos.length <= 3) nuevos.forEach(function(b){ b.classList.add('msg-nuevo'); });
+      });
+    }).observe(l, { childList: true });
+  }
+  document.addEventListener('animationend', function(e){ if (e.target && e.target.classList && e.target.classList.contains('msg-nuevo')) e.target.classList.remove('msg-nuevo'); });
+})();
