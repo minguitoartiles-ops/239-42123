@@ -158,6 +158,7 @@ test('Clientes desde el servidor', async (t) => {
 // ---------------------------------------------------------------------
 import { crearPlanes } from './planes.js';
 import { crearChat } from './chat.js';
+import { crearSeguimientos } from './seguimientos.js';
 
 test('Planes desde el servidor', async (t) => {
   const s = Math.random().toString(36).slice(2, 8);
@@ -334,5 +335,85 @@ test('Chat desde el servidor', async (t) => {
     await assert.rejects(cC.enviar({ id: 'x', clienteId: id, lado: 'out', texto: 'Hola' }), /no válido/);
     await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: '   ' }), /vacío/);
     await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: 'x'.repeat(4001) }), /largo/);
+  });
+});
+
+test('Seguimientos desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`sdom-${s}@prueba.local`);
+  const fat = await crearUsuario(`sfat-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert([
+      { user_id: dom, nombre: 'Domingo', rol: 'entrenador' },
+      { user_id: fat, nombre: 'Fátima', rol: 'dietista' },
+    ]);
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`sdom-${s}@prueba.local`, CLAVE);
+  const sbF = dispositivo(); await crearAuth(sbF).entrar(`sfat-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Pablo ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `pablo-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`pablo-${s}@prueba.local`, CLAVE);
+  const sD = crearSeguimientos(sbD), sF = crearSeguimientos(sbF), sC = crearSeguimientos(sbC);
+  t.after(() => { for (const x of [sbD, sbF, sbC]) x.realtime.disconnect(); });
+  const id = alta.id, sid = crypto.randomUUID();
+  const hoy = new Date().toISOString().slice(0, 10);
+
+  await t.test('El cliente envía su seguimiento; reintentar no lo duplica; otro de la misma semana, no', async () => {
+    await sC.enviar({ id: sid, clienteId: id, fecha: hoy, datos: { peso: '80 kg', e: '8' } });
+    await sC.enviar({ id: sid, clienteId: id, fecha: hoy, datos: { peso: '80 kg', e: '8' } });
+    await assert.rejects(sC.enviar({ id: crypto.randomUUID(), clienteId: id, fecha: hoy, datos: {} }), /Ya enviaste/);
+    const r = await sC.traer([id], false);
+    assert.equal(r.seguimientos.length, 1);
+  });
+
+  await t.test('Lo corrige, y el equipo lo ve corregido', async () => {
+    await sC.corregir(sid, { peso: '79,5 kg', e: '8' });
+    const r = await sD.traer(null, true);
+    const x = r.seguimientos.find((y) => y.id === sid);
+    assert.equal(x.datos.peso, '79,5 kg');
+    assert.ok(x.editado);
+    await assert.rejects(sD.corregir(sid, {}), /no se puede corregir|permiso/);
+  });
+
+  await t.test('Cada profesional apunta lo suyo: visto y revisado con comentario', async () => {
+    await sD.marcar(sid, { visto: new Date().toISOString() });
+    await sD.marcar(sid, { revisado: new Date().toISOString(), comentario: 'Muy bien' });
+    await sF.marcar(sid, { visto: new Date().toISOString() });
+    const r = await sF.traer([id], true);
+    const deD = r.equipo.find((y) => y.user_id === dom), deF = r.equipo.find((y) => y.user_id === fat);
+    assert.equal(deD.comentario, 'Muy bien');
+    assert.ok(deD.revisado && deD.visto && deF.visto && !deF.revisado);
+    await sD.marcar(sid, { revisado: null });
+    assert.equal((await sD.traer([id], true)).equipo.find((y) => y.user_id === dom).comentario, null);
+  });
+
+  await t.test('El cliente no ve lo del equipo ni puede marcar', async () => {
+    const r = await sC.traer([id], true);
+    assert.equal(r.equipo.length, 0);
+    await assert.rejects(sC.marcar(sid, { revisado: new Date().toISOString() }), /permiso/);
+  });
+
+  await t.test('Historial: lo escribe el cliente y lo lee el equipo', async () => {
+    await sC.guardarHistorial(id, { ton: [{ sem: '2026-10-26', kg: 4200 }] });
+    await sC.guardarHistorial(id, { ton: [{ sem: '2026-10-26', kg: 4300 }] });
+    assert.equal((await sF.traer([id], true)).historial[id].ton[0].kg, 4300);
+    await assert.rejects(sD.guardarHistorial(id, {}), /permiso/);
+  });
+
+  await t.test('Un seguimiento nuevo llega en tiempo real', async () => {
+    const llegado = new Promise((bien) => {
+      const parar = sD.escuchar((tabla, cid, ev) => { if (tabla === 'historial' && cid === id) { parar(); bien(ev); } });
+    });
+    await new Promise((r) => setTimeout(r, 1500));
+    await sC.guardarHistorial(id, { ton: [] });
+    const ev = await Promise.race([llegado, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 10000))]);
+    assert.equal(ev, 'UPDATE');
   });
 });
