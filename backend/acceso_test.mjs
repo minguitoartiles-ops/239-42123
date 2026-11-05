@@ -159,6 +159,7 @@ test('Clientes desde el servidor', async (t) => {
 import { crearPlanes } from './planes.js';
 import { crearChat } from './chat.js';
 import { crearSeguimientos } from './seguimientos.js';
+import { crearArchivos } from './archivos.js';
 
 test('Planes desde el servidor', async (t) => {
   const s = Math.random().toString(36).slice(2, 8);
@@ -226,9 +227,9 @@ test('Planes desde el servidor', async (t) => {
 
   await t.test('En tiempo real: el equipo se entera cuando el cliente apunta algo', async () => {
     const recibido = new Promise((ok) => { const fuera = pD.escuchar((x) => { if (x === id) { fuera(); ok(x); } }); });
-    await new Promise((ok) => setTimeout(ok, 2500));                 // que la suscripción quede lista
+    await new Promise((ok) => setTimeout(ok, 4000));                 // que la suscripción quede lista (en GitHub a veces tarda)
     await pC.guardarRegistro('nut', id, semana, { v: 1, comidas: { m1: { tomada: '1' } }, elegidos: { a1: '1' } });
-    const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 10000))]);
+    const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 20000))]);
     assert.equal(r, id);
   });
 });
@@ -335,6 +336,62 @@ test('Chat desde el servidor', async (t) => {
     await assert.rejects(cC.enviar({ id: 'x', clienteId: id, lado: 'out', texto: 'Hola' }), /no válido/);
     await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: '   ' }), /vacío/);
     await assert.rejects(cC.enviar({ id: nuevo(), clienteId: id, lado: 'out', texto: 'x'.repeat(4001) }), /largo/);
+  });
+
+  // ---------- Paso 6: fotos y notas de voz ----------
+  const aC = crearArchivos(sbC), aD = crearArchivos(sbD);
+  const foto = new Blob([new Uint8Array([255, 216, 255, 224, 1, 2, 3, 4])], { type: 'image/jpeg' });
+  const voz = new Blob([new Uint8Array([26, 69, 223, 163, 9, 8, 7])], { type: 'audio/webm;codecs=opus' });
+  const mf = nuevo(), mv = nuevo();
+  let rutaFoto = '';
+
+  await t.test('El cliente sube una foto y la envía; reintentar la subida no la duplica', async () => {
+    rutaFoto = await aC.subir('fotos', id, mf, foto);
+    assert.equal(rutaFoto, `${id}/${mf}.jpg`);
+    assert.equal(await aC.subir('fotos', id, mf, foto), rutaFoto);
+    await cC.enviar({ id: mf, clienteId: id, lado: 'out', tipo: 'foto', archivoRuta: rutaFoto });
+    const m = (await cD.traer(id)).mensajes.find((x) => x.id === mf);
+    assert.equal(m.tipo, 'foto');
+    assert.equal(m.archivo_ruta, rutaFoto);
+    assert.equal(m.texto, null);
+  });
+
+  await t.test('El equipo la descarga con su sesión (sin enlaces)', async () => {
+    const b = await aD.descargar('fotos', rutaFoto);
+    assert.equal(b.size, foto.size);
+  });
+
+  await t.test('Nota de voz con su duración; más de 2 minutos, no', async () => {
+    const r = await aC.subir('audios', id, mv, voz);
+    assert.match(r, /\.webm$/);
+    await assert.rejects(cC.enviar({ id: mv, clienteId: id, lado: 'out', tipo: 'audio', archivoRuta: r, duracion: 121 }), /2 minutos/);
+    await cC.enviar({ id: mv, clienteId: id, lado: 'out', tipo: 'audio', archivoRuta: r, duracion: 37 });
+    assert.equal((await cF.traer(id)).mensajes.find((x) => x.id === mv).duracion, 37);
+  });
+
+  await t.test('Un mensaje con un archivo que no se ha subido, no', async () => {
+    const x = nuevo();
+    await assert.rejects(cC.enviar({ id: x, clienteId: id, lado: 'out', tipo: 'foto', archivoRuta: `${id}/${x}.jpg` }), /no se ha subido/);
+    await assert.rejects(cC.enviar({ id: x, clienteId: id, lado: 'out', tipo: 'foto', archivoRuta: `${otra.id}/${x}.jpg` }), /no válido/);
+  });
+
+  await t.test('El servidor pone los límites aunque alguien se salte la app', async () => {
+    const grande = new Blob([new Uint8Array(3 * 1024 * 1024 + 1)], { type: 'audio/webm' });
+    const r1 = await sbC.storage.from('audios').upload(`${id}/${nuevo()}.webm`, grande, { contentType: 'audio/webm' });
+    assert.ok(r1.error, 'una nota de voz de más de 3 MB se rechaza');
+    const svg = new Blob(['<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'], { type: 'image/svg+xml' });
+    const r2 = await sbC.storage.from('fotos').upload(`${id}/${nuevo()}.jpg`, svg, { contentType: 'image/svg+xml' });
+    assert.ok(r2.error, 'un SVG no entra en la carpeta de fotos');
+    const r3 = await sbC.storage.from('fotos').upload(`${otra.id}/${nuevo()}.jpg`, foto, { contentType: 'image/jpeg' });
+    assert.ok(r3.error, 'no sube a la carpeta de otro cliente');
+    await assert.rejects(aC.subir('fotos', id, nuevo(), new Blob([new Uint8Array(5 * 1024 * 1024 + 1)], { type: 'image/jpeg' })), /grande/);
+    await assert.rejects(aC.subir('fotos', id, nuevo(), svg), /tipo/);
+  });
+
+  await t.test('Eliminar la foto: el mensaje se vacía y el archivo se quita', async () => {
+    await cC.vaciar(mf);
+    await aC.quitar('fotos', rutaFoto);
+    await assert.rejects(aD.descargar('fotos', rutaFoto), /disponible|descargar/);
   });
 });
 

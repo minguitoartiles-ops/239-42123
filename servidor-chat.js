@@ -11,7 +11,11 @@
      etiqueta «📋 Revisión de tu seguimiento» van al servidor. Las dudas solo las ve el equipo.
    · Sin leer y «esperando respuesta»: los calcula el servidor con el «leído hasta aquí» de cada
      persona, así coinciden en el móvil y en el ordenador.
-   · Fotos y notas de voz: llegan en el paso de archivos. Mientras, en modo servidor no se ofrecen.
+   · Fotos y notas de voz (paso 6): primero se sube el archivo a la carpeta privada del cliente y
+     después se envía el mensaje con su ruta. Para verlos, la app los descarga con la sesión de cada
+     persona (no hay enlaces que se puedan reenviar) y los guarda solo en memoria mientras la app
+     está abierta. Se descargan al aparecer en pantalla; la nota de voz, como muy tarde, al tocar ▶.
+     Sin conexión no se envían (se avisa): el archivo no se puede subir.
    ========================================================= */
 const SV_CH = {};                       // por clave de cliente: { mensajes, fijado, dudas, cargado }
 let svChEquipo = null;                  // [{ user_id, nombre, rol }]
@@ -57,6 +61,66 @@ function svChFila(f){
   ['fecha', 'creada', 'cerrada_en', 'ultimo_fecha', 'espera_desde', 'hasta'].forEach(function(c){ if (f[c]) f[c] = svChISO(f[c]); });
   return f;
 }
+/* ---------- archivos (fotos y notas de voz) ---------- */
+const SV_ARCH = {};                       // ruta → URL local (blob:) ya descargada
+const svArchVa = {};                      // ruta → descarga en curso
+const SV_ARCH_VACIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const SV_ARCH_RUTA = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[A-Za-z0-9_-]{1,64}\.(jpg|jpeg|png|webp|webm|m4a|mp4|mp3|ogg|aac)$/;
+function svArchCarpeta(ruta){ return /\.(jpg|jpeg|png|webp)$/i.test(ruta) ? 'fotos' : 'audios'; }
+function svArchTraer(ruta){
+  if (!SV_ARCH_RUTA.test(String(ruta || ''))) return Promise.reject(new Error('Archivo no válido'));
+  if (SV_ARCH[ruta]) return Promise.resolve(SV_ARCH[ruta]);
+  if (svArchVa[ruta]) return svArchVa[ruta];
+  const carpeta = svArchCarpeta(ruta);
+  svArchVa[ruta] = svCargar().then(function(x){ return x.archivos.descargar(carpeta, ruta); }).then(function(b){
+    // el tipo lo fija la app: una foto solo se enseña como imagen y un audio como audio
+    const t = String(b.type || '').split(';')[0];
+    const tipo = carpeta === 'fotos' ? (/^image\/(jpeg|png|webp)$/.test(t) ? t : 'image/jpeg') : (/^audio\//.test(t) ? t : 'audio/mp4');
+    SV_ARCH[ruta] = URL.createObjectURL(new Blob([b], { type: tipo }));
+    return SV_ARCH[ruta];
+  }).finally(function(){ delete svArchVa[ruta]; });
+  return svArchVa[ruta];
+}
+function svArchOndas(id){
+  const n = String(id || '').split('').reduce(function(a, c){ return a + c.charCodeAt(0); }, 0);
+  const o = []; for (let i = 0; i < 22; i++) o.push(5 + Math.round(Math.abs(Math.sin((i + n % 7) * 1.7)) * 15));
+  return o;
+}
+/* pone en pantalla los archivos ya descargados y descarga los que se vayan viendo */
+let svArchVigia = null;
+function svArchPoner(b, url){
+  if (!b) return;
+  const img = b.querySelector(':scope > img');
+  if (img) { if (img.getAttribute('src') !== url) img.src = url; img.classList.remove('sv-arch-carga'); return; }
+  const w = b.querySelector(':scope > .audio-b');
+  if (w && !w.querySelector('audio')) { const a = document.createElement('audio'); a.src = url; a.preload = 'metadata'; a.style.display = 'none'; w.appendChild(a); }
+}
+function svArchFallo(ruta){
+  Array.prototype.forEach.call(document.querySelectorAll('.bubble[data-arch]'), function(b){
+    if (b.getAttribute('data-arch') !== ruta) return;
+    const img = b.querySelector(':scope > img'); if (img) { img.classList.remove('sv-arch-carga'); img.classList.add('sv-arch-no'); img.alt = 'Foto no disponible'; }
+  });
+}
+function svArchCargar(b){
+  const ruta = b.getAttribute('data-arch');
+  svArchTraer(ruta).then(function(url){
+    Array.prototype.forEach.call(document.querySelectorAll('.bubble[data-arch]'), function(x){ if (x.getAttribute('data-arch') === ruta) svArchPoner(x, url); });
+  }, function(){ svArchFallo(ruta); });
+}
+function svArchRellenar(raiz){
+  if (!raiz) return;
+  Array.prototype.forEach.call(raiz.querySelectorAll('.bubble[data-arch]'), function(b){
+    const ruta = b.getAttribute('data-arch');
+    if (SV_ARCH[ruta]) { svArchPoner(b, SV_ARCH[ruta]); return; }
+    const img = b.querySelector(':scope > img'); if (img) img.classList.add('sv-arch-carga');
+    if (!('IntersectionObserver' in window)) { svArchCargar(b); return; }
+    if (!svArchVigia) svArchVigia = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) { svArchVigia.unobserve(e.target); svArchCargar(e.target); } });
+    }, { rootMargin: '400px 0px' });
+    svArchVigia.observe(b);
+  });
+}
+
 function svChPend(k){ const d = clientesData[k]; if (!d) return []; if (!Array.isArray(d.svChPend)) d.svChPend = []; return d.svChPend; }
 
 /* =========================================================
@@ -70,8 +134,13 @@ function svChLista(k){
   const yo = svChYo, lado = svChSoyEquipo() ? 'in' : 'out';
   svChPend(k).forEach(function(p){
     if (vistos[p.id]) return;
-    ms.push({ id: p.id, lado: lado, autor: yo, tipo: 'texto', texto: p.texto, cita_de: p.citaDe || null, eliminado: false,
-              fecha: p.ts, reenviado: !!p.reenviado, etiqueta: p.etiqueta || null, pendiente: true });
+    vistos[p.id] = 1;
+    ms.push({ id: p.id, lado: lado, autor: yo, tipo: p.tipo || 'texto', texto: p.texto, archivo_ruta: p.ruta || null, duracion: p.dur || null,
+              cita_de: p.citaDe || null, eliminado: false, fecha: p.ts, reenviado: !!p.reenviado, etiqueta: p.etiqueta || null, pendiente: true });
+  });
+  (svChSubiendo[k] || []).forEach(function(u){
+    if (vistos[u.id]) return;
+    ms.push({ id: u.id, lado: lado, autor: yo, tipo: u.tipo, local: u.local, duracion: u.dur || null, eliminado: false, fecha: u.ts, pendiente: true });
   });
   return ms;
 }
@@ -80,15 +149,28 @@ function svChQuien(m, k){
   if (svChSoyEquipo()) return ((clientesData[k] || {}).nombre || 'Cliente').split(' ')[0];
   return 'Tú';
 }
-function svChVista(m, max){ return m.eliminado ? '🚫 Mensaje eliminado' : String(m.texto || '').replace(/\s+/g, ' ').trim().slice(0, max); }
+function svChVista(m, max){
+  if (m.eliminado) return '🚫 Mensaje eliminado';
+  if (m.tipo === 'foto') return '📷 Foto';
+  if (m.tipo === 'audio') return '🎤 Nota de voz';
+  return String(m.texto || '').replace(/\s+/g, ' ').trim().slice(0, max);
+}
 function svChModelo(k){
   const ms = svChLista(k), pos = {};
   ms.forEach(function(m, i){ pos[m.id] = i; });
   return { v: FSD_MODELO_V, mensajes: ms.map(function(m){
     const x = { id: m.id, lado: m.lado === 'in' ? 'in' : 'out', ts: m.fecha };
     if (m.lado === 'in') x.de = svChQuien(m, k);
+    let media = false;
     if (m.eliminado) x.tipo = 'eliminado';
-    else { x.tipo = 'texto'; x.texto = String(m.texto || '').slice(0, 4000); }
+    else if (m.tipo === 'foto' && (m.archivo_ruta || m.local)) {
+      // lo descargado se pone después de pintar (en la copia guardada no quedan enlaces locales)
+      media = true; x.tipo = 'foto'; x.foto = { src: m.local || SV_ARCH_VACIO, alt: 'Foto' };
+    } else if (m.tipo === 'audio' && (m.archivo_ruta || m.local)) {
+      const s = Math.max(1, Math.min(120, Math.round(+m.duracion || 0)));
+      media = true; x.tipo = 'audio'; x.audio = { src: m.local || '', dur: String(s), durTxt: fmtDur(s), ondas: svArchOndas(m.id) };
+    } else { x.tipo = 'texto'; x.texto = String(m.texto || '').slice(0, 4000); }
+    if (media && m.archivo_ruta && SV_ARCH_RUTA.test(m.archivo_ruta)) x.extra = { arch: m.archivo_ruta };
     if (m.cita_de && !m.eliminado) {
       const o = pos[m.cita_de] != null ? ms[pos[m.cita_de]] : null;
       x.cita = { id: m.cita_de, n: o ? String(pos[m.cita_de]) : '', t: o && !o.eliminado ? svChVista(o, 60) : '',
@@ -98,6 +180,7 @@ function svChModelo(k){
     if (m.etiqueta === 'revision' && !m.eliminado) x.mencion = '📋 Revisión de tu seguimiento';
     const cl = [];
     if (m.pendiente) cl.push('sv-pend');
+    if (x.tipo === 'foto') cl.push('media');
     if (m.lado === 'in' && !m.autor) cl.push('sv-aviso');
     if (cl.length) x.clases = cl.join(' ');
     return x;
@@ -144,6 +227,7 @@ function svChPintar(k){
   }
   svChVistos[k] = {}; ids.forEach(function(i){ svChVistos[k][i] = 1; });
   if (nuevos && trasNuevos) { const b = l.querySelector('.bubble[data-fid="' + trasNuevos.replace(/["\\]/g, '') + '"]'); if (b) b.parentNode.insertBefore(nuevos, b); }
+  svArchRellenar(l);
   try { decorarChat(); } catch(e){}
   try { puChatFechas(); } catch(e){}
   try { cmPintarFijo(true); } catch(e){}
@@ -307,6 +391,7 @@ function svChParar(){
   if (svChDejar) { try { svChDejar(); } catch(e){} svChDejar = null; }
   Object.keys(SV_CH).forEach(function(k){ delete SV_CH[k]; });
   svChEquipo = null; svChYo = null; svChRes = {}; svChDiferido = {};
+  Object.keys(SV_ARCH).forEach(function(r){ try { URL.revokeObjectURL(SV_ARCH[r]); } catch(e){} delete SV_ARCH[r]; });
 }
 function svChPonerAlDia(){
   svChResumen();
@@ -319,18 +404,50 @@ function svChPonerAlDia(){
 let svChEnviando = false, svChAvisado = false;
 function svChEncolar(k, p){
   const d = clientesData[k]; if (!d || !d.sid) return false;
-  p.id = svChId(); p.ts = new Date().toISOString();
+  p.id = p.id || svChId(); p.ts = p.ts || new Date().toISOString();
   svChPend(k).push(p);
   guardarTodo();
-  if (SV_CH[k]) svChPintar(k);
-  else if (k === clienteActual) {                // chat aún sin traer (o sin conexión): se añade al final
-    const l = document.getElementById('chatList'), mod = svChModelo(k);
-    mod.mensajes = mod.mensajes.filter(function(m){ return m.id === p.id; });
-    if (l) { const v = document.getElementById('chatVacio'); if (v) v.remove(); l.insertAdjacentHTML('beforeend', fsdLimpiarHtml(fsdChatPintar(mod))); try { decorarChat(); } catch(e){} l.scrollTop = l.scrollHeight; }
-    svChTraer(k);
-  }
+  svChMostrar(k, p.id);
   svChEnviar();
   return true;
+}
+/* pinta un mensaje recién puesto (si el chat aún no se ha traído, se añade al final) */
+function svChMostrar(k, id){
+  if (SV_CH[k]) { svChPintar(k); return; }
+  if (k !== clienteActual) return;
+  const l = document.getElementById('chatList'), mod = svChModelo(k);
+  mod.mensajes = mod.mensajes.filter(function(m){ return m.id === id; });
+  if (l && mod.mensajes.length) {
+    const viejo = l.querySelector('.bubble[data-fid="' + String(id).replace(/["\\]/g, '') + '"]');
+    const html = fsdLimpiarHtml(fsdChatPintar(mod));
+    if (viejo) viejo.outerHTML = html;
+    else { const v = document.getElementById('chatVacio'); if (v) v.remove(); l.insertAdjacentHTML('beforeend', html); }
+    svArchRellenar(l);
+    try { decorarChat(); } catch(e){}
+    l.scrollTop = l.scrollHeight;
+  }
+  svChTraer(k);
+}
+/* foto o nota de voz: se sube el archivo (con el id del mensaje como nombre) y después se envía */
+const svChSubiendo = {};                  // por chat: lo que se está subiendo (solo en memoria)
+function svChMandarArchivo(k, tipo, blob, dur){
+  const d = clientesData[k]; if (!d || !d.sid || !blob) return;
+  const u = { id: svChId(), tipo: tipo, local: URL.createObjectURL(blob), dur: dur || null, ts: new Date().toISOString() };
+  (svChSubiendo[k] = svChSubiendo[k] || []).push(u);
+  svChMostrar(k, u.id);
+  const quitar = function(){ svChSubiendo[k] = (svChSubiendo[k] || []).filter(function(x){ return x !== u; }); };
+  svCargar().then(function(x){ return x.archivos.subir(tipo === 'foto' ? 'fotos' : 'audios', d.sid, u.id, blob); }).then(function(ruta){
+    SV_ARCH[ruta] = u.local;                        // ya está en este aparato: no hace falta descargarlo
+    quitar();
+    svChEncolar(k, { id: u.id, ts: u.ts, tipo: tipo, ruta: ruta, dur: tipo === 'audio' ? dur : null });
+  }, function(e){
+    quitar();
+    URL.revokeObjectURL(u.local);
+    if (SV_CH[k]) svChPintar(k); else { const b = document.querySelector('#chatList .bubble[data-fid="' + u.id + '"]'); if (b) b.remove(); }
+    const sin = window.fsdDatos && fsdDatos.sinConexion(e);
+    try { toast(sin ? 'Sin conexión: ' + (tipo === 'foto' ? 'la foto' : 'la nota de voz') + ' no se ha enviado. Vuelve a enviarla con internet.'
+                    : svMensaje(e, 'No se ha podido enviar ' + (tipo === 'foto' ? 'la foto' : 'la nota de voz'))); } catch(_){}
+  });
 }
 function svChEnviar(){
   if (svChEnviando || !svChSesion()) return Promise.resolve();
@@ -346,7 +463,8 @@ function svChEnviar(){
       if (i >= cola.length) return null;
       const k = cola[i][0], p = cola[i][1], d = clientesData[k]; i++;
       if (!d || !d.sid) return siguiente();
-      return x.chat.enviar({ id: p.id, clienteId: d.sid, lado: lado, texto: p.texto, citaDe: p.citaDe, reenviado: p.reenviado, etiqueta: p.etiqueta })
+      return x.chat.enviar({ id: p.id, clienteId: d.sid, lado: lado, texto: p.texto, citaDe: p.citaDe, reenviado: p.reenviado, etiqueta: p.etiqueta,
+                             tipo: p.tipo, archivoRuta: p.ruta, duracion: p.dur })
         .then(function(){ p.enviado = true; svChAvisado = false; return siguiente(); }, function(e){
           if (x.sinConexion(e)) {
             if (!svChAvisado) { svChAvisado = true; try { toast('Sin conexión: tus mensajes se enviarán al volver internet'); } catch(_){} }
@@ -355,7 +473,7 @@ function svChEnviar(){
           d.svChPend = svChPend(k).filter(function(y){ return y !== p; });
           try { toast(svMensaje(e, 'No se ha podido enviar el mensaje')); } catch(_){}
           const inp = document.getElementById('chatInput');
-          if (k === clienteActual && inp && !inp.value.trim()) { inp.value = p.texto; try { actualizarComposer(); } catch(_){} }
+          if (p.texto && k === clienteActual && inp && !inp.value.trim()) { inp.value = p.texto; try { actualizarComposer(); } catch(_){} }
           svChPintar(k);
           return siguiente();
         });
@@ -373,18 +491,85 @@ setInterval(function(){ if (svChSesion() && Object.keys(clientesData).some(funct
    ENGANCHES (solo en modo servidor)
    ========================================================= */
 if (svActivo()) {
-  /* fotos y notas de voz: llegan en el paso de archivos */
   (function(){
     const s = document.createElement('style');
-    s.textContent = 'html.fsd-servidor #clipBtn,html.fsd-servidor #micBtn,html.fsd-servidor #recLock{display:none!important}'
-      + 'html.fsd-servidor #sendBtn{display:flex}html.fsd-servidor .composer:not(.tiene-texto) #sendBtn{opacity:.4}'
-      + '#chatList .bubble.sv-pend{opacity:.62}#chatList .bubble.sv-pend::after{content:"🕓";font-size:11px;margin-left:6px;vertical-align:-1px}';
+    s.textContent = '#chatList .bubble.sv-pend{opacity:.62}#chatList .bubble.sv-pend::after{content:"🕓";font-size:11px;margin-left:6px;vertical-align:-1px}'
+      + '#chatList .bubble img.sv-arch-carga,#chatList .bubble img.sv-arch-no{width:200px;height:150px;max-width:100%;border-radius:12px;background:var(--line,#e5e7eb)}'
+      + '#chatList .bubble img.sv-arch-carga{animation:svArchLate 1.2s ease-in-out infinite}'
+      + '@keyframes svArchLate{50%{opacity:.55}}@media (prefers-reduced-motion:reduce){#chatList .bubble img.sv-arch-carga{animation:none}}';
     document.head.appendChild(s);
   })();
-  const svChSinArchivos = function(){ try { toast('Las fotos y notas de voz llegarán pronto al modo servidor'); } catch(e){} };
-  subirImagen = (function(orig){ return function(input){ if (!svChSesion()) return orig.apply(this, arguments); if (input) input.value = ''; svChSinArchivos(); }; })(subirImagen);
-  toggleMic = (function(orig){ return function(){ if (!svChSesion()) return orig.apply(this, arguments); svChSinArchivos(); }; })(toggleMic);
-  meterEnChat = (function(orig){ return function(){ if (!svChSesion()) return orig.apply(this, arguments); svChSinArchivos(); }; })(meterEnChat);
+  /* foto: se reduce en el aparato (1280 px, JPEG) y se sube */
+  subirImagen = (function(orig){
+    return function(input){
+      if (!svChSesion()) return orig.apply(this, arguments);
+      const f = input && input.files && input.files[0], k = clienteActual;
+      if (input) input.value = '';
+      if (!f || !k) return;
+      if (!/^image\//.test(f.type || '')) { toast('Elige una imagen'); return; }
+      sgFotoReducir(f).then(function(b){
+        if (!/^image\/(jpeg|png|webp)$/.test(b.type || '')) { toast('Esa imagen no se puede enviar. Prueba con otra (JPG o PNG).'); return; }
+        if (b.size > 5 * 1024 * 1024) { toast('La foto es demasiado grande'); return; }
+        svChMandarArchivo(k, 'foto', b);
+      });
+    };
+  })(subirImagen);
+  /* nota de voz: llega como data:… al terminar de grabar (máximo 2 minutos) */
+  const svDataABlob = function(url){
+    const m = /^data:([^;,]+)(?:;[^,]*)?;base64,(.*)$/.exec(String(url || '')); if (!m) return null;
+    const bin = atob(m[2]), a = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+    return new Blob([a], { type: m[1] });
+  };
+  addAudioBubble = (function(orig){
+    return function(src, segs){
+      if (!svChSesion()) return orig.apply(this, arguments);
+      const b = svDataABlob(src), k = clienteActual;
+      if (!b || !k) { toast('No se ha podido grabar la nota de voz'); return; }
+      svChMandarArchivo(k, 'audio', b, Math.max(1, Math.min(120, Math.round(+segs || 1))));
+    };
+  })(addAudioBubble);
+  meterEnChat = (function(orig){ return function(){ if (!svChSesion()) return orig.apply(this, arguments); }; })(meterEnChat);
+  /* la copia del chat que se guarda en el aparato (se lee de la pantalla) no lleva enlaces locales: al
+     reabrir la app ya no valen. La foto queda en gris y la nota de voz sin audio hasta volver a descargarlas */
+  guardarChat = (function(orig){
+    return function(){
+      const r = orig.apply(this, arguments);
+      const c = svChSesion() && clienteActual && PLANES[clienteActual] && PLANES[clienteActual].chat;
+      if (typeof c === 'string' && c.indexOf('blob:') > -1)
+        PLANES[clienteActual].chat = c.replace(/(<img\b[^>]*?\ssrc=")blob:[^"]*"/g, '$1' + SV_ARCH_VACIO + '"').replace(/<audio\b[^>]*\ssrc="blob:[^"]*"[^>]*><\/audio>/g, '');
+      return r;
+    };
+  })(guardarChat);
+  /* ▶ de una nota de voz aún sin descargar: se descarga y suena */
+  reproducirAudio = (function(orig){
+    return function(btn){
+      const w = btn && btn.parentElement, b = btn && btn.closest('.bubble'), ruta = b && b.getAttribute('data-arch');
+      if (!svChSesion() || !ruta || !w || w.querySelector('audio')) return orig.apply(this, arguments);
+      btn.textContent = '…';
+      svArchTraer(ruta).then(function(url){ svArchPoner(b, url); btn.textContent = '▶'; orig(btn); },
+        function(e){ btn.textContent = '▶'; try { toast(svMensaje(e, 'No se ha podido cargar la nota de voz')); } catch(_){} });
+    };
+  })(reproducirAudio);
+  /* tocar una foto que aún no ha llegado: se espera a tenerla y se abre en grande */
+  window.addEventListener('click', function(e){
+    if (!svChSesion() || !e.target.closest) return;
+    const img = e.target.closest('#chatList .bubble[data-arch] > img');
+    if (!img || (img.src && img.src.indexOf('blob:') === 0)) return;
+    e.preventDefault(); e.stopPropagation();
+    const ruta = img.parentNode.getAttribute('data-arch');
+    svArchTraer(ruta).then(function(url){ svArchPoner(img.parentNode, url); try { cmAbrirVisor(url, img.alt); } catch(_){} }, function(){ svArchFallo(ruta); });
+  }, true);
+  /* fotos del chat: antes de enseñarlas todas, se descargan */
+  if (typeof puGaleria === 'function') puGaleria = (function(orig){
+    return function(){
+      if (!svChSesion()) return orig.apply(this, arguments);
+      const l = document.getElementById('chatList');
+      const rutas = Array.prototype.map.call(l ? l.querySelectorAll('.bubble[data-arch] > img') : [], function(i){ return i.parentNode.getAttribute('data-arch'); });
+      const self = this, args = arguments;
+      Promise.all(rutas.map(function(r){ return svArchTraer(r).catch(function(){ return null; }); })).then(function(){ svArchRellenar(l); orig.apply(self, args); });
+    };
+  })(puGaleria);
 
   /* enviar un mensaje de texto */
   sendMsg = (function(orig){
@@ -447,11 +632,19 @@ if (svActivo()) {
         svChPintar(k); guardarTodo(); return;
       }
       const S = SV_CH[k], m = S && S.mensajes.filter(function(x){ return x.id === id; })[0];
-      const antes = m ? { texto: m.texto } : null;
-      if (m) { m.eliminado = true; m.texto = null; }
+      const antes = m ? { texto: m.texto, ruta: m.archivo_ruta } : null;
+      if (m) { m.eliminado = true; m.texto = null; m.archivo_ruta = null; }
       svChPintar(k);
-      svCargar().then(function(x){ return x.chat.vaciar(id); }).catch(function(e){
-        if (m && antes) { m.eliminado = false; m.texto = antes.texto; }
+      svCargar().then(function(x){
+        return x.chat.vaciar(id).then(function(){
+          // el archivo también se quita (si fallara, lo borra la limpieza diaria)
+          if (antes && antes.ruta) {
+            x.archivos.quitar(svArchCarpeta(antes.ruta), antes.ruta).catch(function(){});
+            if (SV_ARCH[antes.ruta]) { URL.revokeObjectURL(SV_ARCH[antes.ruta]); delete SV_ARCH[antes.ruta]; }
+          }
+        });
+      }).catch(function(e){
+        if (m && antes) { m.eliminado = false; m.texto = antes.texto; m.archivo_ruta = antes.ruta; }
         svChPintar(k);
         try { toast(svMensaje(e, 'No se ha podido eliminar el mensaje')); } catch(_){}
       });
