@@ -37,13 +37,14 @@ Deno.test('El código se acepta con guion, espacios o minúsculas', () => {
   assertEquals(m.normalizarCodigo(12345678), null);
 });
 
-Deno.test('Contraseñas: al menos 12 caracteres, con minúsculas, mayúsculas y números', () => {
+Deno.test('Contraseñas: de 6 a 72 caracteres, sin más reglas', () => {
   assertEquals(m.contrasenaValida('Clave-de-prueba-123'), true);
-  assertEquals(m.contrasenaValida('Corta1'), false);
-  assertEquals(m.contrasenaValida('sinmayusculas123'), false);
-  assertEquals(m.contrasenaValida('SINMINUSCULAS123'), false);
-  assertEquals(m.contrasenaValida('SinNumerosNinguno'), false);
-  assertEquals(m.contrasenaValida('A1a' + 'x'.repeat(70)), false);   // más de 72
+  assertEquals(m.contrasenaValida('fresas'), true);                  // 6, solo minúsculas
+  assertEquals(m.contrasenaValida('123456'), true);
+  assertEquals(m.contrasenaValida('corta'), false);                  // 5
+  assertEquals(m.contrasenaValida(''), false);
+  assertEquals(m.contrasenaValida('x'.repeat(72)), true);
+  assertEquals(m.contrasenaValida('x'.repeat(73)), false);           // más de 72
   assertEquals(m.contrasenaValida(123456789012), false);
 });
 

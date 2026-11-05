@@ -23,9 +23,9 @@ site_url = "http://127.0.0.1:8080"
 # Registro cerrado: las cuentas solo se crean desde la función de alta
 enable_signup = false
 jwt_expiry = 3600
-# Igual que en los proyectos reales: 12 caracteres o más, con minúsculas, mayúsculas y números
-minimum_password_length = 12
-password_requirements = "lower_upper_letters_digits"
+# Igual que en los proyectos reales (decisión de Domingo, 5/11/2026): 6 caracteres o más, sin más reglas
+minimum_password_length = 6
+password_requirements = ""
 enable_refresh_token_rotation = true
 
 # Ojo: no poner [auth.email] enable_signup = false: desactiva el inicio de sesión con correo.
