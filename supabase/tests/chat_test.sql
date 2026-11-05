@@ -3,7 +3,7 @@
 -- =====================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(49);
+select plan(53);
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-0000000000d1', 'domingo@prueba.local'),
@@ -129,6 +129,16 @@ select results_eq($$ select cliente_id::text, sin_leer, espera_desde is not null
   $$ values ('00000000-0000-0000-0000-0000000000ca', 0, false), ('00000000-0000-0000-0000-0000000000cb', 1, false),
             ('00000000-0000-0000-0000-0000000000ce', 1, true) $$,
   'El resumen del equipo: sin leer y quién espera respuesta (Beto ya tiene respuesta de Domingo)');
+select lives_ok($$ insert into public.chat_lecturas (cliente_id, no_leido) values ('00000000-0000-0000-0000-0000000000ca', true)
+  on conflict (user_id, cliente_id) do update set cliente_id = excluded.cliente_id, no_leido = excluded.no_leido $$,
+  'Domingo deja un chat como no leído');
+select results_eq($$ select sin_leer from public.resumen_chats() where cliente_id = '00000000-0000-0000-0000-0000000000ca' $$,
+  $$ values (1) $$, 'Ese chat sale con 1 sin leer');
+select lives_ok($$ insert into public.chat_lecturas (cliente_id, hasta, no_leido) values ('00000000-0000-0000-0000-0000000000ca', now(), false)
+  on conflict (user_id, cliente_id) do update set cliente_id = excluded.cliente_id, hasta = excluded.hasta, no_leido = excluded.no_leido $$,
+  'Al leerlo se quita la marca');
+select results_eq($$ select sin_leer from public.resumen_chats() where cliente_id = '00000000-0000-0000-0000-0000000000ca' $$,
+  $$ values (0) $$, 'Y vuelve a 0');
 reset role;
 
 -- ---------- Fátima (dietista) ----------
