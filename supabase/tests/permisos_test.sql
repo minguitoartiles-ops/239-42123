@@ -41,8 +41,8 @@ insert into public.planes_entreno (cliente_id) values
   ('00000000-0000-0000-0000-0000000000ca'), ('00000000-0000-0000-0000-0000000000cb');
 insert into public.planes_nutricion (cliente_id) values
   ('00000000-0000-0000-0000-0000000000ca'), ('00000000-0000-0000-0000-0000000000cb');
-insert into public.seguimientos (id, cliente_id, datos) values
-  ('00000000-0000-0000-0000-00000000005a', '00000000-0000-0000-0000-0000000000ca', '{"peso": 80}');
+insert into public.seguimientos (id, cliente_id, fecha, datos) values
+  ('00000000-0000-0000-0000-00000000005a', '00000000-0000-0000-0000-0000000000ca', current_date - 14, '{"peso": 80}');
 insert into public.mensajes (id, cliente_id, autor, lado, texto) values
   ('00000000-0000-0000-0000-0000000001a1', '00000000-0000-0000-0000-0000000000ca', '00000000-0000-0000-0000-0000000000d1', 'in',  'Hola A'),
   ('00000000-0000-0000-0000-0000000001b1', '00000000-0000-0000-0000-0000000000cb', '00000000-0000-0000-0000-0000000000b1', 'out', 'Soy B'),
@@ -226,14 +226,14 @@ select is_empty($$ update public.planes_nutricion set pauta = '{"comidas": [1]}'
   'El entrenador no edita planes de nutrición');
 select is_empty($$ update public.salud set datos = '{}' returning 1 $$,
   'El equipo no cambia los datos de salud del cliente');
-select throws_ok($$ update public.seguimientos set datos = '{"peso": 70}'
-                    where id = '00000000-0000-0000-0000-00000000005a' $$, '42501', null,
+select is_empty($$ update public.seguimientos set datos = '{"peso": 70}'
+                    where id = '00000000-0000-0000-0000-00000000005a' returning 1 $$,
   'El equipo no cambia lo que escribió el cliente en su seguimiento');
-select lives_ok($$ update public.seguimientos set revisado = true, nota_equipo = 'Muy bien'
-                   where id = '00000000-0000-0000-0000-00000000005a' $$,
-  'El equipo revisa y comenta un seguimiento');
-select is((select revisado_por from public.seguimientos where id = '00000000-0000-0000-0000-00000000005a'),
-  '00000000-0000-0000-0000-0000000000d1'::uuid, 'Queda registrado quién lo revisó');
+select throws_ok($$ update public.seguimientos set revisado = true, nota_equipo = 'Muy bien'
+                   where id = '00000000-0000-0000-0000-00000000005a' $$, '42501', null,
+  'La revisión única antigua ya no se usa (ahora va por profesional, en seguimiento_equipo)');
+select is((select revisado from public.seguimientos where id = '00000000-0000-0000-0000-00000000005a'),
+  false, 'Y el seguimiento sigue sin la marca antigua');
 select lives_ok($$ insert into public.mensajes (cliente_id, lado, texto)
                    values ('00000000-0000-0000-0000-0000000000cb', 'in', 'Hola B') $$,
   'El equipo escribe en cualquier chat');

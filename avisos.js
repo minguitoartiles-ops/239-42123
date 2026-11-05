@@ -349,7 +349,9 @@ function htmlAjustesAvisos(rol){
   const sis = sistemaActivo(dest);
   h += '<div class="list-row aviso-row"><span class="aviso-l"><span>📲 Avisos del móvil</span><small>' + esc(textoSistema()) + '</small></span>'
     + '<div class="toggle' + (sis ? ' on' : '') + '" role="switch" aria-checked="' + sis + '" onclick="cambiarSistema(this,\'' + dest.replace(/'/g, "\\'") + '\')"><div class="toggle-knob"></div></div></div>';
-  h += '</div><p class="ajx-note">Por ahora los avisos llegan con lo que ocurre en este móvil. Entre móviles distintos se activarán más adelante.</p>';
+  h += '</div><p class="ajx-note">' + ((typeof svActivo === 'function' && svActivo())
+    ? 'Los mensajes, las dudas y los seguimientos te avisan en cualquier aparato mientras tengas la app abierta. Con la app cerrada, los avisos llegarán más adelante.'
+    : 'Por ahora los avisos llegan con lo que ocurre en este móvil. Entre móviles distintos se activarán más adelante.') + '</p>';
   return h;
 }
 function cambiarTipoAviso(el, dest, tipo){
