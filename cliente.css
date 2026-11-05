@@ -655,6 +655,10 @@ html.esc .emoji-panel{max-height:290px;}
 
 /* fotos del chat ampliadas */
 #chatList .bubble img{cursor:zoom-in;}
+/* 5/11 · fotos del chat en miniatura (como en WhatsApp o Telegram): como mucho 260 × 320 px sin recortar;
+   al tocarlas se abren en grande en el visor. Antes ocupaban todo el ancho del mensaje (en el ordenador, enormes) */
+#chatList .bubble.media{width:fit-content;max-width:min(72%, 276px);}
+#chatList .bubble.media > img{width:auto;height:auto;max-width:260px;max-height:320px;object-fit:contain;}
 .cm-visor{position:fixed;inset:0;z-index:var(--z-visor);background:rgba(8,10,13,.92);display:flex;align-items:center;justify-content:center;padding:64px 12px 24px;animation:cmVisorIn var(--dur-m) var(--ease-sal);}
 @keyframes cmVisorIn{from{opacity:0}to{opacity:1}}
 .cm-visor-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:var(--r-ctl);box-shadow:0 20px 60px rgba(0,0,0,.5);}
@@ -1271,7 +1275,9 @@ html.esc #view-chat > .chat-cab ~ .view-top,html.esc #view-chat > .chat-cab ~ .t
 html.esc .esc-chat-col #view-chat > .chat-cab{display:none !important;}
 html.esc .esc-chat-col .mt-cab-txt[data-ficha]{cursor:pointer;border-radius:var(--r-ctl);}
 html.esc .esc-chat-col .mt-cab-txt[data-ficha]:hover b{text-decoration:underline;}
-html.esc #chatList{scrollbar-width:thin;padding-right:6px;}
+/* 5/11 · sin barra de desplazamiento en el chat del ordenador (Domingo: con la barra de la lista, sobraba una segunda); se baja con la rueda, el panel táctil o «↓» */
+html.esc #chatList{scrollbar-width:none;padding-right:2px;}
+html.esc #chatList::-webkit-scrollbar{display:none;}
 .chat-cab-panel{display:none;flex:none;width:40px;height:40px;border:0;background:none;color:var(--dim-6);cursor:pointer;border-radius:50%;align-items:center;justify-content:center;}
 .chat-cab-panel:hover{background:var(--wash-soft);color:var(--ink);}
 html.esc .chat-cab-panel{display:flex;}
