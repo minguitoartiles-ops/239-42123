@@ -1225,3 +1225,30 @@ html:not(.esc) :is(.nh-vaso,.nh-agua-mas,.rir-n,.srf-peso>button)::before{conten
 /* #284 · Seguimiento de la semana ya enviado */
 .segui-aviso.hecho{background:color-mix(in srgb, var(--ok) 10%, transparent);border-color:color-mix(in srgb, var(--ok) 35%, transparent);}
 .segui-aviso.hecho .segui-aviso-main{color:var(--ok-text);}
+
+/* ===== 5/11/2026 · Móvil: el teclado no tapa lo que se escribe en el seguimiento ===== */
+html.con-teclado #view-seguimiento .sg-nav,
+html.con-teclado #view-seguimiento .sg-paso-cab,
+html.con-teclado .tb,
+html.con-teclado .sv-marca{display:none !important;}
+
+/* ===== 5/11/2026 · Móvil: el chat aprovecha la pantalla ===== */
+@media (max-width:700px){
+  html:not(.esc) #view-chat > .view-top{padding-top:4px;align-items:center;}
+  html:not(.esc) #view-chat #chatTitle{font-size:var(--fs-xl) !important;line-height:1.2;}
+  html:not(.esc) #view-chat #chatSub{display:none;}
+  html:not(.esc) #view-chat > .team-row{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:6px 0 2px;padding-bottom:2px;scrollbar-width:none;}
+  html:not(.esc) #view-chat > .team-row::-webkit-scrollbar{display:none;}
+  html:not(.esc) #view-chat > .team-row > *{flex:none;padding:4px 10px;font-size:var(--fs-xs);white-space:nowrap;min-height:0;}
+  html:not(.esc) #view-chat .cm-pin{margin:6px 0 0;padding:4px 6px 4px 10px;gap:8px;}
+  html:not(.esc) #view-chat .cm-pin-t{flex-direction:row;align-items:baseline;gap:6px;}
+  html:not(.esc) #view-chat .cm-pin-t b{flex:none;}
+  html:not(.esc) #view-chat .cm-pin button{width:28px;height:28px;}
+  html:not(.esc) #chatList .bubble{padding:8px 12px;max-width:84%;}
+  html:not(.esc) #chatList .bubble .sender{margin-bottom:2px;}
+  /* tus propios mensajes no necesitan tu inicial al lado */
+  html:not(.esc) #app:not(.coach-view) #chatList .bubble.out .msg-av2,
+  html:not(.esc) #app.coach-view #chatList .bubble.in .msg-av2{display:none;}
+  html:not(.esc) #app:not(.coach-view) #chatList .bubble.out.msg-mio,
+  html:not(.esc) #app.coach-view #chatList .bubble.in.msg-mio{margin-left:0 !important;}
+}

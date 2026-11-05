@@ -158,7 +158,7 @@ function svPlAplicar(k, S){
   const semS = { entR: S.ent && S.ent.semana, nutR: S.nut && S.nut.semana };
   const HS = svPlHuellas(Sp, semL, semS);
   const vacio = { entP: svPlHuella(svPlSanearPauta('ent', {})), nutP: svPlHuella(svPlSanearPauta('nut', {})) };
-  const R = {}, nuevas = [];
+  const R = {}, nuevas = [], conocidas = [];   // conocidas: había una versión anterior en este aparato
   let semana = null;
   SV_PL_PARTES.forEach(function(p){
     const mia = mias.indexOf(p) > -1;
@@ -166,7 +166,7 @@ function svPlAplicar(k, S){
     const pendiente = mia && (d.svBase[p] !== undefined ? H[p] !== base[p]
       : (vacio[p] && HS[p] === vacio[p] && H[p] !== vacio[p]));          // primera vez: solo si el servidor está vacío
     if (pendiente) { R[p] = L[p]; if (p.slice(-1) === 'R') semana = semana || semL; return; }
-    if (HS[p] !== base[p]) nuevas.push(p);
+    if (HS[p] !== base[p]) { nuevas.push(p); if (base[p] !== undefined) conocidas.push(p); }
     R[p] = Sp[p];
     base[p] = HS[p];
     if (p.slice(-1) === 'R' && semS[p] && (!semana || semS[p] > semana)) semana = semS[p];
@@ -182,6 +182,15 @@ function svPlAplicar(k, S){
     if (window.fsdSesionCliente && !coachActivo && nuevas.some(function(p){ return p.slice(-1) === 'P'; }) && svPlYaCargado[k]) {
       try { toast('Tu plan se ha actualizado'); } catch(e){}
     }
+  }
+  /* 5/11 · al cliente le llega el aviso en la campana (también si el cambio llegó con la app cerrada) */
+  if (window.fsdSesionCliente && !coachActivo && k === clienteActual) {
+    ['entP', 'nutP'].forEach(function(p){
+      if (conocidas.indexOf(p) < 0) return;
+      const nut = p === 'nutP';
+      try { crearAviso(claveCliente(k), 'plan', (nut ? 'Tu plan de nutrición' : 'Tu entrenamiento') + ' se ha actualizado',
+        (nut ? 'Fátima' : 'Domingo') + ' ha hecho cambios. Échales un vistazo.', { vista: nut ? 'plan' : 'entreno' }); } catch(e){}
+    });
   }
   svPlYaCargado[k] = true;
   return true;
@@ -316,6 +325,10 @@ if (svActivo()) {
     svPlEscuchar();
   });
   window.addEventListener('fsd:sesion-fuera', function(){ svPlParar(); clearTimeout(svPlTemp); svPlCola = {}; });
+  window.addEventListener('fsd:al-volver', function(){
+    if (!svPlSesion()) return;
+    svPlSubir().then(function(){ return svPlTraer(window.fsdSesionCliente && !coachActivo ? [(clientesData[clienteActual] || {}).sid] : null); });
+  });
   window.addEventListener('online', function(){ if (svPlSesion()) svPlSubir().then(function(){ return svPlTraer(window.fsdSesionCliente && !coachActivo ? [(clientesData[clienteActual] || {}).sid] : null); }); });
   setInterval(function(){
     if (!svPlSesion()) return;

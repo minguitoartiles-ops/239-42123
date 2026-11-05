@@ -561,4 +561,5 @@ if (svActivo()) {
     svChPreparar().then(function(){ svChEscuchar(); svChEnviar(); if (k) svChTraer(k); svChResumen(); }).catch(function(){});
   });
   window.addEventListener('fsd:sesion-fuera', svChParar);
+  window.addEventListener('fsd:al-volver', function(){ if (svChSesion()) svChEnviar().then(svChPonerAlDia); });
 }

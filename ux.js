@@ -1849,3 +1849,37 @@ document.addEventListener('submit', function(e){ setTimeout(function(){ fsdOjoTa
     }).observe(document.body, { childList: true, subtree: true });
   }
 })();
+
+/* =========================================================
+   5/11/2026 · Móvil: con el teclado abierto se esconden el botón fijo del seguimiento y la barra de
+   abajo, y la casilla en la que se escribe se coloca a la vista. Al cerrar el teclado vuelve todo.
+   ========================================================= */
+(function(){
+  const tactil = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if (!tactil) return;
+  const escribe = function(el){ return el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|search|email|number|tel|url|password)$/i.test(el.type || 'text'))); };
+  let t = null;
+  document.addEventListener('focusin', function(e){
+    if (!escribe(e.target) || !e.target.closest('#view-seguimiento')) return;
+    clearTimeout(t);
+    document.documentElement.classList.add('con-teclado');
+    const el = e.target;
+    setTimeout(function(){ try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(_){} }, 300);
+  });
+  document.addEventListener('focusout', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){ if (!escribe(document.activeElement)) document.documentElement.classList.remove('con-teclado'); }, 150);
+  });
+  // si el teclado se cierra con el botón del móvil (sin quitar el foco), también vuelve todo
+  if (window.visualViewport) {
+    let alto = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', function(){
+      const h = window.visualViewport.height;
+      if (h > alto + 120 && document.documentElement.classList.contains('con-teclado')) {
+        document.documentElement.classList.remove('con-teclado');
+        try { document.activeElement && document.activeElement.blur(); } catch(_){}
+      }
+      alto = h;
+    });
+  }
+})();
