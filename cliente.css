@@ -1252,3 +1252,30 @@ html.con-teclado .sv-marca{display:none !important;}
   html:not(.esc) #app:not(.coach-view) #chatList .bubble.out.msg-mio,
   html:not(.esc) #app.coach-view #chatList .bubble.in.msg-mio{margin-left:0 !important;}
 }
+
+/* ===== 5/11/2026 · Chat del cliente en el móvil: cabecera tipo Telegram y sin barra de desplazamiento encima ===== */
+.chat-cab{display:none;}
+@media (max-width:700px){
+  html:not(.esc) #app:not(.coach-view) .chat-cab{display:flex;align-items:center;gap:4px;flex:none;margin:0 -22px;padding:6px 12px 8px 6px;border-bottom:1px solid var(--line);background:var(--bg);}
+  html:not(.esc) #app:not(.coach-view) #view-chat > .view-top,
+  html:not(.esc) #app:not(.coach-view) #view-chat > .team-row{display:none !important;}
+  .chat-cab-volver{flex:none;width:40px;height:40px;border:0;background:none;color:var(--ink);font:400 30px/1 var(--f-body);cursor:pointer;border-radius:50%;}
+  .chat-cab-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;padding:2px 4px;text-align:left;cursor:pointer;color:var(--ink);border-radius:var(--r-ctl);}
+  .chat-cab-av{flex:none;width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--accent-wash);}
+  .chat-cab-t{min-width:0;display:flex;flex-direction:column;}
+  .chat-cab-t b{font:700 var(--fs-m) var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-cab-t small{font:400 var(--fs-xs) var(--f-body);color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  html:not(.esc) #chatList{scrollbar-width:none;padding-right:2px;}
+  html:not(.esc) #chatList::-webkit-scrollbar{display:none;}
+}
+.chat-ficha-top{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 16px;text-align:center;}
+.chat-ficha-top img{width:84px;height:84px;border-radius:50%;margin-bottom:6px;}
+.chat-ficha-top b{font:700 var(--fs-l) var(--f-body);}
+.chat-ficha-top small{font:400 var(--fs-s) var(--f-body);color:var(--dim-55);}
+.chat-ficha-fila{gap:12px;justify-content:flex-start !important;}
+.chat-ficha-av{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent-wash);color:var(--accent-text);font:700 var(--fs-m) var(--f-body);background-size:cover;background-position:center;}
+.chat-ficha-n{display:flex !important;flex-direction:column;align-items:flex-start !important;gap:2px !important;min-width:0;}
+.chat-ficha-n b{font:600 var(--fs-s) var(--f-body);}
+.chat-ficha-n small{font:400 var(--fs-xs) var(--f-body);color:var(--dim-55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70vw;}
+/* la marca «Servidor de pruebas» no tapa el nombre del grupo: en el chat del móvil, arriba a la derecha */
+@media (max-width:700px){ html:not(.esc):has(#view-chat.active) .sv-marca{left:auto;right:8px;transform:none;} }
