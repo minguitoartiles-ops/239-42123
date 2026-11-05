@@ -410,7 +410,7 @@ function svAbrirHojaCliente(modo){
   const canje = modo === 'canje';
   document.getElementById('svCliTit').textContent = canje ? 'Crea tu cuenta' : 'Entrar con tu cuenta';
   document.getElementById('svCliTxt').textContent = canje
-    ? 'Tu código es válido. Elige el correo y la contraseña con los que entrarás a partir de ahora. La contraseña: al menos 12 caracteres, con mayúsculas, minúsculas y números.'
+    ? 'Tu código es válido. Elige el correo y la contraseña con los que entrarás a partir de ahora. La contraseña: al menos 6 caracteres.'
     : 'Escribe el correo y la contraseña de tu cuenta.';
   document.getElementById('svCliPass2Fila').hidden = !canje;
   document.getElementById('svCliPass').setAttribute('autocomplete', canje ? 'new-password' : 'current-password');
@@ -429,8 +429,8 @@ function svCerrarHojaCliente(){
   svCodigoCanje = '';
 }
 function svContrasenaFlojaCli(p){
-  if (p.length < 12) return 'La contraseña tiene que tener al menos 12 caracteres.';
-  if (!/[a-z]/.test(p) || !/[A-Z]/.test(p) || !/[0-9]/.test(p)) return 'La contraseña tiene que llevar mayúsculas, minúsculas y números.';
+  if (p.length < 6) return 'La contraseña tiene que tener al menos 6 caracteres.';
+  if (p.length > 72) return 'La contraseña puede tener como mucho 72 caracteres.';
   return '';
 }
 function svEnviarCliente(){
