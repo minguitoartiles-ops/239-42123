@@ -11,7 +11,9 @@
      lo escribe su móvil; el equipo lo lee.
    · Manda el servidor: los seguimientos hechos en modo servidor antes de este paso no se suben.
      Lo que llega se limpia antes de enseñarlo (nadie cuela código en la pantalla de otro).
-   · Fotos de progreso: llegan en el paso de archivos. Mientras, en modo servidor no se ofrecen.
+   · Fotos de progreso (paso 6): hasta 3 (frente, perfil, espalda). Se reducen en el móvil, se suben a
+     la carpeta privada del cliente y el seguimiento guarda solo su ruta. Las ven el cliente, Domingo
+     y Fátima; se descargan con la sesión de cada uno (en la app, su id es «sv:<ruta>»).
    ========================================================= */
 function svSgSesion(){ return svActivo() && !!window.fsdDatos && (!!coachActivo || !!window.fsdSesionCliente); }
 function svSgCliente(){ return !coachActivo && !!window.fsdSesionCliente; }
@@ -38,8 +40,21 @@ function svSgDatos(r){
   }
   ['cardio', 'pasos'].forEach(function(c){ const v = svSgNum(r[c]); if (v !== undefined) d[c] = v; });
   if (Array.isArray(r.textos)) d.textos = r.textos.slice(0, 12).map(function(t){ return svSgTexto(t, 4000) || ''; });
+  // fotos de progreso: { pos, ruta } (del servidor) o { pos, id: 'sv:<ruta>' } (de la app); las del
+  // móvil aún sin subir no van
+  if (Array.isArray(r.fotos)) {
+    const vistas = {}, f = [];
+    r.fotos.forEach(function(x){
+      if (!x || typeof x !== 'object') return;
+      const ruta = typeof x.ruta === 'string' ? x.ruta : (typeof x.id === 'string' && x.id.indexOf('sv:') === 0 ? x.id.slice(3) : '');
+      if (!SV_SG_POS[x.pos] || vistas[x.pos] || !SV_ARCH_RUTA.test(ruta) || !/\.(jpg|jpeg|png|webp)$/.test(ruta)) return;
+      vistas[x.pos] = 1; f.push({ pos: x.pos, ruta: ruta });
+    });
+    if (f.length) d.fotos = f.slice(0, 3);
+  }
   return d;
 }
+const SV_SG_POS = { frente: 1, perfil: 1, espalda: 1 };
 /* historial: claves y textos acotados, sin < > ni comillas; números finitos */
 const SV_SG_CLAVE = /^[^<>&"'`]{1,120}$/;
 function svSgHist(o, prof){
@@ -65,6 +80,8 @@ function svSgNombres(){
 }
 function svSgDeServidor(row, eq, nombres){
   const r = svSgDatos(row.datos);
+  if (r.fotos) r.fotos = r.fotos.filter(function(f){ return f.ruta.indexOf(String(row.cliente_id).toLowerCase() + '/') === 0; })
+                                .map(function(f){ return { pos: f.pos, id: 'sv:' + f.ruta }; });
   r.sid = row.id;
   r.fecha = svChISO(row.creado) || row.fecha;
   if (row.editado) r.editado = svChISO(row.editado);
@@ -93,7 +110,6 @@ function svSgAplicar(k, rows, eq, hist, hayHist){
     const l = porSid[row.id];
     if (l && l.svSube) return l;                                  // corrección del cliente aún sin subir
     const r = svSgDeServidor(row, eq, nombres);
-    if (l && l.fotos) r.fotos = l.fotos;                          // fotos de este móvil (hasta el paso de archivos)
     if (yo) {
       r.svRevBase = svSgMiaRev(r, yo); r.svVistoBase = svSgMioVisto(r, yo);
       if (l) {                                                    // lo mío aún sin subir se queda
@@ -161,7 +177,12 @@ function svSgSubir(){
   if (svSgCliente()) {
     const k = clienteActual, d = k && clientesData[k];
     if (d && d.sid) {
-      (SEGUIMIENTOS[k] || []).forEach(function(r){ if (r && r.svSube && r.sid) trabajos.push([k, r]); });
+      (SEGUIMIENTOS[k] || []).forEach(function(r){
+        if (!r || !r.svSube || !r.sid) return;
+        // las fotos nuevas se guardan primero en el móvil: se espera a que estén (como mucho 15 s)
+        if (r.svFotosN && (r.fotos || []).length < r.svFotosN && Date.now() - (r.svFotosT || 0) < 15000) { svSgProgramar(1500); return; }
+        trabajos.push([k, r]);
+      });
       const h = d.registro ? svSgHist(d.registro) : null;
       if (h && d.svHistBase !== undefined && svPlHuella(h) !== d.svHistBase) trabajos.push([k, null, h]);
     }
@@ -184,11 +205,13 @@ function svSgSubir(){
       let p;
       if (!r) p = x.seguimientos.guardarHistorial(d.sid, t[2]).then(function(){ d.svHistBase = svPlHuella(t[2]); });
       else if (svSgCliente()) {
-        const op = r.svSube, datos = svSgDatos(r);
-        p = (op === 'enviar'
-          ? x.seguimientos.enviar({ id: r.sid, clienteId: d.sid, fecha: r.svDia || mjISO(new Date(r.fecha)), datos: datos })
-          : x.seguimientos.corregir(r.sid, datos)
-        ).then(function(){ if (r.svSube === op) delete r.svSube; });
+        const op = r.svSube;
+        p = svSgSubirFotos(x, d, r).then(function(){
+          const datos = svSgDatos(r);
+          return op === 'enviar'
+            ? x.seguimientos.enviar({ id: r.sid, clienteId: d.sid, fecha: r.svDia || mjISO(new Date(r.fecha)), datos: datos })
+            : x.seguimientos.corregir(r.sid, datos);
+        }).then(function(){ if (r.svSube === op) { delete r.svSube; delete r.svFotosN; delete r.svFotosT; } });
       } else {
         const yo = svSgYo(), rev = svSgMiaRev(r, yo), visto = svSgMioVisto(r, yo), cambios = {};
         if (rev !== (r.svRevBase || '')) { cambios.revisado = rev || null; cambios.comentario = rev ? r.rev[yo].c : null; }
@@ -216,6 +239,28 @@ function svSgSubir(){
     try { guardarTodo(); } catch(e){}
     if (svSgOtraVez) { svSgOtraVez = false; svSgProgramar(200); }
   });
+}
+/* fotos de progreso aún en el móvil (IndexedDB): se suben y pasan a «sv:<ruta>».
+   Cada una lleva su nombre fijo (svN): si se corta y se reintenta, no se duplica. */
+function svSgSubirFotos(x, d, r){
+  const locales = (r.fotos || []).filter(function(f){ return f && typeof f.id === 'string' && f.id.indexOf('sv:') !== 0; });
+  let cadena = Promise.resolve();
+  locales.forEach(function(f){
+    cadena = cadena.then(function(){
+      return prOp('readonly', function(st){ return st.get(f.id); }).then(function(b){
+        if (!b) { r.fotos = r.fotos.filter(function(y){ return y !== f; }); return; }          // ya no está en el móvil
+        f.svN = f.svN || svChId();
+        return x.archivos.subir('fotos', d.sid, f.svN, b).then(function(ruta){
+          const local = f.id;
+          SV_ARCH[ruta] = URL.createObjectURL(b);
+          f.id = 'sv:' + ruta; delete f.svN;
+          try { guardarTodo(); } catch(e){}
+          prOp('readwrite', function(st){ return st.delete(local); }).catch(function(){});
+        });
+      });
+    });
+  });
+  return cadena;
 }
 let svSgSubirT = null;
 function svSgProgramar(ms){ clearTimeout(svSgSubirT); svSgSubirT = setTimeout(svSgSubir, ms || 1500); }
@@ -251,11 +296,16 @@ function svSgParar(){
    ENGANCHES (solo en modo servidor)
    ========================================================= */
 if (svActivo()) {
-  (function(){
-    const s = document.createElement('style');
-    s.textContent = 'html.fsd-servidor #sgFotos{display:none!important}';
-    document.head.appendChild(s);
-  })();
+  /* las fotos que ya están en el servidor se descargan con la sesión de cada uno */
+  sgFotoSrc = (function(orig){
+    return function(im, id){
+      if (typeof id === 'string' && id.indexOf('sv:') === 0) {
+        svArchTraer(id.slice(3)).then(function(u){ im.src = u; }, function(){ im.alt = 'Foto no disponible'; im.classList.add('sv-arch-no'); });
+        return;
+      }
+      return orig.apply(this, arguments);
+    };
+  })(sgFotoSrc);
 
   /* el cliente envía o corrige su seguimiento */
   guardarSeguimiento = (function(orig){
@@ -263,6 +313,8 @@ if (svActivo()) {
       if (!svSgSesion() || !svSgCliente()) return orig.apply(this, arguments);
       const k = clienteActual, l0 = (SEGUIMIENTOS[k] || [])[0];
       const editando = typeof sgEditando !== 'undefined' && sgEditando, previo = k ? sgDeEstaSemana(k) : null;
+      // cuántas fotos llevará (las nuevas se guardan en el móvil un instante después)
+      const nFotos = Object.keys(Object.assign({}, (typeof sgFotosPrevias !== 'undefined' && sgFotosPrevias) || {}, (typeof sgFotosNuevas !== 'undefined' && sgFotosNuevas) || {})).length;
       const r = orig.apply(this, arguments);
       const n0 = k && (SEGUIMIENTOS[k] || [])[0];
       if (!n0 || n0 === l0) return r;                                       // no se ha guardado nada
@@ -272,6 +324,7 @@ if (svActivo()) {
       } else {
         n0.sid = svChId(); n0.svSube = 'enviar'; n0.svDia = mjISO(new Date());
       }
+      if (nFotos) { n0.svFotosN = nFotos; n0.svFotosT = Date.now(); }
       try { guardarTodo(); } catch(e){}
       svSgProgramar(300);
       return r;

@@ -2,9 +2,10 @@
 // No conoce la pantalla. Quién lee y escribe qué lo deciden las políticas RLS y los triggers
 // del servidor (autor, fecha, límites); aquí solo se pide lo necesario.
 import { ErrorServidor } from './clientes.js';
+import { rutaValida } from './archivos.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const COLUMNAS = 'id, cliente_id, autor, lado, tipo, texto, archivo_ruta, cita_de, eliminado, fecha, reenviado, etiqueta';
+const COLUMNAS = 'id, cliente_id, autor, lado, tipo, texto, archivo_ruta, duracion, cita_de, eliminado, fecha, reenviado, etiqueta';
 const MAX_MENSAJES = 500;              // los últimos de cada chat
 
 function id(x, que) {
@@ -65,13 +66,29 @@ export function crearChat(sb) {
     },
 
     // Enviar. El id lo pone la app: si se reintenta sin conexión, el servidor no lo duplica.
-    async enviar({ id: mid, clienteId, texto, citaDe, reenviado, etiqueta, lado }) {
+    // Foto o nota de voz: primero se sube el archivo (archivos.subir) y aquí va su ruta.
+    async enviar({ id: mid, clienteId, texto, citaDe, reenviado, etiqueta, lado, tipo, archivoRuta, duracion }) {
       id(mid, 'Mensaje'); id(clienteId, 'Chat');
       if (citaDe) id(citaDe, 'Mensaje citado');
-      const t = String(texto || '').trim();
-      if (!t) throw new ErrorServidor('El mensaje está vacío.');
-      if (t.length > 4000) throw new ErrorServidor('El mensaje es demasiado largo (máximo 4000 caracteres).');
-      const fila = { id: mid, cliente_id: clienteId, lado, tipo: 'texto', texto: t };
+      const fila = { id: mid, cliente_id: clienteId, lado, tipo: 'texto' };
+      if (tipo === 'foto' || tipo === 'audio') {
+        if (!rutaValida(tipo === 'foto' ? 'fotos' : 'audios', archivoRuta) || !archivoRuta.startsWith(clienteId.toLowerCase() + '/')) {
+          throw new ErrorServidor('Archivo no válido.');
+        }
+        fila.tipo = tipo; fila.archivo_ruta = archivoRuta;
+        if (tipo === 'audio') {
+          const d = Math.round(Number(duracion));
+          if (!(d >= 1 && d <= 120)) throw new ErrorServidor('La nota de voz dura como mucho 2 minutos.');
+          fila.duracion = d;
+        }
+      } else if (tipo && tipo !== 'texto') {
+        throw new ErrorServidor('Tipo de mensaje no válido.');
+      } else {
+        const t = String(texto || '').trim();
+        if (!t) throw new ErrorServidor('El mensaje está vacío.');
+        if (t.length > 4000) throw new ErrorServidor('El mensaje es demasiado largo (máximo 4000 caracteres).');
+        fila.texto = t;
+      }
       if (citaDe) fila.cita_de = citaDe;
       if (reenviado) fila.reenviado = true;
       if (etiqueta) fila.etiqueta = etiqueta;

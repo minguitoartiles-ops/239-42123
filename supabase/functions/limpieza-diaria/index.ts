@@ -2,7 +2,9 @@
 // ya borró (15 días de baja o 15 días sin acceso por impago).
 // Solo la puede llamar la tarea programada, con su llave propia (secreto LIMPIEZA_TOKEN).
 //
-// POST → { "procesados": n, "fallos": n }
+// Además borra las fotos y notas de voz que ya no usa ningún mensaje ni seguimiento.
+//
+// POST → { "procesados": n, "sinUsar": n, "fallos": n }
 import { cabeceras, clienteServidor, error, llamaLaTarea, responder } from '../_compartido/comun.ts';
 
 const CARPETAS = ['fotos', 'audios', 'documentos'];
@@ -43,5 +45,26 @@ Deno.serve(async (req) => {
       console.error('Limpieza: fallo en un borrado pendiente', p.id);
     }
   }
-  return responder(req, 200, { procesados, fallos });
+  // Fotos y notas de voz que ya no usa nadie (mensaje eliminado, foto de progreso cambiada,
+  // subida que no llegó a enviarse). La base de datos solo las da pasados 2 días.
+  let sinUsar = 0;
+  const { data: sobrantes, error: eSobran } = await servidor.rpc('archivos_sin_usar');
+  if (eSobran) {
+    fallos++;
+    console.error('Limpieza: no se ha podido leer la lista de archivos sin usar');
+  } else {
+    const porCarpeta: Record<string, string[]> = {};
+    for (const a of (sobrantes ?? []) as { carpeta: string; ruta: string }[]) {
+      (porCarpeta[a.carpeta] ??= []).push(a.ruta);
+    }
+    for (const [carpeta, rutas] of Object.entries(porCarpeta)) {
+      for (let i = 0; i < rutas.length; i += 100) {
+        const trozo = rutas.slice(i, i + 100);
+        const { error: eQuitar } = await servidor.storage.from(carpeta).remove(trozo);
+        if (eQuitar) { fallos++; console.error('Limpieza: fallo al borrar archivos sin usar'); }
+        else sinUsar += trozo.length;
+      }
+    }
+  }
+  return responder(req, 200, { procesados, sinUsar, fallos });
 });
