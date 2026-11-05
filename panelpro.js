@@ -1029,12 +1029,12 @@ function pintarChatsPro(){
       + '<span class="avatar chat-fila-av" data-k="' + x.k + '"></span>'
       + '<div class="chat-fila-txt"><div class="chat-fila-top"><b>' + esc(x.d.nombre) + '</b><span class="chat-fila-t">' + cuando + '</span></div>'
       + '<div class="chat-fila-ult">' + (x.ult ? quien + esc(x.ult.txt) : '<i>Sin mensajes todavía</i>') + '</div>'
-      + (x.esp ? '<div class="chat-fila-est">' + (rojo ? '⚠️ Sin contestar · ' + textoEspera(x.h).replace('hace ', '') : 'Esperando tu respuesta') + '</div>' : '')
+      + (x.esp && rojo ? '<div class="chat-fila-est">⚠️ Sin contestar · ' + textoEspera(x.h).replace('hace ', '') + '</div>' : '')
       + '</div>'
       + (x.sinLeer ? '<span class="chat-fila-n">' + x.sinLeer + '</span>' : '')
       + '</div>';
   };
-  if (esperan.length) h += '<div class="alta-label">Esperan tu respuesta</div><div class="chat-filas">' + esperan.map(fila).join('') + '</div>';
+  if (esperan.length) h += '<div class="alta-label">Pendientes</div><div class="chat-filas">' + esperan.map(fila).join('') + '</div>';
   const resto = lista.filter(function(x){ return !x.esp; });
   if (resto.length) h += '<div class="alta-label">' + (esperan.length ? 'Al día' : 'Todos los chats') + '</div><div class="chat-filas">' + resto.map(fila).join('') + '</div>';
   cont.innerHTML = h;

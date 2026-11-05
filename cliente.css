@@ -1346,3 +1346,9 @@ html.esc #app:has(#view-chat.active) > #coachBar{display:none !important;}
 .coach-view #view-chat #chatList .bubble.in.msg-otro .rp-q{background:rgba(0,0,0,.05);border-left-color:currentColor;}
 .coach-view #view-chat #chatList .bubble.in.msg-otro .rp-q b{color:inherit;}
 .coach-view #view-chat #chatList .bubble.in.msg-otro .audio-play{background:var(--accent);color:var(--on-accent);}
+
+/* Menú de clic derecho en la lista de chats («Marcar como no leído») */
+.ch-menu{position:fixed;z-index:9000;min-width:200px;padding:6px;border-radius:var(--r-ctl);background:var(--bg);border:1px solid var(--line);box-shadow:0 8px 28px rgba(0,0,0,.22);opacity:1;}
+.ch-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);padding:10px 12px;min-height:40px;border-radius:calc(var(--r-ctl) - 2px);font:600 var(--fs-m) var(--f-body);cursor:pointer;}
+.ch-menu button:hover,.ch-menu button:focus-visible{background:var(--accent-wash);outline:none;}
+#chatsPro .chat-fila{-webkit-touch-callout:none;}

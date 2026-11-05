@@ -315,6 +315,15 @@ test('Chat desde el servidor', async (t) => {
     assert.equal(r[0].sin_leer, 1);                           // la respuesta de Domingo
   });
 
+  await t.test('Marcar como no leído (solo lo ve quien lo marca)', async () => {
+    const antesD = (await cD.resumen()).find((x) => x.cliente_id === id).sin_leer;
+    await cF.noLeido(id);
+    assert.equal((await cF.resumen()).find((x) => x.cliente_id === id).sin_leer, 1);
+    assert.equal((await cD.resumen()).find((x) => x.cliente_id === id).sin_leer, antesD);   // a Domingo no le cambia
+    await cF.leido(id);
+    assert.equal((await cF.resumen()).find((x) => x.cliente_id === id).sin_leer, 0);
+  });
+
   await t.test('Eliminar: solo el autor', async () => {
     await assert.rejects(cD.vaciar(m1), /propios/);
     await cC.vaciar(m1);

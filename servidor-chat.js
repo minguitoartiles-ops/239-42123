@@ -491,6 +491,19 @@ setInterval(function(){ if (svChSesion() && Object.keys(clientesData).some(funct
    ENGANCHES (solo en modo servidor)
    ========================================================= */
 if (svActivo()) {
+  /* «Marcar como no leído»: se guarda en el servidor (en cada profesional) y sale igual en todos sus aparatos */
+  chMarcarNoLeido = (function(orig){
+    return function(k){
+      const d = clientesData[k];
+      if (!svChSesion() || !d || !d.sid) return orig.apply(this, arguments);
+      if (svChVisible(k)) { toast('Ya tienes este chat abierto'); return; }
+      svCargar().then(function(x){ return x.chat.noLeido(d.sid); }).then(function(){
+        if (svChRes[d.sid]) svChRes[d.sid].sin_leer = Math.max(1, svChRes[d.sid].sin_leer || 0);
+        svChVolcarSinLeer();
+        toast('Marcado como no leído');
+      }).catch(function(e){ try { toast(svMensaje(e, 'No se ha podido marcar como no leído')); } catch(_){} });
+    };
+  })(chMarcarNoLeido);
   (function(){
     const s = document.createElement('style');
     s.textContent = '#chatList .bubble.sv-pend{opacity:.62}#chatList .bubble.sv-pend::after{content:"🕓";font-size:11px;margin-left:6px;vertical-align:-1px}'
