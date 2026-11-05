@@ -1075,3 +1075,57 @@ function clPlegarSesiones(){
   });
 }
 fsdTras('goTo', function(r, n){ if (n === 'entreno') { clPlegarSesiones(); try { exBarraEntreno(); } catch(e){} } });
+
+/* =========================================================
+   5/11/2026 · Chat del cliente en el móvil: cabecera tipo Telegram
+   «Asesoría Nombre Apellidos» · «Fátima, Domingo y tú». Al tocarla se abre la ficha del grupo
+   (miembros, fotos del chat y mensaje fijado). Sustituye al título grande y a la fila de botones.
+   ========================================================= */
+function chCabNombre(){ const d = clienteActual && clientesData[clienteActual]; return 'Asesoría ' + ((d && d.nombre) || ''); }
+function chCabPintar(){
+  const v = document.getElementById('view-chat'); if (!v) return;
+  let c = document.getElementById('chatCab');
+  if (!c) {
+    c = document.createElement('div'); c.id = 'chatCab'; c.className = 'chat-cab';
+    c.innerHTML = '<button type="button" class="chat-cab-volver" onclick="volverAtras()" aria-label="Volver">‹</button>'
+      + '<button type="button" class="chat-cab-info" onclick="chFichaAbrir()" aria-label="Información del grupo">'
+      + '<img class="chat-cab-av" src="assets/logo_fsd.png" alt="">'
+      + '<span class="chat-cab-t"><b></b><small></small></span></button>';
+    v.insertBefore(c, v.firstChild);
+  }
+  c.querySelector('.chat-cab-t b').textContent = chCabNombre();
+  c.querySelector('.chat-cab-t small').textContent = COACHES.map(function(x){ return x.u; }).reverse().join(', ') + ' y tú';
+}
+function chAvatar(nombre, foto){
+  return '<span class="chat-ficha-av' + (foto ? ' con-foto' : '') + '"' + (foto ? ' style="background-image:url(&quot;' + esc(foto) + '&quot;)"' : '') + '>'
+    + (foto ? '' : esc((nombre || '?').trim().charAt(0).toUpperCase())) + '</span>';
+}
+function chFichaAbrir(){
+  const k = clienteActual, d = (k && clientesData[k]) || {};
+  const o = mjHoja('chatFicha'); o.classList.add('chat-ficha');
+  const ROL = { entrenador: 'Entrenador', dietista: 'Dietista-nutricionista' };
+  let fotos = 0; try { fotos = puFotosChat().length; } catch(e){}
+  const fijo = d.chatFijo;
+  let h = '<div class="fsd-sheet"><div class="sheet-head"><h3>Información del grupo</h3><button class="x-btn" onclick="mjCerrarHoja(\'chatFicha\')" aria-label="Cerrar">×</button></div>'
+    + '<div class="chat-ficha-top"><img src="assets/logo_fsd.png" alt=""><b>' + esc(chCabNombre()) + '</b><small>' + (COACHES.length + 1) + ' miembros</small></div>'
+    + '<div class="section-lbl">Miembros</div><div class="list-group">'
+    + '<div class="list-row chat-ficha-fila">' + chAvatar(d.nombre, (function(){ try { return fotoDe('cliente:' + k); } catch(e){ return ''; } })()) + '<span class="chat-ficha-n"><b>' + esc(d.nombre || 'Tú') + '</b><small>Tú</small></span></div>';
+  COACHES.slice().reverse().forEach(function(x){
+    let f = ''; try { f = fotoDe(x.u); } catch(e){}
+    h += '<div class="list-row chat-ficha-fila">' + chAvatar(x.u, f) + '<span class="chat-ficha-n"><b>' + esc(x.u) + '</b><small>' + (ROL[x.rol] || '') + '</small></span></div>';
+  });
+  h += '</div><div class="section-lbl">Contenido del chat</div><div class="list-group">'
+    + '<div class="list-row" onclick="mjCerrarHoja(\'chatFicha\');puGaleria()"><span>🖼️ Fotos</span><span class="ajx-acts">' + (fotos ? '<span class="pill">' + fotos + '</span>' : '') + '<span class="chev">›</span></span></div>';
+  if (fijo) h += '<div class="list-row" onclick="chIrAlFijado()"><span class="chat-ficha-n"><b>📌 Mensaje fijado</b><small>' + esc(fijo.vista || fijo.t || '') + '</small></span><span class="chev">›</span></div>';
+  h += '</div></div>';
+  o.innerHTML = h;
+  o.classList.add('show');
+}
+function chIrAlFijado(){
+  mjCerrarHoja('chatFicha');
+  const p = document.getElementById('cmPin'); if (p) p.click();
+}
+goTo = (function(orig){
+  return function(n){ const r = orig.apply(this, arguments); if (n === 'chat') { try { chCabPintar(); } catch(e){} } return r; };
+})(goTo);
+try { chCabPintar(); } catch(e){}
