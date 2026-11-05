@@ -306,3 +306,49 @@ mtAplicar = (function(orig){
     return r;
   };
 })(mtAplicar);
+
+/* ---------- 5/11 · barra vertical en Entrenamientos / Nutrición (pedida por Domingo) ----------
+   Entre la lista de clientes y lo que se muestra en el centro (resumen del plan). Igual que las otras
+   barras: se arrastra (o ← → con el teclado), doble clic = ancho normal, y el ancho se recuerda para
+   cada profesional en este ordenador. Solo cuando la lista y el resumen están lado a lado. */
+const PL_DIV_KEY = 'fsd_pl_lista';
+function plDivGuardado(){ try { const o = JSON.parse(localStorage.getItem(PL_DIV_KEY) || '{}'); return coachActivo ? o[norm(coachActivo.u)] : null; } catch(e){ return null; } }
+function plDivGuardar(px){ try { const o = JSON.parse(localStorage.getItem(PL_DIV_KEY) || '{}'); if (coachActivo) { if (px) o[norm(coachActivo.u)] = px; else delete o[norm(coachActivo.u)]; } localStorage.setItem(PL_DIV_KEY, JSON.stringify(o)); } catch(e){} }
+function plDivPoner(px, split){
+  const r = document.documentElement.style;
+  if (!px) { r.removeProperty('--pl-lista'); return; }
+  const total = split ? split.getBoundingClientRect().width : 1200;
+  r.setProperty('--pl-lista', Math.round(Math.min(Math.max(260, total - 380), Math.max(260, px))) + 'px');   // al resumen le quedan ≥ 380 px
+}
+function plDivisores(){
+  Array.prototype.forEach.call(document.querySelectorAll('#view-coach-planes .pl-split'), function(split){
+    const izq = split.querySelector(':scope > .pl-izq'), der = split.querySelector(':scope > .pl-der');
+    if (!izq || !der || split.querySelector(':scope > .pl-div')) return;
+    const d = document.createElement('div'); d.className = 'pl-div';
+    d.setAttribute('role', 'separator'); d.setAttribute('aria-orientation', 'vertical'); d.tabIndex = 0;
+    d.title = 'Arrastra para cambiar el ancho de la lista · doble clic: ancho normal';
+    d.setAttribute('aria-label', 'Ancho de la lista de clientes');
+    split.insertBefore(d, der);
+    let x0 = 0, w0 = 0, arr = false;
+    d.addEventListener('pointerdown', function(e){
+      arr = true; x0 = e.clientX; w0 = izq.getBoundingClientRect().width; d.setPointerCapture(e.pointerId);
+      document.documentElement.classList.add('esc-arrastrando'); e.preventDefault();
+    });
+    d.addEventListener('pointermove', function(e){ if (arr) plDivPoner(w0 + e.clientX - x0, split); });
+    const fin = function(){ if (!arr) return; arr = false; document.documentElement.classList.remove('esc-arrastrando'); plDivGuardar(Math.round(izq.getBoundingClientRect().width)); };
+    d.addEventListener('pointerup', fin); d.addEventListener('pointercancel', fin);
+    d.addEventListener('dblclick', function(){ plDivGuardar(null); plDivPoner(null); });
+    d.addEventListener('keydown', function(e){
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); plDivPoner(izq.getBoundingClientRect().width + (e.key === 'ArrowRight' ? 24 : -24), split); plDivGuardar(Math.round(izq.getBoundingClientRect().width));
+    });
+  });
+  const s = document.querySelector('#view-coach-planes .pl-split');
+  if (!document.documentElement.classList.contains('esc-arrastrando')) plDivPoner(plDivGuardado(), s);
+}
+(function(){
+  const v = document.getElementById('view-coach-planes'); if (!v) return;
+  let t = null;
+  new MutationObserver(function(){ clearTimeout(t); t = setTimeout(plDivisores, 0); }).observe(v, { childList: true, subtree: true });
+  plDivisores();
+})();
