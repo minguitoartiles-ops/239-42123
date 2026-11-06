@@ -1377,7 +1377,7 @@ pintarSuscripcionFicha = (function(orig){
       // en baja no tiene sentido registrar pagos ni tocar el acceso
       Array.prototype.forEach.call(grupo.querySelectorAll('.pg-acciones, .pg-nota'), function(x){ x.remove(); });
     } else {
-      r.className = 'list-row'; r.onclick = darDeBaja;
+      r.className = 'list-row'; r.setAttribute('onclick', 'darDeBaja()');      // como atributo: el panel de Pagos copia esta fila y así no pierde el clic
       r.innerHTML = '<span>Dar de baja</span><span class="ajx-acts"><span class="ajx-val">Conserva sus datos</span><span class="chev">›</span></span>';
     }
     grupo.appendChild(r);
