@@ -11,6 +11,7 @@ import { crearSeguimientos } from './seguimientos.js';
 import { crearArchivos } from './archivos.js';
 import { crearPerfiles } from './perfiles.js';
 import { crearPagos } from './pagos.js';
+import { crearFacturas } from './facturas.js';
 
 const entorno = window.FSD_MODO_SERVIDOR;   // lo fija servidor-inicio.js al abrir la app
 const proyecto = PROYECTOS[entorno];
@@ -35,6 +36,7 @@ if (proyecto) {
     archivos: crearArchivos(sb),
     perfiles: crearPerfiles(sb),
     pagos: crearPagos(sb),
+    facturas: crearFacturas(sb),
     sinConexion,
     // ¿El mensaje del error está pensado para enseñarse tal cual?
     esErrorAcceso: (e) => e instanceof ErrorAcceso || e instanceof ErrorServidor,
