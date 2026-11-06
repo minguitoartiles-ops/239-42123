@@ -423,3 +423,48 @@ if (svActivo()) {
     document.head.appendChild(s);
   })();
 }
+
+/* =========================================================
+   Clientes de baja fuera de los paneles de trabajo (pedido por Domingo, 6/11/2026)
+   En cualquier modo. Mientras se pinta un panel de trabajo (Clientes, Seguimientos, Chats,
+   Rutinas, avatares, contadores…), los clientes de baja se apartan un momento de la lista y
+   después vuelven en el mismo orden. Siguen en Pagos (filtro «Bajas») y en su propia ficha.
+   Si mientras tanto se guarda, se guardan también ellos (no se pierde nada).
+   ========================================================= */
+let svSbFuera = null;
+function svSinBajas(fn){
+  return function(){
+    if (svSbFuera || typeof mjEsBaja !== 'function') return fn.apply(this, arguments);
+    const orden = Object.keys(clientesData), fuera = {};
+    const fichaAbierta = typeof pantallaVisible === 'function' && pantallaVisible() === 'view-coach-cliente';
+    orden.forEach(function(k){
+      if (mjEsBaja(clientesData[k]) && !(fichaAbierta && k === clienteActual)) { fuera[k] = clientesData[k]; delete clientesData[k]; }
+    });
+    if (!Object.keys(fuera).length) return fn.apply(this, arguments);
+    svSbFuera = fuera;
+    try { return fn.apply(this, arguments); }
+    finally {
+      svSbFuera = null;
+      const ahora = {};
+      Object.keys(clientesData).forEach(function(k){ ahora[k] = clientesData[k]; delete clientesData[k]; });
+      orden.forEach(function(k){
+        if (Object.prototype.hasOwnProperty.call(ahora, k)) { clientesData[k] = ahora[k]; delete ahora[k]; }
+        else if (Object.prototype.hasOwnProperty.call(fuera, k)) clientesData[k] = fuera[k];
+      });
+      Object.keys(ahora).forEach(function(k){ clientesData[k] = ahora[k]; });      // altas hechas mientras tanto
+    }
+  };
+}
+/* guardar mientras están apartados: se guardan con todos */
+guardarTodo = (function(orig){
+  return function(){
+    const f = svSbFuera; if (!f) return orig.apply(this, arguments);
+    const puestos = Object.keys(f).filter(function(k){ return !clientesData[k]; });
+    puestos.forEach(function(k){ clientesData[k] = f[k]; });
+    try { return orig.apply(this, arguments); } finally { puestos.forEach(function(k){ delete clientesData[k]; }); }
+  };
+})(guardarTodo);
+['actualizarPanel', 'pintarListaClientes', 'pintarSegsResumen', 'datosChats', 'pintarChatsPro', 'pintarBadgeChats',
+ 'totalSinLeer', 'escMarcarElegido', 'clMarcarEnLista', 'exPintarFiltros', 'rutPintarLista', 'pintarAvatares', 'mtAplicar'].forEach(function(n){
+  if (typeof window[n] === 'function') window[n] = svSinBajas(window[n]);
+});
