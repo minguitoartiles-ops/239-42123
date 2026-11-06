@@ -679,3 +679,24 @@ IL_REGLAS3.unshift(
   [/saltos al caj[oó]n|box jump/, 'saltos_cajon']
 );
 ilMatDe = (function(orig){ return function(t){ return /skierg/.test(norm(t || '').toLowerCase()) ? 'polea' : orig(t); }; })(ilMatDe);
+
+/* =========================================================
+   6/11/2026 · Domingo pide quitar por ahora las figuras animadas de los ejercicios.
+   Se queda la indicación técnica corta. Para volver a enseñarlas: IL_FIGURAS = true.
+   ========================================================= */
+const IL_FIGURAS = false;
+if (!IL_FIGURAS) ilPoner = function(it){
+  if (!it || isCoachView()) return;
+  const nombre = enNombreEj(it); if (!nombre) return;
+  let box = it.querySelector(':scope > .il-box');
+  if (box && box.dataset.n === nombre) return;
+  const txt = ilConsejo(ilInfo(nombre));
+  if (!txt) { if (box) box.remove(); return; }
+  if (!box) {
+    box = document.createElement('div'); box.className = 'il-box il-solo-txt';
+    const fila = it.querySelector('.ex-table-row');
+    it.insertBefore(box, fila ? fila.nextSibling : it.firstChild);
+  }
+  box.dataset.n = nombre;
+  box.innerHTML = '<p class="il-txt">' + esc(txt) + '</p>';
+};
