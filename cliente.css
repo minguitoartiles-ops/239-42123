@@ -1352,3 +1352,9 @@ html.esc #app:has(#view-chat.active) > #coachBar{display:none !important;}
 .ch-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);padding:10px 12px;min-height:40px;border-radius:calc(var(--r-ctl) - 2px);font:600 var(--fs-m) var(--f-body);cursor:pointer;}
 .ch-menu button:hover,.ch-menu button:focus-visible{background:var(--accent-wash);outline:none;}
 #chatsPro .chat-fila{-webkit-touch-callout:none;}
+
+/* Entrada única (modo servidor): correo y contraseña; el código, plegado debajo */
+#svEntrar .btn-primary{width:100%;}
+#svTengoCodigo{width:100%;margin-top:12px;}
+#svCodigoCaja{margin-top:16px;}
+#svCodigoCaja .btn-primary{width:100%;}

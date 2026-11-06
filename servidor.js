@@ -377,7 +377,7 @@ if (typeof eliminarCliente === 'function') eliminarCliente = svTodaviaNo(elimina
 
 /* =========================================================
    ACCESO DE CLIENTES
-   Primera vez: su código + crear cuenta (correo y contraseña). Después: «Ya tengo cuenta».
+   Primera vez: su código + crear cuenta (correo y contraseña). Después: la entrada única (correo y contraseña).
    ========================================================= */
 let svPermitirCliente = false;
 let svModoCli = 'cuenta';
@@ -494,7 +494,7 @@ enterApp = (function(orig){
     if (!svActivo() || svPermitirCliente) return orig.apply(this, arguments);
     const err = document.getElementById('loginError');
     const cod = (document.getElementById('accessCode').value || '').trim().toUpperCase();
-    if (!cod) { err.textContent = 'Introduce tu código de acceso, o entra con «Ya tengo cuenta».'; return; }
+    if (!cod) { err.textContent = 'Escribe el código que te ha enviado tu equipo.'; return; }
     if (!/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/.test(cod)) { err.textContent = 'El código tiene 8 letras y números, como ABCD-2345.'; return; }
     // En el ordenador la app del cliente no se usa: sale el aviso de siempre antes de crear nada
     if (typeof escEsOrdenador === 'function' && escEsOrdenador()) return orig.apply(this, arguments);
@@ -513,18 +513,78 @@ cerrarSesionCliente = (function(orig){
   };
 })(cerrarSesionCliente);
 
-/* Botón «Ya tengo cuenta» bajo el código (solo en modo servidor) */
-function svBotonCuenta(){
-  if (!svActivo() || document.getElementById('svYaCuenta')) return;
-  const err = document.getElementById('loginError');
-  if (!err) return;
-  const b = document.createElement('button');
-  b.type = 'button'; b.id = 'svYaCuenta'; b.className = 'btn-eq sv-ya-cuenta';
-  b.textContent = 'Ya tengo cuenta';
-  b.onclick = function(){ svAbrirHojaCliente('cuenta'); };
-  err.parentNode.insertBefore(b, err.nextSibling);
-  const pista = err.parentNode.querySelector('.login-hint');
-  if (pista) pista.textContent = 'La primera vez, escribe el código que te ha enviado tu equipo y crea tu cuenta. Después, entra con «Ya tengo cuenta».';
+/* =========================================================
+   ENTRADA ÚNICA (6/11/2026, pedido por Domingo)
+   Una sola forma de entrar para todos: correo y contraseña. Quién es (Domingo, Fátima o un
+   cliente) lo decide el servidor. Sin botones «Domingo / Fátima» en la portada.
+   La primera vez, el cliente usa el código que le envía su equipo para crear su cuenta.
+   ========================================================= */
+function svPortadaUnica(){
+  if (!svActivo() || document.getElementById('svEntrar')) return;
+  const card = document.querySelector('#view-splash .login-card');
+  const cod = document.getElementById('accessCode'), err = document.getElementById('loginError');
+  if (!card || !cod || !err) return;
+  const codFila = cod.closest('.field'), btnCod = codFila && codFila.nextElementSibling;
+  const pista = card.querySelector('.login-hint');
+  const form = document.createElement('form');
+  form.id = 'svEntrar'; form.noValidate = true;
+  form.innerHTML = '<div class="field"><label for="svEntEmail">Correo</label><input type="email" id="svEntEmail" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email"></div>'
+    + '<div class="field"><label for="svEntPass">Contraseña</label><input type="password" id="svEntPass" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>'
+    + '<button type="submit" class="btn-primary" id="svEntBtn">Entrar</button>';
+  card.insertBefore(form, card.firstChild);
+  form.onsubmit = function(ev){ ev.preventDefault(); svEntrarUnico(); };
+  card.insertBefore(err, form.nextSibling);
+  // la primera vez: el código, plegado
+  const abrir = document.createElement('button');
+  abrir.type = 'button'; abrir.id = 'svTengoCodigo'; abrir.className = 'btn-eq sv-ya-cuenta';
+  abrir.textContent = '¿Primera vez? Tengo un código';
+  const caja = document.createElement('div');
+  caja.id = 'svCodigoCaja'; caja.hidden = true;
+  if (codFila) { caja.appendChild(codFila); const l = codFila.querySelector('label'); if (l) { l.textContent = 'Tu código de acceso'; l.setAttribute('for', 'accessCode'); } }
+  if (btnCod && btnCod.tagName === 'BUTTON') { btnCod.textContent = 'Crear mi cuenta'; caja.appendChild(btnCod); }
+  abrir.onclick = function(){
+    caja.hidden = !caja.hidden;
+    abrir.setAttribute('aria-expanded', caja.hidden ? 'false' : 'true');
+    if (!caja.hidden) setTimeout(function(){ try { cod.focus(); } catch(e){} }, 60);
+  };
+  abrir.setAttribute('aria-expanded', 'false'); abrir.setAttribute('aria-controls', 'svCodigoCaja');
+  card.insertBefore(abrir, err.nextSibling);
+  card.insertBefore(caja, abrir.nextSibling);
+  if (pista) pista.textContent = 'Entra con tu correo y tu contraseña. La primera vez, usa el código que te ha enviado tu equipo para crear tu cuenta.';
+  const pro = document.querySelector('#view-splash .pro-quick'); if (pro) pro.hidden = true;
+}
+function svEntrarUnico(){
+  const err = document.getElementById('loginError'), btn = document.getElementById('svEntBtn');
+  const email = (document.getElementById('svEntEmail').value || '').trim();
+  const pass = document.getElementById('svEntPass').value;
+  if (!email || !pass) { err.textContent = 'Escribe tu correo y tu contraseña.'; return; }
+  if (btn.disabled) return;
+  err.textContent = '';
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  svCargar().then(function(d){
+    return d.auth.entrarTodos(email, pass).then(function(r){
+      if (r.tipo === 'equipo') {
+        const c = COACHES.filter(function(x){ return x.rol === r.rol; })[0];
+        if (!c) { d.auth.salir(); throw new Error('Papel desconocido'); }
+        document.getElementById('svEntPass').value = '';
+        svPermitirEntrada = true;
+        try { entrarComo(c.u); } finally { svPermitirEntrada = false; }
+        try { toast('Has entrado como ' + r.nombre + ' (servidor de pruebas)'); } catch(e){}
+        svEmpezarSincro();
+        return;
+      }
+      return d.clientes.miFicha().then(function(f){
+        if (!f) { d.auth.salir(); throw new Error('sin ficha'); }
+        document.getElementById('svEntPass').value = '';
+        svEntrarCliente(f);
+      });
+    });
+  }).catch(function(e){
+    err.textContent = e && e.message === 'sin ficha'
+      ? 'Tu cuenta no tiene acceso ahora mismo: puede que tu asesoría esté de baja o lleve tiempo sin pagarse. Habla con Domingo o Fátima.'
+      : svMensaje(e);
+    try { document.getElementById('svEntPass').select(); } catch(_){}
+  }).finally(function(){ btn.disabled = false; btn.textContent = 'Entrar'; });
 }
 
 /* El servidor no confirma la sesión del cliente: fuera, y sin ventanas suyas abiertas encima de la portada */
@@ -543,7 +603,7 @@ function svEcharCliente(){
    ========================================================= */
 if (svActivo()) {
   svMarca();
-  svBotonCuenta();
+  svPortadaUnica();
   const restaurado = !!(window.fsdSesionCliente && clienteActual);
   const k0 = clienteActual;
   svCargar().then(function(d){
