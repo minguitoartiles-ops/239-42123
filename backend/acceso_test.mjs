@@ -688,3 +688,84 @@ test('Facturas desde el servidor', async (t) => {
     assert.ok(!(await fC.lista()).some((x) => x.tipo === 'mensual'), 'el cliente no ve la factura de Domingo a Fátima');
   });
 });
+
+// ---------------------------------------------------------------------
+// Consentimientos en el servidor (backend/consentimientos.js)
+// ---------------------------------------------------------------------
+import { crearConsentimientos } from './consentimientos.js';
+
+test('Consentimientos en el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`cdom-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert({ user_id: dom, nombre: 'Domingo', rol: 'entrenador' });
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`cdom-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Rosa ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `rosa-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`rosa-${s}@prueba.local`, CLAVE);
+  const cC = crearConsentimientos(sbC), cD = crearConsentimientos(sbD);
+
+  await t.test('El cliente apunta sus decisiones y el equipo las ve', async () => {
+    await cC.apuntar('salud', true, 'prueba');
+    await cC.apuntar('imagen', true, 'prueba', { progreso: true });
+    await cC.apuntar('salud', false, 'prueba');
+    const suyas = await cC.lista();
+    assert.deepEqual(suyas.map((x) => x.tipo + ':' + x.dado), ['salud:true', 'imagen:true', 'salud:false']);
+    assert.ok(suyas.every((x) => x.cliente_id === alta.id));
+    const delEquipo = await cD.lista(alta.id);
+    assert.equal(delEquipo.length, 3);
+  });
+
+  await t.test('El equipo no apunta por el cliente', async () => {
+    await assert.rejects(cD.apuntar('salud', true, 'prueba'), /permiso|No se ha podido/);
+  });
+});
+
+// ---------------------------------------------------------------------
+// Entrada única: correo y contraseña para todos (auth.entrarTodos)
+// ---------------------------------------------------------------------
+test('Entrada única: el servidor dice quién es cada cuenta', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`edom-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert({ user_id: dom, nombre: 'Domingo', rol: 'entrenador' });
+    if (error) throw error;
+  }
+  const sbD = dispositivo();
+  const yo = await crearAuth(sbD).entrarTodos(`edom-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Toni ${s}`, tarifa: 'mensual', pagado: true });
+  await crearClientes(dispositivo()).canjear(alta.codigo, `toni-${s}@prueba.local`, CLAVE);
+  await crearUsuario(`nadie-${s}@prueba.local`);
+
+  await t.test('Un profesional entra como equipo', () => {
+    assert.equal(yo.tipo, 'equipo');
+    assert.equal(yo.rol, 'entrenador');
+  });
+  await t.test('Un cliente entra como cliente, con su ficha', async () => {
+    const r = await crearAuth(dispositivo()).entrarTodos(`toni-${s}@prueba.local`, CLAVE);
+    assert.equal(r.tipo, 'cliente');
+    assert.equal(r.id, alta.id);
+  });
+  await t.test('Una cuenta sin ficha ni equipo no entra y no se queda con la sesión', async () => {
+    const sb = dispositivo();
+    await assert.rejects(crearAuth(sb).entrarTodos(`nadie-${s}@prueba.local`, CLAVE), /no tiene acceso/);
+    const { data } = await sb.auth.getSession();
+    assert.equal(data.session, null);
+  });
+  await t.test('Contraseña mala: mensaje claro', async () => {
+    await assert.rejects(crearAuth(dispositivo()).entrarTodos(`toni-${s}@prueba.local`, 'Mala-Clave-000'), /Correo o contraseña incorrectos/);
+  });
+});
