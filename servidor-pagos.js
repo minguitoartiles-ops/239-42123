@@ -25,8 +25,15 @@ function svPgFechaBorrado(d){ return d && d.baja && d.baja.fecha ? mjSumarDias(S
 
 /* ---------- del servidor a la app ---------- */
 function svPgAPago(r){
-  return { id: r.id, fecha: r.fecha, importe: r.importe == null ? null : Number(r.importe), desde: r.periodo_desde || null,
-    hasta: r.periodo_hasta || null, metodo: r.metodo, por: svPgNombre(r.registrado_por), nota: r.nota || '' };
+  const p = { id: r.id, fecha: r.fecha, importe: r.importe == null ? null : Number(r.importe), desde: r.periodo_desde || null,
+    hasta: r.periodo_hasta || null, metodo: r.metodo, por: svPgNombre(r.registrado_por), nota: r.nota || '', svFactura: !!r.factura_id };
+  if (r.anulado) p.anulado = { fecha: r.anulado, por: svPgNombre(r.anulado_por), motivo: r.anulado_motivo || '' };
+  return p;
+}
+/* los anulados se guardan aparte: no cuentan para nada (cobrado, facturas…), solo se ven en el historial */
+function svPgRepartir(t, lista){
+  t.pagos = lista.filter(function(p){ return !p.anulado; });
+  t.pagosAnulados = lista.filter(function(p){ return !!p.anulado; });
 }
 function svPgPonerPagos(filas){
   const por = {};
@@ -34,7 +41,27 @@ function svPgPonerPagos(filas){
   Object.keys(clientesData).forEach(function(k){
     const d = clientesData[k]; if (!d || !d.sid) return;
     d.tarifa = d.tarifa || { tipo: 'ninguna', acceso: 'auto' };
-    d.tarifa.pagos = por[d.sid] || [];
+    svPgRepartir(d.tarifa, por[d.sid] || []);
+  });
+}
+/* 3 días antes de que el servidor borre una ficha, aviso en la campana de Domingo y Fátima */
+function svPgAvisosBorrado(){
+  if (!coachActivo) return;
+  const hoy = mjISO(new Date());
+  Object.keys(clientesData).forEach(function(k){
+    const d = clientesData[k]; if (!d || !d.sid) return;
+    const b = d.baja ? null : (typeof pgBorrado === 'function' ? pgBorrado(d) : null);
+    const fecha = d.baja ? svPgFechaBorrado(d) : (b && b.fecha);
+    if (!fecha) return;
+    const dias = mjDias(hoy, fecha);
+    if (dias < 0 || dias > 3) return;
+    if (typeof tocaAvisarUnaVez === 'function' && !tocaAvisarUnaVez('sv-borrado|' + d.sid + '|' + fecha)) return;
+    try {
+      avisarPros('pendientes', d.nombre + ': su ficha se borrará el ' + mjFecha(fecha),
+        d.baja ? 'Está de baja desde el ' + mjFecha(String(d.baja.fecha).slice(0, 10)) + '. Si vuelve, reactívalo antes.'
+               : 'Lleva sin pagar desde el ' + mjFecha(d.tarifa.hasta) + '. Registra el pago o descarga sus datos antes.',
+        { cliente: k, vista: 'ficha' });
+    } catch(e){}
   });
 }
 function svPgPonerDatos(c){
@@ -52,6 +79,7 @@ function svPgRepintar(){
     try { if (v === 'view-coach-cliente') pintarSuscripcionFicha(); } catch(e){}
     try { if (v === 'view-coach-pagos' || document.getElementById('view-coach-pagos').classList.contains('esc-izq')) pintarPagosPro(); } catch(e){}
     try { actualizarPanel(); } catch(e){}
+    try { if (coachActivo && capaVisible('prPagos')) verPagos(); } catch(e){}
     try { if (window.fsdSesionCliente) { mjBannerPago(); if (v === 'view-ajustes' && typeof renderAjustes === 'function') renderAjustes('cliente'); } } catch(e){}
   }, 120);
 }
@@ -67,7 +95,7 @@ function svPgTraerEquipo(){
     ]).then(function(){ return Promise.all([x.pagos.lista(), x.pagos.datos().catch(function(){ return null; })]); });
   }).then(function(r){
     svPgPonerPagos(r[0]); svPgPonerDatos(r[1]);
-    guardarTodo(); svPgRepintar();
+    guardarTodo(); svPgRepintar(); svPgAvisosBorrado();
   }).catch(function(e){
     try { toast(svMensaje(e, 'No se han podido traer los pagos del servidor')); } catch(_){}
   }).finally(function(){ svPgTrayendo = null; });
@@ -86,7 +114,7 @@ function svPgTraerCliente(){
         SV_PG.equipo ? null : x.chat.equipo().then(function(e){ SV_PG.equipo = e; }, function(){}),
       ]).then(function(){ return Promise.all([x.pagos.lista(f.id), x.pagos.datos().catch(function(){ return null; })]); })
         .then(function(r){
-          if (clientesData[k]) clientesData[k].tarifa.pagos = r[0].map(svPgAPago);
+          if (clientesData[k]) svPgRepartir(clientesData[k].tarifa, r[0].map(svPgAPago));
           svPgPonerDatos(r[1]);
           guardarTodo(); svPgRepintar();
         });
@@ -328,6 +356,52 @@ if (svActivo()) {
     };
   })(prEditarDatosPago);
 
+  /* ---------- historial de pagos: con «Anular» (si no tiene factura) y los anulados a la vista ---------- */
+  const SV_PG_METODO = { bizum: 'Bizum', transferencia: 'Transferencia', efectivo: 'Efectivo', otro: 'Otro' };
+  verPagos = function(){
+    const k = clienteActual, d = clientesData[k], t = d && d.tarifa;
+    if (!d) return;
+    const fila = function(p, anulado){
+      const det = [p.hasta ? 'Hasta el ' + mjFecha(p.hasta) : '', SV_PG_METODO[p.metodo] || '', p.por || ''].filter(Boolean).join(' · ');
+      return '<div class="list-row sv-pg-fila' + (anulado ? ' anulado' : '') + '" style="cursor:default"><span><span class="sv-pg-imp">' + mjFecha(p.fecha) + ' · <b>' + mjEuros(p.importe) + '</b></span>'
+        + '<small class="nu-pl-res">' + esc(det) + (anulado ? '<br>Anulado' + (p.anulado.por ? ' por ' + esc(p.anulado.por) : '') + ' el ' + mjFecha(String(p.anulado.fecha).slice(0, 10)) + ': ' + esc(p.anulado.motivo) : '') + '</small></span>'
+        + '<span class="ajx-acts">' + (anulado ? '<span class="pill">Anulado</span>' : (p.svFactura ? '<span class="ajx-val">Facturado</span>'
+          : '<button class="mini-btn" onclick="svPgPedirAnular(\'' + esc(p.id) + '\')">Anular</button>')) + '</span></div>';
+    };
+    const lista = (t && t.pagos || []).slice().reverse(), anul = (t && t.pagosAnulados || []).slice().reverse();
+    const o = mjHoja('prPagos');
+    o.innerHTML = '<div class="fsd-sheet"><div class="sheet-head"><h3>Pagos de ' + esc(d.nombre) + '</h3><button class="x-btn" onclick="mjCerrarHoja(\'prPagos\')" aria-label="Cerrar">×</button></div>'
+      + (lista.length ? '<div class="list-group">' + lista.map(function(p){ return fila(p, false); }).join('') + '</div>' : '<p class="ajx-note">Todavía no hay pagos registrados.</p>')
+      + (anul.length ? '<div class="alta-label">Anulados</div><div class="list-group">' + anul.map(function(p){ return fila(p, true); }).join('') + '</div>' : '')
+      + '<p class="ajx-note">Si apuntaste un pago por error, «Anular» lo deja tachado con el motivo y «pagado hasta» vuelve a como estaba. Un pago con factura no se anula.</p></div>';
+    o.classList.add('show');
+  };
+  window.svPgPedirAnular = function(id){
+    const d = clientesData[clienteActual], p = d && d.tarifa && (d.tarifa.pagos || []).filter(function(x){ return x.id === id; })[0];
+    if (!p) return;
+    const o = mjHoja('svPgAnular');
+    o.innerHTML = '<div class="fsd-sheet dlg"><h3>Anular pago</h3>'
+      + '<p>Pago del ' + mjFecha(p.fecha) + ' de <b>' + mjEuros(p.importe) + '</b>' + (p.hasta ? ' (hasta el ' + mjFecha(p.hasta) + ')' : '') + '. No se borra: queda tachado en el historial con el motivo, y «pagado hasta» vuelve a como estaba antes de este pago.</p>'
+      + '<div class="field"><label for="svPgMot">Motivo</label><input type="text" id="svPgMot" maxlength="200" placeholder="Apuntado dos veces, importe equivocado…"></div>'
+      + '<div class="btn-row"><button class="btn-eq" onclick="mjCerrarHoja(\'svPgAnular\')">Cancelar</button><button class="btn-eq danger" id="svPgAnOk" onclick="svPgAnular(\'' + esc(id) + '\')">Anular pago</button></div></div>';
+    o.classList.add('show');
+    setTimeout(function(){ const i = document.getElementById('svPgMot'); if (i) i.focus(); }, 60);
+  };
+  window.svPgAnular = function(id){
+    const motivo = ((document.getElementById('svPgMot') || {}).value || '').trim();
+    if (!motivo) { toast('Escribe por qué se anula'); return; }
+    if (SV_PG.ocupado) return;
+    const b = document.getElementById('svPgAnOk'); if (b) b.disabled = true;
+    SV_PG.ocupado = true;
+    svCargar().then(function(x){ return x.pagos.anular(id, motivo); }).then(function(){
+      mjCerrarHoja('svPgAnular');
+      toast('Pago anulado');
+      svSincronizar();
+    }).catch(function(e){ toast(svMensaje(e, 'No se ha podido anular el pago')); })
+      .finally(function(){ SV_PG.ocupado = false; if (b) b.disabled = false; });
+  };
+  atrasDentroApp = (function(orig){ return function(){ if (capaVisible('svPgAnular')) { mjCerrarHoja('svPgAnular'); return true; } return orig(); }; })(atrasDentroApp);
+
   /* ---------- facturas: llegan en el paso siguiente ---------- */
   ['prFactura', 'fcFacturarTodos', 'fcCrearDesdeForm', 'prImprimirFactura'].forEach(function(n){
     if (typeof window[n] === 'function') window[n] = function(){ toast('Con el servidor, las facturas llegan en el siguiente paso'); };
@@ -342,7 +416,10 @@ if (svActivo()) {
 if (svActivo()) {
   (function(){
     const s = document.createElement('style');
-    s.textContent = '#svPgMet{margin-bottom:14px}';
+    s.textContent = '#svPgMet{margin-bottom:14px}'
+      + '.sv-pg-fila > span:first-child{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;min-width:0;flex:1}'
+      + '.sv-pg-fila .nu-pl-res{display:block;margin:0}'
+      + '.sv-pg-fila.anulado .sv-pg-imp{text-decoration:line-through;opacity:.6}';
     document.head.appendChild(s);
   })();
 }

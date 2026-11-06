@@ -7,7 +7,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const FECHA = /^\d{4}-\d{2}-\d{2}$/;
 const METODOS = ['bizum', 'transferencia', 'efectivo', 'otro'];
 const TARIFAS = ['mensual', 'trimestral', 'semestral', 'anual', 'ninguna'];
-const COLUMNAS = 'id, cliente_id, fecha, importe, metodo, periodo_desde, periodo_hasta, nota, registrado_por, creado';
+const COLUMNAS = 'id, cliente_id, fecha, importe, metodo, periodo_desde, periodo_hasta, nota, registrado_por, creado, '
+  + 'factura_id, anulado, anulado_por, anulado_motivo';
 
 function errorDe(e, generico) {
   const msg = String((e && e.message) || '');
@@ -50,6 +51,18 @@ export function crearPagos(sb) {
       const { data, error } = await sb.from('pagos').insert(fila).select(COLUMNAS).single();
       if (error) throw errorDe(error, 'No se ha podido registrar el pago.');
       return data;
+    },
+
+    // Equipo: anula un pago apuntado por error (queda a la vista, con motivo; «pagado hasta» vuelve atrás)
+    async anular(pagoId, motivo) {
+      const m = String(motivo || '').trim();
+      if (!m) throw new ErrorServidor('Escribe por qué se anula.');
+      const { error } = await sb.rpc('anular_pago', { p_id: id(pagoId, 'Pago'), p_motivo: m.slice(0, 200) });
+      if (error) {
+        if (/factura/.test(error.message || '')) throw new ErrorServidor('Ese pago ya tiene factura: no se puede anular.');
+        if (/ya está anulado/.test(error.message || '')) throw new ErrorServidor('Ese pago ya estaba anulado.');
+        throw errorDe(error, 'No se ha podido anular el pago.');
+      }
     },
 
     // Equipo: tarifa, precio y «pagado hasta»
