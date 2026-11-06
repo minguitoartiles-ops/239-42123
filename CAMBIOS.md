@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.85 (actual)
-Cambios acumulados hacia la 0.86: **7 de 10**
+Cambios acumulados hacia la 0.86: **8 de 10**
 
 ### Hacia la 0.86
 1. 06/11/2026 · Política de privacidad: Domingo Artiles Bordón y Fátima Toledo Suárez como **corresponsables** (art. 26 RGPD) con un único punto de contacto, y la ficha de un cliente de baja se borra a los 15 días (decisiones de Domingo). Sigue marcada como provisional, pendiente del asesor → **0.85.0-1 (caché)**
@@ -14,6 +14,7 @@ Cambios acumulados hacia la 0.86: **7 de 10**
 5. 06/11/2026 · Supabase · paso 8 · **Facturas desde el servidor** (solo en modo servidor de pruebas; decisiones de Domingo). **Fátima → cliente**: en Pagos → Facturas, «Facturar» hace una factura por pago con el **7 % de IGIC incluido** (80 € = 74,77 + 5,23), siguiendo su numeración. **Domingo → Fátima**: una al mes, solo de meses cerrados, por el **50 % de lo que pagaron los clientes ese mes** (sin los pagos anulados), **exenta de IGIC (franquicia fiscal)** y con **15 % de retención**, siguiendo su numeración desde la 11; antes de crearla se enseña la cuenta. Los números, el IGIC y la retención los calcula el servidor. Datos de facturación (nombre, NIF, domicilio) en el servidor: los veis los dos, cada uno cambia los suyos y nunca van en el código; cada factura guarda una copia de los de entonces. La primera vez, cada uno indica su última factura del año hecha fuera de la app. El cliente ve y descarga sus facturas en Ajustes → «Mis facturas». Las facturas no se cambian ni se borran; desde el historial de pagos se descarga la de cada pago. PDF con el diseño de siempre → **0.85.2-1 (caché)**
 6. 06/11/2026 · Chats de los profesionales: **«Pendientes» son los chats con mensajes sin leer** (o marcados como no leídos) y en cuanto los lees pasan solos a «Al día» (pedido por Domingo). El retraso de +24 h sin contestar se sigue viendo en la fila → **0.85.3**
 7. 06/11/2026 · Entreno del cliente: **se quitan por ahora las figuras animadas** de los ejercicios (pedido por Domingo). Se queda la indicación técnica corta. Para volver a ponerlas, `IL_FIGURAS = true` en ilustraciones.js → **0.85.3-1 (caché)**
+8. 06/11/2026 · Supabase · **consentimientos en el servidor** (solo en modo servidor de pruebas). El consentimiento de datos de salud, el de uso de imagen y el del boletín se apuntan en el servidor como prueba: quién, qué, cuándo, versión de la política, IP y navegador (lo pone el servidor). Es un registro que solo crece: dar y retirar son apuntes distintos y nada se borra desde la app. Si ya lo dio en otro aparato no se le vuelve a preguntar; si no consta, se le pregunta; sin conexión no se da por dado. En la ficha, Domingo y Fátima ven «Consentimiento de salud · Dado el…/Retirado el…» y todo el historial. Política de privacidad: se explica esa constancia (art. 7.1 RGPD). Versión de las políticas 2026-11-06 (se vuelve a preguntar por las cookies) → **0.85.4**
 
 ## Versión 0.84 → 0.85.0
 

@@ -5,8 +5,8 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.85.3';
-const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
+const APP_VERSION = '0.85.4';
+const POLICY_V = '2026-11-06';            // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
 const CONSENT_MESES = 24;               // renovación recomendada por la AEPD
@@ -523,8 +523,8 @@ function legalPrivacidad(){
    · Baja: la ficha se borra a los 15 días (lo hace el servidor); las facturas se conservan.
    · Vídeos de YouTube dentro de la app sin pedir permiso antes (sin fines comerciales).
    Pendiente: firmar el DPA de Supabase (art. 28) al montar el proyecto real; registro de
-   actividades de tratamiento y evaluación de impacto; el consentimiento de salud aún se guarda
-   solo en el móvil del cliente. NIF y domicilio no van en el código (el repositorio es público). */
+   actividades de tratamiento y evaluación de impacto. Los consentimientos (salud, imagen y
+   comercial) se apuntan en el servidor desde el 6/11/2026. NIF y domicilio no van en el código (el repositorio es público). */
 const COTITULAR = { nombre: 'Fátima Toledo Suárez' };
 const LEGAL_PRIVACIDAD =
   '<p class="legal-meta">Última actualización: 6 de noviembre de 2026</p>'
@@ -543,7 +543,8 @@ const LEGAL_PRIVACIDAD =
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
 + '<li><b>Compras de productos propios y merchandising:</b> nombre, dirección de envío, teléfono y datos del pedido.</li>'
 + '<li><b>Pago:</b> fecha, importe y tarifa de cada pago. Se paga por transferencia bancaria o, cuando esté disponible, con Stripe; no guardamos los datos de tu tarjeta.</li>'
-+ '<li><b>Datos técnicos:</b> dirección IP, fecha y hora de cada acceso y tipo de navegador, que el servidor registra por seguridad.</li></ul>'
++ '<li><b>Datos técnicos:</b> dirección IP, fecha y hora de cada acceso y tipo de navegador, que el servidor registra por seguridad.</li>'
++ '<li><b>Constancia de tus consentimientos:</b> cuándo das o retiras cada uno (salud, imagen, boletín), con qué versión de esta política, desde qué dirección IP y navegador. Lo guardamos para poder demostrar que nos lo diste (art. 7.1 RGPD).</li></ul>'
 + '<h4>3. Para qué los usamos</h4>'
 + '<ul><li>Prestarte el asesoramiento de entrenamiento y nutrición: planes, seguimiento y ajustes.</li>'
 + '<li>Guardar tus datos en nuestro servidor para que tú y tu equipo los veáis al momento en cualquier dispositivo.</li>'
