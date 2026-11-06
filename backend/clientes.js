@@ -4,7 +4,7 @@
 
 export class ErrorServidor extends Error {}
 
-const COLUMNAS = 'id, user_id, nombre, objetivo, email, telefono, estado, fecha_alta, acceso_hasta, '
+const COLUMNAS = 'id, user_id, nombre, objetivo, email, telefono, estado, baja, fecha_alta, acceso_hasta, '
   + 'programa_semanas, tarifa, precio, inicio_programa';
 
 // Lo único que la app puede cambiar de una ficha (el resto lo cambian funciones del servidor)
@@ -40,9 +40,9 @@ export function crearClientes(sb) {
   }
 
   return {
-    // Equipo: todas las fichas activas
+    // Equipo: todas las fichas (también las de baja, hasta que el servidor las borra a los 15 días)
     async listar() {
-      const { data, error } = await sb.from('clientes').select(COLUMNAS).eq('estado', 'activo').order('fecha_alta');
+      const { data, error } = await sb.from('clientes').select(COLUMNAS).order('fecha_alta');
       if (error) throw errorDeTabla(error);
       return data;
     },

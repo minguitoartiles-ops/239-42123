@@ -17,7 +17,7 @@
    · el cliente entra la primera vez con su código y crea su cuenta (correo y contraseña);
      después entra con «Ya tengo cuenta»
    · planes: los sincroniza servidor-planes.js (paso 3)
-   · seguimientos, chat, pagos y bajas siguen en el dispositivo: llegan en los siguientes pasos
+   · planes, chat, seguimientos, fotos de perfil, pagos y bajas: en sus propios archivos servidor-*.js
    ========================================================= */
 
 function svEntorno(){ return window.FSD_MODO_SERVIDOR || null; }
@@ -371,10 +371,9 @@ function svTodaviaNo(fn, aviso){
     return fn.apply(this, arguments);
   };
 }
-if (typeof eliminarCliente === 'function') eliminarCliente = svTodaviaNo(eliminarCliente, 'Con el servidor de pruebas, la baja llega en un paso siguiente');
-if (typeof confirmarPago === 'function') confirmarPago = svTodaviaNo(confirmarPago, 'Con el servidor de pruebas, los pagos llegan en un paso siguiente');
-if (typeof guardarTarifa === 'function') guardarTarifa = svTodaviaNo(guardarTarifa, 'Con el servidor de pruebas, cambiar la tarifa llega en un paso siguiente');
-if (typeof cambiarAcceso === 'function') cambiarAcceso = svTodaviaNo(cambiarAcceso, 'Con el servidor de pruebas, el acceso lo decide el servidor según los pagos');
+// Pagos, tarifa, acceso y bajas: los conecta servidor-pagos.js (paso 7). Borrar a mano, nunca:
+// se da de baja y el servidor borra la ficha a los 15 días.
+if (typeof eliminarCliente === 'function') eliminarCliente = svTodaviaNo(eliminarCliente, 'Con el servidor, para quitar a un cliente dale de baja: su ficha se borra sola a los 15 días');
 
 /* =========================================================
    ACCESO DE CLIENTES
@@ -458,7 +457,12 @@ function svEnviarCliente(){
     svCerrarHojaCliente();
     svEntrarCliente(f);
   }).catch(function(e){
-    const msg = svMensaje(e);
+    let msg = svMensaje(e);
+    if (e && e.message === 'sin ficha') {
+      // Entró con su cuenta, pero ahora mismo no tiene acceso (de baja o sin pagar): fuera la sesión
+      msg = 'Tu cuenta no tiene acceso ahora mismo: puede que tu asesoría esté de baja o lleve tiempo sin pagarse. Habla con Domingo o Fátima.';
+      if (window.fsdDatos) fsdDatos.auth.salir();
+    }
     if (canjeado) {
       // La cuenta ya está creada (el código ya no vale): a partir de aquí es «Ya tengo cuenta»
       svAbrirHojaCliente('cuenta');
@@ -528,6 +532,7 @@ function svEcharCliente(){
   if (!window.fsdSesionCliente) return;
   cerrarSesionCliente();
   Array.prototype.forEach.call(document.querySelectorAll('.fsd-overlay.show'), function(o){ o.classList.remove('show'); });
+  try { if (typeof obCerrar === 'function') obCerrar(); } catch(e){}          // la bienvenida, si estaba abierta
   toast('Vuelve a entrar con tu cuenta');
 }
 

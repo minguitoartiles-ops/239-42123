@@ -512,3 +512,88 @@ test('Seguimientos desde el servidor', async (t) => {
     assert.ok(['INSERT', 'UPDATE'].includes(ev));     // el «upsert» puede llegar como cualquiera de los dos
   });
 });
+
+// ---------------------------------------------------------------------
+// Paso 7 · Pagos y bajas desde el servidor (backend/pagos.js)
+// ---------------------------------------------------------------------
+import { crearPagos } from './pagos.js';
+
+test('Pagos y bajas desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`pdom-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert({ user_id: dom, nombre: 'Domingo', rol: 'entrenador' });
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`pdom-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Pepa ${s}`, tarifa: 'mensual', precio: 60, pagado: true });
+  const otra = await crearClientes(sbD).crear({ nombre: `Otra ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `pepa-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`pepa-${s}@prueba.local`, CLAVE);
+  const pD = crearPagos(sbD), pC = crearPagos(sbC);
+  const sumar = (iso, dias) => new Date(Date.parse(iso) + dias * 864e5).toISOString().slice(0, 10);
+  const hasta = sumar(alta.acceso_hasta, 30);
+
+  await t.test('El equipo registra un pago y el servidor amplía el acceso', async () => {
+    const p = await pD.registrar({ clienteId: alta.id, importe: '60', metodo: 'bizum', desde: alta.acceso_hasta, hasta });
+    assert.equal(Number(p.importe), 60);
+    assert.equal(p.registrado_por, dom);
+    const f = await crearClientes(sbC).miFicha();
+    assert.equal(f.acceso_hasta, hasta);
+    await pD.registrar({ clienteId: otra.id, importe: 40, metodo: 'efectivo' });
+  });
+
+  await t.test('Sin importe no se registra; el cliente no puede registrar pagos', async () => {
+    await assert.rejects(pD.registrar({ clienteId: alta.id, importe: '', metodo: 'bizum' }), /importe/);
+    await assert.rejects(pC.registrar({ clienteId: alta.id, importe: 10, metodo: 'bizum' }), /permiso|no es válido/);
+  });
+
+  await t.test('El cliente ve solo sus pagos; el equipo, todos', async () => {
+    const suyos = await pC.lista();
+    assert.deepEqual([...new Set(suyos.map((x) => x.cliente_id))], [alta.id]);
+    const todos = await pD.lista();
+    assert.ok(todos.some((x) => x.cliente_id === otra.id));
+  });
+
+  await t.test('Tarifa, precio y «pagado hasta» los cambia el equipo, no el cliente', async () => {
+    await pD.tarifa(alta.id, { tarifa: 'trimestral', precio: 150, hasta });
+    await pC.tarifa(alta.id, { hasta: '2027-12-31' }).catch(() => {});
+    const { data } = await admin.from('clientes').select('tarifa, precio, acceso_hasta').eq('id', alta.id).single();
+    assert.equal(data.tarifa, 'trimestral');
+    assert.equal(Number(data.precio), 150);
+    assert.equal(data.acceso_hasta, hasta);
+  });
+
+  await t.test('Datos de pago: los guarda el equipo y los ve el cliente', async () => {
+    await pD.guardarDatos({ bizum: ['+34 600 111 222'], iban: 'es12 3456 7890 1234 5678 90', titular: 'Domingo', enlace: 'https://pago.ejemplo.com/x' });
+    const d = await pC.datos();
+    assert.equal(d.enlace, 'https://pago.ejemplo.com/x');
+    assert.equal(d.iban, 'ES12345678901234567890');
+    await assert.rejects(pD.guardarDatos({ enlace: 'http://no.es' }), /https/);
+    await pC.guardarDatos({ enlace: 'https://malo.com' }).catch(() => {});
+    assert.equal((await pD.datos()).enlace, 'https://pago.ejemplo.com/x');
+  });
+
+  await t.test('Baja: el cliente pierde el acceso al momento; no se le registran pagos', async () => {
+    await pD.baja(alta.id, 'Fin del objetivo');
+    assert.equal(await crearClientes(sbC).miFicha(), null);
+    await assert.rejects(pD.registrar({ clienteId: alta.id, importe: 10, metodo: 'bizum' }), /de baja/);
+    const { data } = await admin.from('clientes').select('estado, baja').eq('id', alta.id).single();
+    assert.equal(data.estado, 'baja');
+    assert.equal(data.baja.motivo, 'Fin del objetivo');
+    assert.equal(data.baja.por, dom);
+  });
+
+  await t.test('Reactivar: vuelve con su acceso pagado', async () => {
+    await pD.reactivar(alta.id);
+    const f = await crearClientes(sbC).miFicha();
+    assert.equal(f.estado, 'activo');
+    assert.equal(f.acceso_hasta, hasta);
+  });
+});
