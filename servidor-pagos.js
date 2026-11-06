@@ -26,7 +26,7 @@ function svPgFechaBorrado(d){ return d && d.baja && d.baja.fecha ? mjSumarDias(S
 /* ---------- del servidor a la app ---------- */
 function svPgAPago(r){
   const p = { id: r.id, fecha: r.fecha, importe: r.importe == null ? null : Number(r.importe), desde: r.periodo_desde || null,
-    hasta: r.periodo_hasta || null, metodo: r.metodo, por: svPgNombre(r.registrado_por), nota: r.nota || '', svFactura: !!r.factura_id };
+    hasta: r.periodo_hasta || null, metodo: r.metodo, por: svPgNombre(r.registrado_por), nota: r.nota || '', svFactura: !!r.factura_id, facturaId: r.factura_id || null };
   if (r.anulado) p.anulado = { fecha: r.anulado, por: svPgNombre(r.anulado_por), motivo: r.anulado_motivo || '' };
   return p;
 }
@@ -365,7 +365,7 @@ if (svActivo()) {
       const det = [p.hasta ? 'Hasta el ' + mjFecha(p.hasta) : '', SV_PG_METODO[p.metodo] || '', p.por || ''].filter(Boolean).join(' · ');
       return '<div class="list-row sv-pg-fila' + (anulado ? ' anulado' : '') + '" style="cursor:default"><span><span class="sv-pg-imp">' + mjFecha(p.fecha) + ' · <b>' + mjEuros(p.importe) + '</b></span>'
         + '<small class="nu-pl-res">' + esc(det) + (anulado ? '<br>Anulado' + (p.anulado.por ? ' por ' + esc(p.anulado.por) : '') + ' el ' + mjFecha(String(p.anulado.fecha).slice(0, 10)) + ': ' + esc(p.anulado.motivo) : '') + '</small></span>'
-        + '<span class="ajx-acts">' + (anulado ? '<span class="pill">Anulado</span>' : (p.svFactura ? '<span class="ajx-val">Facturado</span>'
+        + '<span class="ajx-acts">' + (anulado ? '<span class="pill">Anulado</span>' : (p.svFactura ? '<button class="mini-btn" onclick="svFcDescargar(\'' + esc(p.facturaId) + '\')">⬇ Factura</button>'
           : '<button class="mini-btn" onclick="svPgPedirAnular(\'' + esc(p.id) + '\')">Anular</button>')) + '</span></div>';
     };
     const lista = (t && t.pagos || []).slice().reverse(), anul = (t && t.pagosAnulados || []).slice().reverse();

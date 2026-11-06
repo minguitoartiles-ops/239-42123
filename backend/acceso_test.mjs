@@ -611,3 +611,80 @@ test('Pagos y bajas desde el servidor', async (t) => {
     assert.equal(f.acceso_hasta, hasta);
   });
 });
+
+// ---------------------------------------------------------------------
+// Paso 8 · Facturas desde el servidor (backend/facturas.js)
+// ---------------------------------------------------------------------
+import { crearFacturas } from './facturas.js';
+
+test('Facturas desde el servidor', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip } },
+  });
+  const dom = await crearUsuario(`fdom-${s}@prueba.local`);
+  const fat = await crearUsuario(`ffat-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert([
+      { user_id: dom, nombre: 'Domingo', rol: 'entrenador' },
+      { user_id: fat, nombre: 'Fátima', rol: 'dietista' },
+    ]);
+    if (error) throw error;
+  }
+  const sbD = dispositivo(); await crearAuth(sbD).entrar(`fdom-${s}@prueba.local`, CLAVE);
+  const sbF = dispositivo(); await crearAuth(sbF).entrar(`ffat-${s}@prueba.local`, CLAVE);
+  const alta = await crearClientes(sbD).crear({ nombre: `Lola ${s}`, tarifa: 'mensual', pagado: true });
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `lola-${s}@prueba.local`, CLAVE);
+  await crearAuth(sbC).entrarCliente(`lola-${s}@prueba.local`, CLAVE);
+  const fD = crearFacturas(sbD), fF = crearFacturas(sbF), fC = crearFacturas(sbC);
+  const pago = await crearPagos(sbD).registrar({ clienteId: alta.id, importe: 80, metodo: 'bizum' });
+
+  await t.test('Sin datos de facturación no se factura; cada uno guarda los suyos', async () => {
+    await assert.rejects(fF.emitirCliente([pago.id], { nombre: 'Lola' }), /Faltan los datos de facturación/);
+    await assert.rejects(fF.guardarDatosFiscales({ nombre: 'F', nif: 'x', direccion: 'Calle 1, Pueblo' }), /NIF/);
+    await fF.guardarDatosFiscales({ nombre: 'Fátima T', nif: '11.111.111-h', direccion: 'Calle 2, Pueblo' });
+    await fD.guardarDatosFiscales({ nombre: 'Domingo A', nif: '00000000T', direccion: 'Calle 1, Pueblo' });
+    const todos = await fD.datosFiscales();
+    assert.ok(todos.some((x) => x.user_id === fat && x.nif === '11111111H'));
+    assert.deepEqual(await fC.datosFiscales(), [], 'el cliente no ve los datos fiscales');
+  });
+
+  await t.test('Fátima sigue su numeración y factura con el IGIC incluido', async () => {
+    const n = await fF.numeracion();
+    if (n.se_puede_fijar) await fF.fijarNumeracion(25);
+    const codigo = await fF.emitirCliente([pago.id], { nombre: 'Lola', nif: '12345678Z' });
+    assert.match(codigo, /^F-\d{4}-\d{4}$/);
+    const f = (await fF.lista()).find((x) => x.codigo === codigo);
+    assert.equal(Number(f.total), 80);
+    assert.equal(Number(f.datos.base), 74.77);
+    assert.equal(f.datos.emisor.nombre, 'Fátima T');
+    await assert.rejects(fF.emitirCliente([pago.id], { nombre: 'Lola' }), /ya está facturado/);
+  });
+
+  await t.test('El cliente ve su factura; Domingo no factura a clientes', async () => {
+    const suyas = await fC.lista();
+    assert.ok(suyas.length >= 1 && suyas.every((x) => x.cliente_id === alta.id && x.serie === 'F'));
+    await assert.rejects(fD.emitirCliente([pago.id], { nombre: 'X' }), /permiso/);
+  });
+
+  await t.test('Domingo: factura del mes cerrado (50 %, retención 15 %); el mes en curso, no', async () => {
+    const hoy = new Date();
+    const pasado = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth() - 1, 10)).toISOString().slice(0, 10);
+    {
+      const { error } = await admin.from('pagos').insert({ cliente_id: alta.id, importe: 100, metodo: 'bizum', fecha: pasado });
+      if (error) throw error;
+    }
+    await assert.rejects(fD.emitirMensual(hoy.toISOString().slice(0, 7)), /mes ya cerrado/);
+    const codigo = await fD.emitirMensual(pasado.slice(0, 7));
+    const f = (await fD.lista()).find((x) => x.codigo === codigo);
+    assert.equal(f.tipo, 'mensual');
+    assert.equal(f.datos.receptor.nif, '11111111H');
+    assert.equal(Number(f.total), Number((Number(f.datos.base) - Number(f.datos.retencion.cuota)).toFixed(2)));
+    assert.equal(Number(f.datos.retencion.cuota), Number((Number(f.datos.base) * 0.15).toFixed(2)));
+    await assert.rejects(fD.emitirMensual(pasado.slice(0, 7)), /./);
+    assert.ok(!(await fC.lista()).some((x) => x.tipo === 'mensual'), 'el cliente no ve la factura de Domingo a Fátima');
+  });
+});

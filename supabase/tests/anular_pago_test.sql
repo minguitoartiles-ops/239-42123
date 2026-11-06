@@ -14,6 +14,8 @@ insert into public.equipo (user_id, nombre, rol) values
   ('00000000-0000-0000-0000-0000000000f1', 'Fátima', 'dietista');
 insert into public.clientes (id, user_id, nombre, acceso_hasta) values
   ('00000000-0000-0000-0000-0000000000ca', '00000000-0000-0000-0000-0000000000a1', 'A', current_date + 5);
+insert into public.datos_fiscales (user_id, nombre, nif, direccion) values
+  ('00000000-0000-0000-0000-0000000000f1', 'Fátima Prueba', '11111111H', 'Calle Falsa 2, Pueblo');
 
 -- ---------- Domingo apunta dos pagos (el segundo, por error) ----------
 set local request.jwt.claims = '{"sub": "00000000-0000-0000-0000-0000000000d1", "role": "authenticated"}';

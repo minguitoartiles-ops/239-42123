@@ -4,13 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.85 (actual)
-Cambios acumulados hacia la 0.86: **4 de 10**
+Cambios acumulados hacia la 0.86: **5 de 10**
 
 ### Hacia la 0.86
 1. 06/11/2026 · Política de privacidad: Domingo Artiles Bordón y Fátima Toledo Suárez como **corresponsables** (art. 26 RGPD) con un único punto de contacto, y la ficha de un cliente de baja se borra a los 15 días (decisiones de Domingo). Sigue marcada como provisional, pendiente del asesor → **0.85.0-1 (caché)**
 2. 06/11/2026 · Pagos (modo servidor): **«Anular pago»** en el historial de pagos para un pago apuntado por error (pedido por Domingo). Pide el motivo; el pago no se borra: queda tachado con quién, cuándo y por qué, y «pagado hasta» vuelve a como estaba (salvo que después se cambiara a mano). Un pago con factura no se anula ni se puede facturar uno anulado. Aviso en la campana de Domingo y Fátima 3 días antes de que el servidor borre una ficha (baja o impago). Condiciones del servicio: la baja borra el perfil a los 15 días y no se avisa por correo antes (decisión de Domingo) → **0.85.1**
 3. 06/11/2026 · Pagos: **«Dar de baja» ya funciona desde el panel de Pagos** (avisado por Domingo). El panel desplegable copia la ficha del cliente y esa fila perdía el clic; ahora lo lleva escrito en la propia fila → **0.85.1-1 (caché)**
 4. 06/11/2026 · **Los clientes de baja ya no salen en los paneles de trabajo** (pedido por Domingo): Clientes, Seguimientos, Chats, rutinas, contadores, avatares y sin leer. Solo se ven en Pagos (también en el filtro «Bajas») y en su ficha, para poder reactivarlos; al reactivarlos vuelven a todo. No se borra nada: se apartan solo mientras se pinta cada panel. Desde el paso 7 el servidor también manda los de baja y salían en todas partes → **0.85.2**
+5. 06/11/2026 · Supabase · paso 8 · **Facturas desde el servidor** (solo en modo servidor de pruebas; decisiones de Domingo). **Fátima → cliente**: en Pagos → Facturas, «Facturar» hace una factura por pago con el **7 % de IGIC incluido** (80 € = 74,77 + 5,23), siguiendo su numeración. **Domingo → Fátima**: una al mes, solo de meses cerrados, por el **50 % de lo que pagaron los clientes ese mes** (sin los pagos anulados), **exenta de IGIC (franquicia fiscal)** y con **15 % de retención**, siguiendo su numeración desde la 11; antes de crearla se enseña la cuenta. Los números, el IGIC y la retención los calcula el servidor. Datos de facturación (nombre, NIF, domicilio) en el servidor: los veis los dos, cada uno cambia los suyos y nunca van en el código; cada factura guarda una copia de los de entonces. La primera vez, cada uno indica su última factura del año hecha fuera de la app. El cliente ve y descarga sus facturas en Ajustes → «Mis facturas». Las facturas no se cambian ni se borran; desde el historial de pagos se descarga la de cada pago. PDF con el diseño de siempre → **0.85.2-1 (caché)**
 
 ## Versión 0.84 → 0.85.0
 
