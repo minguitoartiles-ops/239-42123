@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.84 (actual)
-Cambios acumulados hacia la 0.85: **9 de 10**
+## Versión 0.85 (actual)
+Cambios acumulados hacia la 0.86: **1 de 10**
+
+### Hacia la 0.86
+1. 06/11/2026 · Política de privacidad: Domingo Artiles Bordón y Fátima Toledo Suárez como **corresponsables** (art. 26 RGPD) con un único punto de contacto, y la ficha de un cliente de baja se borra a los 15 días (decisiones de Domingo). Sigue marcada como provisional, pendiente del asesor → **0.85.0-1 (caché)**
+
+## Versión 0.84 → 0.85.0
 
 ### Hacia la 0.85
 1. 05/11/2026 · Movimiento y respuesta (auditoría de experiencia de uso del 5/11): las ventanas aparecen y se van con suavidad (en el móvil la hoja sube desde abajo; diálogos y ordenador, con una ligera ampliación); las informativas (privacidad, información del grupo, fotos del chat, notificaciones) se cierran tocando fuera y con Esc, los diálogos de confirmación y los formularios no; botones, filtros, tarjetas, filas y cabeceras responden al pulsar (y en el ordenador al pasar el ratón); en el chat el mensaje nuevo entra con suavidad y, mientras se carga una conversación, pone «Cargando la conversación…» en vez de «Aún no hay mensajes». Todo respeta «Reducir movimiento» → **0.84.0-1 (caché)**
@@ -16,6 +21,7 @@ Cambios acumulados hacia la 0.85: **9 de 10**
 7. 05/11/2026 · Chat de los profesionales: se quita el aviso «Esperando tu respuesta» (pedido por Domingo): basta con el aviso de que el cliente ha escrito y el número rojo de mensajes sin leer. La lista de chats solo marca el retraso a partir de 24 h («Sin contestar», en ámbar y en rojo a las 48 h) y la barra sobre el cuadro de escribir solo sale a partir de las 24 h → **0.84.3-1 (caché)**
 8. 05/11/2026 · Chat de los profesionales: clic derecho sobre un chat de la lista (en el móvil, pulsación larga) → **«Marcar como no leído»**, para dejarlo pendiente (pedido por Domingo). Sale con el número rojo (1 como mínimo) hasta que lo abres y lo lees. En modo servidor se guarda en el servidor para cada profesional: sale igual en el móvil y en el ordenador, y el otro profesional no lo ve (cada uno tiene el suyo). Si ya tienes ese chat abierto, avisa en vez de marcarlo → **0.84.4**
 9. 05/11/2026 · Textos legales (privacidad, cookies y la ventana del consentimiento de salud) actualizados para la app con servidor: datos en Supabase, en la UE (Irlanda), cifrados y sin enlaces públicos; proveedores y transferencias fuera de la UE (cláusulas contractuales tipo y Marco de Privacidad UE-EE. UU.); datos técnicos de acceso; borrado automático de archivos sin usar; seguridad y brechas (arts. 33 y 34 RGPD). Se quita Google Fonts (las letras van dentro de la app) y se añade YouTube. Marcados como **provisionales, pendientes de revisión por el asesor de protección de datos** (pedido por Domingo) → **0.84.4-1 (caché)**
+10. 06/11/2026 · Supabase · paso 7 · Pagos y bajas desde el servidor (solo en modo servidor de pruebas). Registrar un pago (importe obligatorio y cómo se pagó: Bizum, transferencia, efectivo u otro) se guarda en el servidor, que amplía solo el «pagado hasta»; lo veis los dos al momento y el cliente también. Tarifa, precio y «pagado hasta» se cambian en el servidor. El acceso lo decide el servidor: hasta «pagado hasta» y 7 días más para pagar (fuera «Denegar / Permitir acceso» a mano y el interruptor de Ajustes). **Baja** (decisión de Domingo, opción B): el cliente pierde el acceso al momento y, si no se reactiva en 15 días, el servidor borra su ficha; las facturas se conservan. Al reactivar vuelve en el margen de pago, para que no lo borre esa noche un impago antiguo. Bizum, transferencia y enlace de pago, en el servidor (solo los ven el equipo y los clientes con acceso). Un cliente sin acceso que intenta entrar recibe un mensaje claro. Los pagos no se cambian ni se borran desde la app; las facturas con el servidor llegan en el paso siguiente → **0.85.0**
 
 ## Versión 0.83 → 0.84.0
 
