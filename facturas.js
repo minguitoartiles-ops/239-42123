@@ -100,7 +100,9 @@ function fcPagina(f){
   // totales
   let yt = y - 76; const xl = 340;
   txt(xl, yt, 'Base imponible', 10); der(D, yt, fcEur(f.base), 10); yt -= 16;
-  txt(xl, yt, f.imp[1], 10); der(D, yt, fcEur(f.cuota), 10); yt -= 10;
+  // impuesto (y, si la hay, retención): f.totales = [[texto, importe o null], …]
+  (f.totales || [[f.imp[1], f.cuota]]).forEach(function(t){ txt(xl, yt, t[0], 10); if (t[1] != null) der(D, yt, fcEur(t[1]), 10); yt -= 16; });
+  yt += 6;
   L.push('0.07 0.08 0.1 RG 1 w ' + xl + ' ' + yt + ' m ' + D + ' ' + yt + ' l S'); yt -= 18;
   txt(xl, yt, 'TOTAL', 12, true); der(D, yt, fcEur(f.total), 12, true);
   // nota y pie
