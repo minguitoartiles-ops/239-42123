@@ -580,6 +580,20 @@ test('Pagos y bajas desde el servidor', async (t) => {
     assert.equal((await pD.datos()).enlace, 'https://pago.ejemplo.com/x');
   });
 
+  await t.test('Anular un pago apuntado por error: «pagado hasta» vuelve atrás y queda constancia', async () => {
+    const antes = (await crearClientes(sbC).miFicha()).acceso_hasta;
+    const p = await pD.registrar({ clienteId: alta.id, importe: 60, metodo: 'bizum', desde: antes, hasta: sumar(antes, 30) });
+    assert.equal((await crearClientes(sbC).miFicha()).acceso_hasta, sumar(antes, 30));
+    await assert.rejects(pD.anular(p.id, ''), /por qué/);
+    await assert.rejects(pC.anular(p.id, 'yo no'), /permiso|No se ha podido/);
+    await pD.anular(p.id, 'Repetido');
+    assert.equal((await crearClientes(sbC).miFicha()).acceso_hasta, antes);
+    const fila = (await pD.lista(alta.id)).find((x) => x.id === p.id);
+    assert.ok(fila.anulado);
+    assert.equal(fila.anulado_motivo, 'Repetido');
+    await assert.rejects(pD.anular(p.id, 'otra'), /ya estaba anulado/);
+  });
+
   await t.test('Baja: el cliente pierde el acceso al momento; no se le registran pagos', async () => {
     await pD.baja(alta.id, 'Fin del objetivo');
     assert.equal(await crearClientes(sbC).miFicha(), null);
