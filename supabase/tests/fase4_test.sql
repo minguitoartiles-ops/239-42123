@@ -4,7 +4,7 @@
 -- =====================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(68);
+select plan(69);
 
 -- ---------------------------------------------------------------------
 -- Datos de prueba
@@ -55,6 +55,13 @@ insert into public.pagos (id, cliente_id, importe, metodo) values
   ('00000000-0000-0000-0000-0000000000f3', '00000000-0000-0000-0000-0000000000cb', 40, 'bizum'),
   ('00000000-0000-0000-0000-0000000000f4', '00000000-0000-0000-0000-0000000000ca', 20, 'transferencia'),
   ('00000000-0000-0000-0000-0000000000f5', '00000000-0000-0000-0000-0000000000c2', 25, 'bizum');
+-- Datos fiscales de Domingo y Fátima, y dos pagos del mes pasado (para la factura mensual)
+insert into public.datos_fiscales (user_id, nombre, nif, direccion) values
+  ('00000000-0000-0000-0000-0000000000d1', 'Domingo Prueba', '00000000T', 'Calle Falsa 1, Pueblo'),
+  ('00000000-0000-0000-0000-0000000000f1', 'Fátima Prueba', '11111111H', 'Calle Falsa 2, Pueblo');
+insert into public.pagos (cliente_id, importe, metodo, fecha) values
+  ('00000000-0000-0000-0000-0000000000cb', 100, 'bizum', (date_trunc('month', current_date) - interval '1 month')::date + 2),
+  ('00000000-0000-0000-0000-0000000000cb', 80, 'bizum', (date_trunc('month', current_date) - interval '1 month')::date + 5);
 -- Una factura del mes pasado y otra del cliente I (que se borrará)
 insert into public.facturas (emisor, serie, anio, numero, tipo, cliente_id, fecha, datos, total) values
   ('00000000-0000-0000-0000-0000000000f1', 'F', 2026, 900, 'cliente', '00000000-0000-0000-0000-0000000000cb',
@@ -134,6 +141,8 @@ select is(public.emitir_factura_cliente(array['00000000-0000-0000-0000-000000000
   'F-' || extract(year from current_date)::int || '-0001', 'Fátima emite la primera factura del año: F-AAAA-0001');
 select results_eq($$ select total from public.facturas where numero = 1 and serie = 'F' $$, $$ values (80.00::numeric(10,2)) $$,
   'El total lo calcula el servidor a partir de los pagos');
+select results_eq($$ select (datos ->> 'base')::numeric, (datos -> 'impuesto' ->> 'cuota')::numeric, datos -> 'emisor' ->> 'nif' from public.facturas where numero = 1 and serie = 'F' $$,
+  $$ values (74.77::numeric, 5.23::numeric, '11111111H'::text) $$, 'IGIC 7 % incluido en el precio, con los datos fiscales de Fátima');
 select is((select datos -> 'receptor' from public.facturas where numero = 1 and serie = 'F'),
   '{"nombre": "Cliente A", "nif": "12345678Z"}'::jsonb, 'Del receptor solo se guardan los campos previstos');
 select results_eq($$ select count(*)::int from public.pagos where factura_id is not null $$, $$ values (2) $$,
@@ -162,8 +171,8 @@ select throws_ok($$ select public.emitir_factura_mensual(current_date, '{"nombre
   '22023', null, 'El mes en curso no se puede facturar todavía');
 select is(public.emitir_factura_mensual((date_trunc('month', current_date) - interval '1 month')::date, '{"nombre": "Fátima", "nif": "X"}'),
   'D-' || extract(year from current_date)::int || '-0001', 'Domingo emite su factura mensual: D-AAAA-0001');
-select results_eq($$ select total from public.facturas where serie = 'D' $$, $$ values (130.00::numeric(10,2)) $$,
-  'La factura mensual suma lo que Fátima facturó ese mes');
+select results_eq($$ select total from public.facturas where serie = 'D' $$, $$ values (76.50::numeric(10,2)) $$,
+  'La factura mensual: 50 % de lo pagado ese mes (180 € → 90 €) menos el 15 % de retención');
 select throws_ok($$ select public.emitir_factura_mensual((date_trunc('month', current_date) - interval '1 month')::date, '{"nombre": "Fátima"}') $$,
   '23505', null, 'Un mes no se factura dos veces');
 reset role;
