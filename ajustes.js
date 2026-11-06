@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.84.4';
+const APP_VERSION = '0.85.0';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -515,20 +515,25 @@ function legalPrivacidad(){
   return LEGAL_PRIVACIDAD.replace('{{TITULAR_FISCAL}}', fiscal);
 }
 /* 5/11/2026 · Textos de privacidad y cookies actualizados para la app con servidor (Supabase, UE).
-   TEXTO PROVISIONAL, PENDIENTE DE REVISIÓN POR EL ASESOR DE PROTECCIÓN DE DATOS. Puntos que debe revisar:
-   · Si Fátima es corresponsable del tratamiento (art. 26 RGPD) y hace falta un acuerdo entre los dos.
-   · Si los datos de nutrición cuentan como historia clínica (dietista-nutricionista, Ley 44/2003 y
-     Ley 41/2002: conservación mínima de 5 años), que chocaría con borrar el perfil por impago.
-   · Firmar el contrato de encargo (DPA) con Supabase (art. 28 RGPD) y revisar su lista de subencargados.
-   · Si el vídeo de YouTube reproducido dentro de la app necesita consentimiento previo.
-   · El consentimiento de salud aún se guarda solo en el móvil del cliente (pendiente de llevarlo al servidor).
-   · Registro de actividades de tratamiento y evaluación de impacto (datos de salud). */
+   TEXTO PROVISIONAL, PENDIENTE DE REVISIÓN POR EL ASESOR DE PROTECCIÓN DE DATOS.
+   Decisiones de Domingo (5/11/2026):
+   · Domingo y Fátima son corresponsables (art. 26 RGPD), con un único punto de contacto.
+     Falta firmar el acuerdo de corresponsabilidad entre los dos.
+   · Los datos de nutrición no se tratan como historia clínica: se mantienen los plazos.
+   · Baja: la ficha se borra a los 15 días (lo hace el servidor); las facturas se conservan.
+   · Vídeos de YouTube dentro de la app sin pedir permiso antes (sin fines comerciales).
+   Pendiente: firmar el DPA de Supabase (art. 28) al montar el proyecto real; registro de
+   actividades de tratamiento y evaluación de impacto; el consentimiento de salud aún se guarda
+   solo en el móvil del cliente. NIF y domicilio no van en el código (el repositorio es público). */
+const COTITULAR = { nombre: 'Fátima Toledo Suárez' };
 const LEGAL_PRIVACIDAD =
-  '<p class="legal-meta">Última actualización: 5 de noviembre de 2026</p>'
+  '<p class="legal-meta">Última actualización: 6 de noviembre de 2026</p>'
 + '<p class="legal-aviso">Texto provisional, pendiente de revisión por un asesor de protección de datos. Describe la app con servidor: tus datos se guardan en servidores de la Unión Europea (Irlanda), cifrados, y puedes verlos desde cualquiera de tus dispositivos.</p>'
-+ '<h4>1. Responsable del tratamiento</h4>'
-+ '<p><b>' + TITULAR.nombre + '</b>, profesional autónomo, {{TITULAR_FISCAL}}. Nombre comercial: ' + TITULAR.marca + '. Contacto: <b>' + TITULAR.correo + '</b>.</p>'
-+ '<p>El servicio lo prestan dos profesionales autónomos: Domingo, entrenador, y Fátima, dietista-nutricionista. Cada uno accede solo a los datos que necesita para su parte del asesoramiento.</p>'
++ '<h4>1. Responsables del tratamiento</h4>'
++ '<p>Tus datos los tratan conjuntamente, como <b>corresponsables</b> (art. 26 RGPD), los dos profesionales autónomos que prestan el servicio con el nombre comercial ' + TITULAR.marca + ':</p>'
++ '<ul><li><b>' + TITULAR.nombre + '</b>, entrenador, {{TITULAR_FISCAL}}.</li>'
++ '<li><b>' + COTITULAR.nombre + '</b>, dietista-nutricionista, cuyos NIF y domicilio se facilitan a petición escribiendo a ' + TITULAR.correo + '.</li></ul>'
++ '<p>Hemos acordado entre los dos cómo cumplimos la ley: los dos vemos tu ficha porque el asesoramiento es conjunto, pero cada uno solo cambia lo de su parte (Domingo, el entrenamiento; Fátima, la nutrición); aplicamos las mismas medidas de seguridad y atendemos juntos tus solicitudes. <b>Punto de contacto único: ' + TITULAR.correo + '</b>. Aun así, puedes ejercer tus derechos frente a cualquiera de los dos. Si nos lo pides, te facilitamos lo esencial de ese acuerdo.</p>'
 + '<h4>2. Qué datos tratamos</h4>'
 + '<ul><li><b>Identificación y contacto:</b> nombre, correo, teléfono y, si la añades, tu foto de perfil.</li>'
 + '<li><b>Tu cuenta:</b> correo, contraseña y código de acceso. La contraseña se guarda cifrada de forma que nadie puede leerla, ni siquiera nosotros.</li>'
@@ -563,7 +568,7 @@ const LEGAL_PRIVACIDAD =
 + '<li>Las fotos y notas de voz <b>no tienen enlaces públicos</b>: solo se descargan con la sesión de quien tiene permiso para verlas. Tú ves lo tuyo; Domingo y Fátima, lo de sus clientes; ningún cliente puede ver los datos de otro.</li>'
 + '<li>En tu dispositivo queda una copia para que la app abra rápido y funcione sin conexión. Las fotos y notas de voz del chat solo se guardan en la memoria mientras la app está abierta.</li></ul>'
 + '<h4>6. Cuánto tiempo los guardamos</h4>'
-+ '<p>Mientras tu asesoría esté activa. <b>Si no pagas</b>: tras el periodo de gracia de 7 días pierdes el acceso y guardamos tus datos 15 días más; si sigues sin pagar, borramos tu perfil (plan, seguimientos, conversación y fotos). <b>Si te das de baja</b>, dejas de tener acceso y tu ficha se conserva sin acceso para poder reactivarla si vuelves; puedes pedirnos que la borremos cuando quieras. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
++ '<p>Mientras tu asesoría esté activa. <b>Si no pagas</b>: tras el periodo de gracia de 7 días pierdes el acceso y guardamos tus datos 15 días más; si sigues sin pagar, borramos tu perfil (plan, seguimientos, conversación y fotos). <b>Si te das de baja</b>, dejas de tener acceso al momento y, si no vuelves en 15 días, borramos tu perfil (plan, seguimientos, conversación y fotos); puedes pedirnos que lo borremos antes. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
 + '<p>Las fotos y notas de voz que ya no se usan (por ejemplo, una foto de perfil que cambias) se borran del servidor automáticamente en pocos días. Los registros técnicos de acceso se conservan solo el tiempo necesario por seguridad.</p>'
 + '<h4>7. Con quién los compartimos</h4>'
 + '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta (encargados del tratamiento, art. 28 RGPD), que solo pueden usarlos para darnos su servicio:</p>'
