@@ -1002,6 +1002,7 @@ function datosChats(){
     const esp = esperaDesde(k), ult = ultimoTextoChat(k);
     return { k: k, d: clientesData[k], esp: esp, h: esp ? horasDesde(esp) : 0, ult: ult, sinLeer: msgsSinLeer(k) };
   }).sort(function(a, b){
+    if (!!a.sinLeer !== !!b.sinLeer) return a.sinLeer ? -1 : 1;     // 6/11 · arriba, los que tienen algo sin leer
     if (!!a.esp !== !!b.esp) return a.esp ? -1 : 1;
     if (a.esp) return a.esp < b.esp ? -1 : 1;                       // el que más tiempo lleva esperando, arriba
     const ta = a.ult && a.ult.t || '', tb = b.ult && b.ult.t || '';
@@ -1034,9 +1035,12 @@ function pintarChatsPro(){
       + (x.sinLeer ? '<span class="chat-fila-n">' + x.sinLeer + '</span>' : '')
       + '</div>';
   };
-  if (esperan.length) h += '<div class="alta-label">Pendientes</div><div class="chat-filas">' + esperan.map(fila).join('') + '</div>';
-  const resto = lista.filter(function(x){ return !x.esp; });
-  if (resto.length) h += '<div class="alta-label">' + (esperan.length ? 'Al día' : 'Todos los chats') + '</div><div class="chat-filas">' + resto.map(fila).join('') + '</div>';
+  /* 6/11 · «Pendientes» = con mensajes sin leer (o marcados como no leídos); lo leído pasa solo a «Al día».
+     El retraso de +24 h sin contestar se sigue viendo en la fila, esté donde esté. */
+  const pendientes = lista.filter(function(x){ return x.sinLeer > 0; });
+  if (pendientes.length) h += '<div class="alta-label">Pendientes</div><div class="chat-filas">' + pendientes.map(fila).join('') + '</div>';
+  const resto = lista.filter(function(x){ return !(x.sinLeer > 0); });
+  if (resto.length) h += '<div class="alta-label">' + (pendientes.length ? 'Al día' : 'Todos los chats') + '</div><div class="chat-filas">' + resto.map(fila).join('') + '</div>';
   cont.innerHTML = h;
   Array.prototype.forEach.call(cont.querySelectorAll('.chat-fila-av'), function(av){
     const k = av.getAttribute('data-k'), url = fotoDe('cliente:' + k);
