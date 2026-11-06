@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.85 (actual)
-Cambios acumulados hacia la 0.86: **8 de 10**
+Cambios acumulados hacia la 0.86: **9 de 10**
 
 ### Hacia la 0.86
 1. 06/11/2026 · Política de privacidad: Domingo Artiles Bordón y Fátima Toledo Suárez como **corresponsables** (art. 26 RGPD) con un único punto de contacto, y la ficha de un cliente de baja se borra a los 15 días (decisiones de Domingo). Sigue marcada como provisional, pendiente del asesor → **0.85.0-1 (caché)**
@@ -15,6 +15,7 @@ Cambios acumulados hacia la 0.86: **8 de 10**
 6. 06/11/2026 · Chats de los profesionales: **«Pendientes» son los chats con mensajes sin leer** (o marcados como no leídos) y en cuanto los lees pasan solos a «Al día» (pedido por Domingo). El retraso de +24 h sin contestar se sigue viendo en la fila → **0.85.3**
 7. 06/11/2026 · Entreno del cliente: **se quitan por ahora las figuras animadas** de los ejercicios (pedido por Domingo). Se queda la indicación técnica corta. Para volver a ponerlas, `IL_FIGURAS = true` en ilustraciones.js → **0.85.3-1 (caché)**
 8. 06/11/2026 · Supabase · **consentimientos en el servidor** (solo en modo servidor de pruebas). El consentimiento de datos de salud, el de uso de imagen y el del boletín se apuntan en el servidor como prueba: quién, qué, cuándo, versión de la política, IP y navegador (lo pone el servidor). Es un registro que solo crece: dar y retirar son apuntes distintos y nada se borra desde la app. Si ya lo dio en otro aparato no se le vuelve a preguntar; si no consta, se le pregunta; sin conexión no se da por dado. En la ficha, Domingo y Fátima ven «Consentimiento de salud · Dado el…/Retirado el…» y todo el historial. Política de privacidad: se explica esa constancia (art. 7.1 RGPD). Versión de las políticas 2026-11-06 (se vuelve a preguntar por las cookies) → **0.85.4**
+9. 06/11/2026 · Supabase · **una sola entrada a la app** (solo en modo servidor de pruebas; pedido por Domingo). En la portada ya no están los botones «Domingo / Fátima»: todos entran con correo y contraseña y el servidor decide si es Domingo, Fátima o un cliente. La primera vez, el cliente pulsa «¿Primera vez? Tengo un código», escribe su código y crea su cuenta. Una cuenta sin ficha con acceso no se queda con la sesión → **0.85.4-1 (caché)**
 
 ## Versión 0.84 → 0.85.0
 

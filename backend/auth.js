@@ -66,6 +66,26 @@ export function crearAuth(sb) {
       return { id: ficha.id, nombre: ficha.nombre };
     },
 
+    // Entrada única (6/11/2026): correo y contraseña → { tipo: 'equipo', nombre, rol } o { tipo: 'cliente', id, nombre }.
+    // Quién es lo decide el servidor. Si la cuenta no es del equipo ni tiene ficha con acceso, no se queda la sesión.
+    async entrarTodos(email, password) {
+      const correo = String(email || '').trim().toLowerCase();
+      if (!correo || !password) throw new ErrorAcceso('Escribe tu correo y tu contraseña.');
+      const { data, error } = await sb.auth.signInWithPassword({ email: correo, password });
+      if (error || !data?.user) throw new ErrorAcceso(mensajeDe(error));
+      let papel;
+      try { papel = await miPapel(data.user.id); } catch (e) { await sb.auth.signOut({ scope: 'local' }); throw e; }
+      if (papel) return { tipo: 'equipo', nombre: papel.nombre, rol: papel.rol, email: data.user.email };
+      const { data: ficha, error: e } = await sb.from('clientes').select('id, nombre')
+        .eq('user_id', data.user.id).maybeSingle();
+      if (e || !ficha) {
+        await sb.auth.signOut({ scope: 'local' });
+        throw new ErrorAcceso(e ? 'No se ha podido comprobar tu cuenta. Inténtalo de nuevo.'
+          : 'Tu cuenta no tiene acceso ahora mismo: puede que tu asesoría esté de baja o lleve tiempo sin pagarse. Habla con Domingo o Fátima.');
+      }
+      return { tipo: 'cliente', id: ficha.id, nombre: ficha.nombre };
+    },
+
     // Cierra la sesión en este dispositivo (y borra el token guardado)
     async salir() {
       try { await sb.auth.signOut({ scope: 'local' }); } catch { /* sin conexión: se borra igualmente en local */ }
