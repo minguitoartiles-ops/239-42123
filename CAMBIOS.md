@@ -4,10 +4,13 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.87 (actual)
-Cambios acumulados hacia la 0.88: **1 de 10**
+Cambios acumulados hacia la 0.88: **4 de 10**
 
 ### Hacia la 0.88
 1. 08/11/2026 · Chats: **al entrar en una conversación baja sola hasta el último mensaje** (avisado por Domingo: muchas veces se quedaba a mitad). Antes saltaba al primer mensaje sin leer y, con las fotos o los mensajes del servidor llegando después, se quedaba en medio. Ahora se mantiene abajo mientras termina de cargar y deja de hacerlo en cuanto tocas o desplazas la conversación. El separador «N mensajes nuevos» sigue en su sitio, más arriba → **0.87.0-1 (caché)**
+2. 08/11/2026 · Seguimientos de un cliente (profesionales): **cada semana se pliega y se despliega tocando su título** (pedido por Domingo). Al abrir, la más reciente sale desplegada y las demás plegadas, con su peso a la vista; lo que abres o cierras se recuerda mientras la app está abierta → **0.87.1**
+3. 08/11/2026 · Móvil: **tocar un título o un botón ya no selecciona el texto** (avisado por Domingo: en Android salía la barra negra del buscador del sistema al tocar el nombre en la cabecera del chat). Lo que escribes y los mensajes se pueden seguir copiando como siempre → **0.87.1-1 (caché)**
+4. 08/11/2026 · Chat en el **móvil de Domingo y Fátima como en el ordenador y en Telegram** (pedido por Domingo): cabecera «Asesoría Nombre Apellidos» · «Verónica, Fátima y tú» con «‹» para volver. Al tocarla se abre **«Información del grupo»** con Ficha del cliente, Plan, Seguimientos, fotos, notas de voz, enlaces y miembros. Fuera la fila de botones de arriba (Ficha · Plan · Segs.), que pasa a estar dentro. En el ordenador y en el móvil del cliente no cambia nada → **0.87.2**
 
 ## Versión 0.86 → 0.87.0
 
