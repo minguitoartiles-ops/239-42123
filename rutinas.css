@@ -93,7 +93,7 @@ html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-co
 .srf-n-t{display:flex;align-items:baseline;gap:4px;white-space:nowrap;font:700 var(--fs-s) var(--f-mono);}
 .srf-n-t b{font-size:var(--fs-m);}
 .srf-n small{flex-basis:100%;}
-@media (max-width:380px){
+@media (max-width:480px){
   .srf .srf-n{min-width:44px;padding:0 4px;}
   .srf-n-t{flex-direction:column;align-items:center;gap:0;line-height:1.05;}
   .srf-n-t span{font-size:var(--fs-xs);letter-spacing:.02em;}

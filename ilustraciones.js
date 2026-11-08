@@ -205,6 +205,9 @@ function ilConsejo(info){
   return f.length > 140 ? f.slice(0, 137).replace(/\s+\S*$/, '') + '…' : f;
 }
 /* ---------- en el entreno del cliente ---------- */
+/* 6/11/2026 · Por ahora sin las figuras animadas (pedido por Domingo): solo queda la indicación técnica
+   corta. Para volver a enseñarlas, poner true. */
+const IL_FIGURAS = false;
 function ilPoner(it){
   if (!it || isCoachView()) return;
   const nombre = enNombreEj(it); if (!nombre) return;
@@ -222,6 +225,11 @@ function ilPoner(it){
   }
   box.dataset.n = nombre;
   const txt = ilConsejo(info);
+  if (!IL_FIGURAS) {
+    if (txt) { box.className = 'il-box il-solo-txt'; box.innerHTML = '<p class="il-txt">' + esc(txt) + '</p>'; }
+    else box.remove();
+    return;
+  }
   box.innerHTML = '<button type="button" class="il-fig" aria-label="Ver el movimiento de ' + esc(nombre) + ' más grande" onclick="ilAmpliar(this)">' + ilSvg(pat, mat, ilQuieto()) + '</button>'
     + (txt ? '<p class="il-txt">' + esc(txt) + '</p>' : '<p class="il-txt il-txt-suave">Fíjate en el dibujo: así es el movimiento. Si tienes dudas, pregunta por el chat.</p>');
 }

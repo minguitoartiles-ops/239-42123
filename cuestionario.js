@@ -98,6 +98,7 @@ const CQ_PASOS = [
   { id: 'ti', e: '🙋', t: 'Sobre ti', intro: 'Sé sincero/a: no estamos aquí para juzgarte. Recuerda que la dieta y el entreno se adaptan a tu vida, no tú a ellos.', c: [
     { id: 'nombre', l: 'Nombre y apellidos (para la factura)', req: 1 },
     { id: 'dni', l: 'DNI o NIE (para la factura)', tipo: 'dni', req: 1, ph: '12345678Z' },
+    { id: 'telefono', l: 'Teléfono', tipo: 'tel', req: 1, ph: '+34 600 000 000', nota: 'Por si tenemos que contactarte.' },
     { id: 'direccion', l: 'Dirección (opcional, para la factura)', ph: 'Calle, número, CP y municipio' },
     { id: 'edad', l: 'Edad', tipo: 'num', req: 1, min: 18, max: 99, u: 'años' },
     { id: 'sexo', l: 'Sexo', tipo: 'chips', opts: ['Mujer', 'Hombre', 'Prefiero no decirlo'] },
@@ -188,7 +189,7 @@ function cqCampoHtml(c){
   else if (c.tipo === 'escala') h += '<div class="cq-escala" role="radiogroup">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function(n){ return '<button type="button" class="' + (+v === n ? 'on' : '') + '" role="radio" aria-checked="' + (+v === n) + '" data-v="' + n + '">' + n + '</button>'; }).join('') + '</div><span id="' + id + '" hidden></span>';
   else {
     const num = c.tipo === 'num';
-    h += '<div class="cq-in' + (c.u ? ' con-u' : '') + '"><input id="' + id + '" type="text" ' + (num ? 'inputmode="decimal"' : (c.tipo === 'dni' ? 'autocapitalize="characters" autocomplete="off" spellcheck="false"' : '')) + ' value="' + esc(v == null ? '' : v) + '" placeholder="' + esc(c.ph || '') + '">' + (c.u ? '<span class="cq-u">' + c.u + '</span>' : '') + '</div>';
+    h += '<div class="cq-in' + (c.u ? ' con-u' : '') + '"><input id="' + id + '" type="text" ' + (num ? 'inputmode="decimal"' : (c.tipo === 'dni' ? 'autocapitalize="characters" autocomplete="off" spellcheck="false"' : (c.tipo === 'tel' ? 'inputmode="tel" autocomplete="tel"' : ''))) + ' value="' + esc(v == null ? '' : v) + '" placeholder="' + esc(c.ph || '') + '">' + (c.u ? '<span class="cq-u">' + c.u + '</span>' : '') + '</div>';
   }
   return h + (c.nota ? '<small class="cq-nota">' + esc(c.nota) + '</small>' : '') + '<small class="cq-err" hidden></small></div>';
 }
@@ -255,6 +256,7 @@ function cqValidar(){
     if (c.req && vacio) { mal(c.id, 'Este dato es necesario.'); return; }
     if (vacio) return;
     if (c.tipo === 'num') { const n = mjNum(v); if (n == null || isNaN(n) || (c.min != null && n < c.min) || (c.max != null && n > c.max)) mal(c.id, 'Revisa el número' + (c.min != null ? ' (entre ' + c.min + ' y ' + c.max + (c.u ? ' ' + c.u : '') + ')' : '') + '.'); }
+    if (c.tipo === 'tel') { const t = String(v).replace(/[^0-9+]/g, ''); if (!/^\+?[0-9]{9,15}$/.test(t)) mal(c.id, 'Revisa el teléfono (9 a 15 cifras; con prefijo si no es de España).'); else cqR[c.id] = t; }
     if (c.tipo === 'dni') { const rv = cqDniRevisar(v); if (rv.err) mal(c.id, rv.err); else { cqR[c.id] = rv.ok; const inp = document.getElementById('cq_dni'); if (inp) inp.value = rv.ok; } }
   });
   if (p.especial === 'alergias') { const a = alergiasDe(clienteActual); if (!(a && a.fecha)) mal('alergias', 'Marca tus alergias o indica que no tienes ninguna.'); }
