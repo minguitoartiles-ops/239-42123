@@ -77,6 +77,7 @@ const SHELL = [
   './capas.js',
   './multitarea.js',
   './ilustraciones.js',
+  './figuras.js',
   './modelo.js',
   './datos.js',
   './servidor-inicio.js',

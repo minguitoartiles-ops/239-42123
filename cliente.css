@@ -1198,6 +1198,7 @@ html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
 .il-fondo{stroke:var(--line-strong);stroke-width:1.6;stroke-linecap:round;fill:none;}
 #app.coach-view .il-box{display:none;}
 .il-mueble.il-sin{fill:none;}
+.il-lejos{opacity:.45;}   /* figuras v4: la pierna o el brazo del otro lado */
 .il-rodillo{fill:var(--accent);stroke:var(--bg, #fff);stroke-width:1;}
 .il-barra{stroke:var(--accent);stroke-width:3;stroke-linecap:round;}
 /* 26/10 · móvil con el teclado abierto: los buscadores (ejercicios, alimentos…) a pantalla completa,

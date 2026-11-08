@@ -111,7 +111,7 @@ const EX_FAMILIAS = {
   'Peso muerto convencional': ['Peso muerto sumo', 'Peso muerto con kettlebell'],
   'Hip thrust': ['Hip thrust en máquina', 'Hip thrust en multipower'],
   'Patada de glúteo en polea': ['Patada de glúteo en máquina'],
-  'Elevación de gemelos': ['Elevación de gemelos sentado', 'Elevación de gemelos en prensa', 'Elevación de gemelos en multipower', 'Elevación de gemelos con mancuernas', 'Elevación de gemelos a una pierna'],
+  'Elevación de gemelos': ['Elevación de gemelos sentado', 'Elevación de gemelos en prensa', 'Elevación de gemelos con mancuernas', 'Elevación de gemelos a una pierna'],
   'Elevación de piernas': ['Elevación de rodillas colgado']
 };
 (function(){
