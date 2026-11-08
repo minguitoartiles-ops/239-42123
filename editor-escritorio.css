@@ -1,6 +1,6 @@
 /* Editor de rutinas en el ordenador, más simple (8/11/2026) · ver editor-escritorio.js */
-/* días: en columnas solo si caben; si no, a la fila de abajo */
-html.ed-v2 #sesionesCont{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));overflow-x:visible;}   /* auto-fit: con pocos días se ensanchan y reparten todo el ancho (antes quedaba espacio libre) */
+/* días: uno por fila, de arriba a abajo */
+html.ed-v2 #sesionesCont{display:grid;grid-auto-flow:row;grid-template-columns:minmax(0,1fr);overflow-x:visible;}   /* una sola columna: día 1 arriba, luego 2, 3… cada uno a todo el ancho (9/11/2026) */
 /* fuera lo repetido o lo que sobra */
 html.ed-v2 #ruVistaBtn,
 html.ed-v2 #view-entreno #entSub,

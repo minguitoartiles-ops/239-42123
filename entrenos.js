@@ -93,7 +93,7 @@ enPintarPlanes = (function(orig){
       f.insertAdjacentHTML('afterbegin', plFoto(k));
       const rd = typeof rutDatos === 'function' ? rutDatos(k) : null;
       if (rd) { const s = f.querySelector('.plan-fila-sub'); if (s) s.insertAdjacentHTML('beforeend', ' · <span class="rut-tag ' + rd.nivel + '">🏋️ ' + esc(rd.corto) + '</span>'); }
-      const cta = f.querySelector('.plan-fila-cta'); if (cta) cta.textContent = 'Ver entreno';
+      const cta = f.querySelector('.plan-fila-cta'); if (cta) { cta.textContent = 'Ver entreno ›'; cta.setAttribute('role', 'button'); cta.setAttribute('tabindex', '0'); cta.setAttribute('onclick', "event.stopPropagation();enAbrirPlanDesdeTab('" + k + "')"); cta.setAttribute('onkeydown', "if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();enAbrirPlanDesdeTab('" + k + "')}"); }
     });
     const busca = document.createElement('div'); busca.className = 'pl-busca';
     busca.innerHTML = '<input type="search" id="plBuscar" placeholder="Buscar cliente…" aria-label="Buscar cliente" autocomplete="off" value="' + esc(plBusca) + '" oninput="plFiltrar(this.value)"><div id="plVacio" class="picker-empty" hidden>Ningún cliente coincide con la búsqueda.</div>';
