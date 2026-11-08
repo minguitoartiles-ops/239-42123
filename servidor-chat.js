@@ -507,6 +507,24 @@ if (svActivo()) {
       }).catch(function(e){ try { toast(svMensaje(e, 'No se ha podido marcar como no leído')); } catch(_){} });
     };
   })(chMarcarNoLeido);
+  /* «✓ Marcar como resuelto» (y entrar en un chat, que también lo deja atendido): se guarda en el servidor, en cada profesional,
+     y sale igual en todos sus aparatos. Solo se avisa al servidor si el chat estaba pendiente. */
+  function svChResolver(k){
+    const d = clientesData[k];
+    if (!svChSesion() || !coachActivo || !d || !d.sid) return;
+    svCargar().then(function(x){ return x.chat.resuelto(d.sid); }).then(function(){
+      if (svChRes[d.sid]) svChRes[d.sid].espera_desde = null;
+    }).catch(function(){});
+  }
+  if (typeof puResolver === 'function') puResolver = (function(orig){ return function(){ const k = clienteActual; const r = orig.apply(this, arguments); svChResolver(k); return r; }; })(puResolver);
+  if (typeof puAtender === 'function') puAtender = (function(orig){
+    return function(k){
+      let pend = false; try { pend = !!(coachActivo && k && esperaDesde(k)); } catch(e){}
+      const r = orig.apply(this, arguments);
+      if (pend) svChResolver(k);
+      return r;
+    };
+  })(puAtender);
   (function(){
     const s = document.createElement('style');
     s.textContent = '#chatList .bubble.sv-pend{opacity:.62}#chatList .bubble.sv-pend::after{content:"🕓";font-size:11px;margin-left:6px;vertical-align:-1px}'

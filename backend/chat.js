@@ -152,6 +152,15 @@ export function crearChat(sb) {
       if (error) throw errorDe(error);
     },
 
+    // Equipo: «marcar como resuelto» (quita el «sin contestar» sin escribir al cliente). Solo avanza; si el cliente
+    // escribe después, vuelve a contar. Lo guarda cada profesional para sí mismo.
+    async resuelto(clienteId) {
+      id(clienteId, 'Chat');
+      const { error } = await sb.from('chat_lecturas')
+        .upsert({ cliente_id: clienteId, resuelto: new Date().toISOString() }, { onConflict: 'user_id,cliente_id' });
+      if (error) throw errorDe(error);
+    },
+
     // Avisa de cualquier cambio en lo que se puede ver: alCambiar(tabla, fila nueva o vieja)
     escuchar(alCambiar, alEstado) {
       let canal = sb.channel('chat');
