@@ -47,13 +47,19 @@ export function crearClientes(sb) {
       return data;
     },
 
-    // Avisa (una vez cada medio segundo como mucho) cuando cambia alguna ficha que se puede ver
-    escuchar(alCambiar) {
-      let t = null;
-      const aviso = () => { clearTimeout(t); t = setTimeout(alCambiar, 500); };
+    // Avisa (una vez cada medio segundo como mucho) cuando cambia alguna ficha que se puede ver:
+    // alCambiar(ids de las fichas cambiadas, o null si no se sabe cuáles). alEstado(estado del canal), para ponerse al día al reconectar.
+    escuchar(alCambiar, alEstado) {
+      let t = null, ids = new Set();
+      const aviso = (p) => {
+        const f = p && p.new && p.new.id ? p.new : (p && p.old) || null;
+        ids.add(f && f.id ? f.id : '*');
+        clearTimeout(t);
+        t = setTimeout(() => { const l = Array.from(ids); ids = new Set(); alCambiar(l.includes('*') ? null : l); }, 500);
+      };
       const canal = sb.channel('fichas-clientes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'clientes' }, aviso)
-        .subscribe();
+        .subscribe((estado) => { if (alEstado) alEstado(estado); });
       return () => { clearTimeout(t); sb.removeChannel(canal); };
     },
 

@@ -12,11 +12,11 @@
 
 /* ---------- 1 · recorrido de 5 toques ---------- */
 const OB_TOUR = [
-  { tab: 'hoy', id: 'tab-hoy', e: '☀️', t: 'Hoy', l: ['Lo que te toca hoy: entreno, la comida de ahora y los avisos de tu equipo.', 'Una vez por semana, desde aquí harás tu seguimiento.'] },
-  { tab: 'plan', id: 'tab-plan', e: '🍕', t: 'Nutrición', l: ['Tu plan con las cantidades ya calculadas. Toca una opción para cambiarla o combinar hasta 3.', 'Apunta tus vasos de agua y saca la lista de la compra.'] },
-  { tab: 'entreno', id: 'tab-entreno', e: '🏋️', t: 'Entreno', l: ['Tus sesiones. Abre un ejercicio para ver cómo se hace.', 'Apunta el peso y las repeticiones de cada serie; el descanso se cuenta solo.'] },
-  { tab: 'chat', id: 'tab-chat', e: '💬', t: 'Chat', l: ['Domingo y Fátima, en la misma conversación.', 'Escribe, manda fotos o notas de voz cuando lo necesites.'] },
-  { tab: 'ajustes', id: 'tab-ajustes', e: '⚙️', t: 'Ajustes', l: ['Tu perfil, tus alergias, las notificaciones y la privacidad.', 'Desde aquí también cierras sesión.'] }
+  { tab: 'hoy', id: 'tab-hoy', e: '☀️', t: 'Hoy', sub: 'Tu punto de partida de cada día', l: ['Ves de un vistazo lo que te toca: tu entreno, la comida de ahora y los avisos de tu equipo.', 'Cada semana haces aquí tu <b>seguimiento</b> (peso, medidas y cómo te sientes): con él Domingo y Fátima ajustan tu plan.'] },
+  { tab: 'plan', id: 'tab-plan', e: '🍕', t: 'Nutrición', sub: 'El plan de comidas de Fátima', l: ['Las cantidades ya están calculadas para ti. Toca una opción de cada fila para elegirla (puedes combinar hasta 3).', 'Marca cada comida cuando la tomes y saca desde aquí la <b>lista de la compra</b>.'] },
+  { tab: 'entreno', id: 'tab-entreno', e: '🏋️', t: 'Entreno', sub: 'Las sesiones que te prepara Domingo', l: ['Abre un ejercicio para ver cómo se hace y apunta el <b>peso y las repeticiones</b> de cada serie; el descanso se cuenta solo.', 'Al acabar el día, márcalo con el ✓ de su cabecera.'] },
+  { tab: 'chat', id: 'tab-chat', e: '💬', t: 'Chat', sub: 'Domingo y Fátima, en la misma conversación', l: ['Pregunta tus dudas, manda fotos o notas de voz cuando lo necesites.', 'Si algo del plan no te encaja, cuéntalo aquí.'] },
+  { tab: 'ajustes', id: 'tab-ajustes', e: '⚙️', t: 'Ajustes', sub: 'Tu perfil y tu cuenta', l: ['Tus datos, tus alergias, las notificaciones y la privacidad.', 'Desde aquí también cierras sesión.'] }
 ];
 obPasos = function(){ return OB_TOUR; };
 obAbrir = function(){
@@ -28,6 +28,7 @@ obAbrir = function(){
     const b = e.target.closest('[data-ob]'); if (!b) return;
     const a = b.dataset.ob;
     if (a === 'sig') { if (obPaso < OB_TOUR.length - 1) { obPaso++; obPintar(); } else obTerminar(); }
+    else if (a === 'ant') { if (obPaso > 0) { obPaso--; obPintar(); } }
     else if (a === 'saltar') obTerminar();
   });
   obPintar();
@@ -40,12 +41,14 @@ obPintar = function(){
   const inst = ult && !obInstalada() ? '<p class="obt-tip">📲 Consejo: instálala en tu móvil (' + (obIos() ? 'Safari → Compartir → «Añadir a pantalla de inicio»' : 'menú ⋮ → «Instalar aplicación»') + ').</p>' : '';
   o.innerHTML = '<div class="obt-foco" aria-hidden="true"></div>'
     + '<div class="obt-card">'
-    + (obPaso === 0 ? '<p class="obt-hola">¡Hola' + (nom ? ', ' + esc(nom) : '') + '! Te enseñamos la app en 5 toques.</p>' : '')
+    + (obPaso === 0 ? '<p class="obt-hola">¡Hola' + (nom ? ', ' + esc(nom) : '') + '! Abajo tienes las 5 pestañas de la app: te contamos para qué sirve cada una.</p>' : '')
     + '<div class="obt-top"><span class="obt-e" aria-hidden="true">' + p.e + '</span><h2 id="obTit">' + p.t + '</h2><span class="obt-n">' + (obPaso + 1) + ' / ' + n + '</span></div>'
+    + (p.sub ? '<p class="obt-sub">' + p.sub + '</p>' : '')
     + '<ul class="obt-l">' + p.l.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>' + inst
-    + '<div class="obt-acts"><button type="button" class="obt-saltar" data-ob="saltar">Saltar</button>'
+    + '<div class="obt-acts">' + (obPaso ? '<button type="button" class="obt-saltar" data-ob="ant">Atrás</button>' : '<button type="button" class="obt-saltar" data-ob="saltar">Saltar</button>')
     + '<button type="button" class="btn-primary obt-sig" data-ob="sig">' + (ult ? 'Empezar ✓' : 'Siguiente') + '</button></div>'
-    + '<div class="ob-puntos" aria-hidden="true">' + OB_TOUR.map(function(x, i){ return '<i class="' + (i === obPaso ? 'on' : '') + '"></i>'; }).join('') + '</div></div>';
+    + '<div class="ob-puntos" aria-hidden="true">' + OB_TOUR.map(function(x, i){ return '<i class="' + (i === obPaso ? 'on' : '') + '"></i>'; }).join('') + '</div>'
+    + (obPaso && !ult ? '<div class="obt-salir"><button type="button" class="obt-saltar" data-ob="saltar">Saltar el recorrido</button></div>' : '') + '</div>';
   requestAnimationFrame(function(){ obFoco(p.id); });
   try { o.querySelector('.obt-sig').focus({ preventScroll: true }); } catch(e){}
 };
@@ -92,13 +95,40 @@ comprobarConsentImagen = (function(orig){ return function(){ if (obPendiente()) 
 ciGuardar = (function(orig){ return function(){ const r = orig.apply(this, arguments); if (cqToca()) setTimeout(cqIntro, 350); return r; }; })(ciGuardar);
 
 /* ---------- 3 · cuestionario inicial ---------- */
+/* Prefijos del teléfono: +34 por defecto y los de otros países europeos. El dato guardado sigue siendo uno solo («+34600000000»);
+   quien escribe su número ya con «+» o «00» (otro país) lo deja tal cual. */
+const CQ_PREFIJOS = [['+34', '🇪🇸 España'], ['+351', '🇵🇹 Portugal'], ['+33', '🇫🇷 Francia'], ['+39', '🇮🇹 Italia'], ['+49', '🇩🇪 Alemania'], ['+44', '🇬🇧 Reino Unido'],
+  ['+353', '🇮🇪 Irlanda'], ['+31', '🇳🇱 Países Bajos'], ['+32', '🇧🇪 Bélgica'], ['+352', '🇱🇺 Luxemburgo'], ['+41', '🇨🇭 Suiza'], ['+43', '🇦🇹 Austria'], ['+45', '🇩🇰 Dinamarca'],
+  ['+46', '🇸🇪 Suecia'], ['+47', '🇳🇴 Noruega'], ['+358', '🇫🇮 Finlandia'], ['+354', '🇮🇸 Islandia'], ['+48', '🇵🇱 Polonia'], ['+420', '🇨🇿 Chequia'], ['+421', '🇸🇰 Eslovaquia'],
+  ['+36', '🇭🇺 Hungría'], ['+40', '🇷🇴 Rumanía'], ['+359', '🇧🇬 Bulgaria'], ['+30', '🇬🇷 Grecia'], ['+385', '🇭🇷 Croacia'], ['+386', '🇸🇮 Eslovenia'], ['+381', '🇷🇸 Serbia'],
+  ['+356', '🇲🇹 Malta'], ['+357', '🇨🇾 Chipre'], ['+370', '🇱🇹 Lituania'], ['+371', '🇱🇻 Letonia'], ['+372', '🇪🇪 Estonia'], ['+380', '🇺🇦 Ucrania'], ['+376', '🇦🇩 Andorra'], ['+377', '🇲🇨 Mónaco']];
+function cqTelPartir(v){
+  v = String(v == null ? '' : v).replace(/[^0-9+]/g, '');
+  if (!v) return { p: '+34', n: '' };
+  if (v.charAt(0) !== '+') return { p: '+34', n: v };
+  const orden = CQ_PREFIJOS.map(function(x){ return x[0]; }).sort(function(a, b){ return b.length - a.length; });
+  for (let i = 0; i < orden.length; i++) if (v.indexOf(orden[i]) === 0) return { p: orden[i], n: v.slice(orden[i].length) };
+  return { p: '', n: v };                                         // otro país: se queda con su «+»
+}
+function cqTelCompon(p, n){
+  n = String(n || '').trim(); if (!n) return '';
+  if (/^(\+|00)/.test(n)) return '+' + n.replace(/^(\+|00)/, '').replace(/[^0-9]/g, '');
+  return (p || '+34') + n.replace(/[^0-9]/g, '');
+}
+function cqTelHtml(c, id, v){
+  const t = cqTelPartir(v);
+  return '<div class="cq-tel"><select id="' + id + '_p" class="cq-tel-p" aria-label="Prefijo del país">'
+    + CQ_PREFIJOS.map(function(x){ return '<option value="' + x[0] + '"' + (x[0] === t.p ? ' selected' : '') + '>' + x[1] + ' (' + x[0] + ')</option>'; }).join('')
+    + '<option value=""' + (t.p === '' ? ' selected' : '') + '>🌍 Otro país (escribe el +prefijo)</option></select>'
+    + '<input id="' + id + '" type="text" inputmode="tel" autocomplete="tel-national" value="' + esc(t.n) + '" placeholder="600 000 000"></div>';
+}
 const CQ_GASTRO = [['sii', 'Síndrome del intestino irritable'], ['crohn', 'Enfermedad de Crohn'], ['colitis', 'Colitis ulcerosa'], ['gastritis', 'Gastritis'],
   ['erge', 'Reflujo / ERGE'], ['hiato', 'Hernia de hiato'], ['estrenimiento', 'Estreñimiento crónico'], ['sibo', 'SIBO'], ['diverticulos', 'Diverticulosis / diverticulitis'], ['vesicula', 'Problemas de vesícula']];
 const CQ_PASOS = [
   { id: 'ti', e: '🙋', t: 'Sobre ti', intro: 'Sé sincero/a: no estamos aquí para juzgarte. Recuerda que la dieta y el entreno se adaptan a tu vida, no tú a ellos.', c: [
     { id: 'nombre', l: 'Nombre y apellidos (para la factura)', req: 1 },
     { id: 'dni', l: 'DNI o NIE (para la factura)', tipo: 'dni', req: 1, ph: '12345678Z' },
-    { id: 'telefono', l: 'Teléfono', tipo: 'tel', req: 1, ph: '+34 600 000 000', nota: 'Por si tenemos que contactarte.' },
+    { id: 'telefono', l: 'Teléfono', tipo: 'tel', req: 1, nota: 'Por si tenemos que contactarte. El prefijo es el de España; cámbialo si tu móvil es de otro país.' },
     { id: 'direccion', l: 'Dirección (opcional, para la factura)', ph: 'Calle, número, CP y municipio' },
     { id: 'edad', l: 'Edad', tipo: 'num', req: 1, min: 18, max: 99, u: 'años' },
     { id: 'sexo', l: 'Sexo', tipo: 'chips', opts: ['Mujer', 'Hombre', 'Prefiero no decirlo'] },
@@ -187,6 +217,7 @@ function cqCampoHtml(c){
   else if (c.tipo === 'chips') h += '<div class="chips cq-chips" role="radiogroup" aria-labelledby="' + id + '">' + c.opts.map(function(o){ return '<button type="button" class="chip protein' + (v === o ? ' selected' : '') + '" role="radio" aria-checked="' + (v === o) + '" data-v="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div><span id="' + id + '" hidden></span>';
   else if (c.tipo === 'multi') { const sel = Array.isArray(v) ? v : []; h += '<div class="chips cq-multi">' + c.opts.map(function(o){ return '<button type="button" class="chip protein' + (sel.indexOf(o[0]) > -1 ? ' selected' : '') + '" aria-pressed="' + (sel.indexOf(o[0]) > -1) + '" data-v="' + o[0] + '">' + esc(o[1]) + '</button>'; }).join('') + '<button type="button" class="chip protein' + (v === 'ninguna' ? ' selected' : '') + '" data-v="ninguna">Ninguna</button></div><span id="' + id + '" hidden></span>'; }
   else if (c.tipo === 'escala') h += '<div class="cq-escala" role="radiogroup">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function(n){ return '<button type="button" class="' + (+v === n ? 'on' : '') + '" role="radio" aria-checked="' + (+v === n) + '" data-v="' + n + '">' + n + '</button>'; }).join('') + '</div><span id="' + id + '" hidden></span>';
+  else if (c.tipo === 'tel') h += cqTelHtml(c, id, v);
   else {
     const num = c.tipo === 'num';
     h += '<div class="cq-in' + (c.u ? ' con-u' : '') + '"><input id="' + id + '" type="text" ' + (num ? 'inputmode="decimal"' : (c.tipo === 'dni' ? 'autocapitalize="characters" autocomplete="off" spellcheck="false"' : (c.tipo === 'tel' ? 'inputmode="tel" autocomplete="tel"' : ''))) + ' value="' + esc(v == null ? '' : v) + '" placeholder="' + esc(c.ph || '') + '">' + (c.u ? '<span class="cq-u">' + c.u + '</span>' : '') + '</div>';
@@ -216,7 +247,11 @@ function cqPintar(){
   o.querySelectorAll('.cq-f').forEach(function(f){
     const c = f.dataset.c;
     const inp = f.querySelector('input, textarea');
-    if (inp) inp.addEventListener('input', function(){ cqR[c] = inp.value; f.classList.remove('cq-mal'); const e = f.querySelector('.cq-err'); if (e) e.hidden = true; cqBorrador(); });
+    if (f.querySelector('.cq-tel')) {
+      const sel = f.querySelector('.cq-tel-p'), num = f.querySelector('.cq-tel input');
+      const act = function(){ cqR[c] = cqTelCompon(sel.value, num.value); f.classList.remove('cq-mal'); const e = f.querySelector('.cq-err'); if (e) e.hidden = true; cqBorrador(); };
+      num.addEventListener('input', act); sel.addEventListener('change', act);
+    } else if (inp) inp.addEventListener('input', function(){ cqR[c] = inp.value; f.classList.remove('cq-mal'); const e = f.querySelector('.cq-err'); if (e) e.hidden = true; cqBorrador(); });
     f.querySelectorAll('.cq-chips .chip').forEach(function(b){ b.onclick = function(){ cqR[c] = b.dataset.v; const reP = c === 'sexo'; if (reP) { cqBorrador(); cqPintarMantener(); return; } f.querySelectorAll('.chip').forEach(function(x){ const on = x === b; x.classList.toggle('selected', on); x.setAttribute('aria-checked', on); }); cqBorrador(); }; });
     f.querySelectorAll('.cq-multi .chip').forEach(function(b){ b.onclick = function(){
       let sel = Array.isArray(cqR[c]) ? cqR[c].slice() : [];
@@ -284,7 +319,7 @@ function cqValidar(){
     if (c.req && vacio) { mal(c.id, 'Este dato es necesario.'); return; }
     if (vacio) return;
     if (c.tipo === 'num') { const n = mjNum(v); if (n == null || isNaN(n) || (c.min != null && n < c.min) || (c.max != null && n > c.max)) mal(c.id, 'Revisa el número' + (c.min != null ? ' (entre ' + c.min + ' y ' + c.max + (c.u ? ' ' + c.u : '') + ')' : '') + '.'); }
-    if (c.tipo === 'tel') { const t = String(v).replace(/[^0-9+]/g, ''); if (!/^\+?[0-9]{9,15}$/.test(t)) mal(c.id, 'Revisa el teléfono (9 a 15 cifras; con prefijo si no es de España).'); else cqR[c.id] = t; }
+    if (c.tipo === 'tel') { const t = String(v).replace(/[^0-9+]/g, ''); if (!/^\+?[0-9]{9,15}$/.test(t)) mal(c.id, 'Revisa el teléfono (9 a 15 cifras) y que el prefijo sea el de tu país.'); else cqR[c.id] = t; }
     if (c.tipo === 'dni') { const rv = cqDniRevisar(v); if (rv.err) mal(c.id, rv.err); else { cqR[c.id] = rv.ok; const inp = document.getElementById('cq_dni'); if (inp) inp.value = rv.ok; } }
   });
   if (p.especial === 'alergias') { const a = alergiasDe(clienteActual); if (!(a && a.fecha)) mal('alergias', 'Marca tus alergias o indica que no tienes ninguna.'); }

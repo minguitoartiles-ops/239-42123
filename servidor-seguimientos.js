@@ -282,8 +282,8 @@ function svSgEscuchar(){
         crearAviso(clavePro(coachActivo.u), 'seguimientos', ((clientesData[k] || {}).nombre || 'Un cliente') + ' ha enviado su seguimiento', partes.join(' · '), { cliente: k, vista: 'seguimientos' });
       }
       clearTimeout(svSgEsperas[cid]);
-      svSgEsperas[cid] = setTimeout(function(){ delete svSgEsperas[cid]; svSgTraer([cid]); }, 700);
-    });
+      svSgEsperas[cid] = setTimeout(function(){ delete svSgEsperas[cid]; svSgTraer([cid]); }, 400);
+    }, typeof svVigilarCanal === 'function' ? svVigilarCanal() : null);
   }).catch(function(){});
 }
 function svSgParar(){
@@ -347,11 +347,7 @@ if (svActivo()) {
     svSgEscuchar();
   });
   window.addEventListener('fsd:sesion-fuera', function(){ svSgParar(); clearTimeout(svSgSubirT); });
-  window.addEventListener('online', function(){
-    if (!svSgSesion()) return;
-    const d = clienteActual && clientesData[clienteActual];
-    svSgSubir().then(function(){ return svSgTraer(svSgCliente() ? [d && d.sid] : null); });
-  });
+  /* al recuperar internet: lo hace «fsd:al-volver» (servidor.js lo lanza una sola vez para todas las partes) */
   setInterval(function(){ if (svSgSesion()) svSgSubir(); }, 15000);
   window.addEventListener('fsd:al-volver', function(){
     if (!svSgSesion()) return;
