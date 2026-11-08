@@ -78,6 +78,7 @@ function fgLadoAl(S){
 }
 function fgFrente(S){
   const P = {}, hs = S.hombros || 8, hc = S.caderas || 5;
+  P.ea = S.escAnte || 1;           // para colocar la mano a la medida del antebrazo en cada instante
   P.p = S.p;
   // escTronco < 1: el tronco se inclina hacia delante y, visto de frente, se ve más corto
   P.n = fgSum(P.p, fgDir(S.t || 0, FG_L.tronco * (S.escTronco || 1)));
@@ -93,7 +94,7 @@ function fgFrente(S){
     const f = fgVal(S['f' + s], P);
     P['f' + s] = f || fgSum(k.t, [sig * 4.5, 1]);
     const w = fgVal(S['w' + s], P);
-    if (w) { const e = fgIK(P['s' + s], w, FG_L.brazo, FG_L.antebrazo, S['c' + s] != null ? S['c' + s] : (s === 'L' ? 1 : -1)); P['e' + s] = e.j; P['w' + s] = e.t; }
+    if (w) { const e = fgIK(P['s' + s], w, FG_L.brazo * (S.escBrazo || 1), FG_L.antebrazo * (S.escAnte || 1), S['c' + s] != null ? S['c' + s] : (s === 'L' ? 1 : -1)); P['e' + s] = e.j; P['w' + s] = e.t; }
   });
   return P;
 }
@@ -114,8 +115,21 @@ function fgPrims(F, S){
   return out;
 }
 /* ---------- línea de tiempo: [postura, segundos para llegar a ella] ---------- */
+/* cada postura con sus pies completos: si una no dice hacia dónde apunta el pie, se pone el de por defecto
+   (antes se copiaba el de la postura siguiente y el pie salía torcido) */
+function fgCompletar(F, frente){
+  const G = Object.assign({}, F);
+  if (frente) {
+    if (!G.fL && Array.isArray(G.aL)) G.fL = [G.aL[0] - 4.5, G.aL[1] + 1];
+    if (!G.fR && Array.isArray(G.aR)) G.fR = [G.aR[0] + 4.5, G.aR[1] + 1];
+  } else {
+    if (!G.f && Array.isArray(G.a)) G.f = [G.a[0] + FG_L.pie, G.a[1] + 1];
+    if (!G.f2 && Array.isArray(G.a2)) G.f2 = [G.a2[0] + FG_L.pie, G.a2[1] + 1];
+  }
+  return G;
+}
 function fgCuadros(S){
-  const seq = S.seq, cuadros = [], tiempos = [];
+  const seq = S.seq.map(function(x){ return [fgCompletar(x[0], S.vista === 'frente'), x[1]]; }), cuadros = [], tiempos = [];
   let total = 0;
   seq.forEach(function(x, i){ if (i) total += x[1]; });
   total += S.vuelta != null ? S.vuelta : seq[0][1];
@@ -137,7 +151,7 @@ function fgCuadros(S){
 function fgNum(v){ return Math.round(v * 10) / 10; }
 function fgSvg(S, quieto){
   const tl = fgCuadros(S);
-  const prims = (quieto ? [S.seq[S.quieto || 0][0]] : tl.cuadros).map(function(F){ return fgPrims(F, S); });
+  const prims = (quieto ? [fgCompletar(S.seq[S.quieto || 0][0], S.vista === 'frente')] : tl.cuadros).map(function(F){ return fgPrims(F, S); });
   const kt = tl.tiempos.map(function(x){ return fgNum(x * 1000) / 1000; }).join(';');
   const dur = tl.total.toFixed(2) + 's';
   const anim = function(attr, vals){
@@ -301,7 +315,7 @@ function fgSentFig(s, extra){
   // peso muerto rumano en multipower: bisagra de cadera, la barra baja en vertical pegada a las piernas
   // brazos siempre estirados, colgando bajo los hombros; la cadera se coloca para que la barra vaya por el raíl
   const rum = function(baja){
-    return Object.assign(baja ? { p: [43, 49], t: 72, cab: -45 } : { p: [55, 47.5], t: 5, cab: 0 },
+    return Object.assign(baja ? { p: [43, 51.5], t: 70, cab: -45 } : { p: [56, 49], t: 5, cab: 0 },
       { a: [55, 82.5], f: [63, 83.5], recto: true, w: function(P){ return [P.n[0], P.n[1] + 40]; }, al: { en: function(P){ return P.w; }, x: 61 } });
   };
   FG['peso muerto rumano en multipower'] = { seq: [[rum(false), 0.8], [rum(true), 1.4], [rum(true), 0.2]], vuelta: 1.2, fondo: FG_PISO + fgRail(61), delante: fgEnManos('barra') };
@@ -323,12 +337,13 @@ function fgPose(o){ return Object.assign({ t: 2, cab: 0, brazo: FG_BRAZOS_CAEN }
   const zancada = { seq: [[de0, 0.5], [de1, 0.45], [de2, 0.45], [de3, 0.9], [de3, 0.2], [de2, 0.8], [de1, 0.45]], vuelta: 0.45 };
   FG['zancadas'] = conMancuernas(zancada);
   FG['zancadas con mancuernas'] = conMancuernas(zancada);
-  // zancada inversa: el pie de atrás se levanta y va hacia atrás; el de delante no se mueve
-  const in0 = fgPose({ p: [60, 46.5], a: [60, 82.5], f: [67, 83.5], a2: [60, 82.5], f2: [67, 83.5] });
-  const in1 = fgPose({ p: [58, 46.5], a: [60, 82.5], f: [67, 83.5], a2: [50, 72], f2: [46, 76], r2: 1 });
-  const in2 = fgPose({ p: [55, 50], a: [61, 82.5], f: [68, 83.5], a2: [38, 81], f2: [44, 84] });
-  const in3 = fgPose({ p: [52, 65], t: 4, a: [62, 82.5], f: [69, 83.5], a2: [36, 80.5], f2: [42, 84] });
-  FG['zancada inversa'] = { segundo: true, lejos: ['k', 'a', 'f'], seq: [[in0, 0.5], [in1, 0.45], [in2, 0.45], [in3, 0.9], [in3, 0.2], [in2, 0.8], [in1, 0.45]], vuelta: 0.45, fondo: FG_PISO, delante: fgEnManos('mancuerna') };
+  // zancada inversa: el pie de delante no se mueve en ningún momento (pierna oscura); el otro se levanta y va atrás (más clara)
+  const fijo = { a: [62, 82.5], f: [69, 83.5], r: -1 };
+  const in0 = fgPose(Object.assign({ p: [62, 46.5], a2: [62, 82.5], f2: [69, 83.5] }, fijo));
+  const in1 = fgPose(Object.assign({ p: [60, 47], a2: [52, 73], f2: [48, 77], r2: 1 }, fijo));
+  const in2 = fgPose(Object.assign({ p: [56, 51], a2: [38, 81], f2: [44, 84], r2: -1 }, fijo));
+  const in3 = fgPose(Object.assign({ p: [52, 65], t: 4, a2: [36, 80.5], f2: [42, 84], r2: -1 }, fijo));
+  FG['zancada inversa'] = { segundo: true, seq: [[in0, 0.5], [in1, 0.45], [in2, 0.45], [in3, 0.9], [in3, 0.2], [in2, 0.8], [in1, 0.45]], vuelta: 0.45, fondo: FG_PISO, delante: fgEnManos('mancuerna') };
   // zancadas caminando: zancada con una pierna, sube y la otra pasa delante a la siguiente zancada (avanza)
   const c0 = fgPose({ p: [26, 46.5], a: [26, 82.5], f: [33, 83.5], a2: [26, 82.5], f2: [33, 83.5] });
   const c1 = fgPose({ p: [30, 46.5], a: [38, 70.5], f: [44, 72], a2: [26, 82.5], f2: [33, 83.5] });
@@ -343,45 +358,132 @@ function fgPose(o){ return Object.assign({ t: 2, cab: 0, brazo: FG_BRAZOS_CAEN }
   // zancada en déficit: el pie de delante sobre un disco o un step; más recorrido
   const df = function(y){ return fgPose({ p: [55, y], t: 3, a: [68, 77.5], f: [75, 78.5], a2: [40, 81], f2: [46, 84] }); };
   FG['zancada en deficit'] = { segundo: true, seq: [[df(48), 1], [df(68), 1.3], [df(68), 0.2]], vuelta: 1.1, fondo: FG_PISO + '<rect x="62" y="79" width="20" height="5" rx="1.5" class="il-mueble"/>', delante: fgEnManos('mancuerna') };
-  // zancada con salto: abajo con una pierna delante, salta, cambia de pierna en el aire y cae con la otra delante
-  const sa = fgPose({ p: [57, 65], t: 4, a: [70, 82.5], f: [77, 83.5], a2: [44, 80.5], f2: [50, 84], brazo: [150, 200], brazo2: [200, 150] });
-  const sAire1 = fgPose({ p: [57, 40], t: 0, a: [64, 72], f: [70, 74], a2: [50, 74], f2: [46, 78], r2: 1, brazo: [175, 180] });
-  const sb = fgPose({ p: [57, 65], t: 4, a: [44, 80.5], f: [50, 84], a2: [70, 82.5], f2: [77, 83.5], brazo: [200, 150], brazo2: [150, 200] });
-  const sAire2 = fgPose({ p: [57, 40], t: 0, a: [50, 74], f: [46, 78], r: 1, a2: [64, 72], f2: [70, 74], brazo: [175, 180] });
-  FG['zancada con salto'] = { segundo: true, seq: [[sa, 0.5], [sAire1, 0.4], [sb, 0.4], [sb, 0.3], [sAire2, 0.4]], vuelta: 0.4, fondo: FG_PISO };
 })();
-/* zancada lateral (de frente): da un paso largo a un lado, baja sobre esa pierna con la otra estirada y vuelve */
-(function(){
-  const manos = { wL: function(P){ return [P.n[0] - 3, P.n[1] + 15]; }, wR: function(P){ return [P.n[0] + 3, P.n[1] + 15]; } };
-  const l0 = Object.assign({ vista: 'frente', p: [50, 46.5], aL: [47, 82], aR: [55, 82] }, manos);
-  const l1 = Object.assign({ vista: 'frente', p: [52, 46.5], aL: [47, 82], aR: [68, 74], fR: [72, 75] }, manos);
-  const l2 = Object.assign({ vista: 'frente', p: [66, 50], aL: [47, 82], aR: [88, 82] }, manos);
-  const l3 = Object.assign({ vista: 'frente', p: [80, 66], t: 6, escTronco: 0.85, aL: [47, 82], aR: [88, 82], rR: -1 }, manos);
-  FG['zancada lateral'] = { vista: 'frente', seq: [[l0, 0.5], [l1, 0.45], [l2, 0.45], [l3, 0.9], [l3, 0.2], [l2, 0.8], [l1, 0.45]], vuelta: 0.45, fondo: FG_PISO };
-  // zancada cruzada (de frente): la pierna derecha pasa por detrás de la izquierda y las dos rodillas se doblan
-  const x0 = Object.assign({ vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82] }, manos);
-  const x1 = Object.assign({ vista: 'frente', p: [59, 46.5], aL: [55, 82], aR: [58, 73], fR: [61, 74] }, manos);
-  const x2 = Object.assign({ vista: 'frente', p: [57, 49], aL: [55, 82], aR: [44, 81], fR: [40, 83], rR: 1 }, manos);
-  const x3 = Object.assign({ vista: 'frente', p: [55, 63], t: -4, aL: [55, 82], aR: [43, 80.5], fR: [39, 83], rL: 1, rR: 1 }, manos);
-  FG['zancada cruzada'] = { vista: 'frente', lejos: ['kR', 'aR', 'fR'], seq: [[x0, 0.5], [x1, 0.45], [x2, 0.45], [x3, 0.9], [x3, 0.2], [x2, 0.8], [x1, 0.45]], vuelta: 0.45, fondo: FG_PISO };
-})();
-/* step up al cajón alto (más extensión de cadera): un pie al cajón, sube hasta quedar de pie arriba y baja */
+/* step up al cajón alto (más extensión de cadera): un pie al cajón, empuja, la otra pierna sube con la rodilla
+   delante y se apoya junto a la primera; baja al revés */
 (function(){
   const caja = '<rect x="62" y="56" width="40" height="28" rx="2" class="il-mueble"/>';
   const s0 = fgPose({ p: [44, 46.5], a: [44, 82.5], f: [51, 83.5], a2: [44, 82.5], f2: [51, 83.5] });
-  const s1 = fgPose({ p: [47, 46.5], a: [67, 54.5], f: [74, 55.5], a2: [44, 82.5], f2: [51, 83.5], t: 10 });
-  const s2 = fgPose({ p: [62, 36], a: [70, 54.5], f: [77, 55.5], a2: [52, 70], f2: [50, 75], t: 14, r2: 1 });
-  const s3 = fgPose({ p: [71, 18.5], a: [71, 54.5], f: [78, 55.5], a2: [73, 54.5], f2: [80, 55.5], t: 2 });
-  FG['step up al cajon'] = { segundo: true, zoom: 0.78, seq: [[s0, 0.4], [s1, 0.6], [s2, 0.6], [s3, 0.5], [s3, 0.3], [s2, 0.6], [s1, 0.5]], vuelta: 0.5,
+  const s1 = fgPose({ p: [48, 47], t: 8, a: [69, 54.5], f: [76, 55.5], a2: [44, 82.5], f2: [51, 83.5] });
+  const s2 = fgPose({ p: [55, 45], t: 14, a: [70, 54.5], f: [77, 55.5], a2: [48, 80.5], f2: [54, 84] });
+  const s2b = fgPose({ p: [66, 30], t: 6, a: [71, 54.5], f: [78, 55.5], a2: [63, 47], f2: [69, 49], r2: -1 });
+  const s3 = fgPose({ p: [71, 18.5], a: [71, 54.5], f: [78, 55.5], a2: [72, 54.5], f2: [79, 55.5] });
+  FG['step up al cajon'] = { segundo: true, zoom: 0.78, seq: [[s0, 0.4], [s1, 0.55], [s2, 0.4], [s2b, 0.4], [s3, 0.35], [s3, 0.35], [s2b, 0.4], [s2, 0.4], [s1, 0.45]], vuelta: 0.5,
     fondo: FG_PISO + caja, delante: fgEnManos('mancuerna') };
-  // step up lateral (de frente): el cajón a un lado; sube de lado y baja
+  // step up lateral (de frente): el cajón a la derecha; el pie derecho sube al cajón, empuja y el izquierdo se le une
   const cajaL = '<rect x="64" y="60" width="44" height="24" rx="2" class="il-mueble"/>';
   const manos = { wL: function(P){ return [P.sL[0] + 1, P.sL[1] + 24.6]; }, wR: function(P){ return [P.sR[0] - 1, P.sR[1] + 24.6]; }, cL: -1, cR: 1 };
   const t0 = Object.assign({ vista: 'frente', p: [48, 46.5], aL: [43, 82], aR: [53, 82] }, manos);
-  const t1 = Object.assign({ vista: 'frente', p: [52, 47], aL: [43, 82], aR: [74, 58.5], fR: [78, 59.5] }, manos);
-  const t2 = Object.assign({ vista: 'frente', p: [72, 22], aL: [68, 58.5], aR: [78, 58.5], fL: [64, 59.5], fR: [82, 59.5] }, manos);
-  FG['step up lateral'] = { vista: 'frente', zoom: 0.8, seq: [[t0, 0.4], [t1, 0.6], [t2, 1], [t2, 0.3], [t1, 0.9]], vuelta: 0.5, fondo: FG_PISO + cajaL,
+  const t1 = Object.assign({ vista: 'frente', p: [52, 47.5], aL: [43, 82], aR: [73, 58.5], fR: [77, 59.5], rR: -1 }, manos);
+  const t05 = Object.assign({ vista: 'frente', p: [49, 47], aL: [43, 82], aR: [62, 66], fR: [66, 67], rR: -1 }, manos);   // el pie sube antes de ir al cajón (no se arrastra)
+  const t2 = Object.assign({ vista: 'frente', p: [62, 36], aL: [57, 68], fL: [54, 70], rL: 1, aR: [74, 58.5], fR: [78, 59.5], rR: -1 }, manos);
+  const t3 = Object.assign({ vista: 'frente', p: [72, 22], aL: [67, 58.5], fL: [63, 59.5], aR: [77, 58.5], fR: [81, 59.5] }, manos);
+  FG['step up lateral'] = { vista: 'frente', zoom: 0.8, seq: [[t0, 0.4], [t05, 0.3], [t1, 0.3], [t2, 0.45], [t3, 0.45], [t3, 0.35], [t2, 0.5], [t1, 0.5], [t05, 0.3]], vuelta: 0.3, fondo: FG_PISO + cajaL,
     delante: function(P, ln, ci){ ci(P.wL, 3.6, 'il-peso'); ci(P.wR, 3.6, 'il-peso'); } };
+})();
+
+/* =========================================================
+   Tanda 3 · brazos: el codo queda fijo pegado al cuerpo y solo se mueve el antebrazo
+   ========================================================= */
+/* palma: marca corta en la muñeca hacia donde mira la palma (1: hacia delante/arriba, supino · -1: hacia atrás/abajo, prono) */
+function fgPalma(ln, P, signo, e, w){
+  e = e || P.e; w = w || P.w;
+  const d = Math.hypot(w[0] - e[0], w[1] - e[1]) || 1, dx = (w[0] - e[0]) / d, dy = (w[1] - e[1]) / d;
+  const nx = signo > 0 ? dy : -dy, ny = signo > 0 ? -dx : dx;
+  ln([w[0] + nx * 1.2, w[1] + ny * 1.2], [w[0] + nx * 4.2 + dx * 1, w[1] + ny * 4.2 + dy * 1], 'il-palma');
+}
+/* columna de polea con su rueda (x, y de la rueda) */
+function fgColumna(x, y){ return '<rect x="' + (x + 3) + '" y="2" width="7" height="82" rx="2" class="il-mueble"/><circle cx="' + x + '" cy="' + y + '" r="3.2" class="il-mueble"/>'; }
+function fgCable(desde, ln, P, m){ ln(desde, m || P.w, 'il-cable'); }
+/* mancuerna vista de lado con agarre neutro (martillo): barrita perpendicular al antebrazo con sus discos */
+function fgMancuernaMartillo(ln, ci, P, e, w){
+  e = e || P.e; w = w || P.w;
+  const d = Math.hypot(w[0] - e[0], w[1] - e[1]) || 1, dx = (w[0] - e[0]) / d, dy = (w[1] - e[1]) / d, nx = dy, ny = -dx;
+  const a = [w[0] + nx * 4.5, w[1] + ny * 4.5], b = [w[0] - nx * 4.5, w[1] - ny * 4.5];
+  ln(a, b, 'il-barra'); ci(a, 2.4, 'il-peso'); ci(b, 2.4, 'il-peso');
+}
+(function(){
+  const pie = { p: [56, 46.5], t: 2, cab: 0, a: [56, 82.5], f: [63, 83.5] };
+  const abajo = Object.assign({}, pie, { brazo: [181, 181] }), arriba = Object.assign({}, pie, { brazo: [178, 32] });
+  const curl = function(material, extra){
+    return Object.assign({ seq: [[abajo, 0.3], [arriba, 1.1], [arriba, 0.25]], vuelta: 1.3, fondo: FG_PISO,
+      delante: material === 'martillo' ? function(P, ln, ci){ fgMancuernaMartillo(ln, ci, P); } : fgEnManos(material) }, extra || {});
+  };
+  FG['curl de biceps'] = curl('barra');
+  FG['curl con barra z'] = curl('barra');
+  FG['curl con mancuernas'] = curl('mancuerna');
+  FG['curl martillo'] = curl('martillo');
+  FG['curl con kettlebell'] = curl('kettlebell');
+  // Zottman: sube con la palma hacia arriba (supino), gira arriba y baja con la palma hacia abajo (prono)
+  const zA = Object.assign({}, abajo, { palma: 1 }), zB = Object.assign({}, arriba, { palma: 1 }), zC = Object.assign({}, arriba, { palma: -1 }), zD = Object.assign({}, abajo, { palma: -1 });
+  FG['curl zottman'] = { seq: [[zA, 0.3], [zB, 1.1], [zC, 0.45], [zD, 1.4]], vuelta: 0.45, fondo: FG_PISO,
+    delante: function(P, ln, ci, F){ ci(P.w, 3.8, 'il-peso'); fgPalma(ln, P, F.palma); } };
+  // curl en polea: de pie frente a la polea baja (columna con su rueda abajo); el cable sube hasta la mano
+  const rueda = [86, 80];
+  FG['curl en polea'] = curl('polea', { fondo: FG_PISO + fgColumna(86, 80), atras: function(P, ln){ fgCable(rueda, ln, P); }, delante: function(P, ln, ci){ ln([P.w[0], P.w[1] - 3], [P.w[0], P.w[1] + 3], 'il-barra'); } });
+  FG['curl en polea a una mano'] = curl('polea', { segundo: true, fondo: FG_PISO + fgColumna(86, 80), atras: function(P, ln){ fgCable(rueda, ln, P); },
+    delante: function(P, ln, ci){ ci(P.w, 2.6, 'il-peso'); } });
+  FG['curl en polea a una mano'].seq = FG['curl en polea a una mano'].seq.map(function(x){ return [Object.assign({}, x[0], { brazo2: [185, 182] }), x[1]]; });
+  // concentrado: sentado, tronco inclinado, el codo apoyado en la cara interna del muslo; solo sube el antebrazo
+  const banco = '<rect x="22" y="58" width="30" height="4" rx="2" class="il-mueble"/><line x1="28" y1="62" x2="28" y2="84" class="il-fondo"/><line x1="46" y1="62" x2="46" y2="84" class="il-fondo"/>';
+  const conc = function(fore){ return { p: [42, 56], t: 40, cab: 25, a: [66, 82.5], f: [73, 83.5], brazo: [176, fore] }; };
+  FG['curl concentrado'] = { seq: [[conc(178), 0.3], [conc(18), 1.1], [conc(18), 0.25]], vuelta: 1.3, fondo: FG_PISO + banco, delante: fgEnManos('mancuerna') };
+  // predicador: sentado, el brazo apoyado en el pad inclinado; el antebrazo baja hasta casi estirar sin pasar del pad
+  const pred = function(fore){ return { p: [40, 57], t: 12, cab: 10, a: [62, 82.5], f: [69, 83.5], brazo: [140, fore] }; };
+  const padPred = function(P0){ return ''; };
+  (function(){
+    const P0 = fgLado(pred(140));
+    const e = P0.e, n0 = P0.n;
+    const d = [e[0] - n0[0], e[1] - n0[1]], L = Math.hypot(d[0], d[1]), u = [d[0] / L, d[1] / L];
+    const nx = u[1], ny = -u[0];         // normal hacia abajo del brazo
+    const a = [n0[0] + u[0] * 4 - nx * 3.2, n0[1] + u[1] * 4 - ny * 3.2], b = [e[0] + u[0] * 3 - nx * 3.2, e[1] + u[1] * 3 - ny * 3.2];
+    const pad = '<line x1="' + fgNum(a[0]) + '" y1="' + fgNum(a[1]) + '" x2="' + fgNum(b[0]) + '" y2="' + fgNum(b[1]) + '" class="il-mueble"/><line x1="' + fgNum((a[0] + b[0]) / 2) + '" y1="' + fgNum((a[1] + b[1]) / 2 + 2) + '" x2="' + fgNum((a[0] + b[0]) / 2) + '" y2="84" class="il-fondo"/>';
+    const asiento = '<rect x="26" y="56" width="22" height="4" rx="2" class="il-mueble"/><line x1="37" y1="60" x2="37" y2="84" class="il-fondo"/>';
+    FG['curl predicador con barra'] = { seq: [[pred(150), 0.3], [pred(20), 1.1], [pred(20), 0.25]], vuelta: 1.3, fondo: FG_PISO + asiento + pad, delante: fgEnManos('barra') };
+    // en máquina: la palanca gira en el codo; el agarre va al final de la palanca
+    FG['curl predicador en maquina'] = { seq: [[pred(150), 0.3], [pred(20), 1.1], [pred(20), 0.25]], vuelta: 1.3, fondo: FG_PISO + asiento + pad + '<circle cx="' + fgNum(e[0]) + '" cy="' + fgNum(e[1]) + '" r="2.4" class="il-mueble"/>',
+      delante: function(P, ln, ci){ ln(P.e, P.w, 'il-mueble il-sin'); ci(P.w, 2.4, 'il-peso'); } };
+  })();
+  // martillo cruzado (de frente): el codo pegado al costado; la mancuerna sube cruzando hacia el hombro contrario
+  const mcA = { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], wL: function(P){ return [P.sL[0] + 1, P.sL[1] + 24.6]; }, wR: function(P){ return [P.sR[0] - 1, P.sR[1] + 24.6]; }, cL: -1, cR: 1 };
+  const mcB = Object.assign({}, mcA, { wR: function(P){ return [P.sL[0] + 3, P.sL[1] + 2]; }, cR: 1 });
+  FG['curl martillo cruzado'] = { vista: 'frente', seq: [[mcA, 0.3], [mcB, 1.1], [mcB, 0.25]], vuelta: 1.3, fondo: FG_PISO,
+    delante: function(P, ln, ci){ ci(P.wL, 3, 'il-peso'); const d = [P.wR[0] - P.eR[0], P.wR[1] - P.eR[1]], L = Math.hypot(d[0], d[1]) || 1; const u = [d[0] / L * 4.5, d[1] / L * 4.5]; ln([P.wR[0] - u[0], P.wR[1] - u[1]], [P.wR[0] + u[0], P.wR[1] + u[1]], 'il-barra'); ci([P.wR[0] + u[0], P.wR[1] + u[1]], 2.4, 'il-peso'); ci([P.wR[0] - u[0], P.wR[1] - u[1]], 2.4, 'il-peso'); } };
+
+  /* --- tríceps --- */
+  // extensión con cuerda (de frente): el cable baja de la polea alta a un nudo y la cuerda se abre en dos hacia las manos
+  // arriba: codos pegados a los costados y el antebrazo hacia delante (de frente se ve corto); abajo: brazos estirados y la cuerda abierta
+  const largo = function(P){ return FG_L.brazo + FG_L.antebrazo * P.ea - 0.3; };   // brazo casi estirado: el codo no se abre
+  const cuA = { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], escAnte: 0.3, cL: 1, cR: -1,
+    wL: function(P){ const l = largo(P), dx = (1 - P.ea) * 0 - (P.ea - 0.3) * 4; return [P.sL[0] + dx, P.sL[1] + Math.sqrt(l * l - dx * dx)]; },
+    wR: function(P){ const l = largo(P), dx = (P.ea - 0.3) * 4; return [P.sR[0] + dx, P.sR[1] + Math.sqrt(l * l - dx * dx)]; } };
+  const cuB = Object.assign({}, cuA, { escAnte: 1 });
+  FG['extension en polea con cuerda'] = { vista: 'frente', seq: [[cuA, 0.3], [cuB, 0.9], [cuB, 0.25]], vuelta: 1.1, fondo: FG_PISO + '<circle cx="60" cy="4" r="3.2" class="il-mueble"/>',
+    atras: function(P, ln){ const nudo = [(P.wL[0] + P.wR[0]) / 2, Math.min(P.wL[1], P.wR[1]) - 7]; ln([60, 4], nudo, 'il-cable'); ln(nudo, P.wL, 'il-cuerda-t'); ln(nudo, P.wR, 'il-cuerda-t'); } };
+  // agarre inverso (de lado): codos pegados, palmas hacia arriba; polea alta delante
+  const piePolea = { p: [52, 46.5], t: 6, cab: 0, a: [52, 82.5], f: [59, 83.5] };
+  const invA = Object.assign({}, piePolea, { brazo: [183, 70], palma: 1 }), invB = Object.assign({}, piePolea, { brazo: [181, 176], palma: 1 });
+  FG['extension en polea agarre inverso'] = { seq: [[invA, 0.3], [invB, 0.9], [invB, 0.25]], vuelta: 1.1, fondo: FG_PISO + fgColumna(84, 6),
+    atras: function(P, ln){ fgCable([84, 6], ln, P); }, delante: function(P, ln, ci, F){ ln([P.w[0] - 3, P.w[1]], [P.w[0] + 3, P.w[1]], 'il-barra'); fgPalma(ln, P, F.palma); } };
+  // sobre la cabeza en polea: de espaldas a la polea baja; el cable sube por detrás hasta las manos tras la nuca;
+  // los codos apuntan arriba y los antebrazos estiran en vertical
+  const ohA = { p: [58, 46.5], t: 4, cab: -4, a: [62, 82.5], f: [69, 83.5], a2: [50, 82.5], f2: [57, 83.5], brazo: [14, 196] };
+  const ohB = Object.assign({}, ohA, { brazo: [14, 8] });
+  FG['extension sobre la cabeza en polea'] = { segundo: true, seq: [[ohA, 0.3], [ohB, 0.9], [ohB, 0.25]], vuelta: 1.1, fondo: FG_PISO + fgColumna(26, 80),
+    atras: function(P, ln){ fgCable([26, 80], ln, P); }, delante: function(P, ln, ci){ ci(P.w, 2.6, 'il-peso'); } };
+  // fondos en máquina: sentado, agarra las asas a los lados y empuja hacia abajo hasta estirar los brazos (codos hacia atrás)
+  const asientoM = '<rect x="36" y="56" width="26" height="4" rx="2" class="il-mueble"/><line x1="38" y1="20" x2="38" y2="58" class="il-mueble"/><line x1="49" y1="60" x2="49" y2="84" class="il-fondo"/>';
+  const fmA = { p: [45, 54], t: 2, cab: 0, a: [66, 82.5], f: [73, 83.5], w: [50, 40], c: 1 }, fmB = Object.assign({}, fmA, { w: [49, 54.5] });
+  FG['fondos en maquina'] = { seq: [[fmA, 0.3], [fmB, 0.9], [fmB, 0.25]], vuelta: 1.1, fondo: FG_PISO + asientoM,
+    delante: function(P, ln, ci){ ln([P.w[0] - 4, P.w[1]], [P.w[0] + 4, P.w[1]], 'il-barra'); ln([P.w[0] + 4, P.w[1]], [P.w[0] + 8, P.w[1] + 10], 'il-mueble il-sin'); } };
+  // extensión de tríceps en máquina: sentado, los brazos apoyados en el pad de delante; el antebrazo empuja la palanca hasta estirar
+  const etA = { p: [42, 54], t: 4, cab: 0, a: [64, 82.5], f: [71, 83.5], brazo: [120, 20] }, etB = Object.assign({}, etA, { brazo: [120, 118] });
+  (function(){
+    const P0 = fgLado(etA);
+    const padT = '<line x1="' + fgNum(P0.n[0] + 3) + '" y1="' + fgNum(P0.n[1] + 7) + '" x2="' + fgNum(P0.e[0] + 2) + '" y2="' + fgNum(P0.e[1] + 4.5) + '" class="il-mueble"/><line x1="' + fgNum(P0.e[0]) + '" y1="' + fgNum(P0.e[1] + 6) + '" x2="' + fgNum(P0.e[0]) + '" y2="84" class="il-fondo"/>';
+    FG['extension de triceps en maquina'] = { seq: [[etA, 0.3], [etB, 0.9], [etB, 0.25]], vuelta: 1.1, fondo: FG_PISO + '<rect x="30" y="56" width="24" height="4" rx="2" class="il-mueble"/><line x1="42" y1="60" x2="42" y2="84" class="il-fondo"/>' + padT + '<circle cx="' + fgNum(P0.e[0]) + '" cy="' + fgNum(P0.e[1]) + '" r="2.4" class="il-mueble"/>',
+      delante: function(P, ln, ci){ ln(P.e, P.w, 'il-mueble il-sin'); ci(P.w, 2.4, 'il-peso'); } };
+  })();
 })();
 
 /* ---------- enganche con la app ---------- */
