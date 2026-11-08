@@ -64,7 +64,8 @@ if (typeof entResumenHtml === 'function') entResumenHtml = (function(orig){
     const t = document.createElement('template'); t.innerHTML = orig.apply(this, arguments);
     const card = t.content.querySelector('.ent-prev-card');
     if (card) {
-      const dias = card.querySelectorAll('.fe-dia').length, ej = card.querySelectorAll('.fe-ej').length;
+      const vis = card.querySelector('.fe-wk.sel') || card;         // 8/11 · con semanas, se cuenta solo la que está a la vista
+      const dias = vis.querySelectorAll('.fe-dia').length, ej = vis.querySelectorAll('.fe-ej, .fe-ej2').length;
       puPlegable('res', '🏋️ Resumen del entrenamiento', dias ? dias + (dias === 1 ? ' día' : ' días') + ' · ' + ej + (ej === 1 ? ' ejercicio' : ' ejercicios') : 'sin sesiones', card);
     }
     const mu = t.content.querySelector('.mu-box');
