@@ -640,6 +640,24 @@ function fgArriba(extra){
     atras: function(P, ln){ ln([84, 80], P.a, 'il-cable'); }, delante: function(P, ln, ci){ ci(P.a, 2, 'il-peso'); } };
 })();
 
+/* remo T con el pecho apoyado (referencia de Domingo, 8/11): boca abajo en el pad inclinado, los pies en la plataforma de atrás;
+   los brazos cuelgan hasta las asas de la palanca, anclada abajo y atrás con los discos; tira llevando los codos atrás y arriba */
+function fgRemoT(){
+  const t = 50;
+  const pose = function(k){ return { p: [46, 50], t: t, cab: -18, a: [29, 71], f: [25, 77.5], r: -1,
+    w: function(P){ return fgLerp(fgSum(P.n, [0.5, 24.6]), fgSum(P.n, [-5, 12]), k); }, c: -1 }; };
+  const P0 = fgLado(pose(0)), bajo = fgDir(t + 90, 4.6);
+  const ini = fgLerp(P0.p, P0.n, 0.25), fin = fgLerp(P0.p, P0.n, 0.92);
+  const pad = '<line x1="' + fgNum(ini[0] + bajo[0]) + '" y1="' + fgNum(ini[1] + bajo[1]) + '" x2="' + fgNum(fin[0] + bajo[0]) + '" y2="' + fgNum(fin[1] + bajo[1]) + '" class="il-pad"/>'
+    + '<line x1="' + fgNum(ini[0] + bajo[0] + 2) + '" y1="' + fgNum(ini[1] + bajo[1] + 2) + '" x2="' + fgNum(ini[0] + bajo[0] + 8) + '" y2="84" class="il-mueble il-sin"/>'
+    + '<line x1="20" y1="80" x2="30" y2="74" class="il-placa"/><line x1="26" y1="77" x2="34" y2="84" class="il-fondo"/>';
+  const piv = [16, 82];
+  return { seq: [[pose(0), 0.4], [pose(1), 1], [pose(1), 0.4]], vuelta: 1.3, fondo: FG_PISO + pad + FG_PIVOTE(16, 82),
+    atras: function(P, ln, ci){ ln(piv, P.w, 'il-mueble il-sin'); const d = fgLerp(piv, P.w, 0.8); ci([d[0], d[1] + 1], 6, 'il-disco'); ci([d[0], d[1] + 1], 1.5, 'il-peso'); },
+    delante: function(P, ln){ ln([P.w[0] - 3.5, P.w[1]], [P.w[0] + 3.5, P.w[1]], 'il-barra'); } };
+}
+FG['remo en punta (t-bar)'] = fgRemoT();
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
