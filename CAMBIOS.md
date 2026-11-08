@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.88 (actual)
-Cambios acumulados hacia la 0.89: **5 de 10**
+Cambios acumulados hacia la 0.89: **6 de 10**
 
 ### Hacia la 0.89
 1. 08/11/2026 · Supabase · **lo que un cliente rellenó con una versión antigua (permiso de imagen, cuestionario, alergias) llega a Domingo y Fátima** (avisado por Domingo). Se quedó solo en su móvil porque lo rellenó antes de que esas partes se guardaran en el servidor. Al abrir la versión nueva se le pide otra vez el consentimiento de salud y el permiso de imagen (tienen que constar en el servidor, con fecha y versión) y, en cuanto da el de salud, su cuestionario y sus alergias suben solos; nunca antes de darlo. Además, al abrir la ficha de un cliente se traen al momento su cuestionario, sus alergias y sus permisos (antes, solo al abrir la app) → **0.88.0-1 (caché)**
@@ -12,6 +12,7 @@ Cambios acumulados hacia la 0.89: **5 de 10**
 3. 08/11/2026 · Lista de clientes: **«📝 Cuestionario nuevo» (y «Necesitan atención») se quitan al abrir el cuestionario y ya no vuelven** (avisado por Domingo). Al poner la ficha al día con el servidor se perdía la marca de «ya visto» y el aviso reaparecía; ahora se conserva mientras sea el mismo cuestionario → **0.88.1-1 (caché)**
 4. 08/11/2026 · Entrenamientos (profesionales): **cada sesión del resumen semanal del cliente muestra el peso movido** («🏋️ 2.340 kg movidos»), con las repeticiones hechas o, si no las apunta, las del plan (pedido por Domingo) → **0.88.2**
 5. 08/11/2026 · Entrenamientos (profesionales): **el peso movido en cada serie de cada ejercicio** del resumen semanal del cliente («50×8 = 400 kg»), de esta semana y, plegadas, de las 4 anteriores (aclarado por Domingo) → **0.88.2-1 (caché)**
+6. 08/11/2026 · Entrenamientos (profesionales): **fuera el cálculo peso × repeticiones por serie**; en su lugar, «📅 Pesos por semana» con una columna por semana («Sem 1 · Sem 2 · …», plegables): al tocar una, cada ejercicio muestra el peso de cada serie de esa semana. El tonelaje semanal de arriba y el total de cada sesión se mantienen (pedido por Domingo) → **0.88.3**
 
 ## Versión 0.87 → 0.88.0
 
