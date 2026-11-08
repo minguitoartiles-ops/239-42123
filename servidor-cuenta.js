@@ -205,7 +205,11 @@ function svSaTraer(){
       const s = por[String(d.sid).toLowerCase()];
       if (s && s.cuestionario) {
         const nuevo = !d.cuestionario || d.cuestionario.fecha !== s.cuestionario.fecha;
+        // 8/11 · «visto por» es de este aparato: el que llega del servidor no lo trae y lo borraba en cada puesta al día,
+        // con lo que «📝 Cuestionario nuevo» (y «Necesitan atención») volvía a salir aunque ya se hubiera abierto
+        const visto = (!nuevo && d.cuestionario && d.cuestionario.vistoPor) || null;
         ['cuestionario', 'medIni', 'alergias', 'dni', 'nombreFiscal', 'dirFiscal'].forEach(function(c){ if (s[c] != null) d[c] = s[c]; });
+        if (visto && d.cuestionario && typeof d.cuestionario === 'object') d.cuestionario.vistoPor = visto;
         const tel = s.cuestionario.r && s.cuestionario.r.telefono;
         if (tel && !d.telefono) d.telefono = String(tel).slice(0, 30);
         if (nuevo && svSaReciente(s.cuestionario.fecha) && tocaAvisarUnaVez('sv-cq|' + d.sid + '|' + s.cuestionario.fecha)) {
