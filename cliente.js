@@ -1087,7 +1087,7 @@ function chCabPintar(){
   let c = document.getElementById('chatCab');
   if (!c) {
     c = document.createElement('div'); c.id = 'chatCab'; c.className = 'chat-cab';
-    c.innerHTML = '<button type="button" class="chat-cab-volver" onclick="volverAtras()" aria-label="Volver">‹</button>'
+    c.innerHTML = '<button type="button" class="chat-cab-volver" onclick="chCabVolver()" aria-label="Volver">‹</button>'
       + '<button type="button" class="chat-cab-info" onclick="chFichaAbrir()" aria-label="Información del grupo">'
       + '<img class="chat-cab-av" src="assets/logo_fsd.png" alt="">'
       + '<span class="chat-cab-t"><b></b><small></small></span></button>'
@@ -1107,6 +1107,20 @@ function chCabPintar(){
   }
 }
 /* «Fátima, Domingo y tú» para el cliente; «Paco, Fátima y tú» para Domingo */
+/* 8/11 · «‹» de la cabecera: el profesional vuelve como con su barra de siempre (a la lista de chats o a la ficha) */
+function chCabVolver(){
+  const b = chEsPro() && document.querySelector('#coachBar .coach-bar-volver');
+  if (b) b.click(); else volverAtras();
+}
+/* 8/11 · Móvil del profesional: lo que antes eran los botones Ficha · Plan · Segs. de la cabecera está
+   ahora dentro de «Información del grupo», como los apartados de Telegram */
+function chIrA(q){
+  mjCerrarHoja('chatFicha');
+  const nutri = coachActivo && coachActivo.rol === 'dietista';
+  if (q === 'ficha') { const b = document.querySelector('#coachBar .coach-bar-volver'); if (b) b.click(); else backToCliente(); }
+  else if (q === 'plan') { if (nutri) enAbrirPlanNutri(); else enAbrirPlan(clienteActual); }
+  else if (q === 'segs') goToSeguimientos();
+}
 function chEsPro(){ return !!coachActivo && typeof isCoachView === 'function' && isCoachView(); }
 function chCabMiembros(){
   // ordenador: como Telegram de escritorio, «3 miembros»
@@ -1132,6 +1146,7 @@ function chFichaAbrir(){
   const fijo = d.chatFijo;
   let h = '<div class="fsd-sheet"><div class="sheet-head"><h3>Información del grupo</h3><button class="x-btn" onclick="mjCerrarHoja(\'chatFicha\')" aria-label="Cerrar">×</button></div>'
     + '<div class="chat-ficha-top"><img src="assets/logo_fsd.png" alt=""><b>' + esc(chCabNombre()) + '</b><small>' + (COACHES.length + 1) + ' miembros</small></div>'
+    + chFichaAccesos()
     + '<div class="list-group chat-ficha-cont">'
     + '<div class="list-row" onclick="mjCerrarHoja(\'chatFicha\');puGaleria()"><span>🖼️ ' + cuenta(fotos, 'foto', 'fotos') + '</span><span class="chev">›</span></div>'
     + '<div class="list-row"><span>🎤 ' + cuenta(voz, 'mensaje de voz', 'mensajes de voz') + '</span></div>'
@@ -1147,6 +1162,16 @@ function chFichaAbrir(){
   h += '</div></div>';
   o.innerHTML = h;
   o.classList.add('show');
+}
+function chFichaAccesos(){
+  if (!chEsPro() || document.documentElement.classList.contains('esc')) return '';
+  const nutri = coachActivo && coachActivo.rol === 'dietista';
+  const fila = function(q, ico, txt){ return '<div class="list-row" role="button" tabindex="0" onclick="chIrA(\'' + q + '\')"><span>' + ico + ' ' + txt + '</span><span class="chev">›</span></div>'; };
+  return '<div class="list-group chat-ficha-cont chat-ficha-acc">'
+    + fila('ficha', '👤', 'Ficha del cliente')
+    + fila('plan', nutri ? '🍽️' : '🏋️', nutri ? 'Plan de nutrición' : 'Plan de entrenamiento')
+    + fila('segs', '📋', 'Seguimientos')
+    + '</div>';
 }
 function chIrAlFijado(){
   mjCerrarHoja('chatFicha');

@@ -1366,3 +1366,32 @@ html.fsd-vv .fsd-overlay.show > .fsd-sheet.full{padding-top:12px;}
 /* con el teclado fuera, los botones de «Atrás / Siguiente» del cuestionario van al final y no roban hueco */
 html.fsd-teclado .cq-acts{position:static;}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+
+/* 8/11 · Seguimientos de un cliente: semanas plegables (pulido.js) */
+#seguiList .sg-plegable > .segui-head{cursor:pointer;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;border-radius:var(--r-ctl);}
+#seguiList .sg-plegable > .segui-head:focus-visible{outline:2px solid var(--accent);outline-offset:4px;}
+#seguiList .sg-plegable > .segui-head .segui-week{flex:1;min-width:0;flex-wrap:wrap;}
+#seguiList .sg-chev{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--wash-soft);color:var(--dim-6);font-size:var(--fs-s);transition:transform var(--dur-m);}
+#seguiList .segui-card.plegada .sg-chev{transform:rotate(-90deg);}
+#seguiList .segui-card.plegada > :not(.segui-head){display:none !important;}
+#seguiList .segui-card.plegada > .segui-head{margin-bottom:0;}
+@media (prefers-reduced-motion:reduce){ #seguiList .sg-chev{transition:none;} }
+
+/* 8/11 · Móvil: tocar un título o un botón no selecciona el texto. En Android, al seleccionarlo salía
+   la barra negra del buscador del sistema (avisado por Domingo). Se puede seguir seleccionando y copiando
+   lo que se escribe y el texto largo de las fichas. */
+@media (pointer:coarse){
+  #coachBar,.chat-cab,.coach-bar,.alta-top,.view-top,.tb,.sv-marca,.cliente-card,.section-lbl,.alta-label,
+  .segui-head,.chat-ficha-top,.sheet-head,.chip,.tab-badge,button,[role="button"]{
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  }
+}
+
+/* 8/11 · Chat en el móvil del profesional como el del ordenador y el del cliente (estilo Telegram):
+   cabecera «Asesoría Nombre» · «Verónica, Fátima y tú»; al tocarla, «Información del grupo» con Ficha,
+   Plan, Seguimientos, fotos, notas de voz, enlaces y miembros. Fuera la fila de botones de arriba. */
+html.chat-pro-movil #app.coach-view > #coachBar{display:none !important;}
+html.chat-pro-movil #view-chat > .chat-cab{display:flex;align-items:center;gap:4px;flex:none;margin:0 -22px;padding:6px 12px 8px 6px;border-bottom:1px solid var(--line);background:var(--bg);}
+html.chat-pro-movil #view-chat > .chat-cab .chat-cab-av{display:block;}
+html.chat-pro-movil #view-chat > .chat-cab .chat-cab-volver{display:block;}
+.chat-ficha-acc{margin-bottom:16px;}

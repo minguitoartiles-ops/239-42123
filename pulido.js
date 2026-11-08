@@ -1231,3 +1231,53 @@ goTo = (function(orig){
     return r;
   };
 })(goTo);
+
+/* 8/11 · Seguimientos de un cliente (profesionales): cada semana se pliega y despliega tocando su título
+   (pedido por Domingo). Al abrir, la más reciente sale desplegada y las demás plegadas; lo que cada uno
+   abre o cierra se recuerda mientras la app está abierta. */
+const SG_PLIEGUE = {};
+function sgPliegueClave(card){
+  const w = card.querySelector('.segui-week');
+  return (clienteActual || '') + '|' + ((w && w.textContent) || '').replace(/\s+/g, ' ').trim();
+}
+function sgPliegueAplicar(){
+  const cont = document.getElementById('seguiList'); if (!cont) return;
+  const cards = Array.prototype.slice.call(cont.querySelectorAll('.segui-card'));
+  cards.forEach(function(card, i){
+    const head = card.querySelector('.segui-head'); if (!head) return;
+    if (!head.querySelector('.sg-chev')) {
+      const c = document.createElement('span'); c.className = 'sg-chev'; c.setAttribute('aria-hidden', 'true'); c.textContent = '▾';
+      head.appendChild(c);
+      head.setAttribute('role', 'button'); head.tabIndex = 0;
+    }
+    card.classList.add('sg-plegable');
+    const k = sgPliegueClave(card);
+    const plegada = (k in SG_PLIEGUE) ? SG_PLIEGUE[k] : i > 0;
+    card.classList.toggle('plegada', plegada);
+    head.setAttribute('aria-expanded', String(!plegada));
+  });
+}
+function sgPliegueTocar(head){
+  const card = head.closest('.segui-card'); if (!card) return;
+  const plegada = !card.classList.contains('plegada');
+  card.classList.toggle('plegada', plegada);
+  head.setAttribute('aria-expanded', String(!plegada));
+  SG_PLIEGUE[sgPliegueClave(card)] = plegada;
+}
+(function(){
+  const cont = document.getElementById('seguiList'); if (!cont) return;
+  cont.addEventListener('click', function(e){
+    const head = e.target.closest && e.target.closest('.sg-plegable > .segui-head');
+    if (!head || e.target.closest('button, a, input, select, textarea')) return;
+    sgPliegueTocar(head);
+  });
+  cont.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const head = e.target.closest && e.target.closest('.sg-plegable > .segui-head');
+    if (head && e.target === head) { e.preventDefault(); sgPliegueTocar(head); }
+  });
+  try { new MutationObserver(sgPliegueAplicar).observe(cont, { childList: true }); } catch(e){}
+})();
+goToSeguimientos = (function(orig){
+  return function(){ const r = orig.apply(this, arguments); try { sgPliegueAplicar(); } catch(e){} return r; };
+})(goToSeguimientos);
