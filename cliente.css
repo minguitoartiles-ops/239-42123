@@ -1397,3 +1397,6 @@ html.chat-pro-movil #view-chat > .chat-cab{display:flex;align-items:center;gap:4
 html.chat-pro-movil #view-chat > .chat-cab .chat-cab-av{display:block;}
 html.chat-pro-movil #view-chat > .chat-cab .chat-cab-volver{display:block;}
 .chat-ficha-acc{margin-bottom:16px;}
+
+/* 8/11 · el chat del cliente no lleva «‹»: las pestañas de abajo no llevan «Volver» (el profesional sí, con chat-pro-movil) */
+html:not(.chat-pro-movil) .chat-cab-volver{display:none;}

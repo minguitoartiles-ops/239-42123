@@ -1,0 +1,45 @@
+/* Editor de rutinas en el ordenador, más simple (8/11/2026) · ver editor-escritorio.js */
+/* días: en columnas solo si caben; si no, a la fila de abajo */
+html.ed-v2 #sesionesCont{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));overflow-x:visible;}
+/* fuera lo repetido o lo que sobra */
+html.ed-v2 #ruVistaBtn,
+html.ed-v2 #view-entreno #entSub,
+html.ed-v2 #view-entreno .add-sesion-btn,
+html.ed-v2 #enLeyenda .en-ley-rir,
+html.ed-v2 #sesionesCont .ru-ren,
+html.ed-v2 #sesionesCont .ses-del,
+html.ed-v2 #sesionesCont .ses-tick,
+html.ed-v2 #sesionesCont .en-ses-acts,
+html.ed-v2 #sesionesCont .ru-cambiar,
+html.ed-v2 #sesionesCont .ru-desp,
+html.ed-v2 #sesionesCont .en-ej-btns > button:not(.en-tec-btn){display:none !important;}
+html.ed-v2 #enLeyenda{background:none;border:0;padding:0;margin:0 0 8px;}
+html.ed-v2 #enLeyenda > summary{justify-content:flex-end;}
+/* cabecera del día: nombre · ⋯ · ⌄ */
+html.ed-v2 #sesionesCont .sesion-acts{display:flex;align-items:center;gap:6px;}
+html.ed-v2 .ed-mas{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--card, #fff);color:var(--ink);font:700 18px/1 var(--f-body);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 0 6px;}
+html.ed-v2 .ed-mas:hover{background:var(--wash-soft, #f3f4f6);}
+html.ed-v2 .ed-mas:focus-visible,html.ed-v2 .ed-menu button:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px;}
+/* ejercicio: la fila entera abre y cierra; ⌄ y ⋯ a la derecha */
+html.ed-v2 #sesionesCont .ex-item{position:relative;}
+html.ed-v2 #sesionesCont .ex-item:not(.ru-foco){padding-right:76px !important;}
+html.ed-v2 #sesionesCont .ex-item.ru-foco .ex-table-row{padding-right:76px;}
+html.ed-v2 #sesionesCont .ex-item .ex-name-cell{cursor:pointer;}
+html.ed-v2 #sesionesCont .ex-item > .ed-acc{position:absolute;top:6px;right:6px;display:flex !important;align-items:center;gap:4px;}
+html.ed-v2 .ed-chev{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;font-size:18px;color:var(--accent-text);cursor:pointer;transition:transform var(--dur-m, .2s) var(--ease-sal, ease);padding-bottom:6px;}
+html.ed-v2 .ed-chev:hover{background:var(--wash-soft, #f3f4f6);}
+html.ed-v2 .ex-item.ru-foco .ed-chev{transform:rotate(180deg);padding:6px 0 0;}
+/* menú ⋯ */
+.ed-menu{position:fixed;z-index:var(--z-flotante, 260);min-width:190px;padding:6px;border-radius:12px;background:var(--card, #fff);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.16);display:flex;flex-direction:column;}
+.ed-menu button{text-align:left;padding:9px 12px;border:0;border-radius:8px;background:none;font:500 var(--fs-s) var(--f-body);color:var(--ink);cursor:pointer;}
+.ed-menu button:hover:not([disabled]){background:var(--wash-soft, #f3f4f6);}
+.ed-menu button[disabled]{opacity:.4;cursor:default;}
+.ed-menu button.peligro{color:var(--danger-text);}
+html.ed-v2.ru-plegable #sesionesCont .ex-item.ru-foco .ex-name-cell::after{content:"" !important;}
+/* la pauta, alineada bajo el nombre */
+html.ed-v2 #sesionesCont .ex-item:not(.ru-foco) .ru-res{padding-left:30px !important;}
+/* barra de arriba al editar: solo «Deshacer» y «Guardar cambios y notificar» (fuera Volver, «Editando ‹ nombre ›» y
+   «Entrenamiento | Chat»: en el ordenador ya están el menú lateral, la lista de clientes y el chat al lado) */
+html.ed-v2 #coachBar .coach-bar-left,
+html.ed-v2 #coachBar #exTabsCoach{display:none !important;}
+html.ed-v2 #coachBar{justify-content:flex-end;gap:8px;}

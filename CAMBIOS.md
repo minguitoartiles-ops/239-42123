@@ -3,8 +3,26 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.88 (actual)
-Cambios acumulados hacia la 0.89: **9 de 10**
+## Versión 0.90 (actual)
+Cambios acumulados hacia la 0.91: **0 de 10**
+
+## Versión 0.89 → 0.90.0
+
+### Hacia la 0.90 · editor de rutinas en el ordenador, más simple (pedido por Domingo: desplegables que fallaban, demasiados botones)
+1. 08/11/2026 · **Cada ejercicio se abre y se cierra tocando cualquier parte libre de su fila o la flecha ⌄** (más grande, y ahora también cierra), y **solo queda uno abierto a la vez**. Antes la flechita ▾ solo abría, desaparecía al abrir y abrir otro no cerraba el anterior → **0.89.0-1 (caché)**
+2. 08/11/2026 · **Botón ⋯ en cada ejercicio** con Cambiar ejercicio, Subir, Bajar, Duplicar y Quitar; fuera el botón «Cambiar» y los cuatro botones del detalle → **0.89.1**
+3. 08/11/2026 · **Botón ⋯ en cada día** con Renombrar, Subir, Bajar, Duplicar y Borrar; fuera ✎, ×, ✓ y la fila ↑ ↓ Duplicar. **Borrar un día pide confirmación** (antes se borraba al momento con la × pegada a plegar) → **0.89.1-1 (caché)**
+4. 08/11/2026 · Arriba, **«Plan de Nombre»** en vez de «Tus sesiones» (texto del cliente) y una sola fila: Asistente, Plantillas y + Día. Fuera «Vista detallada / compacta» (queda una sola vista), la frase del cliente, la leyenda de colores del RIR (queda «¿Qué es el RIR?») y el «+ Añadir sesión» repetido de abajo → **0.89.2**
+5. 08/11/2026 · **Los días van en columnas solo si caben**; si no (por ejemplo en «Multitarea», con el chat al lado), pasan a la fila de abajo y ninguno queda cortado → **0.89.2-1 (caché)**
+6. 08/11/2026 · **La barra de arriba del editor, solo con «Deshacer» y «Guardar cambios y notificar»** (pedido por Domingo: en el ordenador no aportaba y cargaba la vista). Fuera «Volver», «Editando ‹ nombre ›» y «Entrenamiento | Chat»: ya están el menú lateral, la lista de clientes y el chat al lado. Al guardar vuelve la barra de siempre → **0.89.3**
+
+### Hacia la 0.90 · navegación del móvil (auditoría del 08/11/2026: «Volver» coherente y que lleve a donde toca)
+7. 08/11/2026 · Cliente: **fuera el «‹» del chat**; las pestañas de abajo no llevan «Volver» y el chat tampoco (el profesional lo mantiene, porque su chat cuelga de la ficha o de la lista de chats) → **0.89.3-1 (caché)**
+8. 08/11/2026 · Cliente: **«‹ Volver» en Ajustes cuando se llega desde el Perfil** (antes solo funcionaba el atrás del móvil, y en el iPhone no hay) → **0.89.4**
+9. 08/11/2026 · Profesionales: **el «Volver» de la ficha lleva a la pestaña de donde se vino** (Seguimientos, Entrenamientos, Chats…) y no siempre a Clientes; ahora es igual que el atrás del móvil → **0.89.4-1 (caché)**
+10. 08/11/2026 · Profesionales: **fuera «‹ Salir» de la pantalla Clientes** (se confundía con «Volver» y abría el cierre de sesión); «Cerrar sesión» sigue en Ajustes → **0.90.0**
+
+## Versión 0.88 → 0.89.0
 
 ### Hacia la 0.89
 1. 08/11/2026 · Supabase · **lo que un cliente rellenó con una versión antigua (permiso de imagen, cuestionario, alergias) llega a Domingo y Fátima** (avisado por Domingo). Se quedó solo en su móvil porque lo rellenó antes de que esas partes se guardaran en el servidor. Al abrir la versión nueva se le pide otra vez el consentimiento de salud y el permiso de imagen (tienen que constar en el servidor, con fecha y versión) y, en cuanto da el de salud, su cuestionario y sus alergias suben solos; nunca antes de darlo. Además, al abrir la ficha de un cliente se traen al momento su cuestionario, sus alergias y sus permisos (antes, solo al abrir la app) → **0.88.0-1 (caché)**
@@ -16,6 +34,7 @@ Cambios acumulados hacia la 0.89: **9 de 10**
 7. 08/11/2026 · Supabase · **las plantillas de rutinas (Domingo) y de dietas (Fátima) viajan al servidor** (tabla nueva `plantillas`, con su migración y pruebas). Cada profesional ve y gestiona solo las suyas; un cliente no ve ninguna. Las que ya hay en el aparato suben solas la primera vez, las del servidor bajan a los demás aparatos, y guardar o «borrar» se sincroniza (borrar archiva en el servidor: nada se borra desde la app). Si la misma cambia en dos aparatos, gana la del aparato donde se acaba de editar. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.88.3-1 (caché)**
 8. 08/11/2026 · Entrenamientos (profesionales): **«📅 Pesos por semana» dentro del cuadro «Resumen del entrenamiento»**, junto a los días (pedido por Domingo) → **0.88.4**
 9. 08/11/2026 · Supabase · **«✓ Marcar como resuelto» se guarda en el servidor** (en cada profesional) y sale igual en el móvil y en el ordenador; también cuando se entra en un chat pendiente. Si el cliente escribe después, vuelve a contar. Migración y pruebas nuevas. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.88.4-1 (caché)**
+10. 08/11/2026 · Entrenamientos (profesionales): **resumen del entrenamiento por semanas, ordenado y sin repetir** (pedido por Domingo: el anterior era poco intuitivo y repetía los ejercicios). Arriba, las semanas (Sem 1 · Sem 2 · …, marcada la actual); debajo, cada día con sus ejercicios y, de cada uno en una sola fila: series × repeticiones, RIR y el peso de cada serie con las repeticiones hechas («25 kg × 8»). Cada día, con el peso total movido esa semana → **0.89.0**
 
 ## Versión 0.87 → 0.88.0
 
