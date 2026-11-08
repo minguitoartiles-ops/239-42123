@@ -354,6 +354,11 @@ html.esc #escInstalar{color:var(--accent-text);font-weight:700;}
 /* #163 Entrenamientos de Domingo: lista + entreno a la derecha */
 .ent-lista{display:flex !important;flex-direction:column;gap:8px;}
 .ent-lista .plan-fila{margin:0;}
+/* «Ver entreno»: botón de verdad, grande y fácil de pulsar (un clic abre el entreno; antes solo seleccionaba y hacía falta doble clic) */
+.ent-lista .plan-fila{padding-right:132px;min-height:76px;}
+.ent-lista .plan-fila-cta{display:flex;align-items:center;justify-content:center;top:50%;bottom:auto;right:10px;transform:translateY(-50%);min-width:104px;min-height:44px;padding:0 14px;border:1px solid var(--accent-text);border-radius:var(--r-ctl);background:color-mix(in srgb, var(--accent-text) 10%, transparent);cursor:pointer;white-space:nowrap;}
+.ent-lista .plan-fila-cta:hover,.ent-lista .plan-fila-cta:focus-visible{background:color-mix(in srgb, var(--accent-text) 22%, transparent);outline:none;}
+.ent-lista .plan-fila-est{padding-right:0;}
 .ent-prev-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 12px;}
 .ent-prev-stats > div{padding:12px 12px;border-radius:var(--r-ctl);background:var(--card-hi, var(--wash-soft));border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;}
 .ent-prev-stats small{font:600 var(--fs-xs) var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim-55);}
