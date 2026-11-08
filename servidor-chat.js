@@ -386,7 +386,7 @@ function svChEscuchar(){
     let primera = true;
     svChDejar = x.chat.escuchar(svChCambio, function(estado){
       // al volver a conectar (tras un corte) se pone al día lo que se haya perdido
-      if (estado === 'SUBSCRIBED') { if (!primera) svChPonerAlDia(); primera = false; }
+      if (estado === 'SUBSCRIBED') { if (!primera) { if (typeof svPonerseAlDia === 'function') svPonerseAlDia(); else svChPonerAlDia(); } primera = false; }
     });
   }).catch(function(){});
 }
@@ -487,7 +487,7 @@ function svChEnviar(){
     guardarTodo();
   });
 }
-window.addEventListener('online', function(){ if (svChSesion()) svChEnviar().then(svChPonerAlDia); });
+/* al recuperar internet: lo hace «fsd:al-volver» (servidor.js lo lanza una sola vez para todas las partes) */
 setInterval(function(){ if (svChSesion() && Object.keys(clientesData).some(function(k){ return svChPend(k).some(function(p){ return !p.enviado; }); })) svChEnviar(); }, 15000);
 
 /* =========================================================
@@ -788,12 +788,13 @@ if (svActivo()) {
     };
   })(mtPonerChat);
 
+  const svChDudasPend = function(x){ return x.chat.dudasPendientes().then(function(ids){ ids.forEach(function(sid){ const k = svChClave(sid); if (k) svChTraer(k); }); }); };
   window.addEventListener('fsd:lista-servidor', function(){
     svChPreparar().then(function(x){
       svChEscuchar();
       svChResumen();
       svChEnviar();
-      return x.chat.dudasPendientes().then(function(ids){ ids.forEach(function(sid){ const k = svChClave(sid); if (k) svChTraer(k); }); });
+      return svChDudasPend(x);
     }).catch(function(){});
   });
   window.addEventListener('fsd:cliente-dentro', function(){
@@ -801,5 +802,9 @@ if (svActivo()) {
     svChPreparar().then(function(){ svChEscuchar(); svChEnviar(); if (k) svChTraer(k); svChResumen(); }).catch(function(){});
   });
   window.addEventListener('fsd:sesion-fuera', svChParar);
-  window.addEventListener('fsd:al-volver', function(){ if (svChSesion()) svChEnviar().then(svChPonerAlDia); });
+  window.addEventListener('fsd:al-volver', function(){
+    if (!svChSesion()) return;
+    svChEnviar().then(svChPonerAlDia);
+    if (coachActivo) svChPreparar().then(svChDudasPend).catch(function(){});   // 8/11 · las dudas que llegaron mientras tanto
+  });
 }

@@ -68,14 +68,17 @@ export function crearPlanes(sb) {
       if (error) throw errorDe(error);
     },
 
-    // Avisa con el id del cliente cuando cambia su pauta o su registro (lo que se puede ver)
-    escuchar(alCambiar) {
-      const aviso = (p) => { const id = (p.new && p.new.cliente_id) || (p.old && p.old.cliente_id); if (id) alCambiar(id); };
+    // Avisa cuando cambia una pauta o un registro (lo que se puede ver): alCambiar(id del cliente, tabla, fila nueva, evento).
+    // La fila puede llegar sin la pauta o los datos (si es muy grande): entonces hay que pedirla.
+    escuchar(alCambiar, alEstado) {
       let canal = sb.channel('planes-y-registros');
       for (const t of ['planes_entreno', 'planes_nutricion', 'registro_entreno', 'registro_nutricion']) {
-        canal = canal.on('postgres_changes', { event: '*', schema: 'public', table: t }, aviso);
+        canal = canal.on('postgres_changes', { event: '*', schema: 'public', table: t }, (p) => {
+          const id = (p.new && p.new.cliente_id) || (p.old && p.old.cliente_id);
+          if (id) alCambiar(id, t, p.new && Object.keys(p.new).length ? p.new : null, p.eventType);
+        });
       }
-      canal.subscribe();
+      canal.subscribe((estado) => { if (alEstado) alEstado(estado); });
       return () => { sb.removeChannel(canal); };
     },
   };
