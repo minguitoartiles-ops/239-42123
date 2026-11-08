@@ -4,13 +4,16 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.91 (actual)
-Cambios acumulados hacia la 0.92: **4 de 10**
+Cambios acumulados hacia la 0.92: **7 de 10**
 
 ### Hacia la 0.92 · sincronización más rápida (auditoría del 08/11/2026, seguimos)
 1. 08/11/2026 · **El plan llega en torno a 1 s**: el aviso del servidor ya trae la pauta o el registro y se usa tal cual (antes se volvían a pedir las 4 tablas de ese cliente); lo que uno mismo acaba de guardar no se vuelve a descargar; la subida espera 0,6 s en vez de 1,2 s. Medido en el servidor simulado: del servidor a la pantalla, de ~1 s a ~0,4-0,6 s → **0.91.0-1 (caché)**
 2. 08/11/2026 · Supabase · **el cuestionario inicial y las alergias llegan al equipo al momento**, sin recargar (la tabla `salud` entra en el tiempo real, con sus mismas políticas: cada cliente solo lo suyo). También se escuchan los consentimientos. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.91.1**
 3. 08/11/2026 · Supabase · **seguimientos sin tope**: se traen de 1.000 en 1.000 hasta el final (antes, como mucho 2.000 entre todos los clientes y, con el tiempo, los más antiguos dejaban de verse en la app) → **0.91.1-1 (caché)**
 4. 08/11/2026 · **Arreglado: los pesos, series, sesiones y comidas que apunta el cliente no llegaban a Domingo y Fátima** (avisado por Domingo). Desde las plantillas en el servidor (0.88.3-1), una función de las plantillas se llamaba igual que la que sube el plan del cliente y la sustituía: lo apuntado solo se subía al volver a abrir la app. Ahora cada una tiene su nombre, y una comprobación nueva en GitHub impide que dos archivos declaren la misma función → **0.91.2**
+5. 08/11/2026 · **Editor de rutinas en el ordenador: los días van uno debajo de otro** (sesión 1 arriba, luego 2, 3…), cada uno a todo el ancho, en vez de repartirse en columnas (pedido por Domingo) → **0.91.2-1 (caché)**
+6. 08/11/2026 · **«Ver entreno» es ahora un botón de verdad, grande y con borde**: un solo clic abre el entreno del cliente (antes era un texto pequeño que solo seleccionaba la tarjeta y hacía falta doble clic o acertar con varios intentos; avisado por Domingo) → **0.91.3**
+7. 08/11/2026 · **«Ver resumen» (Fátima, pestaña Nutrición) igual que «Ver entreno»**: botón grande con borde y un solo clic abre el plan (pedido por Domingo) → **0.91.3-1 (caché)**
 
 ## Versión 0.90 → 0.91.0
 
