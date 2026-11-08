@@ -66,8 +66,7 @@ function entResumenHtml(k){
   return '<div class="ent-prev-stats"><div><small>Tonelaje esta semana</small><b>' + (ton ? fmtMil(Math.round(ton)) + ' kg' : '—') + '</b>'
     + (ant ? '<span>' + (ton ? (ton >= ant ? '▲ ' : '▼ ') : '') + 'semana anterior ' + fmtMil(ant) + ' kg</span>' : '<span>' + (ton ? 'primera semana con pesos' : 'sin pesos registrados') + '</span>') + '</div>'
     + '<div><small>Sesiones esta semana</small><b>' + hechas + ' / ' + tot + '</b>' + (rd ? '<span>Con esta rutina: ' + esc(rd.txt) + '</span>' : '') + '</div></div>'
-    + entSemanasHtml(t, d)
-    + '<div class="fe-card ent-prev-card">' + (ses.length ? ses.join('') : '<div class="picker-empty">Todavía no tiene sesiones.</div>') + '</div>';
+    + '<div class="fe-card ent-prev-card">' + entSemanasHtml(t, d) + (ses.length ? ses.join('') : '<div class="picker-empty">Todavía no tiene sesiones.</div>') + '</div>';
 }
 plResumen = (function(orig){
   return function(k){
