@@ -90,7 +90,7 @@
 @media (max-width:1099px){#listaClientes .kcard .kc-grid{margin-top:8px;}#listaClientes .kcard .kc{flex-direction:row;align-items:baseline;justify-content:space-between;gap:4px;padding:4px 8px;}#listaClientes .kcard .kc-l{font-size:var(--fs-xs) !important;letter-spacing:0;}#listaClientes .kcard .kc-v{font-size:var(--fs-s);}#listaClientes .kcard .kc-v small,#listaClientes .kcard .kc-v i{display:none;}#listaClientes .kcard .kc-pie{margin-top:4px;}}
 .kc-motivos{margin:8px 0 0;font:600 var(--fs-s)/1.35 var(--f-body);color:var(--danger-text);}
 .hoy-aviso .ha-x{flex:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;margin:-4px -8px -4px 4px;border-radius:50%;font-size:var(--fs-xl);color:var(--dim-45);}
-.hoy-aviso .ha-x:hover{background:var(--wash-med);}
+@media (hover:hover){ .hoy-aviso .ha-x:hover{background:var(--wash-med);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 
 /* ---------- B8 · Editor de entrenos: solo la pauta ---------- */
 .coach-edit #view-entreno .tonelaje-card,

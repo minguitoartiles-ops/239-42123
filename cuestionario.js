@@ -211,6 +211,7 @@ function cqPintar(){
     + '<div class="cq-acts">' + (cqPaso ? '<button type="button" class="btn-eq" onclick="cqIr(-1)">Atrás</button>' : '<span></span>')
     + '<button type="button" class="btn-primary" onclick="cqIr(1)">' + (cqPaso < n - 1 ? 'Siguiente' : 'Enviar a mi equipo') + '</button></div></div>';
   const s = o.querySelector('.fsd-sheet'); if (s) s.scrollTop = 0;
+  cqTeclaSiguiente(o);
   /* lectura de lo que se escribe o se elige */
   o.querySelectorAll('.cq-f').forEach(function(f){
     const c = f.dataset.c;
@@ -229,9 +230,36 @@ function cqPintar(){
   });
 }
 function cqPintarMantener(){ const o = document.getElementById('cqHoja'), s = o && o.querySelector('.fsd-sheet'), y = s ? s.scrollTop : 0; cqPintar(); const s2 = document.querySelector('#cqHoja .fsd-sheet'); if (s2) s2.scrollTop = y; }
+/* 8/11 · auditoría iPhone: guardar el borrador lo guarda TODO (planes, chat…) y programa subidas al servidor.
+   Mientras se escribe, se espera a una pausa más larga; al cambiar de paso, cerrar o salir de la app se guarda al momento. */
+function cqBorradorYa(){
+  clearTimeout(cqGuardarT); cqGuardarT = null;
+  const d = clientesData[clienteActual]; if (!d || d.cuestionario || !cqR) return;
+  d.cqBorrador = { paso: cqPaso, r: cqR, fecha: new Date().toISOString() }; try { guardarTodo(); } catch(e){}
+}
 function cqBorrador(){
   clearTimeout(cqGuardarT);
-  cqGuardarT = setTimeout(function(){ const d = clientesData[clienteActual]; if (!d || d.cuestionario) return; d.cqBorrador = { paso: cqPaso, r: cqR, fecha: new Date().toISOString() }; try { guardarTodo(); } catch(e){} }, 400);
+  cqGuardarT = setTimeout(cqBorradorYa, 1500);
+}
+/* si se sale de la app con algo escrito y sin guardar todavía */
+['pagehide', 'visibilitychange'].forEach(function(ev){
+  (ev === 'pagehide' ? window : document).addEventListener(ev, function(){
+    if (cqGuardarT && (ev === 'pagehide' || document.visibilityState === 'hidden')) cqBorradorYa();
+  });
+});
+/* la tecla de abajo a la derecha del teclado: «Siguiente» salta al campo de abajo; en el último, «Hecho» lo cierra */
+function cqTeclaSiguiente(o){
+  const campos = Array.prototype.slice.call(o.querySelectorAll('.cq-paso input[type="text"], .cq-paso input[type="tel"], .cq-paso input:not([type]), .cq-paso textarea'));
+  campos.forEach(function(inp, i){
+    if (inp.tagName === 'TEXTAREA') return;            // en los textos largos, «intro» es salto de línea
+    const ultimo = i === campos.length - 1;
+    inp.setAttribute('enterkeyhint', ultimo ? 'done' : 'next');
+    inp.addEventListener('keydown', function(e){
+      if (e.key !== 'Enter' || e.isComposing) return;
+      e.preventDefault();
+      if (ultimo) inp.blur(); else campos[i + 1].focus();
+    });
+  });
 }
 /* DNI/NIE: admite minúsculas, espacios, puntos, guiones y DNI antiguos de 7 cifras (se completa con un 0 delante) */
 const CQ_LETRAS = 'TRWAGMYFPDXBNJZSQVHLCKE';
@@ -267,7 +295,7 @@ function cqIr(dir){
   if (dir > 0 && !cqValidar()) return;
   if (dir > 0 && cqPaso === CQ_PASOS.length - 1) { cqEnviar(); return; }
   cqPaso = Math.max(0, Math.min(CQ_PASOS.length - 1, cqPaso + dir));
-  cqBorrador(); cqPintar();
+  cqBorradorYa(); cqPintar();
 }
 function cqCerrar(){
   clearTimeout(cqGuardarT);

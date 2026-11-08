@@ -75,7 +75,7 @@ html.esc #exFiltros{flex-wrap:wrap;overflow:visible;}
 .sg-glob.sg-nota-g small{font:700 var(--fs-xs) var(--f-mono);opacity:.75;}
 .sg-cab-der{gap:12px;}
 .sg-ver.sg-ver-btn{min-height:40px;padding:0 16px;border-radius:var(--r-pill);border:1.5px solid var(--accent);background:var(--accent-wash, rgba(120,170,230,.12));color:var(--ink);font:700 var(--fs-s) var(--f-body);}
-.sg-ver.sg-ver-btn:hover{background:var(--accent);color:var(--on-accent);}
+@media (hover:hover){ .sg-ver.sg-ver-btn:hover{background:var(--accent);color:var(--on-accent);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .sg-linea{flex-wrap:wrap;row-gap:8px;}
 @media (max-width:420px){
   .sg-cab{flex-wrap:wrap;}
@@ -131,7 +131,7 @@ html.esc .segui-note{font-size:var(--fs-m);line-height:1.55;margin-top:8px;}
 .pg-fila.pago-fila.nar{border-color:color-mix(in srgb, var(--warn) 35%, transparent);border-left-color:var(--warn);}
 .pg-fila.pago-fila.amb{border-color:color-mix(in srgb, var(--v3) 35%, transparent);border-left-color:var(--v3);}
 .pg-fila.pago-fila.ok{border-left-color:var(--fat);}
-.pg-fila:hover{filter:brightness(.985);}
+@media (hover:hover){ .pg-fila:hover{filter:brightness(.985);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 html.esc .pg-cab{font-size:var(--fs-xs);letter-spacing:.08em;padding:0 20px 4px 24px;}
 html.esc .pg-fila.pago-fila{padding:16px 20px;border-radius:var(--r-ctl);}
 html.esc .pg-c{font-size:var(--fs-m);}
@@ -307,7 +307,7 @@ html.esc .pl-izq{min-width:0;}
 .pr-cliente .pr-lista{margin-top:0;}
 .pr-it{display:flex;align-items:center;gap:8px;}
 .pr-abrir{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:12px 12px;border:1px solid var(--line);border-radius:var(--r-ctl);background:var(--card, #fff);text-align:left;cursor:pointer;color:var(--ink);}
-.pr-abrir:hover{border-color:var(--accent-line, var(--accent));}
+@media (hover:hover){ .pr-abrir:hover{border-color:var(--accent-line, var(--accent));} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .pr-ico{font-size:var(--fs-xl);}
 .pr-t{flex:1;min-width:0;display:flex;flex-direction:column;}
 .pr-t b{font:600 var(--fs-m) var(--f-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -431,7 +431,7 @@ html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) .cd-box.cd-edit .cd-mini{d
 .mu-pelo{opacity:.9;}
 .mu-lin line{stroke:rgba(0,0,0,.18);stroke-width:1;}
 .mu-z{cursor:pointer;stroke:none;transition:filter var(--dur-r);}
-.mu-z:hover{filter:brightness(1.08);}
+@media (hover:hover){ .mu-z:hover{filter:brightness(1.08);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .mu-z.n0{fill:var(--mu0);} .mu-z.n1{fill:var(--mu1);} .mu-z.n2{fill:var(--mu2);} .mu-z.n3{fill:var(--mu3);} .mu-z.n4{fill:var(--mu4);}
 .mu-z.sel{stroke:var(--ink);stroke-width:7;}
 .mu-z:focus{outline:none;stroke:var(--accent);stroke-width:7;}
@@ -492,11 +492,11 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 .emo-tabs{display:flex;gap:2px;position:sticky;top:-6px;background:var(--card);padding:4px 0;z-index:var(--z-contenido);border-bottom:1px solid var(--line);}
 .emo-tab{width:38px;height:34px;border:none;border-radius:var(--r-ctl);background:none;font-size:var(--fs-xl);cursor:pointer;opacity:.6;}
 .emo-tab.on{opacity:1;background:var(--accent-wash);}
-.emo-tab:hover{opacity:1;}
+@media (hover:hover){ .emo-tab:hover{opacity:1;} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .emo-tit{font:600 var(--fs-xs) var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim-55);margin:8px 2px 2px;}
 .emo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:2px;}
 .emo-b{height:38px;border:none;border-radius:var(--r-ctl);background:none;font-size:var(--fs-2xl);line-height:1;cursor:pointer;}
-.emo-b:hover{background:var(--wash-med);}
+@media (hover:hover){ .emo-b:hover{background:var(--wash-med);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .pr-sin{display:block;margin:12px auto 0;border:none;background:none;color:var(--dim-6);font:500 var(--fs-s) var(--f-body);text-decoration:underline;cursor:pointer;}
 
 /* =========================================================
@@ -602,7 +602,7 @@ html.esc .cm-fw-in{border-radius:var(--r-card);}
 .cm-fw-q{height:42px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);background:var(--card);color:var(--ink);padding:0 12px;font:500 var(--fs-m) var(--f-body);}
 .cm-fw-lista{overflow:auto;display:flex;flex-direction:column;gap:4px;}
 .cm-fw-lista button{height:44px;border:none;background:none;text-align:left;padding:0 12px;border-radius:var(--r-ctl);color:var(--ink);font:500 var(--fs-m) var(--f-body);cursor:pointer;}
-.cm-fw-lista button:hover{background:var(--wash-soft);}
+@media (hover:hover){ .cm-fw-lista button:hover{background:var(--wash-soft);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 
 /* adherencias dentro de su apartado */
 .fp-adh{display:block;margin:0 0 12px;}
@@ -631,7 +631,7 @@ html.esc .cm-fw-in{border-radius:var(--r-card);}
 .emo-rec{padding:2px 0 8px;border-bottom:1px solid var(--line);margin-bottom:2px;}
 .emo-rec .emo-tit{display:flex;justify-content:space-between;align-items:center;}
 .emoji-panel .emo-borrar{height:auto;font-size:var(--fs-xs);border:none;background:none;color:var(--dim-6);font:600 var(--fs-xs) var(--f-mono);text-transform:uppercase;cursor:pointer;padding:2px 4px;}
-.emo-borrar:hover{color:var(--accent-text);}
+@media (hover:hover){ .emo-borrar:hover{color:var(--accent-text);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .emo-rec-vacio{font:500 var(--fs-s) var(--f-body);color:var(--dim-55);padding:8px 2px 4px;}
 html.esc .emoji-panel{max-height:290px;}
 
@@ -667,7 +667,7 @@ html.esc .emoji-panel{max-height:290px;}
 .cm-visor-volver{padding:0 16px 0 12px;display:flex;align-items:center;gap:8px;}
 .cm-visor-volver span{font-size:var(--fs-xl);line-height:1;}
 .cm-visor-x{width:38px;font-size:var(--fs-l);}
-.cm-visor-volver:hover,.cm-visor-x:hover{background:rgba(255,255,255,.24);}
+@media (hover:hover){ .cm-visor-volver:hover,.cm-visor-x:hover{background:rgba(255,255,255,.24);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 
 /* temporizador de descanso (cliente) */
 .ds-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:calc(var(--z-hoja) + 30);width:min(440px,calc(100% - 24px));border-radius:var(--r-card);background:var(--ink);color:var(--bg);box-shadow:0 14px 34px -10px rgba(0,0,0,.45);overflow:hidden;}
@@ -1279,13 +1279,13 @@ html.esc .esc-chat-col .mt-cab-txt[data-ficha]:hover b{text-decoration:underline
 html.esc #chatList{scrollbar-width:none;padding-right:2px;}
 html.esc #chatList::-webkit-scrollbar{display:none;}
 .chat-cab-panel{display:none;flex:none;width:40px;height:40px;border:0;background:none;color:var(--dim-6);cursor:pointer;border-radius:50%;align-items:center;justify-content:center;}
-.chat-cab-panel:hover{background:var(--wash-soft);color:var(--ink);}
+@media (hover:hover){ .chat-cab-panel:hover{background:var(--wash-soft);color:var(--ink);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 html.esc .chat-cab-panel{display:flex;}
 html.esc .chat-cab-av{display:none;}
 html.esc .chat-cab-volver{display:none;}
 .chat-cab-volver{flex:none;width:40px;height:40px;border:0;background:none;color:var(--ink);font:400 30px/1 var(--f-body);cursor:pointer;border-radius:50%;}
 .chat-cab-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;padding:2px 4px;text-align:left;cursor:pointer;color:var(--ink);border-radius:var(--r-ctl);}
-.chat-cab-info:hover{background:var(--wash-soft);}
+@media (hover:hover){ .chat-cab-info:hover{background:var(--wash-soft);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .chat-cab-av{flex:none;width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--accent-wash);}
 .chat-cab-t{min-width:0;display:flex;flex-direction:column;}
 .chat-cab-t b{font:700 var(--fs-m) var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1362,7 +1362,9 @@ html:not(.esc) .segui-stats .segui-lbl{max-width:100%;overflow:hidden;text-overf
 /* 8/11 · iPhone con el teclado abierto: la hoja ocupa solo lo que se ve encima del teclado (pulido.js) */
 html.fsd-vv .fsd-overlay.show{top:var(--vv-arriba,0px);bottom:auto;height:var(--vv-alto,100%);}
 html.fsd-vv .fsd-overlay.show > .fsd-sheet{max-height:100%;padding-bottom:12px;}
-html.fsd-vv .fsd-overlay.show > .fsd-sheet.full{padding-top:12px;}
+/* la cabecera nunca bajo la hora y la batería (app instalada en el iPhone) */
+html.fsd-vv .fsd-overlay.show > .fsd-sheet.full{padding-top:calc(12px + env(safe-area-inset-top,0px));}
+html.fsd-vv .cq-acts{position:static;}
 /* con el teclado fuera, los botones de «Atrás / Siguiente» del cuestionario van al final y no roban hueco */
 html.fsd-teclado .cq-acts{position:static;}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
