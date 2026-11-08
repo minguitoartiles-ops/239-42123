@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.88 (actual)
-Cambios acumulados hacia la 0.89: **9 de 10**
+## Versión 0.89 (actual)
+Cambios acumulados hacia la 0.90: **0 de 10**
+
+## Versión 0.88 → 0.89.0
 
 ### Hacia la 0.89
 1. 08/11/2026 · Supabase · **lo que un cliente rellenó con una versión antigua (permiso de imagen, cuestionario, alergias) llega a Domingo y Fátima** (avisado por Domingo). Se quedó solo en su móvil porque lo rellenó antes de que esas partes se guardaran en el servidor. Al abrir la versión nueva se le pide otra vez el consentimiento de salud y el permiso de imagen (tienen que constar en el servidor, con fecha y versión) y, en cuanto da el de salud, su cuestionario y sus alergias suben solos; nunca antes de darlo. Además, al abrir la ficha de un cliente se traen al momento su cuestionario, sus alergias y sus permisos (antes, solo al abrir la app) → **0.88.0-1 (caché)**
@@ -16,6 +18,7 @@ Cambios acumulados hacia la 0.89: **9 de 10**
 7. 08/11/2026 · Supabase · **las plantillas de rutinas (Domingo) y de dietas (Fátima) viajan al servidor** (tabla nueva `plantillas`, con su migración y pruebas). Cada profesional ve y gestiona solo las suyas; un cliente no ve ninguna. Las que ya hay en el aparato suben solas la primera vez, las del servidor bajan a los demás aparatos, y guardar o «borrar» se sincroniza (borrar archiva en el servidor: nada se borra desde la app). Si la misma cambia en dos aparatos, gana la del aparato donde se acaba de editar. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.88.3-1 (caché)**
 8. 08/11/2026 · Entrenamientos (profesionales): **«📅 Pesos por semana» dentro del cuadro «Resumen del entrenamiento»**, junto a los días (pedido por Domingo) → **0.88.4**
 9. 08/11/2026 · Supabase · **«✓ Marcar como resuelto» se guarda en el servidor** (en cada profesional) y sale igual en el móvil y en el ordenador; también cuando se entra en un chat pendiente. Si el cliente escribe después, vuelve a contar. Migración y pruebas nuevas. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.88.4-1 (caché)**
+10. 08/11/2026 · Entrenamientos (profesionales): **resumen del entrenamiento por semanas, ordenado y sin repetir** (pedido por Domingo: el anterior era poco intuitivo y repetía los ejercicios). Arriba, las semanas (Sem 1 · Sem 2 · …, marcada la actual); debajo, cada día con sus ejercicios y, de cada uno en una sola fila: series × repeticiones, RIR y el peso de cada serie con las repeticiones hechas («25 kg × 8»). Cada día, con el peso total movido esa semana → **0.89.0**
 
 ## Versión 0.87 → 0.88.0
 

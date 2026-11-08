@@ -1497,20 +1497,17 @@
 .fe-top .lnk{color:var(--accent-text);font-weight:600;flex:none;}
 .fe-dia{padding:8px 0;border-top:1px solid var(--line);}
 .fe-dia > b{display:block;font:700 var(--fs-s) var(--f-body);margin-bottom:4px;}
-.fe-sems{margin:10px 0 12px;}
-.fe-sems-t{font:700 var(--fs-s) var(--f-body);margin-bottom:6px;}
-.fe-sems-t small{font-weight:500;color:var(--muted, #6b7280);margin-left:6px;}
-.fe-sem-fila{display:flex;flex-wrap:wrap;gap:6px;}
+.fe-sem-fila{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;}
 .fe-sem-b{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card, #fff);font:700 var(--fs-s) var(--f-body);cursor:pointer;}
 .fe-sem-b small{font-weight:500;font-size:11px;color:var(--muted, #6b7280);}
-.fe-sem-b.act{border-color:var(--accent);}
 .fe-sem-b.sel{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
 .fe-sem-b.sel small{color:var(--on-accent);}
-.fe-wk{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;}
-.fe-wk-dia + .fe-wk-dia{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);}
-.fe-wk-dia > b{display:block;font:700 var(--fs-s) var(--f-body);margin-bottom:3px;}
-.fe-wk-ej{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font:var(--fs-s) var(--f-body);padding:2px 0;}
-.fe-wk-p{white-space:nowrap;font-weight:600;}
+.fe-ej2{padding:4px 0;}
+.fe-ej2-t{display:flex;justify-content:space-between;align-items:center;gap:8px;font:var(--fs-s) var(--f-body);}
+.fe-ej2-t small{color:var(--muted, #6b7280);margin-left:4px;}
+.fe-ej2-d{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:3px;}
+.fe-ej2-d small{color:var(--muted, #6b7280);font-size:12px;}
+.fe-s{font:600 12px var(--f-body);padding:2px 7px;border-radius:8px;background:var(--line, #e5e7eb);white-space:nowrap;}
 .fe-dia > .fe-ton{display:block;font:600 var(--fs-xs, 12px) var(--f-body);color:var(--muted, #6b7280);margin:-2px 0 4px;}
 .fe-ej{display:flex;align-items:center;gap:8px;font:500 var(--fs-s) var(--f-body);color:var(--dim-6);padding:2px 0;}
 .fe-ej small{font-family:var(--f-mono);color:var(--dim-45);}
