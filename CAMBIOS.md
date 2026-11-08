@@ -4,10 +4,13 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.88 (actual)
-Cambios acumulados hacia la 0.89: **1 de 10**
+Cambios acumulados hacia la 0.89: **4 de 10**
 
 ### Hacia la 0.89
 1. 08/11/2026 · Supabase · **lo que un cliente rellenó con una versión antigua (permiso de imagen, cuestionario, alergias) llega a Domingo y Fátima** (avisado por Domingo). Se quedó solo en su móvil porque lo rellenó antes de que esas partes se guardaran en el servidor. Al abrir la versión nueva se le pide otra vez el consentimiento de salud y el permiso de imagen (tienen que constar en el servidor, con fecha y versión) y, en cuanto da el de salud, su cuestionario y sus alergias suben solos; nunca antes de darlo. Además, al abrir la ficha de un cliente se traen al momento su cuestionario, sus alergias y sus permisos (antes, solo al abrir la app) → **0.88.0-1 (caché)**
+2. 08/11/2026 · Chats: **ya no se mueve solo hacia arriba** cuando estás abajo del todo ni cuando el cliente escribe (avisado por Domingo). Al repintar el chat con un mensaje nuevo, las fotos que cargaban después hacían crecer la conversación y la vista se quedaba más arriba del final. Ahora, si estabas abajo (con un margen más holgado), se queda pegada al último mensaje mientras terminan de cargar, hasta que tocas o desplazas → **0.88.1**
+3. 08/11/2026 · Lista de clientes: **«📝 Cuestionario nuevo» (y «Necesitan atención») se quitan al abrir el cuestionario y ya no vuelven** (avisado por Domingo). Al poner la ficha al día con el servidor se perdía la marca de «ya visto» y el aviso reaparecía; ahora se conserva mientras sea el mismo cuestionario → **0.88.1-1 (caché)**
+4. 08/11/2026 · Entrenamientos (profesionales): **cada sesión del resumen semanal del cliente muestra el peso movido** («🏋️ 2.340 kg movidos»), con las repeticiones hechas o, si no las apunta, las del plan (pedido por Domingo) → **0.88.2**
 
 ## Versión 0.87 → 0.88.0
 

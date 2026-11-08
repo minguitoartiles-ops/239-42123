@@ -215,7 +215,9 @@ function svChPintar(k){
   if (svChOcupado()) { svChDiferido[k] = 1; return; }
   delete svChDiferido[k];
   const l = document.getElementById('chatList'); if (!l) return;
-  const abajo = l.scrollHeight - l.scrollTop - l.clientHeight < 80;
+  // 8/11 · margen más holgado (una foto o un mensaje largo recién llegado ya pasa de 80 px) y, si se estaba abajo,
+  // se queda pegado al final mientras cargan las fotos: antes, al crecer su alto, la vista quedaba más arriba sin motivo
+  const abajo = l.scrollHeight - l.scrollTop - l.clientHeight < 160;
   const antes = l.scrollTop;
   const nuevos = l.querySelector('.chat-nuevos'), trasNuevos = nuevos && nuevos.nextElementSibling && nuevos.nextElementSibling.getAttribute('data-fid');
   l.innerHTML = html;
@@ -234,6 +236,7 @@ function svChPintar(k){
   try { ddPintar(); } catch(e){}
   try { pintarChatHero(); } catch(e){}
   l.scrollTop = abajo ? l.scrollHeight : antes;
+  if (abajo) { try { puPegarAbajo(2500); } catch(e){} }
   try { puBajarPintar(); } catch(e){}
 }
 setInterval(function(){ if (svChSesion() && !svChOcupado()) Object.keys(svChDiferido).forEach(svChPintar); }, 800);
