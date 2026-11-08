@@ -1034,18 +1034,9 @@ toggleMic = function(){
   });
 };
 
-/* --- Teclado: la barra del chat siempre visible por encima (iPhone no redimensiona solo) --- */
-if (window.visualViewport) {
-  const vv = window.visualViewport;
-  const ajustarAlto = function(){
-    document.documentElement.style.setProperty('--app-h', Math.round(vv.height) + 'px');
-    if (esIOS) window.scrollTo(0, 0);
-    const cl = document.getElementById('chatList');
-    if (cl && document.activeElement && document.activeElement.id === 'chatInput') cl.scrollTop = cl.scrollHeight;
-  };
-  vv.addEventListener('resize', ajustarAlto);
-  ajustarAlto();
-}
+/* --- Teclado: antes aquí se cambiaba el alto de toda la app y se subía la página arriba en cada fotograma
+   de la animación del teclado (iPhone). Iba lento y daba saltos (auditoría iPhone, 8/11/2026). Ahora lo hace,
+   una sola vez y cuando el teclado ya ha terminado de moverse, el gestor del teclado de pulido.js. --- */
 
 /* --- Alternativa a :has() para iPhones con iOS antiguo --- */
 goTo = (function(orig){
@@ -1859,12 +1850,14 @@ document.addEventListener('submit', function(e){ setTimeout(function(){ fsdOjoTa
   if (!tactil) return;
   const escribe = function(el){ return el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|search|email|number|tel|url|password)$/i.test(el.type || 'text'))); };
   let t = null;
+  // iPhone: lo hace el gestor del teclado de pulido.js, una vez el teclado ha salido (8/11)
+  if (typeof esIOS !== 'undefined' && esIOS) return;
   document.addEventListener('focusin', function(e){
     if (!escribe(e.target) || !e.target.closest('#view-seguimiento')) return;
     clearTimeout(t);
     document.documentElement.classList.add('con-teclado');
     const el = e.target;
-    setTimeout(function(){ try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(_){} }, 300);
+    setTimeout(function(){ try { el.scrollIntoView({ block: 'nearest' }); } catch(_){} }, 300);
   });
   document.addEventListener('focusout', function(){
     clearTimeout(t);

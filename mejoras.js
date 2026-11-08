@@ -238,7 +238,7 @@ function mjPrepararCalculadora(key){
   const row = document.getElementById('calcMealRow');
   if (row && d && d.nutObj && d.nutObj.comidas) {
     row.innerHTML = d.nutObj.comidas.map(function(v, i){
-      return '<label>C' + (i + 1) + '<input type="number" oninput="calcularPlan()" class="calc-meal" value="' + v + '"></label>';
+      return '<label>C' + (i + 1) + '<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="' + v + '"></label>';
     }).join('');
   }
 }
