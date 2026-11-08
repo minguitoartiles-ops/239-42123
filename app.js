@@ -372,9 +372,9 @@ function filaEjercicio(nombre,mus,se,rep,rir){
   }
   return '<div class="ex-item">'
    +'<div class="ex-table-row"><span class="ex-name-cell" data-muscle="'+fsdEsc(mus)+'" onclick="openExercisePicker(this)">'+fsdEsc(nombre)+'</span>'
-   +'<span><input class="rx-field" type="number" value="'+se+'" readonly oninput="onPautaChange(this)"></span>'
-   +'<span><input class="rx-field" type="number" value="'+rep+'" readonly oninput="onPautaChange(this)"></span>'
-   +'<span><input class="rx-field" type="number" value="'+rir+'" readonly></span></div>'
+   +'<span><input class="rx-field" type="number" inputmode="decimal" value="'+se+'" readonly oninput="onPautaChange(this)"></span>'
+   +'<span><input class="rx-field" type="number" inputmode="decimal" value="'+rep+'" readonly oninput="onPautaChange(this)"></span>'
+   +'<span><input class="rx-field" type="number" inputmode="decimal" value="'+rir+'" readonly></span></div>'
    +'<div class="ex-desc" oninput="descEditada(this)" onblur="descBlur(this)">'+fsdEsc(descDe(nombre)||'Sin descripción.')+'</div>'
    +'<span class="ex-desc-restore" onclick="restaurarDesc(this)">Restaurar descripción original</span>'
    +'<div class="ex-video-row"><a class="ex-video" target="_blank" rel="noopener">▶ Ver técnica</a><button class="ex-link-btn" onclick="abrirVideoModal(this)">🔗 Enlace</button></div>'
@@ -1265,7 +1265,7 @@ function syncCalcMeals(){
   let html='';
   for(let i=0;i<n;i++){
     const v=(i<prev.length)?prev[i]:10;
-    html+='<label>C'+(i+1)+'<input type="number" oninput="calcularPlan()" class="calc-meal" value="'+v+'"></label>';
+    html+='<label>C'+(i+1)+'<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="'+v+'"></label>';
   }
   row.innerHTML=html;
 }

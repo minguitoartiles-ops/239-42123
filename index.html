@@ -612,18 +612,18 @@ if ('serviceWorker' in navigator) {
           <div class="calc-card" id="calcCard">
             <div class="calc-title">Calculadora de cantidades</div>
             <div class="calc-row">
-              <label>Kcal objetivo<input type="number" id="calcKcal" value="2000" oninput="calcularPlan()"></label>
-              <label>Proteína %<input type="number" oninput="calcularPlan()" id="calcP" value="30"></label>
-              <label>Carbo %<input type="number" oninput="calcularPlan()" id="calcC" value="45"></label>
-              <label>Grasa %<input type="number" oninput="calcularPlan()" id="calcF" value="25"></label>
+              <label>Kcal objetivo<input type="number" inputmode="decimal" id="calcKcal" value="2000" oninput="calcularPlan()"></label>
+              <label>Proteína %<input type="number" inputmode="decimal" oninput="calcularPlan()" id="calcP" value="30"></label>
+              <label>Carbo %<input type="number" inputmode="decimal" oninput="calcularPlan()" id="calcC" value="45"></label>
+              <label>Grasa %<input type="number" inputmode="decimal" oninput="calcularPlan()" id="calcF" value="25"></label>
             </div>
             <div class="calc-sub">Reparto por comida (%)</div>
             <div class="calc-row" id="calcMealRow">
-              <label>C1<input type="number" oninput="calcularPlan()" class="calc-meal" value="25"></label>
-              <label>C2<input type="number" oninput="calcularPlan()" class="calc-meal" value="10"></label>
-              <label>C3<input type="number" oninput="calcularPlan()" class="calc-meal" value="30"></label>
-              <label>C4<input type="number" oninput="calcularPlan()" class="calc-meal" value="10"></label>
-              <label>C5<input type="number" oninput="calcularPlan()" class="calc-meal" value="25"></label>
+              <label>C1<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="25"></label>
+              <label>C2<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="10"></label>
+              <label>C3<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="30"></label>
+              <label>C4<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="10"></label>
+              <label>C5<input type="number" inputmode="decimal" oninput="calcularPlan()" class="calc-meal" value="25"></label>
             </div>
             <button class="btn-primary" onclick="calcularPlan()">Calcular cantidades</button>
             <div class="calc-result" id="calcResult"></div>
@@ -800,9 +800,9 @@ if ('serviceWorker' in navigator) {
           <select class="picker-select" id="newFoodGroup" style="width:100%"></select>
           <div class="calc-sub">Macros por 100 g</div>
           <div class="calc-row">
-            <label>Proteína<input type="number" id="newFoodP" placeholder="0"></label>
-            <label>Carbo<input type="number" id="newFoodC" placeholder="0"></label>
-            <label>Grasa<input type="number" id="newFoodF" placeholder="0"></label>
+            <label>Proteína<input type="number" inputmode="decimal" id="newFoodP" placeholder="0"></label>
+            <label>Carbo<input type="number" inputmode="decimal" id="newFoodC" placeholder="0"></label>
+            <label>Grasa<input type="number" inputmode="decimal" id="newFoodF" placeholder="0"></label>
           </div>
           <div class="picker-new-error" id="newFoodError"></div>
           <div class="picker-new-actions">

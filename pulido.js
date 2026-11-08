@@ -705,6 +705,9 @@ goToCliente = (function(orig){ return function(){ try { if (typeof enSeccion !==
     return el.tagName === 'INPUT' && !NO_TXT.test(el.type || '');
   }
   function tactil(){ return !document.documentElement.classList.contains('esc') && window.matchMedia('(pointer:coarse)').matches; }
+  // iPhone: el teclado tapa la pantalla sin encogerla; lo lleva el gestor del teclado (más abajo), una sola vez
+  // cuando el teclado ha terminado de salir. Ocultar la barra en mitad de la animación la hacía más lenta (8/11).
+  if (typeof esIOS !== 'undefined' && esIOS) return;
   let t = null;
   document.addEventListener('focusin', function(e){
     if (!tactil() || !esCampo(e.target)) return;
@@ -1151,41 +1154,74 @@ function chMenuAbrir(k, x, y, fila){
   window.addEventListener('resize', chMenuCerrar);
 })();
 
-/* 8/11 · iPhone: con el teclado abierto, Safari no encoge la pantalla, solo la tapa. Las hojas (cuestionario,
-   fichas, formularios) se ajustan al trozo que se ve encima del teclado y el campo que se está rellenando
-   se coloca a la vista. En Android (donde la pantalla sí se encoge) no cambia nada. */
+/* =========================================================
+   8/11 · Gestor único del teclado (auditoría iPhone, 8/11/2026)
+   En el iPhone el teclado se pone encima de la pantalla sin encogerla. Antes reaccionaban cuatro trozos de
+   la app a la vez y en cada fotograma de la animación (cambiaban el alto de toda la app, subían la página
+   arriba, ocultaban la barra…): el teclado iba lento y daba saltos. Ahora se espera a que el teclado
+   termine de moverse y se coloca todo UNA vez:
+   · ventanas (cuestionario, formularios): caben en el hueco de encima del teclado;
+   · chat: la app ocupa ese hueco, así el cuadro de escribir queda justo encima del teclado;
+   · el campo que se rellena queda a la vista (sin animación, solo si estaba tapado);
+   · la barra de pestañas se oculta (detrás del teclado no se veía).
+   En Android la pantalla sí se encoge sola: aquí no se hace nada (hueco tapado ≈ 0).
+   ========================================================= */
 (function(){
   const vv = window.visualViewport; if (!vv) return;
   const raiz = document.documentElement;
-  let pend = 0;
-  function medir(){
-    pend = 0;
-    const tapado = window.innerHeight - vv.height;
-    if (tapado > 120 && raiz.classList.contains('fsd-teclado')) {
-      raiz.style.setProperty('--vv-alto', Math.round(vv.height) + 'px');
-      raiz.style.setProperty('--vv-arriba', Math.round(vv.offsetTop) + 'px');
+  const IOS = typeof esIOS !== 'undefined' && esIOS;
+  const NO_TXT = /^(checkbox|radio|button|submit|reset|range|color|file|image|hidden)$/;
+  const escribe = function(el){
+    if (!el || !el.tagName) return false;
+    if (el.isContentEditable || el.tagName === 'TEXTAREA') return true;
+    return el.tagName === 'INPUT' && !NO_TXT.test(el.type || '');
+  };
+  let t = 0, ult = '';
+  function ponerVars(alto, arriba){
+    raiz.style.setProperty('--vv-alto', alto + 'px');
+    raiz.style.setProperty('--vv-arriba', arriba + 'px');
+  }
+  function aLaVista(el, alto, arriba){
+    requestAnimationFrame(function(){
+      if (document.activeElement !== el) return;
+      const r = el.getBoundingClientRect();
+      if (r.bottom > arriba + alto - 12 || r.top < arriba + 8) { try { el.scrollIntoView({ block: 'center' }); } catch(e){} }
+    });
+  }
+  function asentar(){
+    t = 0;
+    const el = document.activeElement;
+    const alto = Math.round(vv.height), arriba = Math.round(vv.offsetTop);
+    const abierto = (window.innerHeight - vv.height) > 120 && escribe(el);
+    const enChat = abierto && !!(el.closest && el.closest('#view-chat'));
+    const firma = [abierto, enChat, alto, arriba].join('|');
+    if (firma === ult) return;
+    ult = firma;
+    if (abierto) {
+      ponerVars(alto, arriba);
       raiz.classList.add('fsd-vv');
-    } else if (raiz.classList.contains('fsd-vv')) {
+      if (IOS) {
+        raiz.classList.add('fsd-teclado');
+        raiz.classList.toggle('con-teclado', !!el.closest('#view-seguimiento'));
+      }
+      if (enChat) {
+        raiz.style.setProperty('--app-h', alto + 'px');
+        if (arriba) window.scrollTo(0, 0);
+        const cl = document.getElementById('chatList'); if (cl) cl.scrollTop = cl.scrollHeight;
+      } else if (raiz.style.getPropertyValue('--app-h')) raiz.style.removeProperty('--app-h');
+      if (!enChat) aLaVista(el, alto, arriba);
+    } else {
       raiz.classList.remove('fsd-vv');
+      raiz.style.removeProperty('--app-h');
+      if (IOS && !escribe(el)) { raiz.classList.remove('fsd-teclado'); raiz.classList.remove('con-teclado'); }
     }
   }
-  function pedir(){ if (!pend) pend = requestAnimationFrame(medir); }
-  vv.addEventListener('resize', pedir); vv.addEventListener('scroll', pedir);
-  document.addEventListener('focusout', function(){ setTimeout(pedir, 160); });
-  document.addEventListener('focusin', function(e){
-    const el = e.target, hoja = el && el.closest && el.closest('.fsd-sheet');
-    if (!hoja || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
-    // cuando el teclado ya ha salido (tarda unos 300 ms en el iPhone), el campo al centro de lo visible
-    setTimeout(function(){
-      medir();
-      if (document.activeElement !== el) return;
-      const r = el.getBoundingClientRect(), rh = hoja.getBoundingClientRect();
-      const fondo = Math.min(rh.bottom, vv.offsetTop + vv.height);
-      if (r.top < rh.top + 8 || r.bottom > fondo - 8) {
-        hoja.scrollTop += (r.top + r.height / 2) - (rh.top + (fondo - rh.top) / 2);
-      }
-    }, 320);
-  });
+  function pedir(){ clearTimeout(t); t = setTimeout(asentar, 140); }
+  vv.addEventListener('resize', pedir);
+  vv.addEventListener('scroll', pedir);
+  document.addEventListener('focusin', pedir);
+  document.addEventListener('focusout', pedir);
+  window.fsdTecladoAsentar = asentar;      // para las pruebas
 })();
 
 /* 8/11 · Al entrar en un chat (pedido por Domingo):
@@ -1281,3 +1317,22 @@ function sgPliegueTocar(head){
 goToSeguimientos = (function(orig){
   return function(){ const r = orig.apply(this, arguments); try { sgPliegueAplicar(); } catch(e){} return r; };
 })(goToSeguimientos);
+
+/* 8/11 · auditoría iPhone: si se usa desde Safari (sin añadirla a la pantalla de inicio), Safari borra lo que la
+   app guarda en el móvil tras 7 días sin abrirla (también la sesión). Al entrar se recuerda cómo añadirla,
+   como mucho una vez por semana y sin taparle otra ventana. */
+function puIosInstalarRecordar(intento){
+  try {
+    if (typeof esIOS === 'undefined' || !esIOS || esInstalada()) return;
+    const CL = 'fsd_ios_instalar', ult = +(localStorage.getItem(CL) || 0);
+    if (Date.now() - ult < 7 * 864e5) return;
+    if (typeof cqToca === 'function' && window.fsdSesionCliente && cqToca()) return;     // primero, su cuestionario inicial
+    const ocupado = document.querySelector('.fsd-overlay.show, .ob-capa') || document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+    if (ocupado) { if ((intento || 0) < 15) setTimeout(function(){ puIosInstalarRecordar((intento || 0) + 1); }, 8000); return; }
+    localStorage.setItem(CL, String(Date.now()));
+    abrirDialogo({ titulo: 'Añade la app a tu pantalla de inicio',
+      texto: 'En el iPhone, si usas la app desde Safari y pasas 7 días sin abrirla, Safari borra lo que guarda en el móvil y tendrás que volver a entrar. Añadida a la pantalla de inicio no pasa y se abre a pantalla completa. Cómo: en Safari, pulsa Compartir (el cuadrado con la flecha) y después «Añadir a pantalla de inicio».',
+      ok: 'Entendido', soloOk: true });
+  } catch(e){}
+}
+['fsd:cliente-dentro', 'fsd:pro-dentro'].forEach(function(ev){ window.addEventListener(ev, function(){ setTimeout(puIosInstalarRecordar, 4000); }); });
