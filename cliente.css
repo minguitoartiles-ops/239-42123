@@ -1400,3 +1400,14 @@ html.chat-pro-movil #view-chat > .chat-cab .chat-cab-volver{display:block;}
 
 /* 8/11 · el chat del cliente no lleva «‹»: las pestañas de abajo no llevan «Volver» (el profesional sí, con chat-pro-movil) */
 html:not(.chat-pro-movil) .chat-cab-volver{display:none;}
+
+/* prefijo del teléfono del cuestionario */
+.cq-tel{display:flex;gap:8px;}
+.cq-tel-p{flex:none;width:44%;max-width:210px;height:42px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);padding:0 8px;background:var(--wash-soft);color:var(--ink);font:500 var(--fs-s) Archivo,sans-serif;font-family:var(--f-body);}
+.cq-tel input{flex:1;min-width:0;}
+
+/* recorrido de inicio: subtítulo; «Atrás» en lugar de «Saltar» a partir del segundo paso */
+.obt-sub{margin:4px 0 0;font:600 var(--fs-s) var(--f-body);color:var(--accent-text);}
+.obt-l b{font-weight:700;}
+.obt-salir{text-align:center;margin-top:2px;}
+.obt-salir .obt-saltar{padding:6px 8px;font-size:var(--fs-xs);}

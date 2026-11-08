@@ -4,11 +4,16 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.90 (actual)
-Cambios acumulados hacia la 0.91: **2 de 10**
+Cambios acumulados hacia la 0.91: **7 de 10**
 
 ### Hacia la 0.91 · editor de rutinas, tras «Guardar y notificar» (avisado por Domingo)
 1. 08/11/2026 · **Al «Guardar cambios y notificar», los días quedan plegados** (antes se desplegaban todos) y **desaparecen los botones ⋯ y ⌄ del editor**, que se quedaban sueltos en la vista del plan guardado. Esa era la diferencia entre las dos capturas: una era el plan ya guardado y la otra, el editor → **0.90.0-1 (caché)**
 2. 08/11/2026 · **El editor toma el estilo del plan guardado** (pedido por Domingo): título del día grande y cada ejercicio en su tarjeta blanca; **los días reparten todo el ancho** (con 1 o 2 días se ensanchan, antes dejaban espacio libre, también en «Multitarea») → **0.90.1**
+3. 08/11/2026 · **Tutorial de inicio más claro** (pedido por Domingo: no iba fluido y no explicaba bien las pestañas). Cada pestaña lleva ahora su subtítulo y dice para qué sirve y qué hacer en ella (seguimiento semanal en Hoy; elegir y marcar comidas y lista de la compra en Nutrición; peso y repeticiones y ✓ del día en Entreno; chat; perfil y cuenta). Fuera la mención a los vasos de agua, que ya no existen → **0.90.1-1 (caché)**
+4. 08/11/2026 · **Tutorial: botón «Atrás» y «Saltar el recorrido»** en todos los pasos (antes solo «Saltar» y no se podía retroceder con un botón) → **0.90.2**
+5. 08/11/2026 · **Cuestionario: prefijo del teléfono** en un desplegable (España +34 por defecto y 34 países europeos, más «Otro país»); el número se guarda como siempre, con su prefijo (pedido por Domingo) → **0.90.2-1 (caché)**
+6. 08/11/2026 · **Al completar un día de entreno (✓) o una comida, su cuadro se pliega solo** en la vista del cliente (pedido por Domingo); si lo vuelve a abrir, se queda abierto → **0.90.3**
+7. 08/11/2026 · **«¿Qué es el RIR?» siempre visible al editar** en el ordenador (la leyenda a veces no se creaba y el enlace desaparecía) → **0.90.3-1 (caché)**
 
 ## Versión 0.89 → 0.90.0
 
