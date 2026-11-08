@@ -309,7 +309,7 @@ document.addEventListener('animationend', function(e){
 
 /* «Volver» solo en pantallas secundarias; las pestañas principales no lo llevan */
 pintarAtras = function(){
-  const mostrar = navHist.length > 0 && tabs.indexOf(vistaActual) === -1;
+  const mostrar = navHist.length > 0 && (tabs.indexOf(vistaActual) === -1 || vistaActual === 'ajustes');   // Ajustes (desde el Perfil) también lleva «Volver»
   Array.prototype.forEach.call(document.querySelectorAll('.view-back'), function(b){
     b.style.display = mostrar ? '' : 'none';
     b.style.visibility = 'visible';

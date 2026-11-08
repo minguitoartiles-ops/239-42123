@@ -1277,6 +1277,8 @@ const TABS_CLIENTE = ['hoy', 'plan', 'entreno', 'progreso', 'chat', 'ajustes'];
 let chatDesdeTabChats = false;
 goToCliente = (function(orig){ return function(k){ chatDesdeTabChats = false; orig(k); }; })(goToCliente);
 abrirChatPro = function(k){ goToCliente(k); chatDesdeTabChats = true; verConversacion(); };
+/* 8/11 · «Volver» de la ficha = atrás del móvil: a la pestaña de donde se vino (Clientes, Seguimientos, Entrenamientos…) */
+function fichaVolver(){ abrirTabPro(tabProActual && tabProActual !== 'ajustes' ? tabProActual : 'clientes'); }
 function atrasPorNiveles(){
   const vis = pantallaVisible();
   const coachBar = document.getElementById('coachBar').classList.contains('show');

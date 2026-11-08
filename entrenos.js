@@ -4,61 +4,63 @@
    ========================================================= */
 /* #163 lista a la izquierda y, al tocar un cliente, su entreno a la derecha (en el móvil, debajo de la fila):
    resumen de cada día, tonelaje movido esta semana (y la anterior) y «Abrir entreno» */
-/* 8/11 · Pesos movidos por semana (pedido por Domingo): una fila de columnas «Sem 1 · Sem 2 · …» (plegables); al tocar una, cada
-   ejercicio muestra el peso de cada serie de esa semana (sin multiplicar). Salen del registro de pesos del cliente; la semana en curso, de su plan. */
-function entSemanasHtml(t, d){
+/* 8/11 · Resumen del entrenamiento por semanas (pedido por Domingo): arriba las semanas (Sem 1 · Sem 2 · …; sale marcada la
+   actual) y, debajo, cada día con sus ejercicios. De cada ejercicio, en una sola fila: series × repeticiones pautadas, RIR y el
+   peso de cada serie esa semana con las repeticiones hechas («25 kg × 8»). Cada día lleva el peso total movido esa semana.
+   Las semanas pasadas salen del registro de pesos del cliente; la actual, de su plan. */
+function entResumenSemanas(t, d){
   const reg = (d.registro && d.registro.ej) || {}, cur = d.semanaRef || '';
   const dias = Array.prototype.map.call(t.querySelectorAll('.sesion-card'), function(c, i){
-    return { tit: ((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim(),
-      ej: Array.prototype.filter.call(c.querySelectorAll('.ex-item'), function(it){ return !it.dataset.cardio; }).map(function(it){
-        let act = []; try { act = enLeerSeries(it).map(function(x){ return x[0]; }); } catch(e){}
-        return { n: enNombreEj(it), act: act };
+    return { tit: ((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim(), hecha: c.classList.contains('hecha'),
+      ej: Array.prototype.map.call(c.querySelectorAll('.ex-item'), function(it){
+        const pz = enPesos(it), r0 = pz.map(function(x){ return mjNum(x.dataset.rir); }).filter(function(x){ return x != null; });
+        const cd = typeof cdTexto === 'function' && it.dataset.cardio ? cdTexto(it) : '';
+        let act = []; if (!cd) { try { act = enLeerSeries(it); } catch(e){} }
+        return { n: enNombreEj(it), cd: cd, series: pz.length, reps: pz[0] ? pz[0].dataset.reps || '' : '', rir: r0.length ? Math.min.apply(null, r0) : null, act: act };
       }) };
   });
-  const pesosDe = function(e, sem){
-    if (sem === cur && e.act.length) return e.act;
-    const w = (reg[e.n] || []).filter(function(x){ return x.sem === sem; })[0];
-    return w && w.s ? w.s.map(function(x){ return x[0]; }) : [];
-  };
   const sems = {};
   Object.keys(reg).forEach(function(n){ reg[n].forEach(function(w){ if (w.s && w.s.length) sems[w.sem] = 1; }); });
-  if (cur && dias.some(function(x){ return x.ej.some(function(e){ return e.act.length; }); })) sems[cur] = 1;
-  const lista = Object.keys(sems).sort(); if (!lista.length) return '';
-  const chips = lista.map(function(sem, i){
-    return '<button type="button" class="fe-sem-b' + (sem === cur ? ' act' : '') + '" data-w="' + esc(sem) + '" aria-expanded="false" onclick="entSemVer(this)">Sem ' + (i + 1) + '<small>' + esc(mjFecha(sem).slice(0, 5)) + '</small></button>';
+  const lista = Object.keys(sems).filter(function(x){ return x !== cur; }).sort();
+  lista.push(cur || 'actual');                                   // la semana en curso siempre, aunque aún no tenga pesos
+  const seriesDe = function(e, sem){
+    if (sem === cur || sem === 'actual') return e.act;
+    const w = (reg[e.n] || []).filter(function(x){ return x.sem === sem; })[0];
+    return w && w.s ? w.s : [];
+  };
+  const chips = lista.length < 2 ? '' : '<div class="fe-sem-fila" role="tablist">' + lista.map(function(sem, i){
+    const ultima = i === lista.length - 1;
+    return '<button type="button" role="tab" class="fe-sem-b' + (ultima ? ' sel' : '') + '" aria-selected="' + ultima + '" data-w="' + esc(sem) + '" onclick="entSemVer(this)">Sem ' + (i + 1)
+      + '<small>' + (ultima ? 'esta' : esc(mjFecha(sem).slice(0, 5))) + '</small></button>';
+  }).join('') + '</div>';
+  const paneles = lista.map(function(sem, i){
+    const ultima = i === lista.length - 1;
+    return '<div class="fe-wk' + (ultima ? ' sel' : '') + '" data-w="' + esc(sem) + '"' + (ultima ? '' : ' hidden') + '>' + (dias.length ? dias.map(function(x){
+      let kg = 0;
+      const filas = x.ej.map(function(e){
+        if (e.cd) return '<div class="fe-ej2"><div class="fe-ej2-t"><span>' + esc(e.n) + '</span></div><div class="fe-ej2-d"><small>' + esc(e.cd) + '</small></div></div>';
+        const s = seriesDe(e, sem);
+        s.forEach(function(z){ if (z[0] > 0 && z[1] != null) kg += z[0] * z[1]; });
+        const pauta = e.series + '×' + e.reps;
+        return '<div class="fe-ej2"><div class="fe-ej2-t"><span>' + esc(e.n) + ' <small>' + esc(pauta) + '</small></span>'
+          + (e.rir != null ? '<b class="sr-badge ' + enRir(e.rir) + '">RIR ' + e.rir + '</b>' : '') + '</div>'
+          + '<div class="fe-ej2-d">' + (s.length ? s.map(function(z){ return '<span class="fe-s">' + fmtNum(z[0]) + ' kg × ' + (z[1] != null ? z[1] : '?') + '</span>'; }).join('') : '<small>Sin pesos apuntados</small>') + '</div></div>';
+      }).join('');
+      return '<div class="fe-dia"><b>' + esc(x.tit) + (ultima && x.hecha ? ' ✓' : '') + '</b>'
+        + (kg > 0 ? '<span class="fe-ton">🏋️ ' + fmtMil(Math.round(kg)) + ' kg movidos</span>' : '')
+        + (filas || '<span class="fe-ej">Sin ejercicios</span>') + '</div>';
+    }).join('') : '<div class="picker-empty">Todavía no tiene sesiones.</div>') + '</div>';
   }).join('');
-  const paneles = lista.map(function(sem){
-    return '<div class="fe-wk" data-w="' + esc(sem) + '" hidden>' + dias.map(function(x){
-      return '<div class="fe-wk-dia"><b>' + esc(x.tit) + '</b>' + (x.ej.map(function(e){
-        const p = pesosDe(e, sem);
-        return '<div class="fe-wk-ej"><span>' + esc(e.n) + '</span><span class="fe-wk-p">' + (p.length ? p.map(fmtNum).join(' · ') + ' kg' : '—') + '</span></div>';
-      }).join('') || '<div class="fe-wk-ej"><span>Sin ejercicios</span></div>') + '</div>';
-    }).join('') + '</div>';
-  }).join('');
-  return '<div class="fe-sems"><div class="fe-sems-t">📅 Pesos por semana <small>toca una semana</small></div><div class="fe-sem-fila">' + chips + '</div>' + paneles + '</div>';
+  return chips + paneles;
 }
 function entSemVer(b){
-  const box = b.closest('.fe-sems'); if (!box) return;
-  const abre = !b.classList.contains('sel');
-  box.querySelectorAll('.fe-sem-b').forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-expanded', 'false'); });
-  box.querySelectorAll('.fe-wk').forEach(function(x){ x.hidden = true; });
-  if (abre) { b.classList.add('sel'); b.setAttribute('aria-expanded', 'true'); const w = box.querySelector('.fe-wk[data-w="' + b.getAttribute('data-w') + '"]'); if (w) w.hidden = false; }
+  const box = b.closest('.ent-prev-card'); if (!box) return;
+  box.querySelectorAll('.fe-sem-b').forEach(function(x){ const si = x === b; x.classList.toggle('sel', si); x.setAttribute('aria-selected', String(si)); });
+  box.querySelectorAll('.fe-wk').forEach(function(x){ const si = x.getAttribute('data-w') === b.getAttribute('data-w'); x.hidden = !si; x.classList.toggle('sel', si); });
 }
 function entResumenHtml(k){
   const d = clientesData[k]; if (!d) return '';
   const t = document.createElement('div'); t.innerHTML = (PLANES[k] && PLANES[k].ent) || '';
-  const ses = Array.prototype.map.call(t.querySelectorAll('.sesion-card'), function(c, i){
-    const ej = Array.prototype.map.call(c.querySelectorAll('.ex-item'), function(it){
-      const pz = enPesos(it), r0 = pz.map(function(x){ return mjNum(x.dataset.rir); }).filter(function(x){ return x != null; });
-      const cd = typeof cdTexto === 'function' && it.dataset.cardio ? cdTexto(it) : '';
-      return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + '</small>'
-        + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>';
-    });
-    // 8/11 · peso movido en cada sesión (pedido por Domingo): con las repeticiones hechas, o las del plan si no las apunta
-    let tonS = 0; try { tonS = Math.round(tonelajeDe(c)) || 0; } catch(e){}
-    return '<div class="fe-dia"><b>' + esc(((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim()) + (c.classList.contains('hecha') ? ' ✓' : '') + '</b>'
-      + (tonS > 0 ? '<span class="fe-ton">🏋️ ' + fmtMil(tonS) + ' kg movidos</span>' : '') + (ej.length ? ej.join('') : '<span class="fe-ej">Sin ejercicios</span>') + '</div>';
-  });
   const ton = typeof mjTonelajeCliente === 'function' ? mjTonelajeCliente(k) : null;
   const reg = (d.registro && d.registro.ton) || [], ant = reg.length ? reg[reg.length - 1].kg : null;
   const hechas = t.querySelectorAll('.sesion-card.hecha').length, tot = t.querySelectorAll('.sesion-card').length;
@@ -66,7 +68,7 @@ function entResumenHtml(k){
   return '<div class="ent-prev-stats"><div><small>Tonelaje esta semana</small><b>' + (ton ? fmtMil(Math.round(ton)) + ' kg' : '—') + '</b>'
     + (ant ? '<span>' + (ton ? (ton >= ant ? '▲ ' : '▼ ') : '') + 'semana anterior ' + fmtMil(ant) + ' kg</span>' : '<span>' + (ton ? 'primera semana con pesos' : 'sin pesos registrados') + '</span>') + '</div>'
     + '<div><small>Sesiones esta semana</small><b>' + hechas + ' / ' + tot + '</b>' + (rd ? '<span>Con esta rutina: ' + esc(rd.txt) + '</span>' : '') + '</div></div>'
-    + '<div class="fe-card ent-prev-card">' + entSemanasHtml(t, d) + (ses.length ? ses.join('') : '<div class="picker-empty">Todavía no tiene sesiones.</div>') + '</div>';
+    + '<div class="fe-card ent-prev-card">' + entResumenSemanas(t, d) + '</div>';
 }
 plResumen = (function(orig){
   return function(k){
