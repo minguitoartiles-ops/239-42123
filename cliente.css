@@ -1200,6 +1200,8 @@ html.esc #view-coach-cliente:not(.esc-izq) .ficha-accesos{max-width:none;}
 .il-mueble.il-sin{fill:none;}
 .il-lejos{opacity:.45;}
 .il-palma{stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;}   /* hacia dónde mira la palma */
+.il-pad{stroke:var(--dim-45, #9aa3ad);stroke-width:5;stroke-linecap:round;}   /* pads de máquina */
+.il-rotulo{font:600 6px/1 var(--f-mono, monospace);fill:var(--dim-45, #9aa3ad);letter-spacing:.04em;}   /* «visto desde arriba» */
 .il-cuerda-t{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;}   /* cuerda de tríceps */   /* figuras v4: la pierna o el brazo del otro lado */
 .il-rodillo{fill:var(--accent);stroke:var(--bg, #fff);stroke-width:1;}
 .il-barra{stroke:var(--accent);stroke-width:3;stroke-linecap:round;}
