@@ -38,3 +38,8 @@ html.ed-v2 .ex-item.ru-foco .ed-chev{transform:rotate(180deg);padding:6px 0 0;}
 html.ed-v2.ru-plegable #sesionesCont .ex-item.ru-foco .ex-name-cell::after{content:"" !important;}
 /* la pauta, alineada bajo el nombre */
 html.ed-v2 #sesionesCont .ex-item:not(.ru-foco) .ru-res{padding-left:30px !important;}
+/* barra de arriba al editar: solo «Deshacer» y «Guardar cambios y notificar» (fuera Volver, «Editando ‹ nombre ›» y
+   «Entrenamiento | Chat»: en el ordenador ya están el menú lateral, la lista de clientes y el chat al lado) */
+html.ed-v2 #coachBar .coach-bar-left,
+html.ed-v2 #coachBar #exTabsCoach{display:none !important;}
+html.ed-v2 #coachBar{justify-content:flex-end;gap:8px;}
