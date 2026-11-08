@@ -11,7 +11,7 @@ html.ru-compacto #sesionesCont .sesion-head{padding:12px 12px;}
 html.ru-compacto #sesionesCont .sesion-title{font-size:var(--fs-l);}
 html.ru-compacto #sesionesCont .en-ses-acts{margin-bottom:8px;}
 html.ru-compacto #sesionesCont .ex-item{padding:8px 8px 8px;margin-bottom:8px;border-radius:var(--r-ctl);}
-html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) > :not(.ex-table-row):not(.ru-res){display:none !important;}
+html.ru-plegable #sesionesCont .ex-item:not(.ru-foco) > :not(.ex-table-row):not(.ru-res):not(.ed-acc){display:none !important;}
 html.ru-compacto #sesionesCont .ex-item .ex-table-row{min-height:0;}
 html.ru-compacto #sesionesCont .ex-item .ex-name-cell{font-size:var(--fs-m);}
 html.ru-plegable .ru-res{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 0;padding:4px 8px 4px 36px;border:none;background:none;border-radius:var(--r-ctl);cursor:pointer;text-align:left;color:var(--ink);font:600 var(--fs-s) var(--f-mono);}
