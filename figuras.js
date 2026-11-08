@@ -561,15 +561,19 @@ function fgArriba(extra){
   // contra el pad vertical, los pies en el suelo. Empieza con los brazos estirados al frente a la altura del pecho y tira de las
   // asas (verticales) hasta llevarlas junto al pad, con los codos muy atrás. Las asas van en la palanca de carga con discos, que
   // gira abajo y delante: por eso las manos recorren un arco
-  const pivRa = [57.3, 78], R_RA = 42.4, angRa = function(k){ return fgLerp(-79.5, -114.4, k); };
-  const manoRa = function(k){ const g = angRa(k) * Math.PI / 180; return [pivRa[0] + Math.cos(g) * R_RA, pivRa[1] + Math.sin(g) * R_RA]; };
-  const ra = function(k){ return { p: [38, 58], t: fgLerp(5, 2, k), cab: 0, a: [56, 82.5], f: [63, 83.5], w: manoRa(k), c: 1 }; };   // c: 1, el codo va abajo y atrás
-  FG['remo apoyado en pecho en maquina'] = { seq: [[ra(0), 0.4], [ra(0.33), 0.37], [ra(0.67), 0.37], [ra(1), 0.37], [ra(1), 0.4], [ra(0.5), 0.7]], vuelta: 1.4,
+  // nota de Domingo (8/11): «los codos deben estar alineados con la muñeca y el movimiento fluido». El antebrazo va siempre en
+  // horizontal, en la línea del tirón (el codo a la altura de la muñeca); las asas recorren el arco plano de la palanca, que gira
+  // en el suelo justo debajo. Al pasar junto al costado el brazo va algo abierto y, de lado, se ve más corto (escBrazo)
+  const pivRa = [52, 85], R_RA = 42, hombroRa = [39.3, 34];
+  const manoRa = function(k){ const dx = fgLerp(9.8, -9.7, k); return [pivRa[0] + dx, pivRa[1] - Math.sqrt(R_RA * R_RA - dx * dx)]; };
+  const ra = function(k){ const w = manoRa(k), esc = Math.hypot(w[0] - 12 - hombroRa[0], w[1] - hombroRa[1]) / FG_L.brazo;
+    return { p: [38, 58], t: 3, cab: 0, a: [57, 82.5], f: [64, 83.5], w: w, c: 1, escBrazo: Math.min(esc, 1.04) }; };
+  FG['remo apoyado en pecho en maquina'] = { seq: [[ra(0), 0.4], [ra(0.25), 0.28], [ra(0.5), 0.28], [ra(0.75), 0.28], [ra(1), 0.28], [ra(1), 0.4], [ra(0.66), 0.45], [ra(0.33), 0.45]], vuelta: 0.45,
     fondo: FG_PISO + '<rect x="28" y="60" width="18" height="4" rx="2" class="il-mueble"/><line x1="37" y1="64" x2="37" y2="84" class="il-fondo"/>'
-      + '<line x1="45" y1="33" x2="45" y2="52" class="il-pad"/><line x1="46" y1="44" x2="84" y2="44" class="il-mueble il-sin"/><line x1="84" y1="44" x2="84" y2="84" class="il-mueble il-sin"/>' + FG_PIVOTE(57.3, 78),
+      + '<line x1="45" y1="33" x2="45" y2="52" class="il-pad"/><line x1="46" y1="44" x2="84" y2="44" class="il-mueble il-sin"/><line x1="84" y1="44" x2="84" y2="84" class="il-mueble il-sin"/>' + FG_PIVOTE(52, 84),
     atras: function(P, ln, ci){ ln(pivRa, P.w, 'il-mueble il-sin');   // los discos, en un tetón que sale hacia delante y gira con la palanca
-      const L = Math.hypot(P.w[0] - pivRa[0], P.w[1] - pivRa[1]) || 1, u = [(P.w[0] - pivRa[0]) / L, (P.w[1] - pivRa[1]) / L], b = fgLerp(pivRa, P.w, 0.45), d = [b[0] - u[1] * 10, b[1] + u[0] * 10];
-      ln(b, d, 'il-mueble il-sin'); ci(d, 6, 'il-disco'); ci(d, 1.5, 'il-peso'); },
+      const L = Math.hypot(P.w[0] - pivRa[0], P.w[1] - pivRa[1]) || 1, u = [(P.w[0] - pivRa[0]) / L, (P.w[1] - pivRa[1]) / L], b = fgLerp(pivRa, P.w, 0.42), d = [b[0] - u[1] * 12, b[1] + u[0] * 12];
+      ln(b, d, 'il-mueble il-sin'); ci(d, 5.5, 'il-disco'); ci(d, 1.5, 'il-peso'); },
     delante: function(P, ln){ ln([P.w[0], P.w[1] - 3.5], [P.w[0], P.w[1] + 3.5], 'il-barra'); } };
   // press de hombro en máquina: sentado con respaldo alto; las asas suben por la palanca que gira detrás
   const phm = function(y){ return { p: [46, 56], t: -4, cab: 2, a: [68, 82.5], f: [75, 83.5], w: function(P){ return fgSum(P.n, [5, y]); }, c: 1 }; };
@@ -661,17 +665,21 @@ function fgArriba(extra){
    tronco. Los brazos cuelgan rectos hasta las asas, en el extremo de delante de la palanca (que lleva los discos junto a las
    asas y gira abajo y atrás); tira llevando los codos atrás y arriba hasta acercar las asas al pecho */
 function fgRemoT(){
-  const t = 58;
-  const pose = function(k){ return { p: [44, 44], t: t, cab: 4, a: [22, 70.5], f: [18.5, 76.5], r: 1,
-    w: function(P){ return fgLerp(fgSum(P.n, [0.5, 24.6]), fgSum(P.n, [-6, 13]), k); }, c: -1 }; };
+  // nota de Domingo (8/11): «el recorrido de la barra y la posición de los codos están mal». La palanca gira atrás y abajo, junto a
+  // la plataforma de los pies: las asas suben en un arco ancho hacia el pecho (arriba y algo atrás). Los codos van hacia atrás y
+  // arriba, por encima de la espalda, con el antebrazo casi vertical en la línea del tirón
+  const t = 58, piv = [24.3, 80], R = 46.8;
+  const angS = Math.atan2(55.8 - 80, 64.35 - 24.3), angE = Math.atan2(43.3 - 80, 53.35 - 24.3);
+  const mano = function(k){ const g = fgLerp(angS, angE, k); return [piv[0] + Math.cos(g) * R, piv[1] + Math.sin(g) * R]; };
+  const pose = function(k){ return { p: [44, 44], t: t, cab: 4, a: [22, 70.5], f: [18.5, 76.5], r: 1, w: mano(k), c: 1 }; };
   const P0 = fgLado(pose(0)), bajo = fgDir(t + 90, 4.6);
   const ini = fgLerp(P0.p, P0.n, 0.2), fin = fgLerp(P0.p, P0.n, 0.9);
   const pad = '<line x1="' + fgNum(ini[0] + bajo[0]) + '" y1="' + fgNum(ini[1] + bajo[1]) + '" x2="' + fgNum(fin[0] + bajo[0]) + '" y2="' + fgNum(fin[1] + bajo[1]) + '" class="il-pad"/>'
     + '<line x1="' + fgNum(ini[0] + bajo[0] + 3) + '" y1="' + fgNum(ini[1] + bajo[1] + 2) + '" x2="' + fgNum(ini[0] + bajo[0] + 3) + '" y2="84" class="il-mueble il-sin"/>'
     + '<line x1="13" y1="79" x2="23" y2="75" class="il-placa"/><line x1="18" y1="77" x2="18" y2="84" class="il-fondo"/>';
-  const piv = [32, 80];
-  return { seq: [[pose(0), 0.4], [pose(1), 1], [pose(1), 0.4]], vuelta: 1.3, fondo: FG_PISO + pad + FG_PIVOTE(32, 80),
-    atras: function(P, ln, ci){ ln(piv, P.w, 'il-mueble il-sin'); const d = fgLerp(piv, P.w, 0.82); ci([d[0], d[1] + 2], 6, 'il-disco'); ci([d[0], d[1] + 2], 1.5, 'il-peso'); },
+  return { seq: [[pose(0), 0.4], [pose(0.25), 0.25], [pose(0.5), 0.25], [pose(0.75), 0.25], [pose(1), 0.25], [pose(1), 0.4], [pose(0.66), 0.45], [pose(0.33), 0.45]], vuelta: 0.45,
+    fondo: FG_PISO + pad + FG_PIVOTE(24.3, 80),
+    atras: function(P, ln, ci){ ln(piv, P.w, 'il-mueble il-sin'); const d = fgLerp(piv, P.w, 0.84); ci([d[0], d[1] + 2], 6, 'il-disco'); ci([d[0], d[1] + 2], 1.5, 'il-peso'); },
     delante: function(P, ln){ ln([P.w[0] - 3.5, P.w[1]], [P.w[0] + 3.5, P.w[1]], 'il-barra'); } };
 }
 FG['remo en punta (t-bar)'] = fgRemoT();
