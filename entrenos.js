@@ -11,7 +11,9 @@ function entResumenHtml(k){
     const ej = Array.prototype.map.call(c.querySelectorAll('.ex-item'), function(it){
       const pz = enPesos(it), r0 = pz.map(function(x){ return mjNum(x.dataset.rir); }).filter(function(x){ return x != null; });
       const cd = typeof cdTexto === 'function' && it.dataset.cardio ? cdTexto(it) : '';
-      return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + '</small>'
+      // 8/11 · peso movido en cada ejercicio (series × repeticiones × peso; con las repeticiones hechas si las apunta)
+      let tonE = 0; if (!cd) { try { const w = document.createElement('div'); w.appendChild(it.cloneNode(true)); tonE = Math.round(tonelajeDe(w)) || 0; } catch(e){} }
+      return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + (tonE > 0 ? ' · ' + fmtMil(tonE) + ' kg' : '') + '</small>'
         + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>';
     });
     // 8/11 · peso movido en cada sesión (pedido por Domingo): con las repeticiones hechas, o las del plan si no las apunta
