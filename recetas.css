@@ -20,7 +20,7 @@ html.esc .rc-volver{display:none;}
 .rc-card-b .btn-primary{flex:1 1 auto;min-height:42px;margin:0;}
 .rc-card-b .btn-eq{flex:none;min-height:42px;margin:0;}
 .rc-card-b .rc-borrar{width:42px;padding:0;border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;font-weight:800;}
-.rc-card-b .rc-borrar:hover{background:var(--del) !important;color:#fff !important;}
+@media (hover:hover){ .rc-card-b .rc-borrar:hover{background:var(--del) !important;color:#fff !important;} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 /* editor */
 .rc-sheet .field{margin-bottom:12px;}
 .rc-rac input{max-width:120px;}

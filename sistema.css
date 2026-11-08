@@ -17,11 +17,11 @@ html.esc #coachTabs .tbi-emo .ico{width:20px;height:20px;}
 /* ---------- Botones: principal, secundario y terciario ---------- */
 .btn-primary{height:48px;border-radius:var(--r-ctl);font:600 var(--fs-m) var(--f-body);letter-spacing:0;}
 .btn-eq{border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);color:var(--ink);font:600 var(--fs-s) var(--f-body);}
-.btn-eq:hover{background:var(--wash-soft);}
+@media (hover:hover){ .btn-eq:hover{background:var(--wash-soft);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .btn-eq.danger{border-color:color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger-text);background:var(--bg);}
 .mini-btn,.sg-ver.sg-ver-btn,.team-chip{min-height:36px;border-radius:var(--r-pill);font:600 var(--fs-s) var(--f-body);}
 .sg-ver.sg-ver-btn{border:1px solid var(--line-strong);background:var(--wash-soft);color:var(--ink);}
-.sg-ver.sg-ver-btn:hover{background:var(--wash-med);color:var(--ink);}
+@media (hover:hover){ .sg-ver.sg-ver-btn:hover{background:var(--wash-med);color:var(--ink);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 
 /* ---------- Chips de filtro: uno solo, 36 px, contador en píldora ---------- */
 .ex-filtros button,.ent-filtros button,.sg-filtros .chip,.pu-chat-chips .chip,.pagos-filtros .chip,.gr-chips .chip{

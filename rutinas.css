@@ -43,7 +43,7 @@
 .coach-edit #view-entreno .ex-table-row > .ru-asa{order:-1;}
 .ru-asa{display:none;}
 .coach-edit .ru-asa{display:flex;align-items:center;justify-content:center;flex:none;width:26px;height:30px;margin:0 -4px 0 -8px;border-radius:var(--r-ctl);color:var(--dim-45);font-size:var(--fs-xl);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
-.coach-edit .ru-asa:hover{background:var(--wash-med);color:var(--ink);}
+@media (hover:hover){ .coach-edit .ru-asa:hover{background:var(--wash-med);color:var(--ink);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 /* con el asa, el nombre comparte la primera línea */
 .coach-edit #view-entreno .ex-table-row:has(> .ru-asa) > .ex-name-cell{flex:1 1 calc(100% - 40px);}
 .coach-edit #view-entreno .ru-f{flex:1 1 0;order:1;display:flex;flex-direction:column;align-items:stretch;gap:4px;min-width:0;}
@@ -134,7 +134,7 @@ html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center
 .ru-ss-x{width:34px;height:34px;border-radius:var(--r-ctl);border:1px solid color-mix(in srgb, var(--danger) 30%, transparent);background:none;color:var(--danger-text);cursor:pointer;font-size:var(--fs-s);}
 .ru-ss-x:disabled{opacity:.25;cursor:default;}
 .ru-ss-mas{margin-top:8px;min-height:36px;padding:0 16px;border-radius:var(--r-ctl);border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer;}
-.ru-ss-mas:hover{background:var(--accent-wash);}
+@media (hover:hover){ .ru-ss-mas:hover{background:var(--accent-wash);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .ru-ss-rir.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:8px;} .ru-ss-n{font-size:var(--fs-s);} }
 .srf-cab .srf-rir-v{padding:0 4px;border-radius:5px;}
@@ -148,7 +148,7 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
   font:800 var(--fs-l)/1 Archivo,sans-serif !important;cursor:pointer;transition:background var(--dur-r),color var(--dur-r),transform var(--dur-r);}
 .coach-edit .ses-del,.coach-edit .meal-del{display:inline-flex;}
 .en-ej-btns .en-del,.ru-ss-x{display:inline-flex;}
-.ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;}
+@media (hover:hover){ .ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .ses-del:active,.meal-del:active,.en-ej-btns .en-del:active,.ru-ss-x:not(:disabled):active{transform:scale(.94);}
 .ru-ss-x:disabled{opacity:.3;}
 .ru-ss-cab,.ru-ss-f{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr) 38px;}
@@ -157,7 +157,7 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 .chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1;
   font:800 var(--fs-m)/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
 .chip-x::after{content:"";position:absolute;inset:-9px;}         /* zona de toque más grande */
-.chip-x:hover{background:color-mix(in srgb, var(--danger) 80%, #000);}
+@media (hover:hover){ .chip-x:hover{background:color-mix(in srgb, var(--danger) 80%, #000);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 /* textos de borrar en rojo */
 .mini-btn[onclick^="enBorrarPlantilla"],.mini-btn[onclick^="quitarFoto"],#videoModal .picker-btn-ghost{color:var(--del);border-color:var(--del-line) !important;}
 html.esc #app.coach-edit .en-ej-btns .en-del{height:32px;width:34px;font-size:var(--fs-m) !important;}
