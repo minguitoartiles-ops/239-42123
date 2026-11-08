@@ -220,20 +220,28 @@ function svChPintar(k){
   const abajo = l.scrollHeight - l.scrollTop - l.clientHeight < 160;
   const antes = l.scrollTop;
   const nuevos = l.querySelector('.chat-nuevos'), trasNuevos = nuevos && nuevos.nextElementSibling && nuevos.nextElementSibling.getAttribute('data-fid');
-  l.innerHTML = html;
-  // 5/11 · lo que no estaba antes en pantalla (mensaje nuevo) entra con suavidad
-  const vistos = svChVistos[k], ids = Array.prototype.map.call(l.querySelectorAll('.bubble[data-fid]'), function(b){ return b.getAttribute('data-fid'); });
-  if (vistos) {
-    const nuevosB = Array.prototype.filter.call(l.querySelectorAll('.bubble[data-fid]'), function(b){ return !vistos[b.getAttribute('data-fid')]; });
-    if (nuevosB.length <= 5) nuevosB.forEach(function(b){ b.classList.add('msg-nuevo'); });
-  }
-  svChVistos[k] = {}; ids.forEach(function(i){ svChVistos[k][i] = 1; });
-  if (nuevos && trasNuevos) { const b = l.querySelector('.bubble[data-fid="' + trasNuevos.replace(/["\\]/g, '') + '"]'); if (b) b.parentNode.insertBefore(nuevos, b); }
-  svArchRellenar(l);
-  try { decorarChat(); } catch(e){}
-  try { puChatFechas(); } catch(e){}
-  try { cmPintarFijo(true); } catch(e){}
-  try { ddPintar(); } catch(e){}
+  // 8/11 · sin parpadeo: se pinta en una copia invisible y a la pantalla solo pasa lo que cambia (antes se rehacía
+  // toda la conversación con cada mensaje, «leído» o «escribiendo»: las fotos se redibujaban y la vista saltaba)
+  const pintar = function(){
+    const L = document.getElementById('chatList') || l;
+    L.innerHTML = html;
+    // 5/11 · lo que no estaba antes en pantalla (mensaje nuevo) entra con suavidad
+    const vistos = svChVistos[k], ids = Array.prototype.map.call(L.querySelectorAll('.bubble[data-fid]'), function(b){ return b.getAttribute('data-fid'); });
+    if (vistos) {
+      const nuevosB = Array.prototype.filter.call(L.querySelectorAll('.bubble[data-fid]'), function(b){ return !vistos[b.getAttribute('data-fid')]; });
+      if (nuevosB.length <= 5) nuevosB.forEach(function(b){ b.classList.add('msg-nuevo'); });
+    }
+    svChVistos[k] = {}; ids.forEach(function(i){ svChVistos[k][i] = 1; });
+    if (nuevos && trasNuevos) { const b = L.querySelector('.bubble[data-fid="' + trasNuevos.replace(/["\\]/g, '') + '"]'); if (b) b.parentNode.insertBefore(nuevos, b); }
+    svArchRellenar(L);
+    try { decorarChat(); } catch(e){}
+    try { puChatFechas(); } catch(e){}
+    try { cmPintarFijo(true); } catch(e){}
+    try { ddPintar(); } catch(e){}
+  };
+  if (typeof fsdSinParpadeo === 'function') fsdSinParpadeo(['chatList'], pintar, null, { chatList: { saltar: '.sonando', conservar: ['data-enlazado'] } });   // la nota de voz que suena, ni se toca
+  else pintar();
+  svArchRellenar(l);                       // las fotos que aún no se habían descargado se piden ya en la pantalla
   try { pintarChatHero(); } catch(e){}
   l.scrollTop = abajo ? l.scrollHeight : antes;
   if (abajo) { try { puPegarAbajo(2500); } catch(e){} }

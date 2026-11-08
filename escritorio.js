@@ -244,8 +244,8 @@ function escFiltrarClientes(){
 
 /* ---------- 3 · Ficha en columnas ---------- */
 const ESC_GRUPOS = {
-  entrenador: ['segui', 'sens', 'gestion', 'pago', 'entreno', 'ton', 'nutri', 'datos'],
-  dietista: ['segui', 'sens', 'gestion', 'pago', 'nutri', 'datos', 'entreno', 'ton']
+  entrenador: ['segui', 'sens', 'fotos', 'gestion', 'pago', 'entreno', 'ton', 'nutri', 'datos'],
+  dietista: ['segui', 'sens', 'fotos', 'gestion', 'pago', 'nutri', 'datos', 'entreno', 'ton']
 };
 enSeccionDe = (function(orig){ return function(el){ return el.id === 'escFichaGrid' ? 'siempre' : orig(el); }; })(enSeccionDe);
 function escAgruparFicha(){
@@ -276,7 +276,7 @@ function escAgruparFicha(){
   const orden = ESC_GRUPOS[coachActivo && coachActivo.rol === 'dietista' ? 'dietista' : 'entrenador'];
   const grupo = function(g){
     let el = grid.querySelector('.esc-grupo[data-g="' + g + '"]');
-    if (!el) { el = document.createElement('div'); el.className = 'esc-grupo'; el.dataset.g = g; el.dataset.sec = g === 'gestion' ? 'datos' : (g === 'ton' ? 'entreno' : (g === 'sens' ? 'segui' : g)); grid.appendChild(el); }
+    if (!el) { el = document.createElement('div'); el.className = 'esc-grupo'; el.dataset.g = g; el.dataset.sec = g === 'gestion' ? 'datos' : (g === 'ton' ? 'entreno' : (g === 'sens' || g === 'fotos' ? 'segui' : g)); grid.appendChild(el); }
     return el;
   };
   let gestion = !!grid.querySelector('.esc-grupo[data-g="gestion"] .alta-label');
@@ -291,6 +291,9 @@ function escAgruparFicha(){
   // 26/10 · «Sensaciones del día» en su propia tarjeta (antes compartía la de «Evolución»)
   const sensEl = document.getElementById('fichaSens');
   if (sensEl && sensEl.closest('#escFichaGrid') && !sensEl.closest('.esc-grupo[data-g="sens"]')) grupo('sens').appendChild(sensEl);
+  // 8/11 · «Antes / Ahora» también en su propia tarjeta (se creaba junto a «Sensaciones del día» y compartían recuadro)
+  const fotosEl = document.getElementById('fichaFotos');
+  if (fotosEl && fotosEl.closest('#escFichaGrid') && !fotosEl.closest('.esc-grupo[data-g="fotos"]')) grupo('fotos').appendChild(fotosEl);
   orden.forEach(function(g){ const el = grid.querySelector('.esc-grupo[data-g="' + g + '"]'); if (el) grid.appendChild(el); });
   Array.prototype.forEach.call(grid.querySelectorAll('.esc-grupo'), function(g){ g.hidden = !g.children.length; });
   escFiltroFicha();

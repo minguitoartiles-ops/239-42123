@@ -177,8 +177,15 @@ function svPlAplicar(k, S){
   const nut = fsdLimpiarHtml(fsdNutPintar(fsdNutUnir(svPlSanearPauta('nut', R.nutP), svPlSanearReg('nut', R.nutR))));
   PLANES[k] = Object.assign({}, PLANES[k] || {}, { ent: fsdMdIdsHtml(ent), nut: fsdMdIdsHtml(nut) });
   if (k === clienteActual) {
-    try { cargarPlan(k); } catch(e){}
-    try { if (typeof ruPintar === 'function') ruPintar(); } catch(e){}
+    const repintar = function(){
+      try { cargarPlan(k); } catch(e){}
+      try { if (typeof ruPintar === 'function') ruPintar(); } catch(e){}
+    };
+    // 8/11 · sin parpadeo: solo cambia en pantalla lo que ha cambiado (un peso, una serie hecha…). La conversación
+    // la pinta el chat del servidor: lo que cargarPlan dejaría ahí (una copia sin fotos) se descarta.
+    if (typeof fsdSinParpadeo === 'function') fsdSinParpadeo(['sesionesCont', 'comidasCont', 'enLeyenda'], repintar, ['chatList'],
+      { sesionesCont: { bloque: '.ex-item' }, comidasCont: { bloque: '.meal-block' } });   // un ejercicio o una comida que cambia, entero
+    else repintar();
     if (window.fsdSesionCliente && !coachActivo && nuevas.some(function(p){ return p.slice(-1) === 'P'; }) && svPlYaCargado[k]) {
       try { toast('Tu plan se ha actualizado'); } catch(e){}
     }
