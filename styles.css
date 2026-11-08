@@ -1497,6 +1497,7 @@
 .fe-top .lnk{color:var(--accent-text);font-weight:600;flex:none;}
 .fe-dia{padding:8px 0;border-top:1px solid var(--line);}
 .fe-dia > b{display:block;font:700 var(--fs-s) var(--f-body);margin-bottom:4px;}
+.fe-dia > .fe-ton{display:block;font:600 var(--fs-xs, 12px) var(--f-body);color:var(--muted, #6b7280);margin:-2px 0 4px;}
 .fe-ej{display:flex;align-items:center;gap:8px;font:500 var(--fs-s) var(--f-body);color:var(--dim-6);padding:2px 0;}
 .fe-ej small{font-family:var(--f-mono);color:var(--dim-45);}
 .fe-ej .sr-badge{flex-direction:row;min-width:0;padding:1px 8px;font-size:var(--fs-xs);margin-left:auto;}
