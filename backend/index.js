@@ -13,6 +13,7 @@ import { crearPerfiles } from './perfiles.js';
 import { crearPagos } from './pagos.js';
 import { crearFacturas } from './facturas.js';
 import { crearConsentimientos } from './consentimientos.js';
+import { crearSalud } from './salud.js';
 
 const entorno = window.FSD_MODO_SERVIDOR;   // lo fija servidor-inicio.js al abrir la app
 const proyecto = PROYECTOS[entorno];
@@ -39,6 +40,7 @@ if (proyecto) {
     pagos: crearPagos(sb),
     facturas: crearFacturas(sb),
     consentimientos: crearConsentimientos(sb),
+    salud: crearSalud(sb),
     // Avisa si la sesión se cierra o cambia de cuenta (también desde otra pestaña): alCambiar(userId | null)
     vigilarSesion(alCambiar) {
       const { data } = sb.auth.onAuthStateChange((evento, sesion) => {
