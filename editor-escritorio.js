@@ -51,7 +51,8 @@ function edTitulo(on){
     if (e && e.dataset.edOrig != null) { e.textContent = e.dataset.edOrig; delete e.dataset.edOrig; }
   }
 }
-ruPintarCompacta = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { edDecorar(); } catch(e){} return r; }; })(ruPintarCompacta);
+/* «¿Qué es el RIR?» siempre a mano mientras se edita: la leyenda solo se creaba al pintar el plan y a veces faltaba */
+ruPintarCompacta = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { edDecorar(); if (edOn() && !document.getElementById('enLeyenda') && typeof enLeyendaRir === 'function') enLeyendaRir(); } catch(e){} return r; }; })(ruPintarCompacta);
 /* lo de pantalla no se guarda (ni cuenta para «Deshacer») */
 ruLimpiarHtml = (function(orig){
   return function(h){
@@ -130,3 +131,17 @@ document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && docu
 document.addEventListener('scroll', edCerrarMenu, true);
 window.addEventListener('resize', edCerrarMenu);
 edDecorar();
+
+/* 8/11 · Al «Guardar cambios y notificar» el plan se ve como lo ve el cliente: con los días plegados (antes quedaban todos
+   desplegados) y sin los botones ⋯ y ⌄ del editor, que solo valen mientras se edita */
+editarPlan = (function(orig){
+  return function(){
+    const estaba = coachEditing, r = orig.apply(this, arguments);
+    if (estaba && !coachEditing) {
+      try { document.querySelectorAll('#sesionesCont .ed-acc, #sesionesCont .ed-mas').forEach(function(x){ x.remove(); }); } catch(e){}
+      try { document.querySelectorAll('#sesionesCont .ex-item.ru-foco').forEach(function(x){ x.classList.remove('ru-foco'); }); } catch(e){}
+      try { enPlegarDias(); } catch(e){}
+    }
+    return r;
+  };
+})(editarPlan);

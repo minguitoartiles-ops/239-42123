@@ -63,9 +63,10 @@ function svCsAplicar(d, salud, imagen){
   } else d.consentImagen = null;
 }
 let svCsTrayendo = null;
+let svCsOtraVez = false;
 function svCsTraer(){
   if (!svSesDentro()) return Promise.resolve();
-  if (svCsTrayendo) return svCsTrayendo;
+  if (svCsTrayendo) { svCsOtraVez = true; return svCsTrayendo; }
   svCsTrayendo = svCargar().then(function(x){ return x.consentimientos.lista(); }).then(function(filas){
     const u = svCsUltimos(filas);
     Object.keys(clientesData).forEach(function(k){
@@ -82,7 +83,7 @@ function svCsTraer(){
     } else {
       try { if (typeof pantallaVisible === 'function' && pantallaVisible() === 'view-coach-cliente' && typeof pintarImagenFicha === 'function') pintarImagenFicha(); } catch(e){}
     }
-  }).catch(function(){}).finally(function(){ svCsTrayendo = null; });
+  }).catch(function(){}).finally(function(){ svCsTrayendo = null; if (svCsOtraVez) { svCsOtraVez = false; svCsTraer(); } });
   return svCsTrayendo;
 }
 
@@ -174,17 +175,36 @@ function svSaSubir(k){
 }
 function svSaReciente(f){ return f && (Date.now() - Date.parse(f)) < SV_SA_DIAS_AVISO * 864e5; }
 // «Ya ha entrado en la app»: una sola vez por cliente, en cuanto el equipo se entera (al abrir o en directo)
+/* 8/11 · tiempo real: el cuestionario y las alergias (tabla salud) y los consentimientos llegan al momento, sin recargar */
+let svSaDejar = null, svCsDejar = null, svSaT = null, svSaIds = [], svCsT = null;
+function svSaEscuchar(){
+  if (svSaDejar || !svSesDentro()) return;
+  svCargar().then(function(x){
+    if (svSaDejar || !svSesDentro()) return;
+    svSaDejar = x.salud.escuchar(function(cid){
+      if (svSaIds.indexOf(cid) < 0) svSaIds.push(cid);
+      clearTimeout(svSaT);
+      svSaT = setTimeout(function(){ const l = svSaIds; svSaIds = []; svSaTraer(l); }, 400);
+    }, typeof svVigilarCanal === 'function' ? svVigilarCanal() : null);
+    if (!svCsDejar) svCsDejar = x.consentimientos.escuchar(function(){ clearTimeout(svCsT); svCsT = setTimeout(svCsTraer, 400); });
+  }).catch(function(){});
+}
+function svSaParar(){
+  [svSaDejar, svCsDejar].forEach(function(f){ if (f) { try { f(); } catch(e){} } });
+  svSaDejar = svCsDejar = null; clearTimeout(svSaT); clearTimeout(svCsT); svSaIds = [];
+}
 function svSaAvisoCuenta(k){
   const d = clientesData[k];
   if (!coachActivo || !d || !d.sid || !d.svCuentaDesde || !svSaReciente(d.svCuentaDesde)) return;
   if (!tocaAvisarUnaVez('sv-cuenta|' + d.sid)) return;
   try { avisarPros('cuentas', d.nombre + ' ya ha entrado en la app', 'Creó su cuenta el ' + fechaCorta(d.svCuentaDesde) + '. Todo ha ido bien: ahora le toca el cuestionario inicial.', { cliente: k, vista: 'ficha' }); } catch(e){}
 }
-let svSaTrayendo = null;
-function svSaTraer(){
+let svSaTrayendo = null, svSaOtraVez = null;
+function svSaTraer(sids){
   if (!svSesDentro()) return Promise.resolve();
-  if (svSaTrayendo) return svSaTrayendo;
-  svSaTrayendo = svCargar().then(function(x){ return x.salud.lista(); }).then(function(filas){
+  sids = Array.isArray(sids) && sids.length ? sids : null;           // (los eventos pasan un Event: entonces, todos)
+  if (svSaTrayendo) { svSaOtraVez = svSaOtraVez === null ? (sids || 'todos') : (svSaOtraVez === 'todos' || !sids ? 'todos' : svSaOtraVez.concat(sids)); return svSaTrayendo; }
+  svSaTrayendo = svCargar().then(function(x){ return x.salud.lista(sids); }).then(function(filas){
     const por = {}; filas.forEach(function(r){ por[String(r.cliente_id).toLowerCase()] = r.datos || {}; });
     if (window.fsdSesionCliente && !coachActivo) {
       const k = clienteActual, d = clientesData[k]; if (!d || !d.sid) return;
@@ -202,6 +222,7 @@ function svSaTraer(){
     // el equipo: cuestionarios y avisos
     Object.keys(clientesData).forEach(function(k){
       const d = clientesData[k]; if (!d || !d.sid) return;
+      if (sids && sids.indexOf(d.sid) < 0) return;
       const s = por[String(d.sid).toLowerCase()];
       if (s && s.cuestionario) {
         const nuevo = !d.cuestionario || d.cuestionario.fecha !== s.cuestionario.fecha;
@@ -219,7 +240,11 @@ function svSaTraer(){
       svSaAvisoCuenta(k);
     });
     guardarTodo();
-  }).catch(function(){}).finally(function(){ svSaTrayendo = null; });
+    if (sids) { try { actualizarPanel(); } catch(e){} try { if (typeof pintarListas === 'function') pintarListas(); } catch(e){} }
+  }).catch(function(){}).finally(function(){
+    svSaTrayendo = null;
+    if (svSaOtraVez !== null) { const o = svSaOtraVez; svSaOtraVez = null; svSaTraer(o === 'todos' ? null : o); }
+  });
   return svSaTrayendo;
 }
 
@@ -243,9 +268,15 @@ if (svActivo()) {
       return r;
     };
   })(cqEnviar);
-  window.addEventListener('fsd:lista-servidor', svSaTraer);
-  window.addEventListener('fsd:cliente-dentro', svSaTraer);
-  window.addEventListener('fsd:al-volver', function(){ if (window.fsdSesionCliente && !coachActivo) svSaTraer(); });
+  window.addEventListener('fsd:lista-servidor', function(){ svSaTraer(); svSaEscuchar(); });
+  window.addEventListener('fsd:cliente-dentro', function(){ svSaTraer(); svSaEscuchar(); });
+  window.addEventListener('fsd:al-volver', function(){ svSaTraer(); if (coachActivo) svCsTraer(); });
+  window.addEventListener('fsd:sesion-fuera', svSaParar);
+  /* 8/11 · cambió la ficha de algún cliente (p. ej. acaba de crear su cuenta): el aviso «ya ha entrado en la app» */
+  window.addEventListener('fsd:fichas-cambiadas', function(e){
+    const sids = (e.detail && e.detail.sids) || [];
+    Object.keys(clientesData).forEach(function(k){ const d = clientesData[k]; if (d && sids.indexOf(d.sid) > -1) svSaAvisoCuenta(k); });
+  });
 }
 
 /* =========================================================

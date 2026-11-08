@@ -12,10 +12,25 @@ function errorDe(e, generico) {
 export function crearSalud(sb) {
   return {
     // Las fichas de salud que puede ver quien pregunta → [{ cliente_id, datos, actualizado }]
-    async lista() {
-      const { data, error } = await sb.from('salud').select('cliente_id, datos, actualizado').limit(5000);
+    async lista(ids) {
+      let q = sb.from('salud').select('cliente_id, datos, actualizado').limit(5000);
+      if (ids) {
+        if (!ids.every((x) => /^[0-9a-f-]{36}$/i.test(String(x)))) throw new ErrorServidor('Cliente no válido.');
+        q = q.in('cliente_id', ids);
+      }
+      const { data, error } = await q;
       if (error) throw errorDe(error, 'No se han podido traer los cuestionarios.');
       return data || [];
+    },
+    // 8/11 · Avisa con el id del cliente cuando cambia su ficha de salud (cuestionario, alergias): alCambiar(id)
+    escuchar(alCambiar, alEstado) {
+      const canal = sb.channel('salud')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'salud' }, (p) => {
+          const f = p.new && p.new.cliente_id ? p.new : p.old;
+          if (f && f.cliente_id) alCambiar(f.cliente_id);
+        })
+        .subscribe((estado) => { if (alEstado) alEstado(estado); });
+      return () => { sb.removeChannel(canal); };
     },
     // El cliente guarda la suya (se sustituye entera)
     async guardar(clienteId, datos) {

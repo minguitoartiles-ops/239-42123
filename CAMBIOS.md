@@ -3,8 +3,29 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.90 (actual)
-Cambios acumulados hacia la 0.91: **0 de 10**
+## Versión 0.91 (actual)
+Cambios acumulados hacia la 0.92: **3 de 10**
+
+### Hacia la 0.92 · sincronización más rápida (auditoría del 08/11/2026, seguimos)
+1. 08/11/2026 · **El plan llega en torno a 1 s**: el aviso del servidor ya trae la pauta o el registro y se usa tal cual (antes se volvían a pedir las 4 tablas de ese cliente); lo que uno mismo acaba de guardar no se vuelve a descargar; la subida espera 0,6 s en vez de 1,2 s. Medido en el servidor simulado: del servidor a la pantalla, de ~1 s a ~0,4-0,6 s → **0.91.0-1 (caché)**
+2. 08/11/2026 · Supabase · **el cuestionario inicial y las alergias llegan al equipo al momento**, sin recargar (la tabla `salud` entra en el tiempo real, con sus mismas políticas: cada cliente solo lo suyo). También se escuchan los consentimientos. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.91.1**
+3. 08/11/2026 · Supabase · **seguimientos sin tope**: se traen de 1.000 en 1.000 hasta el final (antes, como mucho 2.000 entre todos los clientes y, con el tiempo, los más antiguos dejaban de verse en la app) → **0.91.1-1 (caché)**
+
+## Versión 0.90 → 0.91.0
+
+### Hacia la 0.91 · editor de rutinas, tras «Guardar y notificar» (avisado por Domingo)
+1. 08/11/2026 · **Al «Guardar cambios y notificar», los días quedan plegados** (antes se desplegaban todos) y **desaparecen los botones ⋯ y ⌄ del editor**, que se quedaban sueltos en la vista del plan guardado. Esa era la diferencia entre las dos capturas: una era el plan ya guardado y la otra, el editor → **0.90.0-1 (caché)**
+2. 08/11/2026 · **El editor toma el estilo del plan guardado** (pedido por Domingo): título del día grande y cada ejercicio en su tarjeta blanca; **los días reparten todo el ancho** (con 1 o 2 días se ensanchan, antes dejaban espacio libre, también en «Multitarea») → **0.90.1**
+3. 08/11/2026 · **Tutorial de inicio más claro** (pedido por Domingo: no iba fluido y no explicaba bien las pestañas). Cada pestaña lleva ahora su subtítulo y dice para qué sirve y qué hacer en ella (seguimiento semanal en Hoy; elegir y marcar comidas y lista de la compra en Nutrición; peso y repeticiones y ✓ del día en Entreno; chat; perfil y cuenta). Fuera la mención a los vasos de agua, que ya no existen → **0.90.1-1 (caché)**
+4. 08/11/2026 · **Tutorial: botón «Atrás» y «Saltar el recorrido»** en todos los pasos (antes solo «Saltar» y no se podía retroceder con un botón) → **0.90.2**
+5. 08/11/2026 · **Cuestionario: prefijo del teléfono** en un desplegable (España +34 por defecto y 34 países europeos, más «Otro país»); el número se guarda como siempre, con su prefijo (pedido por Domingo) → **0.90.2-1 (caché)**
+6. 08/11/2026 · **Al completar un día de entreno (✓) o una comida, su cuadro se pliega solo** en la vista del cliente (pedido por Domingo); si lo vuelve a abrir, se queda abierto → **0.90.3**
+7. 08/11/2026 · **«¿Qué es el RIR?» siempre visible al editar** en el ordenador (la leyenda a veces no se creaba y el enlace desaparecía) → **0.90.3-1 (caché)**
+
+### Hacia la 0.91 · sincronización (auditoría del 08/11/2026: que los datos viajen bien y rápido)
+8. 08/11/2026 · **Un cambio en la ficha de un cliente ya no hace descargar todo de todos**: se trae la lista de clientes y sus pagos (3 lecturas en vez de 13). Si aparece o desaparece un cliente, se trae todo como al entrar → **0.90.4**
+9. 08/11/2026 · **Al volver a la app, una sola puesta al día** (13 lecturas en vez de 17-19: antes se pedía casi todo dos veces). También al recuperar internet → **0.90.4-1 (caché)**
+10. 08/11/2026 · **Si se corta la conexión en directo sin salir de la app** (cambio de wifi a datos, caída breve), al reconectar se pone al día todo: planes, seguimientos, fichas, salud, pagos y chat (antes solo el chat). Como mucho una vez cada 5 s → **0.91.0**
 
 ## Versión 0.89 → 0.90.0
 

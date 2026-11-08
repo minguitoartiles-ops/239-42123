@@ -1337,3 +1337,28 @@ function puIosInstalarRecordar(intento){
   } catch(e){}
 }
 ['fsd:cliente-dentro', 'fsd:pro-dentro'].forEach(function(ev){ window.addEventListener(ev, function(){ setTimeout(puIosInstalarRecordar, 4000); }); });
+
+/* 8/11 · Al completar un día de entreno o una comida, su cuadro se pliega solo (pedido por Domingo). Solo en la vista del cliente;
+   un pequeño retardo para que se vea el ✓ antes de plegarse. Si lo vuelve a abrir, se queda abierto. */
+toggleSesionHecha = (function(orig){
+  return function(ev, el){
+    const c = el && el.closest && el.closest('.sesion-card'), antes = c && c.classList.contains('hecha');
+    const r = orig.apply(this, arguments);
+    if (c && !antes && c.classList.contains('hecha') && !isCoachView()) setTimeout(function(){
+      const h = c.querySelector('.sesion-head'), b = c.querySelector('.sesion-body');
+      if (h && b && b.style.display === 'block' && c.classList.contains('hecha')) toggleSesion(h);
+    }, 450);
+    return r;
+  };
+})(toggleSesionHecha);
+toggleComida = (function(orig){
+  return function(ev, el){
+    const b = el && el.closest && el.closest('.meal-block'), antes = b && b.classList.contains('eaten');
+    const r = orig.apply(this, arguments);
+    if (b && !antes && b.classList.contains('eaten') && !isCoachView()) setTimeout(function(){
+      const h = b.querySelector('.meal-head'), cu = b.querySelector('.meal-body');
+      if (h && cu && cu.classList.contains('open') && b.classList.contains('eaten')) toggleMealBlock(h);
+    }, 450);
+    return r;
+  };
+})(toggleComida);
