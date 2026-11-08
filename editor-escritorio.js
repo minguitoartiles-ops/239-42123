@@ -130,3 +130,17 @@ document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && docu
 document.addEventListener('scroll', edCerrarMenu, true);
 window.addEventListener('resize', edCerrarMenu);
 edDecorar();
+
+/* 8/11 · Al «Guardar cambios y notificar» el plan se ve como lo ve el cliente: con los días plegados (antes quedaban todos
+   desplegados) y sin los botones ⋯ y ⌄ del editor, que solo valen mientras se edita */
+editarPlan = (function(orig){
+  return function(){
+    const estaba = coachEditing, r = orig.apply(this, arguments);
+    if (estaba && !coachEditing) {
+      try { document.querySelectorAll('#sesionesCont .ed-acc, #sesionesCont .ed-mas').forEach(function(x){ x.remove(); }); } catch(e){}
+      try { document.querySelectorAll('#sesionesCont .ex-item.ru-foco').forEach(function(x){ x.classList.remove('ru-foco'); }); } catch(e){}
+      try { enPlegarDias(); } catch(e){}
+    }
+    return r;
+  };
+})(editarPlan);

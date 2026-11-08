@@ -4,7 +4,11 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.90 (actual)
-Cambios acumulados hacia la 0.91: **0 de 10**
+Cambios acumulados hacia la 0.91: **2 de 10**
+
+### Hacia la 0.91 · editor de rutinas, tras «Guardar y notificar» (avisado por Domingo)
+1. 08/11/2026 · **Al «Guardar cambios y notificar», los días quedan plegados** (antes se desplegaban todos) y **desaparecen los botones ⋯ y ⌄ del editor**, que se quedaban sueltos en la vista del plan guardado. Esa era la diferencia entre las dos capturas: una era el plan ya guardado y la otra, el editor → **0.90.0-1 (caché)**
+2. 08/11/2026 · **El editor toma el estilo del plan guardado** (pedido por Domingo): título del día grande y cada ejercicio en su tarjeta blanca; **los días reparten todo el ancho** (con 1 o 2 días se ensanchan, antes dejaban espacio libre, también en «Multitarea») → **0.90.1**
 
 ## Versión 0.89 → 0.90.0
 
