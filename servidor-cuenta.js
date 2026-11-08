@@ -77,6 +77,7 @@ function svCsTraer(){
     if (window.fsdSesionCliente && !coachActivo) {
       // el cliente: si el servidor no tiene su consentimiento, se le pide (aunque lo diera antes en este móvil)
       try { comprobarConsentSalud(); } catch(e){}
+      try { svSaTraer(); } catch(e){}
       try { if (vistaActual === 'ajustes' && typeof renderAjustes === 'function') renderAjustes('cliente'); } catch(e){}
     } else {
       try { if (typeof pantallaVisible === 'function' && pantallaVisible() === 'view-coach-cliente' && typeof pintarImagenFicha === 'function') pintarImagenFicha(); } catch(e){}
@@ -107,7 +108,7 @@ if (svActivo()) {
       const yo = this, args = arguments, b = document.getElementById('csOk');
       ocupado = true; if (b) b.disabled = true;
       svCargar().then(function(x){ return x.consentimientos.registrar('salud', 'dado', POLICY_V); })
-        .then(function(){ orig.apply(yo, args); const d = clientesData[clienteActual]; if (d && d.consentSalud) d.consentSalud.sv = true; })
+        .then(function(){ orig.apply(yo, args); const d = clientesData[clienteActual]; if (d && d.consentSalud) d.consentSalud.sv = true; try { svSaTraer(); } catch(e){} })
         .catch(function(e){ toast(svMensaje(e, 'No se ha podido guardar tu consentimiento. Inténtalo de nuevo.')); })
         .finally(function(){ ocupado = false; if (b) b.disabled = !document.getElementById('csChk').checked; });
     };
@@ -192,7 +193,9 @@ function svSaTraer(){
         Object.assign(d, s); delete d.cqBorrador; guardarTodo();
         try { mjAvisoAlergiasHoy(); } catch(e){}
       } else if (d.cuestionario && (!s.cuestionario || d.svSaludPend)) {
-        svSaSubir(k).catch(function(){});              // lo tenía solo en este móvil (o quedó a medias)
+        // lo tenía solo en este móvil (o quedó a medias). 8/11: solo cuando su consentimiento de salud ya consta en el
+        // servidor; si no, se sube justo después de que lo dé (ver csAceptar más abajo)
+        if (d.consentSalud && d.consentSalud.sv) svSaSubir(k).catch(function(){});
       }
       return;
     }
@@ -276,4 +279,24 @@ if (svActivo() && typeof svChPintar === 'function') {
       return r;
     };
   })(svChPintar);
+}
+
+/* =========================================================
+   6 · Ficha del cliente al día (8/11/2026, avisado por Domingo): al abrirla se traen del servidor su
+   cuestionario, sus alergias y sus permisos (antes solo al abrir la app), y se vuelve a pintar.
+   ========================================================= */
+if (svActivo() && typeof goToCliente === 'function') {
+  goToCliente = (function(orig){
+    return function(k){
+      const r = orig.apply(this, arguments);
+      if (coachActivo) {
+        Promise.all([svSaTraer(), svCsTraer()]).then(function(){
+          if (clienteActual !== k || typeof pantallaVisible !== 'function' || pantallaVisible() !== 'view-coach-cliente') return;
+          try { pintarAlergiasFicha(); } catch(e){}
+          try { pintarImagenFicha(); } catch(e){}
+        });
+      }
+      return r;
+    };
+  })(goToCliente);
 }

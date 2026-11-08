@@ -2,7 +2,7 @@
    Fitnessindramas — Nutrición del cliente: el día de un vistazo (25/10/2026, tarea #183)
    Arriba de su plan, una tarjeta «Hoy» con:
    · anillo de calorías tomadas (según las comidas que marca con ✓) y anillos de proteína, carbos y grasa con emoji
-   · hidratación: vasos de agua del día (objetivo según su peso, unos 35 ml por kg)
+   · (8/11) sin los vasos de agua: se quitaron a petición de Domingo
    · «Ahora toca»: la comida de esta hora, que ya sale abierta y marcada en el plan; tocarla lleva a ella
    ========================================================= */
 function nhHoy(){ const d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
@@ -57,7 +57,6 @@ function nhPintar(){
   const tot = bl.reduce(function(a, b){ return { p: a.p + (+b.dataset.mp || 0), c: a.c + (+b.dataset.mc || 0), f: a.f + (+b.dataset.mf || 0) }; }, { p: 0, c: 0, f: 0 });
   const o = obj ? { kcal: obj.kcal, p: obj.p, c: obj.c, f: obj.f } : { kcal: Math.round(tot.p * 4 + tot.c * 4 + tot.f * 9), p: tot.p, c: tot.c, f: tot.f };
   const mac = [['p', '🥩', 'Proteína', p, o.p, 'var(--protein)'], ['c', '🍚', 'Carbos', cb, o.c, 'var(--carb)'], ['f', '🥑', 'Grasa', f, o.f, 'var(--fat)']];
-  const agua = nhAgua(k), aObj = nhAguaObj(k);
   const ia = typeof exComidaAhora === 'function' ? exComidaAhora() : -1, ba = ia > -1 ? bl[ia] : null;
   const ahora = ba && !ba.classList.contains('eaten') ? ba : null;
   let h = '<div class="nh-top"><span class="nh-eye">Hoy · ' + n + ' de ' + bl.length + ' comidas</span>' + (o.kcal ? '<span class="nh-quedan">' + (kcal >= o.kcal ? '¡Objetivo cumplido! 🎉' : 'Te quedan <b>' + fmtMil(o.kcal - kcal) + '</b> kcal') + '</span>' : '') + '</div>'
@@ -66,11 +65,8 @@ function nhPintar(){
     + '<div class="nh-macros">' + mac.map(function(m){
         return '<div class="nh-m ' + m[0] + '">' + nhAnillo(m[4] ? m[3] / m[4] : 0, m[5], 40, 12, '<span aria-hidden="true">' + m[1] + '</span>', 'nh-peq')
           + '<div class="nh-m-t"><b>' + Math.round(m[3]) + '<small>/' + Math.round(m[4] || 0) + ' g</small></b><span>' + m[2] + '</span></div></div>';
-      }).join('') + '</div></div>'
-    + '<div class="nh-agua"><div class="nh-agua-h"><span>💧 Agua</span><b>' + agua + ' de ' + aObj + ' vasos</b><small>' + fmtNum(Math.round(agua * 0.25 * 100) / 100) + ' l</small></div>'
-    + '<div class="nh-vasos" role="group" aria-label="Vasos de agua de hoy">' + Array.from({ length: Math.max(aObj, agua) }, function(_, i){
-        return '<button type="button" class="nh-vaso' + (i < agua ? ' on' : '') + '" data-vaso="' + (i + 1) + '" aria-label="' + (i + 1) + (i ? ' vasos' : ' vaso') + '" aria-pressed="' + (i < agua) + '"></button>';
-      }).join('') + '<button type="button" class="nh-agua-mas" data-agua="+" aria-label="Añadir un vaso">+1</button></div></div>';
+      }).join('') + '</div></div>';
+  /* 8/11 · fuera los vasos de agua (no aportaban información útil; pedido por Domingo) */
   if (ahora) {
     const t = ((ahora.querySelector('.meal-block-title') || {}).textContent || 'Comida').trim();
     const el = ((ahora.querySelector('.meal-elegidas') || {}).textContent || '').trim();
