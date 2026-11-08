@@ -4,7 +4,14 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.89 (actual)
-Cambios acumulados hacia la 0.90: **0 de 10**
+Cambios acumulados hacia la 0.90: **5 de 10**
+
+### Hacia la 0.90 · editor de rutinas en el ordenador, más simple (pedido por Domingo: desplegables que fallaban, demasiados botones)
+1. 08/11/2026 · **Cada ejercicio se abre y se cierra tocando cualquier parte libre de su fila o la flecha ⌄** (más grande, y ahora también cierra), y **solo queda uno abierto a la vez**. Antes la flechita ▾ solo abría, desaparecía al abrir y abrir otro no cerraba el anterior → **0.89.0-1 (caché)**
+2. 08/11/2026 · **Botón ⋯ en cada ejercicio** con Cambiar ejercicio, Subir, Bajar, Duplicar y Quitar; fuera el botón «Cambiar» y los cuatro botones del detalle → **0.89.1**
+3. 08/11/2026 · **Botón ⋯ en cada día** con Renombrar, Subir, Bajar, Duplicar y Borrar; fuera ✎, ×, ✓ y la fila ↑ ↓ Duplicar. **Borrar un día pide confirmación** (antes se borraba al momento con la × pegada a plegar) → **0.89.1-1 (caché)**
+4. 08/11/2026 · Arriba, **«Plan de Nombre»** en vez de «Tus sesiones» (texto del cliente) y una sola fila: Asistente, Plantillas y + Día. Fuera «Vista detallada / compacta» (queda una sola vista), la frase del cliente, la leyenda de colores del RIR (queda «¿Qué es el RIR?») y el «+ Añadir sesión» repetido de abajo → **0.89.2**
+5. 08/11/2026 · **Los días van en columnas solo si caben**; si no (por ejemplo en «Multitarea», con el chat al lado), pasan a la fila de abajo y ninguno queda cortado → **0.89.2-1 (caché)**
 
 ## Versión 0.88 → 0.89.0
 
