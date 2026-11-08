@@ -14,7 +14,10 @@ function entResumenHtml(k){
       return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + '</small>'
         + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>';
     });
-    return '<div class="fe-dia"><b>' + esc(((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim()) + (c.classList.contains('hecha') ? ' ✓' : '') + '</b>' + (ej.length ? ej.join('') : '<span class="fe-ej">Sin ejercicios</span>') + '</div>';
+    // 8/11 · peso movido en cada sesión (pedido por Domingo): con las repeticiones hechas, o las del plan si no las apunta
+    let tonS = 0; try { tonS = Math.round(tonelajeDe(c)) || 0; } catch(e){}
+    return '<div class="fe-dia"><b>' + esc(((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim()) + (c.classList.contains('hecha') ? ' ✓' : '') + '</b>'
+      + (tonS > 0 ? '<span class="fe-ton">🏋️ ' + fmtMil(tonS) + ' kg movidos</span>' : '') + (ej.length ? ej.join('') : '<span class="fe-ej">Sin ejercicios</span>') + '</div>';
   });
   const ton = typeof mjTonelajeCliente === 'function' ? mjTonelajeCliente(k) : null;
   const reg = (d.registro && d.registro.ton) || [], ant = reg.length ? reg[reg.length - 1].kg : null;
