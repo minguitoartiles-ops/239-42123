@@ -98,7 +98,7 @@ function mtPonerChat(k){
     setTimeout(function(){
       try { if (typeof puBorrPoner === 'function') puBorrPoner(); } catch(e){}
       try { if (typeof ddPintar === 'function') ddPintar(); } catch(e){}
-      const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
+      try { puPegarAbajo(); } catch(e){}
     }, 40);
   }
 }
@@ -108,6 +108,7 @@ function mtLeido(k){
     if (!coachActivo || typeof sinLeerDe !== 'function') return;
     const pro = clavePro(coachActivo.u), s = sinLeerDe(pro), habia = s[k] || 0;
     s[k] = 0;
+    try { puAtender(k); } catch(e){}      // 8/11 · entrar en el chat lo deja atendido
     ((leerAvisos().lista[pro]) || []).forEach(function(x){ if (x.tipo === 'mensajes' && x.ir && x.ir.cliente === k) x.leida = true; });
     guardarAvisos(); pintarCampanas();
     if (habia && typeof actualizarPanel === 'function') actualizarPanel();

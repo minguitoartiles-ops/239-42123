@@ -3,8 +3,13 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.86 (actual)
-Cambios acumulados hacia la 0.87: **9 de 10**
+## Versión 0.87 (actual)
+Cambios acumulados hacia la 0.88: **1 de 10**
+
+### Hacia la 0.88
+1. 08/11/2026 · Chats: **al entrar en una conversación baja sola hasta el último mensaje** (avisado por Domingo: muchas veces se quedaba a mitad). Antes saltaba al primer mensaje sin leer y, con las fotos o los mensajes del servidor llegando después, se quedaba en medio. Ahora se mantiene abajo mientras termina de cargar y deja de hacerlo en cuanto tocas o desplazas la conversación. El separador «N mensajes nuevos» sigue en su sitio, más arriba → **0.87.0-1 (caché)**
+
+## Versión 0.86 → 0.87.0
 
 ### Hacia la 0.87
 1. 08/11/2026 · **Alta de cliente sin correo ni teléfono** (pedido por Domingo): solo nombre, objetivo, duración y tarifa. El correo lo pone el cliente al crear su cuenta (el servidor lo copia a su ficha) y el **teléfono se pide en el cuestionario inicial** (obligatorio, solo números, con o sin prefijo) → **0.86.0-1 (caché)**
@@ -16,6 +21,7 @@ Cambios acumulados hacia la 0.87: **9 de 10**
 7. 08/11/2026 · Chats: **«Duda para Fátima / Domingo» ya no deja el chat pendiente a quien la pasa** (avisado por Domingo). Quien pasa la duda ya ha atendido ese chat; le sigue saliendo a su compañero. Si el cliente vuelve a escribir después, vuelve a contar como pendiente → **0.86.3-1 (caché)**
 8. 08/11/2026 · Portada: **la versión ya sale bien** (avisado por Domingo). Estaba escrita a mano y se quedó en «0.84»; ahora la toma de la propia app, la misma que se ve en Ajustes → **0.86.4**
 9. 08/11/2026 · Portada (ordenador y móvil): **el panel de entrada vuelve a estar centrado** (avisado por Domingo). Al quitar los botones «Domingo / Fátima» se fue abajo del todo, porque eran ellos los que dejaban el hueco de abajo → **0.86.4-1 (caché)**
+10. 08/11/2026 · Chats: **entrar en un chat quita el «sin contestar»** aunque no contestes (pedido por Domingo). Antes se mantenía hasta responder y el número de la pestaña Chats no bajaba. Ahora, al abrirlo (móvil u ordenador) queda atendido; si el cliente escribe cuando ya has salido, vuelve a contar, y si escribe con el chat a la vista, no. Reutiliza «Marcar como resuelto» (cada profesional lo suyo) → **0.87.0**
 
 ## Versión 0.85 → 0.86.0
 
