@@ -1497,6 +1497,11 @@
 .fe-top .lnk{color:var(--accent-text);font-weight:600;flex:none;}
 .fe-dia{padding:8px 0;border-top:1px solid var(--line);}
 .fe-dia > b{display:block;font:700 var(--fs-s) var(--f-body);margin-bottom:4px;}
+.fe-series{margin:2px 0 8px;font:var(--fs-xs, 12px) var(--f-body);}
+.fe-sem{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:2px 0;}
+.fe-sem > small{min-width:74px;color:var(--muted, #6b7280);font-weight:600;}
+.fe-s{white-space:nowrap;}
+.fe-ant > summary{cursor:pointer;color:var(--muted, #6b7280);margin-top:3px;}
 .fe-dia > .fe-ton{display:block;font:600 var(--fs-xs, 12px) var(--f-body);color:var(--muted, #6b7280);margin:-2px 0 4px;}
 .fe-ej{display:flex;align-items:center;gap:8px;font:500 var(--fs-s) var(--f-body);color:var(--dim-6);padding:2px 0;}
 .fe-ej small{font-family:var(--f-mono);color:var(--dim-45);}
