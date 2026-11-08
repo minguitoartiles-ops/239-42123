@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.85.2';
+const APP_VERSION = '0.86.3';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
@@ -569,7 +569,7 @@ const LEGAL_PRIVACIDAD =
 + '<li>En tu dispositivo queda una copia para que la app abra rápido y funcione sin conexión. Las fotos y notas de voz del chat solo se guardan en la memoria mientras la app está abierta.</li></ul>'
 + '<h4>6. Cuánto tiempo los guardamos</h4>'
 + '<p>Mientras tu asesoría esté activa. <b>Si no pagas</b>: tras el periodo de gracia de 7 días pierdes el acceso y guardamos tus datos 15 días más; si sigues sin pagar, borramos tu perfil (plan, seguimientos, conversación y fotos). <b>Si te das de baja</b>, dejas de tener acceso al momento y, si no vuelves en 15 días, borramos tu perfil (plan, seguimientos, conversación y fotos); puedes pedirnos que lo borremos antes. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
-+ '<p>Las fotos y notas de voz que ya no se usan (por ejemplo, una foto de perfil que cambias) se borran del servidor automáticamente en pocos días. Los registros técnicos de acceso se conservan solo el tiempo necesario por seguridad.</p>'
++ '<p>Las fotos y notas de voz que ya no se usan (por ejemplo, una foto de perfil que cambias) se borran del servidor automáticamente en pocos días. Los registros técnicos de acceso se conservan solo el tiempo necesario por seguridad. Cuando das, cambias o retiras un consentimiento (datos de salud o uso de imagen) guardamos la fecha, la versión de estos textos y el tipo de navegador, para poder demostrarlo; se borra con tu perfil.</p>'
 + '<h4>7. Con quién los compartimos</h4>'
 + '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta (encargados del tratamiento, art. 28 RGPD), que solo pueden usarlos para darnos su servicio:</p>'
 + '<ul><li><b>Supabase Pte. Ltd.</b> (Singapur), con el apoyo técnico de Supabase, Inc. (EE. UU.): servidor de la app (base de datos, cuentas y archivos), alojado en la UE con Amazon Web Services.</li>'

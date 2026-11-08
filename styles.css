@@ -1622,7 +1622,7 @@ html.esc .srf{max-width:560px;}
 .srf-tipos{overflow-x:auto;scrollbar-width:none;}
 .srf-tipos::-webkit-scrollbar{display:none;}
 .srf-tipos button{flex:1 0 auto;padding:0 12px;}
-@media (max-width:420px){
+@media (max-width:480px){   /* 8/11 · antes 420: en los iPhone grandes (430) el peso se cortaba */
   .srf-l1{gap:4px;}
   .srf-n{width:34px;}
   .srf-reps{flex-basis:50px;flex-direction:column;justify-content:center;gap:0;padding:0 2px;}
@@ -1638,4 +1638,4 @@ html.esc .srf{max-width:560px;}
   .srf-nota-b{width:34px;}
   .srf-tipos button{font-size:var(--fs-xs);padding:0 8px;}
 }
-@media (max-width:420px){ .srf-peso input{min-width:0;} .srf-reps{flex-basis:46px;} .srf-peso button{width:24px;} }
+@media (max-width:480px){ .srf-peso{flex:1 1 0;min-width:100px;} .srf-peso input{min-width:0;width:100%;} .srf-reps{flex-basis:46px;} .srf-peso button{width:24px;} }

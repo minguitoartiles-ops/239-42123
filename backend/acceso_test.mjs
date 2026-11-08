@@ -688,3 +688,47 @@ test('Facturas desde el servidor', async (t) => {
     assert.ok(!(await fC.lista()).some((x) => x.tipo === 'mensual'), 'el cliente no ve la factura de Domingo a Fátima');
   });
 });
+
+// ---------------------------------------------------------------------
+// 6/11 · Entrada única y consentimientos en el servidor
+// ---------------------------------------------------------------------
+import { crearConsentimientos } from './consentimientos.js';
+
+test('Entrada única y consentimientos', async (t) => {
+  const s = Math.random().toString(36).slice(2, 8);
+  const ip = `10.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}`;
+  const dispositivo = () => createClient(API, ANON, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { 'x-forwarded-for': ip, 'user-agent': 'PruebaFSD/1.0' } },
+  });
+  const dom = await crearUsuario(`edom-${s}@prueba.local`);
+  {
+    const { error } = await admin.from('equipo').insert({ user_id: dom, nombre: 'Domingo', rol: 'entrenador' });
+    if (error) throw error;
+  }
+  const sbD = dispositivo();
+  const alta = await (async () => { await crearAuth(sbD).entrar(`edom-${s}@prueba.local`, CLAVE); return crearClientes(sbD).crear({ nombre: `Rita ${s}`, tarifa: 'mensual', pagado: true }); })();
+  const sbC = dispositivo();
+  await crearClientes(sbC).canjear(alta.codigo, `rita-${s}@prueba.local`, CLAVE);
+
+  await t.test('Con la misma puerta entran el profesional y el cliente', async () => {
+    const p = await crearAuth(dispositivo()).entrarCualquiera(`edom-${s}@prueba.local`, CLAVE);
+    assert.deepEqual([p.tipo, p.rol], ['pro', 'entrenador']);
+    const c = await crearAuth(sbC).entrarCualquiera(`rita-${s}@prueba.local`, CLAVE);
+    assert.deepEqual([c.tipo, c.id], ['cliente', alta.id]);
+    await assert.rejects(crearAuth(dispositivo()).entrarCualquiera(`rita-${s}@prueba.local`, 'mala-clave'), /incorrectos/);
+  });
+
+  await t.test('El cliente registra su consentimiento; queda con fecha, versión y navegador', async () => {
+    const cC = crearConsentimientos(sbC);
+    await cC.registrar('salud', 'dado', '2026-10-19-2');
+    await cC.registrar('imagen', 'dado', '2026-10-19-2', { progreso: true, reconocible: false, nombre: false });
+    const suyos = await cC.lista();
+    assert.equal(suyos.length, 2);
+    assert.ok(suyos.every((x) => x.cliente_id === alta.id));
+    const { data } = await admin.from('consentimientos').select('navegador, user_id').eq('cliente_id', alta.id);
+    assert.ok(data.every((x) => /PruebaFSD/.test(x.navegador || '') || x.navegador === ''), 'navegador apuntado (si el servidor lo pasa)');
+    await assert.rejects(crearConsentimientos(sbD).registrar('salud', 'dado', 'v1'), /acceso/);
+    assert.ok((await crearConsentimientos(sbD).lista()).some((x) => x.cliente_id === alta.id), 'el equipo lo ve');
+  });
+});

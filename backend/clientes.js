@@ -4,7 +4,7 @@
 
 export class ErrorServidor extends Error {}
 
-const COLUMNAS = 'id, user_id, nombre, objetivo, email, telefono, estado, baja, fecha_alta, acceso_hasta, '
+const COLUMNAS = 'id, user_id, nombre, objetivo, email, telefono, estado, baja, fecha_alta, acceso_hasta, cuenta_desde, '
   + 'programa_semanas, tarifa, precio, inicio_programa';
 
 // Lo único que la app puede cambiar de una ficha (el resto lo cambian funciones del servidor)
