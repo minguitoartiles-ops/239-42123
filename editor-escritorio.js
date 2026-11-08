@@ -51,7 +51,8 @@ function edTitulo(on){
     if (e && e.dataset.edOrig != null) { e.textContent = e.dataset.edOrig; delete e.dataset.edOrig; }
   }
 }
-ruPintarCompacta = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { edDecorar(); } catch(e){} return r; }; })(ruPintarCompacta);
+/* «¿Qué es el RIR?» siempre a mano mientras se edita: la leyenda solo se creaba al pintar el plan y a veces faltaba */
+ruPintarCompacta = (function(orig){ return function(){ const r = orig.apply(this, arguments); try { edDecorar(); if (edOn() && !document.getElementById('enLeyenda') && typeof enLeyendaRir === 'function') enLeyendaRir(); } catch(e){} return r; }; })(ruPintarCompacta);
 /* lo de pantalla no se guarda (ni cuenta para «Deshacer») */
 ruLimpiarHtml = (function(orig){
   return function(h){
