@@ -751,7 +751,7 @@ function enviarCodigoCoach(){
   if (!c || !d) return;
   const nombre = (d.nombre || '').split(' ')[0];
   const texto = 'Hola' + (nombre ? ' ' + nombre : '') + ', tu código de acceso a Fitnessindramas es ' + c +
-    '. Entra en ' + location.origin + location.pathname.replace(/index\.html$/, '') + ' y escríbelo en «Código de acceso».';
+    '. Entra en ' + location.origin + location.pathname.replace(/index\.html$/, '') + (window.FSD_MODO_SERVIDOR ? '?servidor=' + window.FSD_MODO_SERVIDOR : '') + ' y escríbelo en «Código de acceso».';
   if (navigator.share) {
     navigator.share({ title: 'Tu código de acceso', text: texto }).catch(function(err){
       if (!err || err.name !== 'AbortError') copiarTexto(texto);

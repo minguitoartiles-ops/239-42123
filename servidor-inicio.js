@@ -31,6 +31,17 @@
   let entorno = null;
   try { const v = localStorage.getItem(CLAVE_MODO); entorno = ENTORNOS.indexOf(v) > -1 ? v : null; } catch(e){}
 
+  // 8/11 · En modo servidor la dirección conserva «?servidor=…»: así, si en el iPhone se añade a la
+  // pantalla de inicio, el acceso directo (que tiene su propio almacenamiento, aparte del de Safari)
+  // también abre en modo servidor. Y el manifiesto de la app apunta a esa misma dirección.
+  if (entorno) {
+    try {
+      const u = new URL(location.href);
+      if (u.searchParams.get('servidor') !== entorno) { u.searchParams.set('servidor', entorno); history.replaceState(null, '', u.pathname + u.search + u.hash); }
+    } catch(e){}
+    const ponerManifiesto = function(){ const l = document.querySelector('link[rel="manifest"]'); if (l) l.setAttribute('href', 'manifest-' + entorno + '.webmanifest'); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ponerManifiesto); else ponerManifiesto();
+  }
   Object.defineProperty(window, 'FSD_MODO_SERVIDOR', { value: entorno, writable: false, configurable: false });
   Object.defineProperty(window, 'FSD_MODO_CAMBIO', { value: cambio, writable: false, configurable: false });
   if (!entorno) return;

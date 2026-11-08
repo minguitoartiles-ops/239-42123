@@ -203,8 +203,9 @@ if ('serviceWorker' in navigator) {
 
       <div class="alta-body">
         <div class="field"><label>Nombre completo</label><input type="text" placeholder="Nombre y apellidos"></div>
-        <div class="field"><label>Correo</label><input type="email" placeholder="correo@ejemplo.com"></div>
-        <div class="field"><label>Teléfono</label><input type="tel" placeholder="+34 600 000 000"></div>
+        <!-- 8/11 · Correo y teléfono los pone el cliente (al crear su cuenta y en el cuestionario): campos ocultos, se dejan para no mover los demás -->
+        <div class="field" hidden style="display:none"><label>Correo</label><input type="email" placeholder="correo@ejemplo.com" tabindex="-1"></div>
+        <div class="field" hidden style="display:none"><label>Teléfono</label><input type="tel" placeholder="+34 600 000 000" tabindex="-1"></div>
 
         <div class="alta-label">Objetivo</div>
         <div class="chips">
@@ -235,7 +236,7 @@ if ('serviceWorker' in navigator) {
           <div class="field"><label for="altaPrecio">Precio (€)</label><input type="text" inputmode="decimal" id="altaPrecio" placeholder="Opcional"></div>
           <label class="chk-row alta-pagado" for="altaPagado"><input type="checkbox" id="altaPagado" checked><span>Primer pago ya recibido</span></label>
         </div>
-        <p class="ajx-note alta-nota-med">📝 El peso y las medidas los rellena el cliente en su <b>cuestionario inicial</b> al entrar por primera vez.</p>
+        <p class="ajx-note alta-nota-med">📝 El correo, el teléfono, el peso y las medidas los pone el cliente al crear su cuenta y en su <b>cuestionario inicial</b>. Os llegará un aviso cuando entre y cuando lo envíe.</p>
 
         <span id="generatedCode" style="display:none">XXXX-XXXX</span>
 

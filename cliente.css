@@ -1352,3 +1352,17 @@ html.esc #app:has(#view-chat.active) > #coachBar{display:none !important;}
 .ch-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);padding:10px 12px;min-height:40px;border-radius:calc(var(--r-ctl) - 2px);font:600 var(--fs-m) var(--f-body);cursor:pointer;}
 .ch-menu button:hover,.ch-menu button:focus-visible{background:var(--accent-wash);outline:none;}
 #chatsPro .chat-fila{-webkit-touch-callout:none;}
+
+/* 8/11 · móvil: las notas de la semana (entreno, nutrición, motivación, estrés, descanso, actividad)
+   en rejilla de 3 columnas; antes iban en una sola fila y se salían por la derecha */
+html:not(.esc) .segui-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;justify-content:stretch;}
+html:not(.esc) .segui-stats>div{min-width:0;padding:8px 4px;border-radius:var(--r-ctl);background:var(--wash-soft);text-align:center;}
+html:not(.esc) .segui-stats .segui-lbl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.02em;}
+
+/* 8/11 · iPhone con el teclado abierto: la hoja ocupa solo lo que se ve encima del teclado (pulido.js) */
+html.fsd-vv .fsd-overlay.show{top:var(--vv-arriba,0px);bottom:auto;height:var(--vv-alto,100%);}
+html.fsd-vv .fsd-overlay.show > .fsd-sheet{max-height:100%;padding-bottom:12px;}
+html.fsd-vv .fsd-overlay.show > .fsd-sheet.full{padding-top:12px;}
+/* con el teclado fuera, los botones de «Atrás / Siguiente» del cuestionario van al final y no roban hueco */
+html.fsd-teclado .cq-acts{position:static;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}

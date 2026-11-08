@@ -1149,3 +1149,40 @@ function chMenuAbrir(k, x, y, fila){
   window.addEventListener('scroll', chMenuCerrar, true);
   window.addEventListener('resize', chMenuCerrar);
 })();
+
+/* 8/11 · iPhone: con el teclado abierto, Safari no encoge la pantalla, solo la tapa. Las hojas (cuestionario,
+   fichas, formularios) se ajustan al trozo que se ve encima del teclado y el campo que se está rellenando
+   se coloca a la vista. En Android (donde la pantalla sí se encoge) no cambia nada. */
+(function(){
+  const vv = window.visualViewport; if (!vv) return;
+  const raiz = document.documentElement;
+  let pend = 0;
+  function medir(){
+    pend = 0;
+    const tapado = window.innerHeight - vv.height;
+    if (tapado > 120 && raiz.classList.contains('fsd-teclado')) {
+      raiz.style.setProperty('--vv-alto', Math.round(vv.height) + 'px');
+      raiz.style.setProperty('--vv-arriba', Math.round(vv.offsetTop) + 'px');
+      raiz.classList.add('fsd-vv');
+    } else if (raiz.classList.contains('fsd-vv')) {
+      raiz.classList.remove('fsd-vv');
+    }
+  }
+  function pedir(){ if (!pend) pend = requestAnimationFrame(medir); }
+  vv.addEventListener('resize', pedir); vv.addEventListener('scroll', pedir);
+  document.addEventListener('focusout', function(){ setTimeout(pedir, 160); });
+  document.addEventListener('focusin', function(e){
+    const el = e.target, hoja = el && el.closest && el.closest('.fsd-sheet');
+    if (!hoja || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+    // cuando el teclado ya ha salido (tarda unos 300 ms en el iPhone), el campo al centro de lo visible
+    setTimeout(function(){
+      medir();
+      if (document.activeElement !== el) return;
+      const r = el.getBoundingClientRect(), rh = hoja.getBoundingClientRect();
+      const fondo = Math.min(rh.bottom, vv.offsetTop + vv.height);
+      if (r.top < rh.top + 8 || r.bottom > fondo - 8) {
+        hoja.scrollTop += (r.top + r.height / 2) - (rh.top + (fondo - rh.top) / 2);
+      }
+    }, 320);
+  });
+})();

@@ -124,7 +124,7 @@ if (svActivo()) {
           const d = clientesData[clienteActual];
           if (d) d.consentSalud = null;
           guardarTodo();
-          try { avisarPros('pendientes', (d ? d.nombre : 'Un cliente') + ' ha retirado su consentimiento de datos de salud', 'Ya no podéis tratar sus datos de salud. Habla con él o dale de baja.', { cliente: clienteActual, vista: 'ficha' }); } catch(e){}
+          try { avisarPros('cuentas', (d ? d.nombre : 'Un cliente') + ' ha retirado su consentimiento de datos de salud', 'Ya no podéis tratar sus datos de salud. Habla con él o dale de baja.', { cliente: clienteActual, vista: 'ficha' }); } catch(e){}
           cerrarSesionCliente();
           document.getElementById('loginError').textContent = 'Has retirado tu consentimiento y se ha cerrado tu sesión.';
         }).catch(function(e){ toast(svMensaje(e, 'No se ha podido retirar. Inténtalo de nuevo.')); });
@@ -146,3 +146,120 @@ if (svActivo()) {
     };
   })(ciGuardar);
 }
+
+/* =========================================================
+   3 · Cuestionario inicial en el servidor y aviso de «ya ha entrado» (pedido por Domingo, 8/11/2026)
+   · El cuestionario (con el teléfono, el DNI para la factura, medidas, alergias…) se guarda en el
+     servidor al enviarlo; Domingo y Fátima lo ven y les llega el aviso. Si ya lo rellenó en otro
+     móvil, no se le vuelve a pedir.
+   · Cuando el cliente crea su cuenta y entra por primera vez, a los dos les llega un aviso.
+   ========================================================= */
+/* Un tipo de aviso propio que sí entra en la campana (los de «altas» y «pendientes» se quitaron de ella) */
+if (svActivo()) {
+  TIPOS_PRO.push({ id: 'cuentas', ico: '🔑', nombre: 'Cuentas de clientes', desc: 'Cuando un cliente entra por primera vez en la app o retira su consentimiento' });
+  try { CAMPANA_PRO.push('cuentas'); } catch(e){}
+}
+const SV_SA_DIAS_AVISO = 14;                  // en un aparato nuevo, solo se avisa de lo reciente
+function svSaDatos(d){
+  const x = {};
+  ['cuestionario', 'medIni', 'alergias', 'dni', 'nombreFiscal', 'dirFiscal'].forEach(function(c){ if (d[c] != null) x[c] = d[c]; });
+  return JSON.parse(JSON.stringify(x));
+}
+function svSaSubir(k){
+  const d = clientesData[k]; if (!d || !d.sid || !d.cuestionario) return Promise.resolve();
+  return svCargar().then(function(x){ return x.salud.guardar(d.sid, svSaDatos(d)); })
+    .then(function(){ delete d.svSaludPend; guardarTodo(); })
+    .catch(function(e){ d.svSaludPend = true; guardarTodo(); throw e; });
+}
+function svSaReciente(f){ return f && (Date.now() - Date.parse(f)) < SV_SA_DIAS_AVISO * 864e5; }
+// «Ya ha entrado en la app»: una sola vez por cliente, en cuanto el equipo se entera (al abrir o en directo)
+function svSaAvisoCuenta(k){
+  const d = clientesData[k];
+  if (!coachActivo || !d || !d.sid || !d.svCuentaDesde || !svSaReciente(d.svCuentaDesde)) return;
+  if (!tocaAvisarUnaVez('sv-cuenta|' + d.sid)) return;
+  try { avisarPros('cuentas', d.nombre + ' ya ha entrado en la app', 'Creó su cuenta el ' + fechaCorta(d.svCuentaDesde) + '. Todo ha ido bien: ahora le toca el cuestionario inicial.', { cliente: k, vista: 'ficha' }); } catch(e){}
+}
+let svSaTrayendo = null;
+function svSaTraer(){
+  if (!svSesDentro()) return Promise.resolve();
+  if (svSaTrayendo) return svSaTrayendo;
+  svSaTrayendo = svCargar().then(function(x){ return x.salud.lista(); }).then(function(filas){
+    const por = {}; filas.forEach(function(r){ por[String(r.cliente_id).toLowerCase()] = r.datos || {}; });
+    if (window.fsdSesionCliente && !coachActivo) {
+      const k = clienteActual, d = clientesData[k]; if (!d || !d.sid) return;
+      const s = por[String(d.sid).toLowerCase()] || {};
+      if (s.cuestionario && !d.cuestionario) {          // lo rellenó en otro móvil
+        Object.assign(d, s); delete d.cqBorrador; guardarTodo();
+        try { mjAvisoAlergiasHoy(); } catch(e){}
+      } else if (d.cuestionario && (!s.cuestionario || d.svSaludPend)) {
+        svSaSubir(k).catch(function(){});              // lo tenía solo en este móvil (o quedó a medias)
+      }
+      return;
+    }
+    // el equipo: cuestionarios y avisos
+    Object.keys(clientesData).forEach(function(k){
+      const d = clientesData[k]; if (!d || !d.sid) return;
+      const s = por[String(d.sid).toLowerCase()];
+      if (s && s.cuestionario) {
+        const nuevo = !d.cuestionario || d.cuestionario.fecha !== s.cuestionario.fecha;
+        ['cuestionario', 'medIni', 'alergias', 'dni', 'nombreFiscal', 'dirFiscal'].forEach(function(c){ if (s[c] != null) d[c] = s[c]; });
+        const tel = s.cuestionario.r && s.cuestionario.r.telefono;
+        if (tel && !d.telefono) d.telefono = String(tel).slice(0, 30);
+        if (nuevo && svSaReciente(s.cuestionario.fecha) && tocaAvisarUnaVez('sv-cq|' + d.sid + '|' + s.cuestionario.fecha)) {
+          try { avisarPros('seguimientos', d.nombre + ' ha enviado su cuestionario inicial', 'Objetivo: ' + recortar((s.cuestionario.r || {}).objetivo || (s.cuestionario.r || {}).ent_objetivo || '', 90), { cliente: k, vista: 'ficha' }); } catch(e){}
+        }
+      }
+      svSaAvisoCuenta(k);
+    });
+    guardarTodo();
+  }).catch(function(){}).finally(function(){ svSaTrayendo = null; });
+  return svSaTrayendo;
+}
+
+if (svActivo()) {
+  svAFicha = (function(orig){
+    return function(r, d){
+      const res = orig.apply(this, arguments);
+      if (r.cuenta_desde) d.svCuentaDesde = r.cuenta_desde; else delete d.svCuentaDesde;
+      if (d.svCuentaDesde && r.id) setTimeout(function(){ const k = svClaveDe(r.id); if (k) svSaAvisoCuenta(k); }, 0);
+      return res;
+    };
+  })(svAFicha);
+  cqEnviar = (function(orig){
+    return function(){
+      const r = orig.apply(this, arguments);
+      if (window.fsdSesionCliente && clienteActual) {
+        svSaSubir(clienteActual).catch(function(e){
+          toast(svMensaje(e, 'Tu cuestionario se ha guardado en el móvil, pero no se ha podido enviar. Se volverá a intentar al abrir la app.'));
+        });
+      }
+      return r;
+    };
+  })(cqEnviar);
+  window.addEventListener('fsd:lista-servidor', svSaTraer);
+  window.addEventListener('fsd:cliente-dentro', svSaTraer);
+  window.addEventListener('fsd:al-volver', function(){ if (window.fsdSesionCliente && !coachActivo) svSaTraer(); });
+}
+
+/* =========================================================
+   4 · «Duda para …» (en cualquier modo; pedido por Domingo, 8/11/2026)
+   Quien pasa una duda a su compañero ya ha atendido ese chat: para él no cuenta como
+   «sin contestar» (le sigue saliendo a quien se la ha pasado). Si el cliente vuelve a escribir
+   después, vuelve a contar.
+   ========================================================= */
+esperaDesde = (function(orig){
+  return function(k){
+    const r = orig.apply(this, arguments);
+    if (!r || !coachActivo) return r;
+    const d = clientesData[k]; if (!d || !Array.isArray(d.dudas)) return r;
+    const yo = norm(coachActivo.u);
+    const mia = d.dudas.filter(function(x){ return !x.ok && x.f && norm(x.de || '') === yo && x.f >= r; })
+      .map(function(x){ return x.f; }).sort().pop();
+    if (!mia) return r;
+    // ¿ha escrito el cliente después de pasar la duda?
+    let ultimoCli = '';
+    if (d.chatT && Array.isArray(d.chatT.cli)) ultimoCli = d.chatT.cli.slice(-1)[0] || '';
+    try { const s = d.sid && typeof svChRes !== 'undefined' && svChRes[d.sid]; if (s && s.ultimo_lado === 'out' && s.ultimo_fecha > ultimoCli) ultimoCli = s.ultimo_fecha; } catch(e){}
+    return ultimoCli > mia ? ultimoCli : null;
+  };
+})(esperaDesde);
