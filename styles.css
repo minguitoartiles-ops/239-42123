@@ -954,6 +954,8 @@
   #view-splash .logo-mark{margin-top:auto;}
   #view-splash .login-card{margin-top:24px;}
   #view-splash .pro-quick{margin-bottom:auto;}
+  /* 8/11 · sin los botones Domingo / Fátima (modo servidor), el hueco de abajo lo pone la tarjeta de entrar: todo queda centrado */
+  #view-splash:has(.pro-quick[hidden]) .login-card{margin-bottom:auto;}
   #view-splash .login-card,#view-splash .pro-quick,#view-splash .instalar-card{max-width:420px;}
   @media (max-height: 820px){ #view-splash .login-card{margin-top:16px;} }
   @media (max-height: 600px){ #view-splash .wordmark{margin-top:auto;} }

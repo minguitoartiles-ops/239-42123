@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.86 (actual)
-Cambios acumulados hacia la 0.87: **7 de 10**
+Cambios acumulados hacia la 0.87: **9 de 10**
 
 ### Hacia la 0.87
 1. 08/11/2026 · **Alta de cliente sin correo ni teléfono** (pedido por Domingo): solo nombre, objetivo, duración y tarifa. El correo lo pone el cliente al crear su cuenta (el servidor lo copia a su ficha) y el **teléfono se pide en el cuestionario inicial** (obligatorio, solo números, con o sin prefijo) → **0.86.0-1 (caché)**
@@ -14,6 +14,8 @@ Cambios acumulados hacia la 0.87: **7 de 10**
 5. 08/11/2026 · iPhone · **la app añadida a la pantalla de inicio abre en modo servidor** (avisado por Domingo). El acceso directo del iPhone guarda sus datos aparte de Safari y abría sin el modo servidor. Ahora, en modo servidor, la dirección conserva «?servidor=pruebas» y la app indica esa dirección al añadirla a inicio. El mensaje con el código de acceso que se manda al cliente también la lleva. **Quien ya la tenga añadida debe quitarla y volver a añadirla** desde Safari con el enlace de pruebas → **0.86.2-1 (caché)**
 6. 08/11/2026 · Móvil · Seguimientos: **el resumen de la semana ya no se sale por la derecha** (avisado por Domingo): las cuatro cifras van en una rejilla que cabe en la pantalla → **0.86.3**
 7. 08/11/2026 · Chats: **«Duda para Fátima / Domingo» ya no deja el chat pendiente a quien la pasa** (avisado por Domingo). Quien pasa la duda ya ha atendido ese chat; le sigue saliendo a su compañero. Si el cliente vuelve a escribir después, vuelve a contar como pendiente → **0.86.3-1 (caché)**
+8. 08/11/2026 · Portada: **la versión ya sale bien** (avisado por Domingo). Estaba escrita a mano y se quedó en «0.84»; ahora la toma de la propia app, la misma que se ve en Ajustes → **0.86.4**
+9. 08/11/2026 · Portada (ordenador y móvil): **el panel de entrada vuelve a estar centrado** (avisado por Domingo). Al quitar los botones «Domingo / Fátima» se fue abajo del todo, porque eran ellos los que dejaban el hueco de abajo → **0.86.4-1 (caché)**
 
 ## Versión 0.85 → 0.86.0
 
