@@ -112,7 +112,7 @@ if (typeof enPintarPlanes === 'function') enPintarPlanes = (function(orig){
       f.setAttribute('onclick', "plElegir('" + k + "')");
       f.setAttribute('ondblclick', "enAbrirPlanDesdeTab('" + k + "')");
       f.insertAdjacentHTML('afterbegin', plFoto(k));
-      const cta = f.querySelector('.plan-fila-cta'); if (cta) cta.textContent = 'Ver resumen';
+      const cta = f.querySelector('.plan-fila-cta'); if (cta) { cta.textContent = 'Ver resumen ›'; cta.setAttribute('role', 'button'); cta.setAttribute('tabindex', '0'); cta.setAttribute('onclick', "event.stopPropagation();enAbrirPlanDesdeTab('" + k + "')"); cta.setAttribute('onkeydown', "if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();enAbrirPlanDesdeTab('" + k + "')}"); }
     });
     const busca = document.createElement('div'); busca.className = 'pl-busca';
     busca.innerHTML = '<input type="search" id="plBuscar" placeholder="Buscar cliente…" aria-label="Buscar cliente" autocomplete="off" value="' + esc(plBusca) + '" oninput="plFiltrar(this.value)"><div id="plVacio" class="picker-empty" hidden>Ningún cliente coincide con la búsqueda.</div>';
