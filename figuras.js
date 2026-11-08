@@ -56,7 +56,8 @@ function fgLado(S){
     if (br) { P['e' + s] = fgSum(P.n, fgDir(br[0], FG_L.brazo)); P['w' + s] = fgSum(P['e' + s], fgDir(br[1], FG_L.antebrazo)); return; }
     const w = fgVal(S['w' + s] || S.w, P);
     if (!w) return;
-    const e = fgIK(P.n, w, FG_L.brazo, FG_L.antebrazo, S['c' + s] != null ? S['c' + s] : (S.c != null ? S.c : 1));
+    // escBrazo < 1: el brazo va abierto hacia fuera y, visto de lado, se ve más corto (press de banca)
+    const e = fgIK(P.n, w, FG_L.brazo * (S.escBrazo || 1), FG_L.antebrazo, S['c' + s] != null ? S['c' + s] : (S.c != null ? S.c : 1));
     P['e' + s] = e.j; P['w' + s] = e.t;
   });
   return P;
@@ -208,11 +209,11 @@ function fgSentFig(s, extra){
   const z = fgSent({ en: zEn, bx: 64, tAbajo: 24, pAbajoY: 66, brazo: function(t){ return [t + 145, t + 12]; } });
   FG['sentadilla zercher'] = fgSentFig(z);
 })();
-/* sentadilla con talones elevados (mancuernas a los lados, talones sobre una cuña) */
+/* sentadilla con talones elevados (mancuernas en los hombros, talones sobre un disco) */
 (function(){
   const a = [56, 78], f = [64, 83.5];
-  const arriba = { p: [57, 43.5], t: 1, a: a, f: f, brazo: [182, 180] };
-  const abajo = { p: [49, 66], t: 18, cab: -10, a: a, f: f, brazo: [195, 190] };
+  const arriba = { p: [57, 43.5], t: 1, a: a, f: f, brazo: [166, 8] };
+  const abajo = { p: [49, 66], t: 18, cab: -10, a: a, f: f, brazo: [183, 25] };
   FG['sentadilla con talones elevados'] = { seq: [[arriba, 1], [abajo, 1.3], [abajo, 0.2]], vuelta: 1.1,
     fondo: FG_PISO + '<rect x="50" y="80.5" width="10" height="3.5" rx="1" class="il-mueble"/>', delante: fgEnManos('mancuerna') };
 })();
@@ -220,8 +221,8 @@ function fgSentFig(s, extra){
 (function(){
   const pie = { a: [55, 82.5], f: [63, 83.5] };
   const arriba = Object.assign({ p: [58, 46], t: 3, brazo: [185, 180] }, pie);
-  const abajo = Object.assign({ p: [46, 66], t: 36, cab: -18, brazo: [215, 200] }, pie);
-  const aire = { p: [58, 34], t: -2, a: [57, 71], f: [62, 76], brazo: [150, 140] };
+  const abajo = Object.assign({ p: [46, 66], t: 36, cab: -18, brazo: [95, 92] }, pie);          // brazos al frente al bajar
+  const aire = { p: [58, 34], t: -2, a: [57, 71], f: [62, 76], brazo: [200, 195] };             // y atrás al saltar
   FG['sentadilla con salto'] = { seq: [[arriba, 0.6], [abajo, 0.9], [aire, 0.35], [arriba, 0.35]], vuelta: 0.4, fondo: FG_PISO };
 })();
 /* pistol: a una pierna; la otra estirada al frente; brazos al frente para equilibrar */
@@ -259,30 +260,30 @@ function fgSentFig(s, extra){
     delante: function(P, ln, ci){ const c = fgLerp(P.wL, P.wR, 0.5); ln([c[0], c[1] - 1], [c[0], c[1] + 9], 'il-barra'); ci([c[0], c[1] + 10], 3.6, 'il-peso'); } };
   // peso muerto sumo: barra en el suelo, delante de las canillas
   const pmA = Object.assign({ vista: 'frente', p: [60, 46], wL: [52, 68], wR: [68, 68], cL: -1, cR: 1, t: 0 }, pies);
-  const pmB = Object.assign({ vista: 'frente', p: [60, 60], wL: [52, 78], wR: [68, 78], cL: -1, cR: 1, t: 0 }, pies);
+  const pmB = Object.assign({ vista: 'frente', p: [60, 61], wL: [52, 77.5], wR: [68, 77.5], cL: -1, cR: 1, t: 0 }, pies);   // discos apoyados en el suelo
   pmA.rL = pmB.rL = 1; pmA.rR = pmB.rR = -1;
-  FG['peso muerto sumo'] = { vista: 'frente', seq: [[pmB, 0.6], [pmA, 1.3], [pmA, 0.3]], vuelta: 1.3, fondo: FG_PISO,
-    delante: function(P, ln, ci){ const y = (P.wL[1] + P.wR[1]) / 2; ln([20, y], [100, y], 'il-barra'); ['22', '98'].forEach(function(x){ ln([+x, y - 7], [+x, y + 7], 'il-placa'); }); } };
+  FG['peso muerto sumo'] = { vista: 'frente', seq: [[pmB, 0.6], [pmA, 1.3], [pmA, 0.3], [pmB, 1.3]], vuelta: 0.6, fondo: FG_PISO,
+    delante: function(P, ln, ci){ const y = (P.wL[1] + P.wR[1]) / 2; ln([20, y], [100, y], 'il-barra'); ['22', '98'].forEach(function(x){ ln([+x, y - 6.5], [+x, y + 6.5], 'il-placa'); }); } };
 })();
 
 /* --- multipower: la barra sube y baja pegada al raíl --- */
 (function(){
   // press de pecho / cerrado en multipower (banco plano)
   const banco = fgBanco(20, 82, 58);
-  const tumb = function(y){ return { p: [62, 54.5], t: -90, cab: 6, a: [74, 82.5], f: [81, 83.5], r: -1, w: [44, y], c: 1 }; };
+  const tumb = function(y, esc){ return { p: [62, 54.5], t: -90, cab: 6, a: [74, 82.5], f: [81, 83.5], r: -1, w: [44, y], c: 1, escBrazo: esc }; };   // codos por debajo de la barra, hacia los pies (no hacia la cabeza)
   ['press de pecho en multipower', 'press cerrado en multipower'].forEach(function(n){
-    FG[n] = { seq: [[tumb(14), 0.8], [tumb(48), 1.3], [tumb(48), 0.2]], vuelta: 1.1, fondo: FG_PISO + banco + fgRail(44), delante: fgEnManos('barra') };
+    FG[n] = { seq: [[tumb(31, 1), 0.8], [tumb(49, 0.7), 1.3], [tumb(49, 0.7), 0.2]], vuelta: 1.1, fondo: FG_PISO + banco + fgRail(44), delante: fgEnManos('barra') };
   });
   // inclinado: banco a 30-45 grados; la barra baja en vertical hasta la parte alta del pecho
   const incl = '<line x1="22" y1="34" x2="52" y2="60" class="il-mueble"/><rect x="50" y="58" width="22" height="4" rx="2" class="il-mueble"/><line x1="60" y1="62" x2="60" y2="84" class="il-fondo"/>';
-  const inc = function(y){ return { p: [56, 57], t: -52, cab: 10, a: [74, 82.5], f: [81, 83.5], w: [40, y], c: 1 }; };
-  FG['press inclinado en multipower'] = { seq: [[inc(8), 0.8], [inc(36), 1.3], [inc(36), 0.2]], vuelta: 1.1, fondo: FG_PISO + incl + fgRail(40), delante: fgEnManos('barra') };
+  const inc = function(y, esc){ return { p: [56, 57], t: -52, cab: 10, a: [74, 82.5], f: [81, 83.5], w: [40, y], c: 1, escBrazo: esc }; };
+  FG['press inclinado en multipower'] = { seq: [[inc(19, 1), 0.8], [inc(37, 0.7), 1.3], [inc(37, 0.7), 0.2]], vuelta: 1.1, fondo: FG_PISO + incl + fgRail(40), delante: fgEnManos('barra') };
   // remo en multipower: tronco inclinado, la barra sube en vertical por el raíl hasta el abdomen
-  const remo = function(y){ return { p: [48, 50], t: 62, cab: -40, a: [56, 82.5], f: [64, 83.5], w: [63, y], c: -1 }; };
+  const remo = function(y){ return { p: [48, 50], t: 62, cab: -40, a: [56, 82.5], f: [64, 83.5], w: [63, y], c: 1 }; };   // el codo sube hacia atrás, pegado al cuerpo
   FG['remo en multipower'] = { seq: [[remo(70), 0.8], [remo(50), 1], [remo(50), 0.3]], vuelta: 1.1, fondo: FG_PISO + fgRail(63), delante: fgEnManos('barra') };
   // press de hombro en multipower: sentado, la barra baja delante de la cara hasta la barbilla
   const asiento = '<rect x="38" y="56" width="26" height="4" rx="2" class="il-mueble"/><line x1="40" y1="24" x2="40" y2="58" class="il-mueble"/><line x1="51" y1="60" x2="51" y2="84" class="il-fondo"/>';
-  const hom = function(y){ return { p: [46, 54], t: -4, cab: 0, a: [66, 82.5], f: [73, 83.5], w: [54, y], c: -1 }; };
+  const hom = function(y){ return { p: [46, 54], t: -4, cab: 0, a: [66, 82.5], f: [73, 83.5], w: [54, y], c: 1 }; };   // codos delante y debajo de la barra
   FG['press de hombro en multipower'] = { seq: [[hom(31), 0.8], [hom(4), 1.2], [hom(4), 0.2]], vuelta: 1.1, fondo: FG_PISO + asiento + fgRail(54), delante: fgEnManos('barra') };
   // búlgara en multipower: barra en el trapecio y en el raíl; el pie de atrás sobre el banco
   const bulg = function(arriba){
@@ -291,7 +292,8 @@ function fgSentFig(s, extra){
   FG['sentadilla bulgara en multipower'] = { segundo: true, seq: [[bulg(true), 1], [bulg(false), 1.3], [bulg(false), 0.2]], vuelta: 1.1, fondo: FG_PISO + fgBanco(16, 40, 61) + fgRail(58), delante: fgEnManos('barra', fgTrapecio) };
   // peso muerto rumano en multipower: bisagra de cadera, la barra baja en vertical pegada a las piernas
   const rum = function(baja){
-    return baja ? { p: [44, 47], t: 72, cab: -45, a: [55, 82.5], f: [63, 83.5], w: [61, 68], c: -1 } : { p: [56, 45.5], t: 4, cab: 0, a: [55, 82.5], f: [63, 83.5], w: [61, 46], c: -1 };
+    // rodillas siempre algo flexionadas (la cadera nunca llega a estirar del todo la pierna)
+    return baja ? { p: [43, 49], t: 72, cab: -45, a: [55, 82.5], f: [63, 83.5], w: [61, 68], c: -1 } : { p: [55, 47.5], t: 5, cab: 0, a: [55, 82.5], f: [63, 83.5], w: [61, 47], c: -1 };
   };
   FG['peso muerto rumano en multipower'] = { seq: [[rum(false), 0.8], [rum(true), 1.4], [rum(true), 0.2]], vuelta: 1.2, fondo: FG_PISO + fgRail(61), delante: fgEnManos('barra') };
 })();
