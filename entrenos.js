@@ -4,16 +4,45 @@
    ========================================================= */
 /* #163 lista a la izquierda y, al tocar un cliente, su entreno a la derecha (en el móvil, debajo de la fila):
    resumen de cada día, tonelaje movido esta semana (y la anterior) y «Abrir entreno» */
-/* 8/11 · Peso movido en cada serie de cada ejercicio (pedido por Domingo): «50×8 = 400 kg» (peso × repeticiones hechas, o las del plan
-   si no las apunta). Esta semana, y las anteriores (hasta 4) plegadas, tomadas del registro de pesos del cliente. */
-function entSeriesHtml(it, d){
-  const chip = function(x){ const r = x[1]; return '<span class="fe-s">' + fmtNum(x[0]) + '×' + (r != null ? r : '?') + (r != null ? ' = <b>' + fmtMil(Math.round(x[0] * r)) + ' kg</b>' : '') + '</span>'; };
-  let act = []; try { act = enLeerSeries(it); } catch(e){}
-  const l = (((d.registro || {}).ej || {})[enNombreEj(it)] || []).filter(function(w){ return w.sem !== d.semanaRef && w.s && w.s.length; }).slice(-4).reverse();
-  let h = '';
-  if (act.length) h += '<div class="fe-sem"><small>Esta semana</small>' + act.map(chip).join('') + '</div>';
-  if (l.length) h += '<details class="fe-ant"><summary>Semanas anteriores (' + l.length + ')</summary>' + l.map(function(w){ return '<div class="fe-sem"><small>' + esc(mjFecha(w.sem).slice(0, 5)) + '</small>' + w.s.map(chip).join('') + '</div>'; }).join('') + '</details>';
-  return h ? '<div class="fe-series">' + h + '</div>' : '';
+/* 8/11 · Pesos movidos por semana (pedido por Domingo): una fila de columnas «Sem 1 · Sem 2 · …» (plegables); al tocar una, cada
+   ejercicio muestra el peso de cada serie de esa semana (sin multiplicar). Salen del registro de pesos del cliente; la semana en curso, de su plan. */
+function entSemanasHtml(t, d){
+  const reg = (d.registro && d.registro.ej) || {}, cur = d.semanaRef || '';
+  const dias = Array.prototype.map.call(t.querySelectorAll('.sesion-card'), function(c, i){
+    return { tit: ((c.querySelector('.sesion-title') || {}).textContent || 'Día ' + (i + 1)).trim(),
+      ej: Array.prototype.filter.call(c.querySelectorAll('.ex-item'), function(it){ return !it.dataset.cardio; }).map(function(it){
+        let act = []; try { act = enLeerSeries(it).map(function(x){ return x[0]; }); } catch(e){}
+        return { n: enNombreEj(it), act: act };
+      }) };
+  });
+  const pesosDe = function(e, sem){
+    if (sem === cur && e.act.length) return e.act;
+    const w = (reg[e.n] || []).filter(function(x){ return x.sem === sem; })[0];
+    return w && w.s ? w.s.map(function(x){ return x[0]; }) : [];
+  };
+  const sems = {};
+  Object.keys(reg).forEach(function(n){ reg[n].forEach(function(w){ if (w.s && w.s.length) sems[w.sem] = 1; }); });
+  if (cur && dias.some(function(x){ return x.ej.some(function(e){ return e.act.length; }); })) sems[cur] = 1;
+  const lista = Object.keys(sems).sort(); if (!lista.length) return '';
+  const chips = lista.map(function(sem, i){
+    return '<button type="button" class="fe-sem-b' + (sem === cur ? ' act' : '') + '" data-w="' + esc(sem) + '" aria-expanded="false" onclick="entSemVer(this)">Sem ' + (i + 1) + '<small>' + esc(mjFecha(sem).slice(0, 5)) + '</small></button>';
+  }).join('');
+  const paneles = lista.map(function(sem){
+    return '<div class="fe-wk" data-w="' + esc(sem) + '" hidden>' + dias.map(function(x){
+      return '<div class="fe-wk-dia"><b>' + esc(x.tit) + '</b>' + (x.ej.map(function(e){
+        const p = pesosDe(e, sem);
+        return '<div class="fe-wk-ej"><span>' + esc(e.n) + '</span><span class="fe-wk-p">' + (p.length ? p.map(fmtNum).join(' · ') + ' kg' : '—') + '</span></div>';
+      }).join('') || '<div class="fe-wk-ej"><span>Sin ejercicios</span></div>') + '</div>';
+    }).join('') + '</div>';
+  }).join('');
+  return '<div class="fe-sems"><div class="fe-sems-t">📅 Pesos por semana <small>toca una semana</small></div><div class="fe-sem-fila">' + chips + '</div>' + paneles + '</div>';
+}
+function entSemVer(b){
+  const box = b.closest('.fe-sems'); if (!box) return;
+  const abre = !b.classList.contains('sel');
+  box.querySelectorAll('.fe-sem-b').forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-expanded', 'false'); });
+  box.querySelectorAll('.fe-wk').forEach(function(x){ x.hidden = true; });
+  if (abre) { b.classList.add('sel'); b.setAttribute('aria-expanded', 'true'); const w = box.querySelector('.fe-wk[data-w="' + b.getAttribute('data-w') + '"]'); if (w) w.hidden = false; }
 }
 function entResumenHtml(k){
   const d = clientesData[k]; if (!d) return '';
@@ -23,8 +52,7 @@ function entResumenHtml(k){
       const pz = enPesos(it), r0 = pz.map(function(x){ return mjNum(x.dataset.rir); }).filter(function(x){ return x != null; });
       const cd = typeof cdTexto === 'function' && it.dataset.cardio ? cdTexto(it) : '';
       return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + '</small>'
-        + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>'
-        + (cd ? '' : entSeriesHtml(it, d));
+        + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>';
     });
     // 8/11 · peso movido en cada sesión (pedido por Domingo): con las repeticiones hechas, o las del plan si no las apunta
     let tonS = 0; try { tonS = Math.round(tonelajeDe(c)) || 0; } catch(e){}
@@ -38,6 +66,7 @@ function entResumenHtml(k){
   return '<div class="ent-prev-stats"><div><small>Tonelaje esta semana</small><b>' + (ton ? fmtMil(Math.round(ton)) + ' kg' : '—') + '</b>'
     + (ant ? '<span>' + (ton ? (ton >= ant ? '▲ ' : '▼ ') : '') + 'semana anterior ' + fmtMil(ant) + ' kg</span>' : '<span>' + (ton ? 'primera semana con pesos' : 'sin pesos registrados') + '</span>') + '</div>'
     + '<div><small>Sesiones esta semana</small><b>' + hechas + ' / ' + tot + '</b>' + (rd ? '<span>Con esta rutina: ' + esc(rd.txt) + '</span>' : '') + '</div></div>'
+    + entSemanasHtml(t, d)
     + '<div class="fe-card ent-prev-card">' + (ses.length ? ses.join('') : '<div class="picker-empty">Todavía no tiene sesiones.</div>') + '</div>';
 }
 plResumen = (function(orig){
