@@ -195,39 +195,76 @@ function svAsegurarFicha(r){
   return k;
 }
 
-let svSincronizando = null;
-function svSincronizar(){
+/* La lista de clientes del equipo.
+   8/11 · Antes, cualquier cambio en una ficha hacía que cada parte (planes, seguimientos, salud, pagos, facturas, chat…)
+   volviera a traer todo de todos los clientes. Ahora (op):
+   · {} (al entrar): la lista y, con «fsd:lista-servidor», cada parte trae todo.
+   · { sids: [...] } (cambió la ficha de esos clientes): la lista y solo lo que depende de la ficha («fsd:fichas-cambiadas»).
+   · { soloLista: true } (al volver a la app o reconectar: cada parte ya se pone al día con «fsd:al-volver»).
+   Si aparece o desaparece algún cliente, siempre como al entrar. */
+let svSincronizando = null, svSincroPend = null;
+function svUnirOp(a, b){
+  if (!a) return b;
+  const total = function(o){ return !o.soloLista && !o.sids; };
+  if (total(a) || total(b)) return {};
+  if (a.sids || b.sids) return { sids: (a.sids || []).concat(b.sids || []) };
+  return { soloLista: true };
+}
+function svSincronizar(op){
+  op = op || {};
   if (!svActivo() || !coachActivo) return Promise.resolve();
-  if (svSincronizando) return svSincronizando;
+  if (svSincronizando) { svSincroPend = svUnirOp(svSincroPend, op); return svSincronizando; }
+  const antes = {};
+  Object.keys(clientesData).forEach(function(k){ if (clientesData[k] && clientesData[k].sid) antes[clientesData[k].sid] = 1; });
   svSincronizando = svCargar().then(function(d){ return d.clientes.listar(); }).then(function(lista){
     const vistos = {};
-    lista.forEach(function(r){ vistos[svAsegurarFicha(r)] = 1; });
+    let cambioLista = false;
+    lista.forEach(function(r){ if (!antes[r.id]) cambioLista = true; vistos[svAsegurarFicha(r)] = 1; });
     // Lo que ya no está en el servidor (o nunca estuvo) desaparece de este cajón
     Object.keys(clientesData).forEach(function(k){
       if (vistos[k]) return;
+      cambioLista = true;
       delete clientesData[k]; delete SEGUIMIENTOS[k]; delete PLANES[k];
       if (clienteActual === k) { clienteActual = null; try { backToPanel(); } catch(e){} }
     });
     try { mjRefrescarSemanas(); } catch(e){}
     guardarTodo();
     actualizarPanel();
-    window.dispatchEvent(new Event('fsd:lista-servidor'));             // servidor-planes.js trae los planes
+    if (cambioLista || (!op.soloLista && !op.sids)) window.dispatchEvent(new Event('fsd:lista-servidor'));   // cada parte trae lo suyo
+    else if (op.sids) window.dispatchEvent(new CustomEvent('fsd:fichas-cambiadas', { detail: { sids: op.sids } }));
   }).catch(function(e){
     try { toast(svMensaje(e, 'No se ha podido traer la lista de clientes del servidor')); } catch(_){}
-  }).finally(function(){ svSincronizando = null; });
+  }).finally(function(){
+    svSincronizando = null;
+    if (svSincroPend) { const o = svSincroPend; svSincroPend = null; svSincronizar(o); }
+  });
   return svSincronizando;
+}
+/* 8/11 · Ponerse al día una sola vez (al volver a la app, al recuperar internet o al reconectar el tiempo real):
+   cada parte con «fsd:al-volver» y el equipo, además, la lista de clientes. Como mucho una vez cada 5 s. */
+let svUltimaPuesta = 0;
+function svPonerseAlDia(){
+  if (!svActivo() || Date.now() - svUltimaPuesta < 5000) return;
+  svUltimaPuesta = Date.now();
+  window.dispatchEvent(new Event('fsd:al-volver'));
+  if (coachActivo) svSincronizar({ soloLista: true });
+}
+/* el tiempo real avisa del estado de cada canal: si vuelve a conectarse tras un corte, se pone al día lo perdido */
+function svVigilarCanal(){
+  let primera = true;
+  return function(estado){ if (estado === 'SUBSCRIBED') { if (!primera) svPonerseAlDia(); primera = false; } };
 }
 function svEmpezarSincro(){
   svPararSincro();
   svSincronizar();
   svCargar().then(function(d){
-    if (coachActivo && !svDejarDeEscuchar) svDejarDeEscuchar = d.clientes.escuchar(svSincronizar);
+    if (coachActivo && !svDejarDeEscuchar) svDejarDeEscuchar = d.clientes.escuchar(function(sids){ svSincronizar(sids ? { sids: sids } : {}); }, svVigilarCanal());
   }).catch(function(){});
 }
 function svPararSincro(){
   if (svDejarDeEscuchar) { try { svDejarDeEscuchar(); } catch(e){} svDejarDeEscuchar = null; }
 }
-window.addEventListener('online', function(){ if (svActivo() && coachActivo) svSincronizar(); });
+window.addEventListener('online', function(){ if (svActivo()) { svUltimaPuesta = 0; svPonerseAlDia(); } });
 
 /* ---------- comprobaciones antes de enviar (las mismas reglas que el servidor) ---------- */
 function svTelefono(t){ return String(t || '').replace(/[^0-9+]/g, ''); }
@@ -606,7 +643,7 @@ if (svActivo()) {
    (planes, chat, seguimientos y, en el equipo, la lista de clientes). */
 if (svActivo()) {
   let svOculta = 0;
-  const svAlVolver = function(){ window.dispatchEvent(new Event('fsd:al-volver')); if (coachActivo) svSincronizar(); };
+  const svAlVolver = function(){ svUltimaPuesta = 0; svPonerseAlDia(); };
   document.addEventListener('visibilitychange', function(){
     if (document.visibilityState === 'hidden') { svOculta = Date.now(); return; }
     if (svOculta && Date.now() - svOculta > 4000) svAlVolver();

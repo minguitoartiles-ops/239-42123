@@ -227,11 +227,15 @@ test('Planes desde el servidor', async (t) => {
   });
 
   await t.test('En tiempo real: el equipo se entera cuando el cliente apunta algo', async () => {
-    const recibido = new Promise((ok) => { const fuera = pD.escuchar((x) => { if (x === id) { fuera(); ok(x); } }); });
+    const recibido = new Promise((ok) => { const fuera = pD.escuchar((x, tabla, fila) => { if (x === id) { fuera(); ok({ x, tabla, fila }); } }); });
     await new Promise((ok) => setTimeout(ok, 4000));                 // que la suscripción quede lista (en GitHub a veces tarda)
     await pC.guardarRegistro('nut', id, semana, { v: 1, comidas: { m1: { tomada: '1' } }, elegidos: { a1: '1' } });
     const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 20000))]);
-    assert.equal(r, id);
+    assert.equal(r.x, id);
+    // 8/11 · el aviso trae la fila: la app la usa sin volver a pedirla
+    assert.equal(r.tabla, 'registro_nutricion');
+    assert.equal(r.fila.semana, semana);
+    assert.equal(r.fila.datos.comidas.m1.tomada, '1');
   });
 });
 
@@ -693,6 +697,7 @@ test('Facturas desde el servidor', async (t) => {
 // 6/11 · Entrada única y consentimientos en el servidor
 // ---------------------------------------------------------------------
 import { crearConsentimientos } from './consentimientos.js';
+import { crearSalud } from './salud.js';
 
 test('Entrada única y consentimientos', async (t) => {
   const s = Math.random().toString(36).slice(2, 8);
@@ -730,5 +735,19 @@ test('Entrada única y consentimientos', async (t) => {
     assert.ok(data.every((x) => /PruebaFSD/.test(x.navegador || '') || x.navegador === ''), 'navegador apuntado (si el servidor lo pasa)');
     await assert.rejects(crearConsentimientos(sbD).registrar('salud', 'dado', 'v1'), /acceso/);
     assert.ok((await crearConsentimientos(sbD).lista()).some((x) => x.cliente_id === alta.id), 'el equipo lo ve');
+  });
+
+  await t.test('8/11 · El cuestionario llega al equipo en tiempo real y se puede pedir solo el de un cliente', async () => {
+    const sD = crearSalud(sbD);
+    const recibido = new Promise((ok) => { const fuera = sD.escuchar((cid) => { if (cid === alta.id) { fuera(); ok(cid); } }); });
+    await new Promise((ok) => setTimeout(ok, 4000));                 // que la suscripción quede lista
+    const fecha = new Date().toISOString();
+    await crearSalud(sbC).guardar(alta.id, { cuestionario: { fecha, v: 1, r: { ent_objetivo: 'Fuerza' } } });
+    const r = await Promise.race([recibido, new Promise((_, mal) => setTimeout(() => mal(new Error('no llegó el aviso')), 20000))]);
+    assert.equal(r, alta.id);
+    const uno = await sD.lista([alta.id]);
+    assert.equal(uno.length, 1);
+    assert.equal(uno[0].datos.cuestionario.fecha, fecha);
+    await assert.rejects(sD.lista(['no-es-un-id']), /no válido/);
   });
 });

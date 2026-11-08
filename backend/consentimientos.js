@@ -22,6 +22,13 @@ export function crearConsentimientos(sb) {
       if (error) throw errorDe(error, 'No se han podido traer los consentimientos.');
       return data || [];
     },
+    // 8/11 · Avisa cuando alguien da o retira un consentimiento: alCambiar(id del cliente)
+    escuchar(alCambiar) {
+      const canal = sb.channel('consentimientos')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'consentimientos' }, (p) => { if (p.new && p.new.cliente_id) alCambiar(p.new.cliente_id); })
+        .subscribe();
+      return () => { sb.removeChannel(canal); };
+    },
     // El cliente da o retira un consentimiento (imagen: { progreso, reconocible, nombre })
     async registrar(tipo, estado, version, detalle) {
       if (!TIPOS.includes(tipo) || !['dado', 'retirado'].includes(estado) || !VERSION.test(String(version || ''))) {

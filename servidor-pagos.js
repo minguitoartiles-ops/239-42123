@@ -86,9 +86,13 @@ function svPgRepintar(){
 
 /* equipo: todos los pagos y los datos de pago, cada vez que llega la lista de clientes */
 let svPgTrayendo = null;
+/* 8/11 · tras registrar, anular, cambiar la tarifa, dar de baja o reactivar: la lista de clientes y los pagos,
+   no todo lo de todos (las facturas avisan solas en tiempo real) */
+let svPgOtraVez = false;
+function svPgPonerAlDia(){ try { svSincronizar({ soloLista: true }); } catch(e){} svPgTraerEquipo(); }
 function svPgTraerEquipo(){
   if (!svPgSesion() || !coachActivo) return Promise.resolve();
-  if (svPgTrayendo) return svPgTrayendo;
+  if (svPgTrayendo) { svPgOtraVez = true; return svPgTrayendo; }      // al acabar se vuelve a pedir: nada se pierde
   svPgTrayendo = svCargar().then(function(x){
     return Promise.all([
       SV_PG.equipo ? null : x.chat.equipo().then(function(e){ SV_PG.equipo = e; }, function(){}),
@@ -98,7 +102,7 @@ function svPgTraerEquipo(){
     guardarTodo(); svPgRepintar(); svPgAvisosBorrado();
   }).catch(function(e){
     try { toast(svMensaje(e, 'No se han podido traer los pagos del servidor')); } catch(_){}
-  }).finally(function(){ svPgTrayendo = null; });
+  }).finally(function(){ svPgTrayendo = null; if (svPgOtraVez) { svPgOtraVez = false; svPgTraerEquipo(); } });
   return svPgTrayendo;
 }
 
@@ -125,7 +129,7 @@ function svPgEscucharCliente(){
   if (svPgDejarCli || !window.fsdSesionCliente || coachActivo) return;
   svCargar().then(function(x){
     if (svPgDejarCli || !window.fsdSesionCliente) return;
-    svPgDejarCli = x.clientes.escuchar(function(){ clearTimeout(svPgCliT); svPgCliT = setTimeout(svPgTraerCliente, 300); });
+    svPgDejarCli = x.clientes.escuchar(function(){ clearTimeout(svPgCliT); svPgCliT = setTimeout(svPgTraerCliente, 300); }, typeof svVigilarCanal === 'function' ? svVigilarCanal() : null);
   }).catch(function(){});
 }
 function svPgParar(){
@@ -203,14 +207,14 @@ if (svActivo()) {
       t.pagos = (t.pagos || []).concat([svPgAPago(fila)]);
       guardarTodo(); pintarSuscripcionFicha(); actualizarPanel();
       toast('Pago registrado · hasta el ' + mjFecha(t.hasta));
-      svSincronizar();
+      svPgPonerAlDia();
       if (nuevoTipo) {
         abrirDialogo({ titulo: '¿Cambiar su tarifa a ' + MJ_TARIFAS[nuevoTipo].n.toLowerCase() + '?',
           texto: d.nombre + ' tiene tarifa ' + (MJ_TARIFAS[t.tipo] ? MJ_TARIFAS[t.tipo].n.toLowerCase() : 'sin tarifa') + '. Si la cambias, los próximos pagos se propondrán como ' + MJ_TARIFAS[nuevoTipo].n.toLowerCase() + ' y el precio pasará a ' + mjEuros(imp) + '.',
           ok: 'Cambiar tarifa', cancel: 'Dejarla igual',
           onOk: function(){
             svCargar().then(function(x){ return x.pagos.tarifa(d.sid, { tarifa: nuevoTipo, precio: imp }); })
-              .then(function(){ toast('Tarifa cambiada'); svSincronizar(); })
+              .then(function(){ toast('Tarifa cambiada'); svPgPonerAlDia(); })
               .catch(function(e){ toast(svMensaje(e, 'No se ha podido cambiar la tarifa')); });
           } });
       }
@@ -237,7 +241,7 @@ if (svActivo()) {
       SV_PG.ocupado = true;
       const yo = this, args = arguments;
       svCargar().then(function(x){ return x.pagos.tarifa(d.sid, { tarifa: tipo, precio: precio, hasta: hasta }); })
-        .then(function(){ orig.apply(yo, args); svSincronizar(); })
+        .then(function(){ orig.apply(yo, args); svPgPonerAlDia(); })
         .catch(function(e){ toast(svMensaje(e, 'No se ha podido guardar la tarifa')); })
         .finally(function(){ SV_PG.ocupado = false; });
     };
@@ -293,7 +297,7 @@ if (svActivo()) {
       d.baja = { fecha: new Date().toISOString(), motivo: motivo };
       guardarTodo(); pintarSuscripcionFicha(); actualizarPanel();
       toast(d.nombre + ' está de baja');
-      svSincronizar();
+      svPgPonerAlDia();
     }).catch(function(e){ toast(svMensaje(e, 'No se ha podido dar de baja')); })
       .finally(function(){ SV_PG.ocupado = false; });
   };
@@ -305,7 +309,7 @@ if (svActivo()) {
       delete d.baja;
       guardarTodo(); pintarSuscripcionFicha(); actualizarPanel();
       toast(d.nombre + ' vuelve a estar activo. Si no tenía pagado, está en el periodo para pagar: registra su pago.');
-      svSincronizar();
+      svPgPonerAlDia();
     }).catch(function(e){ toast(svMensaje(e, 'No se ha podido reactivar')); })
       .finally(function(){ SV_PG.ocupado = false; });
   };
@@ -396,7 +400,7 @@ if (svActivo()) {
     svCargar().then(function(x){ return x.pagos.anular(id, motivo); }).then(function(){
       mjCerrarHoja('svPgAnular');
       toast('Pago anulado');
-      svSincronizar();
+      svPgPonerAlDia();
     }).catch(function(e){ toast(svMensaje(e, 'No se ha podido anular el pago')); })
       .finally(function(){ SV_PG.ocupado = false; if (b) b.disabled = false; });
   };
@@ -409,7 +413,8 @@ if (svActivo()) {
 
   window.addEventListener('fsd:lista-servidor', svPgTraerEquipo);
   window.addEventListener('fsd:cliente-dentro', function(){ svPgTraerCliente(); svPgEscucharCliente(); });
-  window.addEventListener('fsd:al-volver', function(){ if (window.fsdSesionCliente && !coachActivo) svPgTraerCliente(); });
+  window.addEventListener('fsd:al-volver', function(){ if (window.fsdSesionCliente && !coachActivo) svPgTraerCliente(); else if (coachActivo) svPgTraerEquipo(); });
+  window.addEventListener('fsd:fichas-cambiadas', function(){ if (coachActivo) svPgTraerEquipo(); });
   window.addEventListener('fsd:sesion-fuera', svPgParar);
 }
 

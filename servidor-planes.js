@@ -207,7 +207,8 @@ function svPlTraer(ids){
     Object.keys(clientesData).forEach(function(k){
       const d = clientesData[k];
       if (!d || !d.sid || (sids && sids.indexOf(d.sid) < 0)) return;
-      if (svPlAplicar(k, r[d.sid] || {})) algo = true;
+      SV_PL_ULT[d.sid] = r[d.sid] || { ent: {}, nut: {} };            // lo último del servidor (para los avisos en directo)
+      if (svPlAplicar(k, SV_PL_ULT[d.sid])) algo = true;
     });
     guardarTodo();
     if (algo && coachActivo) {
@@ -221,16 +222,55 @@ function svPlTraer(ids){
 }
 
 /* ---------- tiempo real ---------- */
+/* 8/11 · El aviso del servidor ya trae la pauta o el registro: se usa directamente (antes se volvían a pedir las 4 tablas
+   de ese cliente). Así un cambio llega en torno a 1 s y lo que uno mismo acaba de guardar no se vuelve a descargar.
+   Si el aviso llega sin los datos (filas muy grandes), se borra algo o aún no se tiene nada de ese cliente, se piden. */
+const SV_PL_ULT = {};
+function svPlDesdeAviso(sid, tabla, f, ev){
+  const U = SV_PL_ULT[sid];
+  if (!U || !f || ev === 'DELETE') return null;
+  const area = tabla.indexOf('nutricion') > -1 ? 'nut' : 'ent';
+  const S = { ent: Object.assign({}, U.ent || {}), nut: Object.assign({}, U.nut || {}) };
+  if (tabla.indexOf('planes_') === 0) {
+    if (!f.pauta || typeof f.pauta !== 'object') return null;
+    S[area].pauta = f.pauta;
+  } else {
+    if (!f.datos || typeof f.datos !== 'object' || !f.semana) return null;
+    if (f.semana < svPlDesde() || (S[area].semana && f.semana < S[area].semana)) return 'igual';   // una semana anterior: no cambia lo actual
+    S[area].semana = f.semana; S[area].registro = f.datos;
+  }
+  return S;
+}
+function svPlAplicarYa(sid){
+  const k = typeof svClaveDe === 'function' ? svClaveDe(sid) : null;
+  if (!k || !clientesData[k] || !SV_PL_ULT[sid]) return;
+  if (svPlAplicar(k, SV_PL_ULT[sid])) {
+    guardarTodo();
+    if (coachActivo) {
+      try { actualizarPanel(); } catch(e){}
+      try { if (typeof enPintarPlanes === 'function') enPintarPlanes(); } catch(e){}
+      try { if (typeof pintarListas === 'function') pintarListas(); } catch(e){}
+    }
+  }
+}
 let svPlDejar = null;
 const svPlEsperas = {};
 function svPlEscuchar(){
   if (svPlDejar || !svPlSesion()) return;
   svCargar().then(function(x){
     if (svPlDejar || !svPlSesion()) return;
-    svPlDejar = x.planes.escuchar(function(sid){
+    svPlDejar = x.planes.escuchar(function(sid, tabla, fila, ev){
+      const S = tabla ? svPlDesdeAviso(sid, tabla, fila, ev) : null;
+      if (S === 'igual') return;
       clearTimeout(svPlEsperas[sid]);
-      svPlEsperas[sid] = setTimeout(function(){ delete svPlEsperas[sid]; svPlTraer([sid]); }, 700);
-    });
+      if (S && !svPlEsperas[sid + '·pedir']) {
+        SV_PL_ULT[sid] = S;                                             // al momento, para que el siguiente aviso parta de aquí
+        svPlEsperas[sid] = setTimeout(function(){ delete svPlEsperas[sid]; svPlAplicarYa(sid); }, 150);
+      } else {
+        svPlEsperas[sid + '·pedir'] = 1;
+        svPlEsperas[sid] = setTimeout(function(){ delete svPlEsperas[sid]; delete svPlEsperas[sid + '·pedir']; svPlTraer([sid]); }, 400);
+      }
+    }, typeof svVigilarCanal === 'function' ? svVigilarCanal() : null);
   }).catch(function(){});
 }
 function svPlParar(){
@@ -246,7 +286,7 @@ function svPlProgramar(k){
   if (!k || !svActivo()) return;
   svPlCola[k] = 1;
   clearTimeout(svPlTemp);
-  svPlTemp = setTimeout(svPlSubir, 1200);
+  svPlTemp = setTimeout(svPlSubir, 600);                         // 8/11 · antes 1,2 s
 }
 function svPlSubir(){
   if (!svPlSesion()) return Promise.resolve();
@@ -329,7 +369,7 @@ if (svActivo()) {
     if (!svPlSesion()) return;
     svPlSubir().then(function(){ return svPlTraer(window.fsdSesionCliente && !coachActivo ? [(clientesData[clienteActual] || {}).sid] : null); });
   });
-  window.addEventListener('online', function(){ if (svPlSesion()) svPlSubir().then(function(){ return svPlTraer(window.fsdSesionCliente && !coachActivo ? [(clientesData[clienteActual] || {}).sid] : null); }); });
+  /* al recuperar internet: lo hace «fsd:al-volver» (servidor.js lo lanza una sola vez para todas las partes) */
   setInterval(function(){
     if (!svPlSesion()) return;
     svPlAplicarDiferidos();

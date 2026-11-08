@@ -23,6 +23,18 @@ function errorDe(e, generico) {
 export function crearSeguimientos(sb) {
   const filtro = (q, ids) => (ids ? q.in('cliente_id', ids) : q);
   const comprobarIds = (ids) => { if (ids && !ids.every((x) => UUID.test(x))) throw new ErrorServidor('Cliente no válido.'); };
+  // 8/11 · Todo, de 1.000 en 1.000 (antes, un tope de 2.000 en total para todos los clientes: con el tiempo los más
+  // antiguos dejaban de verse). hacer() crea la consulta, con un orden fijo para que las páginas no se solapen.
+  const todas = async (hacer) => {
+    const filas = [];
+    for (let desde = 0; desde < 100000; desde += 1000) {
+      const r = await hacer().range(desde, desde + 999);
+      if (r.error) return r;
+      filas.push(...(r.data || []));
+      if (!r.data || r.data.length < 1000) break;
+    }
+    return { data: filas };
+  };
 
   return {
     // Seguimientos (los más recientes primero), lo de cada profesional (solo el equipo) e historial
@@ -30,10 +42,10 @@ export function crearSeguimientos(sb) {
     async traer(ids, conEquipo) {
       comprobarIds(ids);
       const [s, e, h] = await Promise.all([
-        filtro(sb.from('seguimientos').select(COLUMNAS), ids).order('fecha', { ascending: false }).limit(2000),
-        conEquipo ? filtro(sb.from('seguimiento_equipo').select('seguimiento_id, cliente_id, user_id, visto, revisado, comentario'), ids)
+        todas(() => filtro(sb.from('seguimientos').select(COLUMNAS), ids).order('fecha', { ascending: false }).order('id')),
+        conEquipo ? todas(() => filtro(sb.from('seguimiento_equipo').select('seguimiento_id, cliente_id, user_id, visto, revisado, comentario'), ids).order('seguimiento_id').order('user_id'))
           : Promise.resolve({ data: [] }),
-        filtro(sb.from('historial').select('cliente_id, datos'), ids),
+        todas(() => filtro(sb.from('historial').select('cliente_id, datos'), ids).order('cliente_id')),
       ]);
       const fallo = [s, e, h].find((x) => x.error);
       if (fallo) throw errorDe(fallo.error, 'No se han podido traer los seguimientos.');
@@ -83,7 +95,7 @@ export function crearSeguimientos(sb) {
     },
 
     // Avisa con el id del cliente cuando cambia algo de sus seguimientos o su historial
-    escuchar(alCambiar) {
+    escuchar(alCambiar, alEstado) {
       let canal = sb.channel('seguimientos');
       for (const t of ['seguimientos', 'seguimiento_equipo', 'historial']) {
         canal = canal.on('postgres_changes', { event: '*', schema: 'public', table: t }, (p) => {
@@ -91,7 +103,7 @@ export function crearSeguimientos(sb) {
           if (f && f.cliente_id) alCambiar(t, f.cliente_id, p.eventType, f);
         });
       }
-      canal.subscribe();
+      canal.subscribe((estado) => { if (alEstado) alEstado(estado); });
       return () => { sb.removeChannel(canal); };
     },
   };
