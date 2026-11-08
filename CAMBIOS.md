@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.91 (actual)
-Cambios acumulados hacia la 0.92: **7 de 10**
+## Versión 0.92 (actual)
+Cambios acumulados hacia la 0.93: **0 de 10**
+
+## Versión 0.91 → 0.92.0
 
 ### Hacia la 0.92 · sincronización más rápida (auditoría del 08/11/2026, seguimos)
 1. 08/11/2026 · **El plan llega en torno a 1 s**: el aviso del servidor ya trae la pauta o el registro y se usa tal cual (antes se volvían a pedir las 4 tablas de ese cliente); lo que uno mismo acaba de guardar no se vuelve a descargar; la subida espera 0,6 s en vez de 1,2 s. Medido en el servidor simulado: del servidor a la pantalla, de ~1 s a ~0,4-0,6 s → **0.91.0-1 (caché)**
@@ -14,6 +16,11 @@ Cambios acumulados hacia la 0.92: **7 de 10**
 5. 08/11/2026 · **Editor de rutinas en el ordenador: los días van uno debajo de otro** (sesión 1 arriba, luego 2, 3…), cada uno a todo el ancho, en vez de repartirse en columnas (pedido por Domingo) → **0.91.2-1 (caché)**
 6. 08/11/2026 · **«Ver entreno» es ahora un botón de verdad, grande y con borde**: un solo clic abre el entreno del cliente (antes era un texto pequeño que solo seleccionaba la tarjeta y hacía falta doble clic o acertar con varios intentos; avisado por Domingo) → **0.91.3**
 7. 08/11/2026 · **«Ver resumen» (Fátima, pestaña Nutrición) igual que «Ver entreno»**: botón grande con borde y un solo clic abre el plan (pedido por Domingo) → **0.91.3-1 (caché)**
+
+### Hacia la 0.92 · ficha y pantalla sin parpadeos (avisado por Domingo)
+8. 08/11/2026 · **Ficha del cliente: «Antes / Ahora» en su propia tarjeta**, como el resto de apartados (compartía recuadro con «Sensaciones del día» y rompía la estética) → **0.91.4**
+9. 08/11/2026 · **Entrenamientos sin parpadeos** (avisado por Domingo: «la pantalla parpadea mucho cada vez que refresca»). Cada peso o serie que apuntaba un cliente borraba y rehacía la lista de clientes con su vista previa (unos 1.200 elementos por aviso) y el plan abierto entero. Ahora lo nuevo se prepara en una copia invisible y a la pantalla solo pasa lo que cambia: la lista queda quieta (0 elementos rehechos en la prueba, antes 7.200) y en el plan solo se cambia el ejercicio donde se apuntó el peso (unos 2.100 en vez de 5.000). Se conservan las fotos, el scroll, el separador de la lista y lo que se esté escribiendo en el buscador → **0.91.4-1 (caché)**
+10. 08/11/2026 · **Chat sin parpadeos**: cada mensaje, «leído» o «escribiendo» rehacía la conversación entera (las fotos se redibujaban y la vista saltaba); ahora solo entra lo nuevo. La lista de chats tampoco se rehace (0 en vez de unos 150 elementos por prueba). Una nota de voz que esté sonando no se toca. Además, al llegar un cambio del plan ya no se pisa la conversación con una copia antigua sin fotos → **0.92.0**
 
 ## Versión 0.90 → 0.91.0
 
