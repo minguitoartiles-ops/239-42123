@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.89 (actual)
-Cambios acumulados hacia la 0.90: **6 de 10**
+## Versión 0.90 (actual)
+Cambios acumulados hacia la 0.91: **0 de 10**
+
+## Versión 0.89 → 0.90.0
 
 ### Hacia la 0.90 · editor de rutinas en el ordenador, más simple (pedido por Domingo: desplegables que fallaban, demasiados botones)
 1. 08/11/2026 · **Cada ejercicio se abre y se cierra tocando cualquier parte libre de su fila o la flecha ⌄** (más grande, y ahora también cierra), y **solo queda uno abierto a la vez**. Antes la flechita ▾ solo abría, desaparecía al abrir y abrir otro no cerraba el anterior → **0.89.0-1 (caché)**
@@ -13,6 +15,12 @@ Cambios acumulados hacia la 0.90: **6 de 10**
 4. 08/11/2026 · Arriba, **«Plan de Nombre»** en vez de «Tus sesiones» (texto del cliente) y una sola fila: Asistente, Plantillas y + Día. Fuera «Vista detallada / compacta» (queda una sola vista), la frase del cliente, la leyenda de colores del RIR (queda «¿Qué es el RIR?») y el «+ Añadir sesión» repetido de abajo → **0.89.2**
 5. 08/11/2026 · **Los días van en columnas solo si caben**; si no (por ejemplo en «Multitarea», con el chat al lado), pasan a la fila de abajo y ninguno queda cortado → **0.89.2-1 (caché)**
 6. 08/11/2026 · **La barra de arriba del editor, solo con «Deshacer» y «Guardar cambios y notificar»** (pedido por Domingo: en el ordenador no aportaba y cargaba la vista). Fuera «Volver», «Editando ‹ nombre ›» y «Entrenamiento | Chat»: ya están el menú lateral, la lista de clientes y el chat al lado. Al guardar vuelve la barra de siempre → **0.89.3**
+
+### Hacia la 0.90 · navegación del móvil (auditoría del 08/11/2026: «Volver» coherente y que lleve a donde toca)
+7. 08/11/2026 · Cliente: **fuera el «‹» del chat**; las pestañas de abajo no llevan «Volver» y el chat tampoco (el profesional lo mantiene, porque su chat cuelga de la ficha o de la lista de chats) → **0.89.3-1 (caché)**
+8. 08/11/2026 · Cliente: **«‹ Volver» en Ajustes cuando se llega desde el Perfil** (antes solo funcionaba el atrás del móvil, y en el iPhone no hay) → **0.89.4**
+9. 08/11/2026 · Profesionales: **el «Volver» de la ficha lleva a la pestaña de donde se vino** (Seguimientos, Entrenamientos, Chats…) y no siempre a Clientes; ahora es igual que el atrás del móvil → **0.89.4-1 (caché)**
+10. 08/11/2026 · Profesionales: **fuera «‹ Salir» de la pantalla Clientes** (se confundía con «Volver» y abría el cierre de sesión); «Cerrar sesión» sigue en Ajustes → **0.90.0**
 
 ## Versión 0.88 → 0.89.0
 
