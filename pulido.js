@@ -473,7 +473,8 @@ function puMarcarNuevos(n){
   const s = document.createElement('div'); s.className = 'chat-nuevos'; s.setAttribute('role', 'separator');
   s.innerHTML = '<span>' + n + (n === 1 ? ' mensaje nuevo' : ' mensajes nuevos') + '</span>';
   primero.parentNode.insertBefore(s, primero);
-  setTimeout(function(){ try { l.scrollTop = Math.max(0, s.offsetTop - l.offsetTop - 12); } catch(e){} puBajarPintar(); }, 60);
+  // 8/11 · antes saltaba al primero sin leer y a menudo dejaba la conversación a medias (avisado por Domingo): ahora baja al final; el separador queda en su sitio
+  setTimeout(function(){ try { puPegarAbajo(2500); } catch(e){} puBajarPintar(); }, 60);
 }
 (function(){
   const envolver = function(nombre, cuantos){
@@ -1186,3 +1187,47 @@ function chMenuAbrir(k, x, y, fila){
     }, 320);
   });
 })();
+
+/* 8/11 · Al entrar en un chat (pedido por Domingo):
+   1) el chat queda atendido: se quita el «sin contestar» (y su número en la pestaña Chats) aunque no se conteste.
+      Si el cliente escribe después, vuelve a contar. Reutiliza «Marcar como resuelto» (chatT.resuelto).
+   2) la conversación baja sola hasta el último mensaje y se queda ahí mientras termina de cargar
+      (mensajes del servidor, fotos…), hasta que se toca o se desplaza la conversación. */
+function puAtender(k){
+  try {
+    if (!coachActivo || !k || !clientesData[k]) return;
+    const c = chatT(k);
+    if (c.resuelto && Date.now() - Date.parse(c.resuelto) < 400) return;      // sin guardar de más cuando llegan varios mensajes a la vez
+    c.resuelto = new Date().toISOString();
+    guardarTodo();
+    try { pintarBadgeChats(); } catch(e){}
+    try { pintarBotonChatFicha(); } catch(e){}
+    try { if (typeof pintarChatsPro === 'function' && tabProActual === 'chats') pintarChatsPro(); } catch(e){}
+    try { if (typeof puPendPintar === 'function') puPendPintar(); } catch(e){}
+    try { if (typeof actualizarPanel === 'function') actualizarPanel(); } catch(e){}
+  } catch(e){}
+}
+let puPegarHasta = 0;
+function puChatAlFinal(){ const l = document.getElementById('chatList'); if (l && l.scrollHeight > l.clientHeight) l.scrollTop = l.scrollHeight; }
+function puPegarAbajo(ms){ puPegarHasta = Date.now() + (ms || 4000); puChatAlFinal(); requestAnimationFrame(puChatAlFinal); }
+(function(){
+  const l = document.getElementById('chatList'); if (!l) return;
+  const sigue = function(){ if (Date.now() < puPegarHasta) { puChatAlFinal(); try { puBajarPintar(); } catch(e){} } };
+  try { new MutationObserver(sigue).observe(l, { childList: true, subtree: true }); } catch(e){}
+  l.addEventListener('load', sigue, true);               // las fotos que terminan de cargar cambian el alto
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(ev){ l.addEventListener(ev, function(){ puPegarHasta = 0; }, { passive: true }); });
+})();
+abrirVistaCliente = (function(orig){
+  return function(vista){
+    const r = orig.apply(this, arguments);
+    if (vista === 'chat') { puPegarAbajo(); puAtender(clienteActual); }
+    return r;
+  };
+})(abrirVistaCliente);
+goTo = (function(orig){
+  return function(n){
+    const r = orig.apply(this, arguments);
+    if (n === 'chat') puPegarAbajo();
+    return r;
+  };
+})(goTo);

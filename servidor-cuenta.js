@@ -263,3 +263,17 @@ esperaDesde = (function(orig){
     return ultimoCli > mia ? ultimoCli : null;
   };
 })(esperaDesde);
+
+/* =========================================================
+   5 · Chat abierto (8/11/2026): si el cliente escribe mientras el profesional tiene su chat a la vista,
+   ya lo está viendo: no queda como «sin contestar». (Solo en modo servidor, donde llegan en directo.)
+   ========================================================= */
+if (svActivo() && typeof svChPintar === 'function') {
+  svChPintar = (function(orig){
+    return function(k){
+      const r = orig.apply(this, arguments);
+      try { if (coachActivo && k === clienteActual && svChVisible(k)) puAtender(k); } catch(e){}
+      return r;
+    };
+  })(svChPintar);
+}
