@@ -1,0 +1,38 @@
+// Consentimientos (datos de salud y uso de imagen) guardados en Supabase. No conoce la pantalla.
+// Registro que solo crece: dar, cambiar o retirar añade una fila. Lo escribe el propio cliente
+// (el servidor pone su ficha, la fecha y el navegador); lo ven él y el equipo.
+import { ErrorServidor } from './clientes.js';
+
+const TIPOS = ['salud', 'imagen'];
+const VERSION = /^[0-9A-Za-z._-]{1,40}$/;
+
+function errorDe(e, generico) {
+  const msg = String((e && e.message) || '');
+  if (/fetch|network|Failed to fetch|Load failed/i.test(msg)) return new ErrorServidor('Sin conexión con el servidor. Comprueba internet y vuelve a probar.');
+  if (e && e.code === '42501') return new ErrorServidor('Tu cuenta no tiene acceso ahora mismo.');
+  return new ErrorServidor(generico || 'No se ha podido guardar. Inténtalo de nuevo.');
+}
+
+export function crearConsentimientos(sb) {
+  return {
+    // Todos los que puede ver quien pregunta, del más antiguo al más nuevo
+    async lista() {
+      const { data, error } = await sb.from('consentimientos')
+        .select('cliente_id, tipo, estado, version, detalle, fecha').order('fecha').limit(5000);
+      if (error) throw errorDe(error, 'No se han podido traer los consentimientos.');
+      return data || [];
+    },
+    // El cliente da o retira un consentimiento (imagen: { progreso, reconocible, nombre })
+    async registrar(tipo, estado, version, detalle) {
+      if (!TIPOS.includes(tipo) || !['dado', 'retirado'].includes(estado) || !VERSION.test(String(version || ''))) {
+        throw new ErrorServidor('Consentimiento no válido.');
+      }
+      const fila = { tipo, estado, version };
+      if (tipo === 'imagen' && estado === 'dado') {
+        fila.detalle = { progreso: !!(detalle && detalle.progreso), reconocible: !!(detalle && detalle.reconocible), nombre: !!(detalle && detalle.nombre) };
+      }
+      const { error } = await sb.from('consentimientos').insert(fila);
+      if (error) throw errorDe(error);
+    },
+  };
+}

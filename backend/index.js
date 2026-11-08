@@ -12,6 +12,7 @@ import { crearArchivos } from './archivos.js';
 import { crearPerfiles } from './perfiles.js';
 import { crearPagos } from './pagos.js';
 import { crearFacturas } from './facturas.js';
+import { crearConsentimientos } from './consentimientos.js';
 
 const entorno = window.FSD_MODO_SERVIDOR;   // lo fija servidor-inicio.js al abrir la app
 const proyecto = PROYECTOS[entorno];
@@ -37,6 +38,19 @@ if (proyecto) {
     perfiles: crearPerfiles(sb),
     pagos: crearPagos(sb),
     facturas: crearFacturas(sb),
+    consentimientos: crearConsentimientos(sb),
+    // Avisa si la sesión se cierra o cambia de cuenta (también desde otra pestaña): alCambiar(userId | null)
+    vigilarSesion(alCambiar) {
+      const { data } = sb.auth.onAuthStateChange((evento, sesion) => {
+        if (evento === 'INITIAL_SESSION') return;
+        alCambiar(sesion?.user?.id || null, evento);
+      });
+      return () => data.subscription.unsubscribe();
+    },
+    async quienSoy() {
+      const { data } = await sb.auth.getSession();
+      return data?.session?.user?.id || null;
+    },
     sinConexion,
     // ¿El mensaje del error está pensado para enseñarse tal cual?
     esErrorAcceso: (e) => e instanceof ErrorAcceso || e instanceof ErrorServidor,

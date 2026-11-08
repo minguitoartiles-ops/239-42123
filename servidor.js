@@ -62,7 +62,9 @@ function svMarca(){
 /* =========================================================
    ACCESO DE PROFESIONALES
    ========================================================= */
-let svPermitirEntrada = false;   // solo se entra al panel tras una comprobación real en el servidor
+let svPermitirEntrada = false;
+// true mientras se saca a esta pestaña porque la sesión ya no es suya (no se cierra la de la otra pestaña)
+let svNoTocarSesion = false;   // solo se entra al panel tras una comprobación real en el servidor
 
 function svDialogo(){
   document.getElementById('proPassTit').textContent = 'Entrar · Servidor de pruebas';
@@ -105,14 +107,9 @@ confirmarPassPro = (function(orig){
     svCargar()
       .then(function(d){ return d.auth.entrar(email, pass); })
       .then(function(p){
-        const c = COACHES.filter(function(x){ return x.rol === p.rol; })[0];
-        if (!c) throw new Error('Papel desconocido');
         document.getElementById('proPassInput').value = '';
         cerrarPassPro();
-        svPermitirEntrada = true;
-        try { entrarComo(c.u); } finally { svPermitirEntrada = false; }
-        try { toast('Has entrado como ' + p.nombre + ' (servidor de pruebas)'); } catch(e){}
-        svEmpezarSincro();
+        svEntrarPro(p);
       })
       .catch(function(e){
         err.textContent = svMensaje(e);
@@ -121,6 +118,17 @@ confirmarPassPro = (function(orig){
       .finally(function(){ if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; } });
   };
 })(confirmarPassPro);
+
+/* Entra al panel con el papel que ha dicho el servidor (también desde la entrada única) */
+function svEntrarPro(p){
+  const c = COACHES.filter(function(x){ return x.rol === p.rol; })[0];
+  if (!c) throw new Error('Papel desconocido');
+  svPermitirEntrada = true;
+  try { entrarComo(c.u); } finally { svPermitirEntrada = false; }
+  try { toast('Has entrado como ' + p.nombre + ' (servidor de pruebas)'); } catch(e){}
+  svEmpezarSincro();
+  window.dispatchEvent(new Event('fsd:pro-dentro'));
+}
 
 /* Nadie entra al panel en modo servidor sin haber pasado por el servidor */
 entrarComo = (function(orig){
@@ -134,7 +142,7 @@ entrarComo = (function(orig){
 coachLogout = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo()) { svPararSincro(); window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos) fsdDatos.auth.salir(); }
+    if (svActivo()) { svPararSincro(); window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) fsdDatos.auth.salir(); }
     return r;
   };
 })(coachLogout);
@@ -449,10 +457,16 @@ function svEnviarCliente(){
   btn.disabled = true; btn.textContent = canje ? 'Creando tu cuenta…' : 'Entrando…';
   let canjeado = false;
   svCargar().then(function(d){
-    return (canje ? d.clientes.canjear(svCodigoCanje, email, pass).then(function(){ canjeado = true; }) : Promise.resolve())
+    // 6/11 · Entrada única: con «Entrar con mi cuenta» entran clientes y profesionales (lo decide el servidor)
+    if (!canje) return d.auth.entrarCualquiera(email, pass).then(function(r){
+      if (r.tipo === 'pro') return { pro: r };
+      return d.clientes.miFicha();
+    });
+    return d.clientes.canjear(svCodigoCanje, email, pass).then(function(){ canjeado = true; })
       .then(function(){ return d.auth.entrarCliente(email, pass); })
       .then(function(){ return d.clientes.miFicha(); });
   }).then(function(f){
+    if (f && f.pro) { svCerrarHojaCliente(); svEntrarPro(f.pro); return; }
     if (!f) throw new Error('sin ficha');
     svCerrarHojaCliente();
     svEntrarCliente(f);
@@ -494,7 +508,7 @@ enterApp = (function(orig){
     if (!svActivo() || svPermitirCliente) return orig.apply(this, arguments);
     const err = document.getElementById('loginError');
     const cod = (document.getElementById('accessCode').value || '').trim().toUpperCase();
-    if (!cod) { err.textContent = 'Introduce tu código de acceso, o entra con «Ya tengo cuenta».'; return; }
+    if (!cod) { err.textContent = 'Introduce tu código de acceso, o entra con «Entrar con mi cuenta».'; return; }
     if (!/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/.test(cod)) { err.textContent = 'El código tiene 8 letras y números, como ABCD-2345.'; return; }
     // En el ordenador la app del cliente no se usa: sale el aviso de siempre antes de crear nada
     if (typeof escEsOrdenador === 'function' && escEsOrdenador()) return orig.apply(this, arguments);
@@ -508,7 +522,7 @@ enterApp = (function(orig){
 cerrarSesionCliente = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo()) { window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos) fsdDatos.auth.salir(); }
+    if (svActivo()) { window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) fsdDatos.auth.salir(); }
     return r;
   };
 })(cerrarSesionCliente);
@@ -520,11 +534,13 @@ function svBotonCuenta(){
   if (!err) return;
   const b = document.createElement('button');
   b.type = 'button'; b.id = 'svYaCuenta'; b.className = 'btn-eq sv-ya-cuenta';
-  b.textContent = 'Ya tengo cuenta';
+  b.textContent = 'Entrar con mi cuenta';
   b.onclick = function(){ svAbrirHojaCliente('cuenta'); };
   err.parentNode.insertBefore(b, err.nextSibling);
   const pista = err.parentNode.querySelector('.login-hint');
-  if (pista) pista.textContent = 'La primera vez, escribe el código que te ha enviado tu equipo y crea tu cuenta. Después, entra con «Ya tengo cuenta».';
+  if (pista) pista.textContent = '¿Ya tienes cuenta? Entra con tu correo y tu contraseña. La primera vez, escribe el código que te ha enviado tu equipo y crea tu cuenta.';
+  // Entrada única: sin los botones de «Acceso directo de profesionales» (entran también con su cuenta)
+  const pq = document.querySelector('.pro-quick'); if (pq) pq.hidden = true;
 }
 
 /* El servidor no confirma la sesión del cliente: fuera, y sin ventanas suyas abiertas encima de la portada */
@@ -534,6 +550,21 @@ function svEcharCliente(){
   Array.prototype.forEach.call(document.querySelectorAll('.fsd-overlay.show'), function(o){ o.classList.remove('show'); });
   try { if (typeof obCerrar === 'function') obCerrar(); } catch(e){}          // la bienvenida, si estaba abierta
   toast('Vuelve a entrar con tu cuenta');
+}
+
+/* ¿Hay otra pestaña de la app dentro con su cuenta? (responde en menos de medio segundo) */
+const svPestanas = (typeof BroadcastChannel === 'function') ? new BroadcastChannel('fsd-pestanas') : null;
+if (svPestanas) svPestanas.onmessage = function(e){
+  if (e.data === 'dentro?' && (coachActivo || window.fsdSesionCliente)) svPestanas.postMessage('dentro');
+};
+function svOtraPestanaDentro(){
+  if (!svPestanas) return Promise.resolve(false);
+  return new Promise(function(ok){
+    const oir = new BroadcastChannel('fsd-pestanas');
+    const t = setTimeout(function(){ oir.close(); ok(false); }, 500);
+    oir.onmessage = function(e){ if (e.data === 'dentro') { clearTimeout(t); oir.close(); ok(true); } };
+    oir.postMessage('dentro?');
+  });
 }
 
 /* =========================================================
@@ -547,7 +578,10 @@ if (svActivo()) {
   const restaurado = !!(window.fsdSesionCliente && clienteActual);
   const k0 = clienteActual;
   svCargar().then(function(d){
-    if (!restaurado) return d.auth.salir();
+    // 6/11 · Antes de cerrar una sesión guardada, se pregunta a las otras pestañas de este navegador:
+    // si alguna la está usando (la sesión es de todo el navegador), no se toca. Antes, abrir la app
+    // en otra pestaña dejaba sin sesión a la que ya estaba dentro («No tienes permiso…»).
+    if (!restaurado) return svOtraPestanaDentro().then(function(hay){ if (!hay) return d.auth.salir(); });
     return d.clientes.miFicha().then(function(f){
       if (f && svClaveDe(f.id) === k0) {
         svAsegurarFicha(f); guardarTodo(); try { pintarCliente(); } catch(e){}
