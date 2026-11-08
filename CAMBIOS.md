@@ -11,7 +11,7 @@ Cambios acumulados hacia la 0.89: **5 de 10**
 2. 08/11/2026 · Chats: **ya no se mueve solo hacia arriba** cuando estás abajo del todo ni cuando el cliente escribe (avisado por Domingo). Al repintar el chat con un mensaje nuevo, las fotos que cargaban después hacían crecer la conversación y la vista se quedaba más arriba del final. Ahora, si estabas abajo (con un margen más holgado), se queda pegada al último mensaje mientras terminan de cargar, hasta que tocas o desplazas → **0.88.1**
 3. 08/11/2026 · Lista de clientes: **«📝 Cuestionario nuevo» (y «Necesitan atención») se quitan al abrir el cuestionario y ya no vuelven** (avisado por Domingo). Al poner la ficha al día con el servidor se perdía la marca de «ya visto» y el aviso reaparecía; ahora se conserva mientras sea el mismo cuestionario → **0.88.1-1 (caché)**
 4. 08/11/2026 · Entrenamientos (profesionales): **cada sesión del resumen semanal del cliente muestra el peso movido** («🏋️ 2.340 kg movidos»), con las repeticiones hechas o, si no las apunta, las del plan (pedido por Domingo) → **0.88.2**
-5. 08/11/2026 · Entrenamientos (profesionales): **el peso movido también por ejercicio** en el resumen semanal del cliente («3×8 · 960 kg»), no solo por sesión (aclarado por Domingo) → **0.88.2-1 (caché)**
+5. 08/11/2026 · Entrenamientos (profesionales): **el peso movido en cada serie de cada ejercicio** del resumen semanal del cliente («50×8 = 400 kg»), de esta semana y, plegadas, de las 4 anteriores (aclarado por Domingo) → **0.88.2-1 (caché)**
 
 ## Versión 0.87 → 0.88.0
 
