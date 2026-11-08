@@ -4,6 +4,17 @@
    ========================================================= */
 /* #163 lista a la izquierda y, al tocar un cliente, su entreno a la derecha (en el móvil, debajo de la fila):
    resumen de cada día, tonelaje movido esta semana (y la anterior) y «Abrir entreno» */
+/* 8/11 · Peso movido en cada serie de cada ejercicio (pedido por Domingo): «50×8 = 400 kg» (peso × repeticiones hechas, o las del plan
+   si no las apunta). Esta semana, y las anteriores (hasta 4) plegadas, tomadas del registro de pesos del cliente. */
+function entSeriesHtml(it, d){
+  const chip = function(x){ const r = x[1]; return '<span class="fe-s">' + fmtNum(x[0]) + '×' + (r != null ? r : '?') + (r != null ? ' = <b>' + fmtMil(Math.round(x[0] * r)) + ' kg</b>' : '') + '</span>'; };
+  let act = []; try { act = enLeerSeries(it); } catch(e){}
+  const l = (((d.registro || {}).ej || {})[enNombreEj(it)] || []).filter(function(w){ return w.sem !== d.semanaRef && w.s && w.s.length; }).slice(-4).reverse();
+  let h = '';
+  if (act.length) h += '<div class="fe-sem"><small>Esta semana</small>' + act.map(chip).join('') + '</div>';
+  if (l.length) h += '<details class="fe-ant"><summary>Semanas anteriores (' + l.length + ')</summary>' + l.map(function(w){ return '<div class="fe-sem"><small>' + esc(mjFecha(w.sem).slice(0, 5)) + '</small>' + w.s.map(chip).join('') + '</div>'; }).join('') + '</details>';
+  return h ? '<div class="fe-series">' + h + '</div>' : '';
+}
 function entResumenHtml(k){
   const d = clientesData[k]; if (!d) return '';
   const t = document.createElement('div'); t.innerHTML = (PLANES[k] && PLANES[k].ent) || '';
@@ -12,7 +23,8 @@ function entResumenHtml(k){
       const pz = enPesos(it), r0 = pz.map(function(x){ return mjNum(x.dataset.rir); }).filter(function(x){ return x != null; });
       const cd = typeof cdTexto === 'function' && it.dataset.cardio ? cdTexto(it) : '';
       return '<span class="fe-ej">' + esc(enNombreEj(it)) + ' <small>' + (cd ? esc(cd) : pz.length + '×' + esc(pz[0] ? pz[0].dataset.reps || '' : '')) + '</small>'
-        + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>';
+        + (!cd && r0.length ? '<b class="sr-badge ' + enRir(Math.min.apply(null, r0)) + '">RIR ' + Math.min.apply(null, r0) + '</b>' : '') + '</span>'
+        + (cd ? '' : entSeriesHtml(it, d));
     });
     // 8/11 · peso movido en cada sesión (pedido por Domingo): con las repeticiones hechas, o las del plan si no las apunta
     let tonS = 0; try { tonS = Math.round(tonelajeDe(c)) || 0; } catch(e){}
