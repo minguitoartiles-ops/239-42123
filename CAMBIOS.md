@@ -3,8 +3,10 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.87 (actual)
-Cambios acumulados hacia la 0.88: **8 de 10**
+## Versión 0.88 (actual)
+Cambios acumulados hacia la 0.89: **0 de 10**
+
+## Versión 0.87 → 0.88.0
 
 ### Hacia la 0.88
 1. 08/11/2026 · Chats: **al entrar en una conversación baja sola hasta el último mensaje** (avisado por Domingo: muchas veces se quedaba a mitad). Antes saltaba al primer mensaje sin leer y, con las fotos o los mensajes del servidor llegando después, se quedaba en medio. Ahora se mantiene abajo mientras termina de cargar y deja de hacerlo en cuanto tocas o desplazas la conversación. El separador «N mensajes nuevos» sigue en su sitio, más arriba → **0.87.0-1 (caché)**
@@ -15,6 +17,8 @@ Cambios acumulados hacia la 0.88: **8 de 10**
 6. 08/11/2026 · Cuestionario inicial: **la tecla «Siguiente» del teclado pasa al campo de abajo** (en el último, «Hecho») sin cerrar y abrir el teclado, y mientras se escribe ya no se guarda todo a cada pausa corta: se guarda tras una pausa más larga, al cambiar de paso, al cerrarlo o al salir de la app → **0.87.3**
 7. 08/11/2026 · iPhone · detalles: los fondos «al pasar el ratón» ya no se quedan puestos tras tocar (cabecera del chat, menús, botones) y los campos de números de Fátima (kcal, %, macros de alimentos nuevos) abren el teclado numérico → **0.87.3-1 (caché)**
 8. 08/11/2026 · iPhone · **si se usa desde Safari, al entrar se recuerda añadir la app a la pantalla de inicio** (una vez por semana, sin taparle otra ventana; al cliente nuevo, después de su cuestionario). Motivo: Safari borra lo que guarda una web tras 7 días sin abrirla, también la sesión; a la app instalada no le pasa → **0.87.4**
+9. 08/11/2026 · Cliente · Hoy: **fuera la tarjeta «Habla con Fátima y Domingo»** (pedido por Domingo: repetía la pestaña Chat, que ya avisa de los mensajes nuevos) → **0.87.4-1 (caché)**
+10. 08/11/2026 · Cliente · Nutrición: **fuera los vasos de agua** de la tarjeta «Hoy» (pedido por Domingo: no aportaban información útil). Se quedan las calorías, los macros y «Ahora toca». La pregunta del agua del cuestionario inicial se mantiene → **0.88.0**
 
 ## Versión 0.86 → 0.87.0
 
