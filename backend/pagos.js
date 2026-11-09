@@ -7,8 +7,16 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const FECHA = /^\d{4}-\d{2}-\d{2}$/;
 const METODOS = ['bizum', 'transferencia', 'efectivo', 'otro'];
 const TARIFAS = ['mensual', 'trimestral', 'semestral', 'anual', 'ninguna'];
-const COLUMNAS = 'id, cliente_id, fecha, importe, metodo, periodo_desde, periodo_hasta, nota, registrado_por, creado, '
-  + 'factura_id, anulado, anulado_por, anulado_motivo';
+// 9/11 · lo que ve también el cliente; lo interno (nota, quién lo registró o anuló y por qué) solo lo
+// devuelve al equipo la función pagos_internos() del servidor
+const COLUMNAS = 'id, cliente_id, fecha, importe, metodo, periodo_desde, periodo_hasta, creado, factura_id, anulado';
+async function conInterno(sb, filas) {
+  if (!filas.length) return filas;
+  const { data, error } = await sb.rpc('pagos_internos', { p_ids: filas.length > 200 ? null : filas.map((f) => f.id) });
+  if (error) return filas;                                     // sin lo interno, pero con los pagos
+  const por = new Map((data || []).map((x) => [x.id, x]));
+  return filas.map((f) => Object.assign({ nota: null, registrado_por: null, anulado_por: null, anulado_motivo: null }, f, por.get(f.id) || {}));
+}
 
 function errorDe(e, generico) {
   const msg = String((e && e.message) || '');
@@ -34,7 +42,7 @@ export function crearPagos(sb) {
       if (clienteId) q = q.eq('cliente_id', id(clienteId, 'Cliente'));
       const { data, error } = await q;
       if (error) throw errorDe(error, 'No se han podido traer los pagos.');
-      return data || [];
+      return conInterno(sb, data || []);
     },
 
     // Equipo: registra un pago; si trae periodo, el servidor amplía el acceso → fila
@@ -50,7 +58,7 @@ export function crearPagos(sb) {
       if (p.fecha) fila.fecha = fecha(p.fecha, 'Fecha del pago');
       const { data, error } = await sb.from('pagos').insert(fila).select(COLUMNAS).single();
       if (error) throw errorDe(error, 'No se ha podido registrar el pago.');
-      return data;
+      return (await conInterno(sb, [data]))[0];
     },
 
     // Equipo: anula un pago apuntado por error (queda a la vista, con motivo; «pagado hasta» vuelve atrás)

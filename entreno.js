@@ -382,8 +382,8 @@ function abrirPlantillas(){
   const mias = enMisPlantillas();
   const fila = function(nombre, propia){
     return '<div class="list-row"><span>' + esc(nombre) + '</span><span class="ajx-acts">'
-      + (propia ? '<button class="mini-btn" onclick="enBorrarPlantilla(\'' + esc(nombre).replace(/'/g, "\\'") + '\')">Borrar</button>' : '')
-      + '<button class="mini-btn" onclick="enAplicarPlantilla(\'' + esc(nombre).replace(/'/g, "\\'") + '\',' + (propia ? 'true' : 'false') + ')">Usar</button></span></div>';
+      + (propia ? '<button class="mini-btn" onclick="enBorrarPlantilla(\'' + fsdEscJs(nombre) + '\')">Borrar</button>' : '')
+      + '<button class="mini-btn" onclick="enAplicarPlantilla(\'' + fsdEscJs(nombre) + '\',' + (propia ? 'true' : 'false') + ')">Usar</button></span></div>';
   };
   o.innerHTML = '<div class="fsd-sheet full"><div class="sheet-head"><h3>Plantillas de entrenamiento</h3><button class="x-btn" onclick="mjCerrarHoja(\'enPlantillas\')" aria-label="Cerrar">×</button></div>'
     + '<p class="ajx-note">Al usar una plantilla se sustituyen las sesiones actuales de este cliente. Luego puedes cambiar todo.</p>'

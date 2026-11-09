@@ -3,8 +3,22 @@
 La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera cifra cada 2 cambios
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
-## Versión 0.92 (actual)
-Cambios acumulados hacia la 0.93: **0 de 10**
+## Versión 0.93 (actual)
+Cambios acumulados hacia la 0.94: **0 de 10**
+
+## Versión 0.92 → 0.93.0
+
+### Hacia la 0.93 · auditoría de seguridad del 09/11/2026 (ver claude/auditoria-seguridad-2026-11-09.md)
+1. 09/11/2026 · **Arreglado (crítico): se podía colar código a través de las alergias.** La marca de cada alergia («diagnosticada», «sospecha») se pintaba tal cual en la ficha, el chat y el plan que ven Domingo y Fátima; un cliente que mandara sus datos directamente al servidor podía hacer que se ejecutara código en la sesión del equipo. Ahora solo valen las tres marcas conocidas → **0.92.0-1 (caché)**
+2. 09/11/2026 · **Todo lo que llega del cuestionario y las alergias se valida antes de usarlo** (claves conocidas, tipos esperados, textos acotados y sin < >), como ya se hacía con planes, chat y seguimientos. Unos datos mal formados ya no rompen las pantallas del equipo (antes dejaban sin abrir el chat y el plan de ese cliente) → **0.92.1**
+3. 09/11/2026 · Supabase · **el servidor solo guarda el cuestionario y las alergias con la forma de la app** (regla nueva en `salud`). **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.92.1-1 (caché)**
+4. 09/11/2026 · Supabase · **lo interno de los pagos, solo para el equipo**: la nota, quién lo registró o anuló y el motivo de anulación ya no los puede leer el cliente (el equipo los recibe aparte) → **0.92.2**
+5. 09/11/2026 · Supabase · **límite de escrituras por persona**: 1.500 cambios cada 10 minutos en pesos, comidas, seguimientos, cuestionario, historial, consentimientos, lecturas del chat y foto de perfil (la app se queda muy por debajo; el equipo no tiene límite). Se suma a los que ya tenían los mensajes, las subidas y el canje de códigos → **0.92.2-1 (caché)**
+6. 09/11/2026 · **Al cerrar sesión se borra la copia de los datos de clientes que guarda el aparato** (fichas, planes, chats, cuestionarios, fotos y notas de voz guardadas). Antes se quedaba en el navegador; ahora se cierra la sesión en el servidor, se borra la copia y la app vuelve a la entrada. Al volver a entrar se descarga de nuevo → **0.92.3**
+7. 09/11/2026 · Supabase · **la extensión `pg_net`** (con la que la base de datos lanza la limpieza diaria) **pasa al esquema de extensiones**, como pedía el asesor de seguridad de Supabase → **0.92.3-1 (caché)**
+8. 09/11/2026 · **Botones con nombres que llevan comillas** (una plantilla «Plan de Ana's», por ejemplo) ya no se rompen: escape propio para el texto dentro de un `onclick` → **0.92.4**
+9. 09/11/2026 · **Comprobación nueva en GitHub: ningún DNI/NIE ni IBAN real en el repositorio** (busca números con la letra o los dígitos de control correctos; los de prueba se permiten). El repositorio es público y lo que se sube queda en el historial → **0.92.4-1 (caché)**
+10. 09/11/2026 · **20 pruebas nuevas del servidor** (forma de `salud`, pagos internos, límite de escrituras, `pg_net`) y la prueba de acceso de pagos comprueba que el cliente no recibe lo interno → **0.93.0**
 
 ## Versión 0.91 → 0.92.0
 

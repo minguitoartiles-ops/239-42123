@@ -142,10 +142,17 @@ entrarComo = (function(orig){
 coachLogout = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo()) { svPararSincro(); window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) fsdDatos.auth.salir(); }
+    if (svActivo()) { svPararSincro(); window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) svSalirYBorrar(); }
     return r;
   };
 })(coachLogout);
+/* 9/11 · auditoría de seguridad: al cerrar sesión (a mano o por inactividad) no se queda en el aparato la copia de los
+   datos de clientes; se cierra la sesión en el servidor, se borra la copia y la app vuelve a empezar desde la entrada */
+function svSalirYBorrar(){
+  const fin = function(){ try { window.fsdBorrarCopiaLocal(); } catch(e){} setTimeout(function(){ location.reload(); }, 60); };
+  let p; try { p = fsdDatos.auth.salir(); } catch(e){ p = null; }
+  Promise.resolve(p).then(fin, fin);
+}
 
 /* =========================================================
    FICHAS DE CLIENTES: del servidor a la app
@@ -559,7 +566,7 @@ enterApp = (function(orig){
 cerrarSesionCliente = (function(orig){
   return function(){
     const r = orig.apply(this, arguments);
-    if (svActivo()) { window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) fsdDatos.auth.salir(); }
+    if (svActivo()) { window.dispatchEvent(new Event('fsd:sesion-fuera')); if (window.fsdDatos && !svNoTocarSesion) svSalirYBorrar(); }
     return r;
   };
 })(cerrarSesionCliente);

@@ -848,8 +848,8 @@ function filaFoto(rol){
   const url = fotoDe(dest);
   return '<div class="list-row foto-row" style="cursor:default"><span class="foto-row-l">'
     + '<span class="avatar foto-prev' + (tiene ? ' con-foto' : '') + '"' + (tiene ? ' style="background-image:url(&quot;' + url + '&quot;)"' : '') + '></span>Foto de perfil</span>'
-    + '<span class="ajx-acts"><button class="mini-btn" onclick="elegirFoto(\'' + dest.replace(/'/g, "\\'") + '\')">' + (tiene ? 'Cambiar' : 'Añadir') + '</button>'
-    + (tiene ? '<button class="mini-btn" onclick="quitarFoto(\'' + dest.replace(/'/g, "\\'") + '\')">Quitar</button>' : '')
+    + '<span class="ajx-acts"><button class="mini-btn" onclick="elegirFoto(\'' + fsdEscJs(dest) + '\')">' + (tiene ? 'Cambiar' : 'Añadir') + '</button>'
+    + (tiene ? '<button class="mini-btn" onclick="quitarFoto(\'' + fsdEscJs(dest) + '\')">Quitar</button>' : '')
     + '</span></div>';
 }
 
