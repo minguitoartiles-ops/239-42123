@@ -1273,6 +1273,13 @@
   @media (max-width: 400px){ .tl-largo{display:none;} .tl-corto{display:inline;} }
   /* D13 · letras de la barra inferior y etiquetas más legibles */
   .tbi{font-size:var(--fs-xs);}
+  /* 9/11 · barra inferior más compacta (pedido por Domingo: más espacio para la pantalla), la del cliente y la del
+     profesional. De 83 a ~60 px: menos relleno, icono algo más pequeño y la etiqueta pegada a él. Cada botón sigue
+     teniendo al menos 44 px de alto para pulsarlo bien. Abajo deja el hueco de la barra del sistema (el actual o el
+     máximo que anuncie Chrome) sin sumar relleno extra encima */
+  .tb,.coach-tb{padding-top:6px;padding-bottom:max(8px, env(safe-area-inset-bottom, 0px), env(safe-area-max-inset-bottom, 0px));}
+  .tbi{gap:2px;min-height:44px;justify-content:center;}
+  .tbi-emo{width:40px;height:26px;font-size:var(--fs-l);}
   .kc-l{font-size:var(--fs-xs);}
   .segui-lbl{font-size:var(--fs-xs);}
   /* B9 · barra «Editando: nombre» del profesional sin aplastarse */
