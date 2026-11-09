@@ -243,7 +243,7 @@ select throws_ok($$ insert into public.mensajes (cliente_id, lado, texto)
 select lives_ok($$ insert into public.pagos (id, cliente_id, importe, metodo)
                    values ('00000000-0000-0000-0000-0000000003a1', '00000000-0000-0000-0000-0000000000ca', 50, 'transferencia') $$,
   'El equipo registra un pago');
-select is((select registrado_por from public.pagos where id = '00000000-0000-0000-0000-0000000003a1'),
+select is((select registrado_por from public.pagos_internos(array['00000000-0000-0000-0000-0000000003a1'::uuid])),
   '00000000-0000-0000-0000-0000000000d1'::uuid, 'Queda registrado quién apuntó el pago');
 select lives_ok($$ update public.clientes set estado = 'baja', baja = '{"motivo": "fin del plan", "por": "falso"}'
                    where id = '00000000-0000-0000-0000-0000000000cb' $$,
