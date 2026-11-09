@@ -35,8 +35,8 @@ insert into public.clientes (id, user_id, nombre) values
 update public.clientes set estado = 'baja' where id = '00000000-0000-0000-0000-0000000000cc';
 
 insert into public.salud (cliente_id, datos) values
-  ('00000000-0000-0000-0000-0000000000ca', '{"alergias": "ninguna"}'),
-  ('00000000-0000-0000-0000-0000000000cb', '{"alergias": "frutos secos"}');
+  ('00000000-0000-0000-0000-0000000000ca', '{"alergias": {"ninguna": true}}'),
+  ('00000000-0000-0000-0000-0000000000cb', '{"alergias": {"otras": "frutos secos"}}');
 insert into public.planes_entreno (cliente_id) values
   ('00000000-0000-0000-0000-0000000000ca'), ('00000000-0000-0000-0000-0000000000cb');
 insert into public.planes_nutricion (cliente_id) values
@@ -101,7 +101,7 @@ select results_eq($$ select cliente_id from public.salud $$,
 select is_empty($$ update public.salud set datos = '{"x": 1}'
                    where cliente_id = '00000000-0000-0000-0000-0000000000cb' returning 1 $$,
   'El cliente A no puede cambiar los datos de salud de B');
-select lives_ok($$ update public.salud set datos = '{"alergias": "lactosa"}'
+select lives_ok($$ update public.salud set datos = '{"alergias": {"otras": "lactosa"}}'
                    where cliente_id = '00000000-0000-0000-0000-0000000000ca' $$,
   'El cliente A puede actualizar sus datos de salud');
 select throws_ok($$ insert into public.clientes (nombre) values ('Intruso') $$, '42501', null,
