@@ -4,10 +4,11 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.93 (actual)
-Cambios acumulados hacia la 0.94: **1 de 10**
+Cambios acumulados hacia la 0.94: **2 de 10**
 
 ### Hacia la 0.94
 1. 09/11/2026 · **La barra inferior ya no se recorta en Android** (avisado por Domingo: con la app a pantalla completa, las etiquetas quedaban detrás de los botones del sistema). Ahora deja siempre el hueco de la barra de navegación del sistema (y de la raya de inicio del iPhone); el chat del profesional en el móvil, también → **0.93.0-1 (caché)**
+2. 09/11/2026 · **Diagnóstico de pantalla**: la barra seguía recortada en el Android de Domingo y en los simuladores se ve bien, así que hace falta medir en su móvil. Tocando 5 veces seguidas la pestaña «Ajustes» se abre un cuadro con las medidas que da el navegador (ventana, pantalla, huecos del sistema, dónde acaba la barra). No guarda ni envía nada. La barra también tiene en cuenta el hueco máximo que anuncian las versiones nuevas de Chrome → **0.93.1**
 
 ## Versión 0.92 → 0.93.0
 

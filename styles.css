@@ -658,7 +658,7 @@
   /* 9/11 · la barra no se esconde detrás de la barra de navegación del sistema (Android con la app a pantalla completa,
      iPhone con la raya de inicio). Antes esta regla pisaba la del móvil, que ya sumaba ese hueco, y en Android las
      etiquetas quedaban recortadas (avisado por Domingo) */
-  .tb{padding-bottom:max(16px, calc(8px + env(safe-area-inset-bottom, 0px)));}
+  .tb{padding-bottom:max(16px, calc(8px + env(safe-area-inset-bottom, 0px)), calc(8px + env(safe-area-max-inset-bottom, 0px)));}
   html.chat-pro-movil .chat-input{margin-bottom:calc(20px + env(safe-area-inset-bottom, 0px));}
   .tbi{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;min-width:0;font:600 var(--fs-xs) var(--f-mono);letter-spacing:0;color:var(--dim-40);background:none;border:none;cursor:pointer;}
   .tbi.active{color:var(--accent-text);}
