@@ -864,7 +864,8 @@ function htmlAlergiasPro(k, compacto){
   const ids = Object.keys(a.items).sort(function(x, y){ return orden[a.items[x]] - orden[a.items[y]]; });
   const chips = ids.map(function(id){
     const e = a.items[id];
-    return '<span class="alg-chip ' + (e || 'sin') + '">' + esc(nombreAlergia(id)) + '<small>' + (e === 'diag' ? 'diagnosticada' : (e === 'sosp' ? 'sospecha' : 'sin indicar')) + '</small></span>';
+    // 9/11 · la marca la escribe el cliente: solo valen las tres conocidas (antes se pintaba tal cual: se podía colar código)
+    return '<span class="alg-chip ' + (e === 'diag' || e === 'sosp' ? e : 'sin') + '">' + esc(nombreAlergia(id)) + '<small>' + (e === 'diag' ? 'diagnosticada' : (e === 'sosp' ? 'sospecha' : 'sin indicar')) + '</small></span>';
   }).join('');
   return '<div class="alg-chips">' + chips + '</div>' + (a.otras ? '<div class="alg-otras">«' + esc(a.otras) + '»</div>' : '')
     + (compacto ? '' : '<div class="alg-fecha">Actualizado el ' + fechaCorta(a.fecha) + '</div>');

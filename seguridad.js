@@ -52,6 +52,12 @@ function fsdLimpiarPlan(p){
   return p;
 }
 function fsdFotoSegura(v){ return typeof v === 'string' && /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(v); }
+/* 9/11 · texto dentro de una cadena de JavaScript dentro de un atributo onclick="f('…')": primero se escapa para
+   JavaScript (barra, comillas, saltos de línea) y luego para HTML. Al revés no sirve: el navegador convierte &#39;
+   en ' antes de ejecutar el onclick, y una comilla en el texto (un nombre de plantilla, por ejemplo) rompía el botón. */
+function fsdEscJs(s){
+  return fsdEsc(String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\r?\n|\u2028|\u2029/g, ' '));
+}
 function fsdEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 /* fotos de perfil y avatares guardados aparte */
 (function(){

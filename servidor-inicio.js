@@ -51,8 +51,17 @@
   const get = S.getItem, set = S.setItem, rem = S.removeItem;
   const mapa = function(k){ return (typeof k === 'string' && CAJON[k]) ? k + sufijo : k; };
   S.getItem = function(k){ return get.call(this, mapa(k)); };
-  S.setItem = function(k, v){ return set.call(this, mapa(k), v); };
+  // 9/11 · al cerrar sesión se borra la copia de los datos de clientes que guarda este aparato (fichas, planes,
+  // chats, cuestionarios, fotos): el servidor es el que manda y al volver a entrar se descarga de nuevo. Desde ese
+  // momento y hasta recargar, la app ya no vuelve a escribirla (el guardado al salir de la página la recrearía).
+  let sinGuardar = false;
+  S.setItem = function(k, v){ if (sinGuardar && typeof k === 'string' && CAJON[k]) return; return set.call(this, mapa(k), v); };
   S.removeItem = function(k){ return rem.call(this, mapa(k)); };
+  Object.defineProperty(window, 'fsdBorrarCopiaLocal', { configurable: false, writable: false, value: function(){
+    sinGuardar = true;
+    Object.keys(CAJON).forEach(function(k){ try { rem.call(localStorage, k + sufijo); } catch(e){} });
+    Object.keys(BASES_IDB).forEach(function(n){ try { indexedDB.deleteDatabase(n + sufijo); } catch(e){} });
+  } });
 
   if (typeof IDBFactory !== 'undefined') {
     const abrir = IDBFactory.prototype.open;
