@@ -76,6 +76,9 @@ jobs:
       - name: Ninguna función repetida entre archivos de la app
         run: node pruebas/nombres_repetidos.mjs
 
+      - name: Ningún DNI/NIE ni IBAN real en el repositorio
+        run: node pruebas/datos_personales.mjs
+
   funciones:
     name: Funciones del servidor
     runs-on: ubuntu-latest
