@@ -205,9 +205,9 @@ function ilConsejo(info){
   return f.length > 140 ? f.slice(0, 137).replace(/\s+\S*$/, '') + '…' : f;
 }
 /* ---------- en el entreno del cliente ---------- */
-/* 6/11/2026 · Por ahora sin las figuras animadas (pedido por Domingo): solo queda la indicación técnica
-   corta. Para volver a enseñarlas, poner true. */
-const IL_FIGURAS = false;
+/* 6/11/2026 · Se quitaron las figuras animadas mientras se rehacían (pedido por Domingo).
+   11/11/2026 · Vuelven: Domingo ha aprobado las 227 (146 rehechas en figuras.js y 81 antiguas que ya valían). */
+const IL_FIGURAS = true;
 function ilPoner(it){
   if (!it || isCoachView()) return;
   const nombre = enNombreEj(it); if (!nombre) return;
