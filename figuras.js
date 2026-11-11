@@ -54,7 +54,7 @@ function fgLado(S){
     const s = x[0];
     const a = fgVal(S['a' + s] || S.a, P);
     const k = fgIK(P.p, a, FG_L.muslo, FG_L.canilla, S['r' + s] != null ? S['r' + s] : (S.r != null ? S.r : -1));
-    P['k' + s] = k.j; P['a' + s] = k.t;
+    P['k' + s] = S.piernaRecta ? fgLerp(P.p, k.t, FG_L.muslo / (FG_L.muslo + FG_L.canilla)) : k.j; P['a' + s] = k.t;   // 11/11 · piernaRecta: sin ninguna flexión
     const f = fgVal(S['f' + s] || S.f, P);
     P['f' + s] = f || fgSum(k.t, [FG_L.pie, 0]);
   });
@@ -1396,6 +1396,110 @@ FG['kettlebell swing'] = fgSwing({ rotulo: 'la cadera lanza la pesa' });
 FG['swing con kettlebell'] = FG['kettlebell swing'];
 // a una mano (nota: «no se ve a una mano»): la mano libre se queda en la cadera
 FG['swing a una mano'] = fgSwing({ libre: true, rotulo: 'a una mano' });
+
+/* =========================================================
+   TANDA 8 (11/11/2026) · core: elevación de piernas, crunch en polea, Pallof y planchas
+   ========================================================= */
+function fgFlechaH(x1, x2, y){ const d = x2 < x1 ? 1 : -1; return '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" class="il-palma"/><polyline points="' + (x2 + 5 * d) + ',' + (y - 4) + ' ' + x2 + ',' + y + ' ' + (x2 + 5 * d) + ',' + (y + 4) + '" class="il-palma" fill="none"/>'; }
+/* --- elevación de piernas (nota: «hay que afinar el movimiento de las piernas y pies»): tumbado boca arriba con la zona
+   lumbar pegada al suelo; las piernas, estiradas y juntas, suben por flexión de cadera hasta la vertical y bajan sin tocar el
+   suelo; el pie se mantiene a 90° de la pierna todo el recorrido --- */
+(function(){
+  const n = [22, 81], p = [46, 81];
+  const pose = function(g){ const a = fgSum(p, fgDir(g, 37.3)); return { p: p, t: -90, cab: 0, a: a, f: fgSum(a, fgDir(g - 90, 6)), r: -1, piernaRecta: 1, recto: true, w: [n[0] + 23, 83] }; };
+  // muchas posturas seguidas: entre dos posturas el tobillo va en línea recta y la rodilla se doblaría
+  const sube = [], baja = [];
+  for (let g = 80; g >= 4; g -= 8) sube.push([pose(g), 0.12]);
+  for (let g = 12; g <= 72; g += 8) baja.push([pose(g), 0.16]);
+  FG['elevacion de piernas'] = { seq: [[pose(80), 0.3]].concat(sube.slice(1), [[pose(4), 0.3]], baja), vuelta: 0.16,
+    fondo: FG_PISO + fgRotulo('la zona lumbar pegada al suelo') };
+})();
+/* --- crunch en polea (nota: «hay que afinar el movimiento de brazos y torso»): de rodillas mirando a la polea alta, la cuerda
+   a los lados de la cabeza y las manos junto a las orejas; la cadera no se mueve y el tronco se enrolla acercando los codos a
+   los muslos; los brazos no tiran, van fijos con la cabeza --- */
+(function(){
+  const polea = [97, 6];
+  const pose = function(k){ const t = fgLerp(6, 48, k), cab = fgLerp(0, 45, k);
+    return { p: [56, 63.5], t: t, cab: cab, a: [38, 82.5], f: [32, 83.5], r: 1,
+      w: function(P){ return fgSum(fgLerp(P.n, P.h, 0.75), fgDir(t + cab + 90, 4)); },
+      e: function(P){ return fgSum(P.n, fgDir(t + 125, 11)); } }; };
+  FG['crunch en polea'] = { seq: [[pose(0), 0.4], [pose(0.5), 0.45], [pose(1), 0.45], [pose(1), 0.4], [pose(0.5), 0.6]], vuelta: 0.6,
+    fondo: FG_PISO + fgColumna(polea[0], polea[1]) + fgRotulo('enrolla el tronco, cadera quieta'),
+    atras: function(P, ln){ fgCable(polea, ln, P); } };
+})();
+/* --- Pallof press: de frente, la polea a la altura del pecho a un lado; las manos salen del esternón y se estiran hacia
+   delante (hacia quien mira, por eso los brazos se ven cortos) mientras el cable tira hacia el lado. El recuadro, visto desde
+   arriba, enseña el empuje hacia delante y el tirón lateral que hay que resistir --- */
+(function(){
+  const polea = [10, 40];
+  const A = { vista: 'frente', p: [60, 46.5], aL: [53, 82], aR: [67, 82], kL: [54, 64.5], kR: [66, 64.5], wL: [58.5, 40], wR: [61.5, 40], eL: [48.5, 45], eR: [71.5, 45] };
+  const B = Object.assign({}, A, { wL: [59, 40], wR: [61, 40], eL: [55, 40.5], eR: [65, 40.5] });
+  const arriba = '<circle cx="100" cy="14" r="3" class="il-cabeza"/><line x1="91" y1="14" x2="109" y2="14" class="il-cuerpo"/>'
+    + '<line x1="91" y1="14" x2="99" y2="30" class="il-cuerpo"/><line x1="109" y1="14" x2="101" y2="30" class="il-cuerpo"/>'
+    + '<line x1="80" y1="30" x2="100" y2="30" class="il-cable"/><circle cx="100" cy="30" r="1.8" class="il-peso"/>'
+    + '<text x="96" y="43" text-anchor="middle" class="il-rotulo">desde arriba</text>';
+  FG['pallof press en polea'] = { vista: 'frente', seq: [[A, 0.4], [B, 0.8], [B, 1], [A, 0.8]], vuelta: 0.4,
+    fondo: FG_PISO + '<rect x="2" y="2" width="5" height="82" rx="2" class="il-mueble"/><circle cx="' + polea[0] + '" cy="' + polea[1] + '" r="3" class="il-mueble"/>' + arriba + fgRotulo('resiste el giro, cadera fija'),
+    delante: function(P, ln, ci){ const m = fgLerp(P.wL, P.wR, 0.5); ln(polea, m, 'il-cable'); ci(m, 2.4, 'il-peso'); } };
+})();
+/* --- planchas de lado: el cuerpo en línea recta de los tobillos a los hombros. Sobre antebrazos (codos bajo los hombros) o
+   alta (manos bajo los hombros, brazos estirados) --- */
+function fgPlancha(alta){
+  const a = [20, 79], hombroY = alta ? 59 : 70, L = FG_L.muslo + FG_L.canilla + FG_L.tronco - 0.4;
+  const dy = hombroY - a[1], dx = Math.sqrt(L * L - dy * dy), n = [a[0] + dx, hombroY];
+  const kp = (FG_L.muslo + FG_L.canilla - 0.2) / L, p = [a[0] + dx * kp, a[1] + dy * kp];
+  const t = Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI;
+  const S = { p: p, t: t, cab: 4, a: a, f: [a[0] + 3, 83.5], r: -1 };
+  if (alta) Object.assign(S, { w: [n[0], 83.5], recto: true }); else Object.assign(S, { e: [n[0], 83], w: [n[0] + 12, 83] });
+  return S;
+}
+// RKC: los codos un poco por delante de los hombros y los puños cerrados; se tira de los codos hacia los pies sin moverlos y se
+// aprietan glúteo y abdomen (la pelvis se mete un poco). Más intensa y más corta
+(function(){
+  const A = Object.assign(fgPlancha(false), { e: function(P){ return [P.n[0] + 3, 83]; }, w: function(P){ return [P.n[0] + 14, 83]; } });
+  const B = Object.assign({}, A, { p: [A.p[0], A.p[1] - 0.8] });
+  FG['plancha rkc'] = { seq: [[A, 0.6], [B, 0.5], [B, 1.2], [A, 0.5]], vuelta: 0.4,
+    fondo: FG_PISO + fgFlechaH(76, 60, 62) + fgRotulo('codos hacia los pies'),
+    delante: function(P, ln, ci){ ci(P.w, 2.4, 'il-peso'); } };
+})();
+// toque de hombros (de frente, mirando a la cabeza): plancha alta con los pies abiertos; una mano sube a tocar el hombro
+// contrario y vuelve, luego la otra; la cadera no se mueve
+(function(){
+  const sI = [42, 48], sD = [78, 48];
+  const brazo = function(F, ln, s, otro, k, lado){ const w = fgLerp([s[0], 83.5], [otro[0] - 4 * lado, otro[1] + 3], k), e = fgLerp([s[0], 66], [s[0] + 13 * lado, 66], k); ln(s, e); ln(e, w); };
+  const dibujo = function(F, ln, ci){
+    ln([54, 66], [49, 83]); ln([66, 66], [71, 83]); ln([49, 83.5], [45, 83.5]); ln([71, 83.5], [75, 83.5]); ln([54, 66], [66, 66]); ln([60, 48], [60, 66]);
+    ln(sI, sD); ci([60, 54], 5.6, 'il-cabeza');
+    brazo(F, ln, sI, sD, F.i, 1); brazo(F, ln, sD, sI, F.d, -1); };
+  FG['plancha con toque de hombros'] = { dibujo: dibujo, seq: [[{ i: 0, d: 0 }, 0.3], [{ i: 1, d: 0 }, 0.45], [{ i: 1, d: 0 }, 0.2], [{ i: 0, d: 0 }, 0.45], [{ i: 0, d: 1 }, 0.45], [{ i: 0, d: 1 }, 0.2]], vuelta: 0.45,
+    fondo: FG_PISO + fgRotulo('de frente · mano al hombro') };
+})();
+// elevación de pierna: sobre antebrazos; una pierna estirada sube hasta la línea del cuerpo (un poco más) sin arquear la lumbar,
+// baja y sube la otra
+(function(){
+  const A = fgPlancha(false);
+  const sube = function(g){ const d = Math.atan2(A.a[0] - A.p[0], A.p[1] - A.a[1]) * 180 / Math.PI + g, a = fgSum(A.p, fgDir(d, 36.6)); return { a: a, f: fgSum(a, fgDir(d - 90, 6)) }; };
+  const base = { a: A.a, f: A.f };
+  const pose = function(u, v){ const x = u ? sube(20) : base, y = v ? sube(20) : base; return Object.assign({}, A, { a: x.a, f: x.f, a2: y.a, f2: y.f }); };
+  FG['plancha con elevacion de pierna'] = { segundo: true, lejos: ['k2', 'a2', 'f2'], seq: [[pose(false, false), 0.3], [pose(true, false), 0.5], [pose(true, false), 0.4], [pose(false, false), 0.5], [pose(false, true), 0.5], [pose(false, true), 0.4]], vuelta: 0.5,
+    fondo: FG_PISO + fgRotulo('sin arquear la zona lumbar') };
+})();
+/* --- plancha lateral con elevación de cadera: de frente, apoyado en un antebrazo (el codo bajo el hombro) y con los pies uno
+   encima del otro; la otra mano en la cadera. La cadera baja casi hasta el suelo y sube hasta dejar el cuerpo recto --- */
+(function(){
+  const sB = [80, 70], pie = [18, 82.5];
+  const dibujo = function(F, ln, ci){
+    const hB = [55, F.y], d = Math.hypot(sB[0] - hB[0], sB[1] - hB[1]), u = [(sB[0] - hB[0]) / d, (sB[1] - hB[1]) / d], q = [u[1], -u[0]];
+    const mas = function(a, v, k){ return [a[0] + v[0] * k, a[1] + v[1] * k]; };
+    const hT = mas(hB, q, 5), hC = mas(hB, q, 2.5), sT = mas(sB, q, 15), sC = mas(sB, q, 7.5);
+    ln(hB, pie); ln(hT, [pie[0] + 0.5, pie[1] - 4]); ln(pie, [pie[0] - 3.5, pie[1] + 1]); ln([pie[0] + 0.5, pie[1] - 4], [pie[0] - 3, pie[1] - 3]);
+    ln(hB, hT); ln(hC, sC); ln(sB, sT);
+    ln(sB, [sB[0], 83]); ln([sB[0], 83], [sB[0] + 4, 83.5]);
+    ln(sT, [sT[0] + 1, sT[1] - 24]);
+    ci(mas(sC, u, 8.5), 5.6, 'il-cabeza'); };
+  FG['plancha lateral con elevacion de cadera'] = { dibujo: dibujo, seq: [[{ y: 81 }, 0.4], [{ y: 78 }, 0.5], [{ y: 75 }, 0.5], [{ y: 75 }, 0.4], [{ y: 78 }, 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + fgRotulo('de frente · sube la cadera') };
+})();
 
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
