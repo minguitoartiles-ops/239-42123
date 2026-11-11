@@ -1245,7 +1245,7 @@ function fgMancuernaLado(ln, ci, w){ ln([w[0] - 4.5, w[1]], [w[0] + 4.5, w[1]], 
 function fgPesoMuerto(o){
   const barX = o.barX || 58, pie = o.pie || [55, 82.5];
   const pose = function(k){
-    const t = fgLerp(o.tAbajo, 3, k), barY = fgLerp(o.barAbajo, 47, k);
+    const t = fgLerp(o.tAbajo, 3, k), barY = fgLerp(o.barAbajo, pie[1] - 35.5, k);   // arriba, de pie del todo (rodillas estiradas) sea cual sea la altura de los pies
     return { p: [50, 50], t: t, cab: fgLerp(-25, 0, k), a: pie, f: fgSum(pie, [7, 1]), r: -1,
       w: function(P){ return [P.n[0], barY]; }, recto: true,
       al: { en: function(P){ return [P.n[0], P.n[1]]; }, x: barX },
@@ -1261,13 +1261,16 @@ FG['peso muerto convencional'] = fgPesoMuerto({ tAbajo: 62, barAbajo: FG_SUELO -
 // déficit: de pie sobre una plataforma; los discos siguen en el suelo, así que la barra empieza más abajo respecto a los pies
 FG['peso muerto en deficit'] = fgPesoMuerto({ tAbajo: 68, barAbajo: FG_SUELO - 10, pie: [55, 76.5], fondo: '<rect x="42" y="78" width="30" height="6" rx="1.5" class="il-mueble"/>', rotulo: 'de pie sobre una plataforma' });
 // rack pull: la barra parte de los soportes del rack, a la altura de las rodillas
-FG['rack pull'] = fgPesoMuerto({ tAbajo: 40, barAbajo: 52.8, rotulo: 'desde los soportes · rodillas',
-  fondo: '<line x1="70" y1="6" x2="70" y2="84" class="il-mueble il-sin"/><line x1="78" y1="6" x2="78" y2="84" class="il-mueble il-sin"/><line x1="50" y1="62.8" x2="80" y2="62.8" class="il-mueble"/>' });
+// 11/11 (nota de Domingo): la barra apoyada en los soportes justo debajo de la rótula; bisagra de cadera con las rodillas
+// apenas flexionadas, los hombros sobre la barra
+FG['rack pull'] = fgPesoMuerto({ tAbajo: 65, barAbajo: 66.5, rotulo: 'barra bajo la rótula',
+  fondo: '<line x1="70" y1="6" x2="70" y2="84" class="il-mueble il-sin"/><line x1="78" y1="6" x2="78" y2="84" class="il-mueble il-sin"/><line x1="50" y1="68" x2="80" y2="68" class="il-mueble"/>' });
 // piernas rígidas: las rodillas casi estiradas todo el recorrido; la cadera va atrás y la barra baja hasta media espinilla
 (function(){
-  const pose = function(k){ const t = fgLerp(78, 3, k), barY = fgLerp(66.5, 47, k), n0 = fgDir(t, FG_L.tronco);
-    return { p: [50, barY - 24.8 - n0[1]], t: t, cab: fgLerp(-30, 0, k), a: [55, 82.5], f: [62, 83.5], r: -1, recto: true,
-      w: function(P){ return [P.n[0], barY]; }, al: { en: function(P){ return P.n; }, x: 60 } }; };
+  // 11/11: la cadera bien atrás y alta, las rodillas casi estiradas en todo el recorrido; la barra sobre el medio del pie
+  const pose = function(k){ const t = fgLerp(65, 3, k), barY = fgLerp(66.5, 47, k), n0 = fgDir(t, FG_L.tronco);
+    return { p: [50, barY - 24.8 - n0[1]], t: t, cab: fgLerp(-30, 0, k), a: [46, 82.5], f: [53, 83.5], r: -1, recto: true,
+      w: function(P){ return [P.n[0], barY]; }, al: { en: function(P){ return P.n; }, x: 52 } }; };
   // con la cadera más alta las piernas quedan casi rectas
   FG['peso muerto piernas rigidas'] = { seq: [[pose(1), 0.5], [pose(0.5), 0.6], [pose(0), 0.6], [pose(0), 0.3], [pose(0.5), 0.6]], vuelta: 0.6,
     fondo: FG_PISO + fgRotulo('piernas casi estiradas'), delante: fgEnManos('barra') };
@@ -1277,7 +1280,8 @@ FG['rack pull'] = fgPesoMuerto({ tAbajo: 40, barAbajo: 52.8, rotulo: 'desde los 
 (function(){
   const pies = { aL: [53, 82], aR: [67, 82] };
   const agarre = { wL: function(P){ return [P.sL[0] - 1, P.sL[1] + 24.6]; }, wR: function(P){ return [P.sR[0] + 1, P.sR[1] + 24.6]; }, cL: -1, cR: 1 };
-  const A = Object.assign({ vista: 'frente', p: [60, 66], escTronco: 0.82, cab: 0 }, pies, agarre), B = Object.assign({ vista: 'frente', p: [60, 49], escTronco: 1 }, pies, agarre);
+  // 11/11 (nota de Domingo): las rodillas miran al frente; de frente quedan en la vertical de los tobillos, sin abrirse
+  const A = Object.assign({ vista: 'frente', p: [60, 66], escTronco: 0.82, cab: 0, kL: [53, 70], kR: [67, 70] }, pies, agarre), B = Object.assign({ vista: 'frente', p: [60, 49], escTronco: 1, kL: [54, 65.5], kR: [66, 65.5] }, pies, agarre);
   const hexY = function(P){ return (P.wL[1] + P.wR[1]) / 2; };
   FG['peso muerto con barra hexagonal'] = { vista: 'frente', seq: [[A, 0.6], [B, 1.1], [B, 0.3], [A, 1.1]], vuelta: 0.4,
     fondo: FG_PISO + fgRotulo('barra hexagonal · asas'),
