@@ -1327,6 +1327,76 @@ FG['hiperextension 45°'] = fgHiper({ tobillo: [24, 76], angulo: 45, colgado: 17
     delante: function(P, ln, ci){ const r = fgSum(P.a, fgDir(Math.atan2(P.a[0] - rod[0], rod[1] - P.a[1]) * 180 / Math.PI + 90, 3)); ln(rod, r, 'il-mueble il-sin'); ci(r, 2.8, 'il-rodillo'); } };
 })();
 
+/* =========================================================
+   TANDA 7b (11/11/2026) · hip thrust, puentes, frog pump y swings
+   ========================================================= */
+/* --- hip thrust de lado: la parte alta de la espalda apoyada en el borde del banco (los hombros no se mueven); la cadera sube
+   hasta dejar el tronco en horizontal con la rodilla a 90°; la barbilla metida, mirando hacia las rodillas --- */
+function fgHipThrust(o){
+  const n = [27, 57], pie = o.pie || [68, 82.5];
+  const pose = function(k){ const t = fgLerp(-60, -91, k), p = fgSum(n, fgDir(t, -FG_L.tronco));
+    const S = { p: p, t: t, cab: 65, a: pie, f: fgSum(pie, [7, 1]), r: -1, w: function(P){ return fgSum(P.p, [1, -2.5]); }, c: 1 };
+    if (o.extra) Object.assign(S, o.extra(t, p));
+    return S; };
+  return { segundo: !!o.segundo, lejos: o.lejos || [], seq: [[pose(0), 0.4], [pose(0.5), 0.35], [pose(1), 0.35], [pose(1), 0.4], [pose(0.5), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + fgCaja(8, 59, 19, 25) + (o.fondo || '') + fgRotulo(o.rotulo), delante: o.delante };
+}
+// a una pierna (nota: «no se ve que sea a una pierna»): la otra pierna, estirada y en el aire, sigue la línea del tronco
+FG['hip thrust a una pierna'] = fgHipThrust({ segundo: true, rotulo: 'un pie en el aire',
+  extra: function(t, p){ const d = t + 160, a2 = fgSum(p, fgDir(d, 36.6)); return { a2: a2, f2: fgSum(a2, fgDir(d - 90, 6)) }; } });
+// con banda (nota: «la banda tiene que crear una fuerza que active el glúteo»): la banda pasa por encima de la cadera y está
+// anclada al suelo a los lados, así que tira de la cadera hacia abajo y el glúteo tiene que vencerla al subir
+(function(){
+  const ancla = [49, 81.5];
+  FG['hip thrust con banda'] = fgHipThrust({ rotulo: 'banda anclada al suelo',
+    fondo: '<circle cx="' + ancla[0] + '" cy="' + ancla[1] + '" r="2.6" class="il-peso"/>',
+    delante: function(P, ln){ ln(ancla, fgSum(P.p, [0, -3]), 'il-cable il-banda'); } });
+})();
+
+/* --- puentes en el suelo: tumbado boca arriba, los hombros y la cabeza en el suelo; la cadera sube hasta dejar en línea
+   hombros, cadera y rodilla; los brazos estirados en el suelo, a los lados --- */
+function fgPuente(o){
+  const n = [22, 81];
+  const pose = function(k){ const t = fgLerp(-91, o.tArriba, k), p = fgSum(n, fgDir(t, -FG_L.tronco));
+    const S = { p: p, t: t, cab: -90 - t, a: o.pie, f: fgSum(o.pie, [7, 1]), r: -1, recto: true, w: [n[0] + 23, 83] };
+    if (o.extra) Object.assign(S, o.extra(t, p));
+    return S; };
+  return { segundo: !!o.segundo, lejos: [], seq: [[pose(0), 0.4], [pose(0.5), 0.3], [pose(1), 0.3], [pose(1), o.pausa || 0.4], [pose(0.5), 0.45]], vuelta: 0.45,
+    fondo: FG_PISO + (o.fondo || '') + fgRotulo(o.rotulo) };
+}
+// a una pierna (nota: «una pierna debe estar extendida»): la otra, estirada, en línea con el muslo de apoyo
+FG['puente de gluteo a una pierna'] = fgPuente({ segundo: true, pie: [62, 82.5], tArriba: -117, rotulo: 'una pierna estirada',
+  extra: function(t, p){ const d = t + 170, a2 = fgSum(p, fgDir(d, 36.6)); return { a2: a2, f2: fgSum(a2, fgDir(d - 90, 6)) }; } });
+// frog pump (nota: postura de rana, plantas juntas y rodillas abiertas): de lado los pies cerca del glúteo; el recuadro, visto
+// desde arriba, enseña las plantas juntas y las rodillas abiertas hacia los lados; recorrido corto y rápido
+(function(){
+  const arriba = '<circle cx="99" cy="9" r="3" class="il-cabeza"/><line x1="99" y1="12" x2="99" y2="28" class="il-cuerpo"/><line x1="95" y1="28" x2="103" y2="28" class="il-cuerpo"/>'
+    + '<line x1="95" y1="28" x2="85" y2="38" class="il-cuerpo"/><line x1="85" y1="38" x2="97.5" y2="44" class="il-cuerpo"/>'
+    + '<line x1="103" y1="28" x2="113" y2="38" class="il-cuerpo"/><line x1="113" y1="38" x2="100.5" y2="44" class="il-cuerpo"/>'
+    + '<text x="99" y="53" text-anchor="middle" class="il-rotulo">desde arriba</text>';
+  FG['frog pump'] = fgPuente({ pie: [57, 82.5], tArriba: -110, pausa: 0.2, fondo: arriba, rotulo: 'plantas juntas, rodillas fuera' });
+})();
+
+/* --- swing con kettlebell (nota: «la pesa va pegada a la cadera y la mueve la extensión de cadera»): bisagra de cadera con las
+   rodillas algo flexionadas; abajo la pesa pasa entre los muslos, pegada a la ingle; la cadera se extiende de golpe y los
+   brazos, estirados y sin tirar, suben hasta la altura del pecho; la pesa sigue la línea del brazo --- */
+function fgSwing(o){
+  const pie = [57, 82.5];
+  const pose = function(t, p, brazo, cab){
+    const S = { p: p, t: t, cab: cab, a: pie, f: fgSum(pie, [7, 1]), r: -1, brazo: [brazo, brazo] };
+    if (o.libre) Object.assign(S, { brazo: null, w: function(P){ return fgSum(P.n, fgDir(brazo, 25)); }, recto: true,
+      w2: function(P){ return fgSum(P.p, fgDir(t, 5)); }, e2: function(P){ return fgSum(fgLerp(P.p, P.n, 0.55), fgDir(t - 90, 6)); } });
+    return S; };
+  const abajo = pose(64, [44, 55.5], 230, -40), medio = pose(28, [50, 49.5], 160, -15), arriba = pose(-3, [55, 46.5], 92, 0);
+  return { segundo: !!o.libre, lejos: o.libre ? ['e2', 'w2'] : [], seq: [[abajo, 0.3], [medio, 0.22], [arriba, 0.22], [arriba, 0.15], [medio, 0.3]], vuelta: 0.25,
+    fondo: FG_PISO + fgRotulo(o.rotulo),
+    delante: function(P, ln, ci){ const d = Math.hypot(P.w[0] - P.n[0], P.w[1] - P.n[1]) || 1; ci([P.w[0] + (P.w[0] - P.n[0]) / d * 4.5, P.w[1] + (P.w[1] - P.n[1]) / d * 4.5], 4.4, 'il-peso'); } };
+}
+FG['kettlebell swing'] = fgSwing({ rotulo: 'la cadera lanza la pesa' });
+FG['swing con kettlebell'] = FG['kettlebell swing'];
+// a una mano (nota: «no se ve a una mano»): la mano libre se queda en la cadera
+FG['swing a una mano'] = fgSwing({ libre: true, rotulo: 'a una mano' });
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
