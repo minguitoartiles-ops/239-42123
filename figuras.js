@@ -1236,6 +1236,87 @@ function fgMancuernaLado(ln, ci, w){ ln([w[0] - 4.5, w[1]], [w[0] + 4.5, w[1]], 
     zoom: 0.92, fondo: FG_PISO + fgRotulo('a una mano'), delante: function(P, ln, ci){ fgMancuernaLado(ln, ci, P.wR); } };
 })();
 
+
+/* =========================================================
+   TANDA 7a (11/11/2026) · peso muerto, hiperextensiones y extensión de cuádriceps
+   ========================================================= */
+/* peso muerto de lado: la barra sube y baja en vertical sobre el medio del pie (barX); los brazos estirados colgando de los
+   hombros; abajo los discos se apoyan (en el suelo o en los soportes del rack) */
+function fgPesoMuerto(o){
+  const barX = o.barX || 58, pie = o.pie || [55, 82.5];
+  const pose = function(k){
+    const t = fgLerp(o.tAbajo, 3, k), barY = fgLerp(o.barAbajo, 47, k);
+    return { p: [50, 50], t: t, cab: fgLerp(-25, 0, k), a: pie, f: fgSum(pie, [7, 1]), r: -1,
+      w: function(P){ return [P.n[0], barY]; }, recto: true,
+      al: { en: function(P){ return [P.n[0], P.n[1]]; }, x: barX },
+      _barY: barY };
+  };
+  // la cadera se coloca a la altura justa para que los brazos (25) lleguen a la barra
+  const conAltura = function(k){ const S = pose(k), n0 = fgDir(S.t, FG_L.tronco); S.p = [50, S._barY - 24.8 - n0[1]]; delete S._barY; return S; };
+  const A = conAltura(0), M = conAltura(0.5), B = conAltura(1);
+  return { seq: [[A, 0.6], [M, 0.5], [B, 0.5], [B, 0.3], [M, 0.6]], vuelta: 0.6,
+    fondo: FG_PISO + (o.fondo || '') + fgRotulo(o.rotulo), atras: o.atras, delante: function(P, ln, ci){ ci(P.w, 10, 'il-disco'); ci(P.w, 1.6, 'il-peso'); if (o.delante) o.delante(P, ln, ci); } };   // disco grande, como uno de 20 kg
+}
+FG['peso muerto convencional'] = fgPesoMuerto({ tAbajo: 62, barAbajo: FG_SUELO - 10, rotulo: 'los discos apoyados en el suelo' });
+// déficit: de pie sobre una plataforma; los discos siguen en el suelo, así que la barra empieza más abajo respecto a los pies
+FG['peso muerto en deficit'] = fgPesoMuerto({ tAbajo: 68, barAbajo: FG_SUELO - 10, pie: [55, 76.5], fondo: '<rect x="42" y="78" width="30" height="6" rx="1.5" class="il-mueble"/>', rotulo: 'de pie sobre una plataforma' });
+// rack pull: la barra parte de los soportes del rack, a la altura de las rodillas
+FG['rack pull'] = fgPesoMuerto({ tAbajo: 40, barAbajo: 52.8, rotulo: 'desde los soportes · rodillas',
+  fondo: '<line x1="70" y1="6" x2="70" y2="84" class="il-mueble il-sin"/><line x1="78" y1="6" x2="78" y2="84" class="il-mueble il-sin"/><line x1="50" y1="62.8" x2="80" y2="62.8" class="il-mueble"/>' });
+// piernas rígidas: las rodillas casi estiradas todo el recorrido; la cadera va atrás y la barra baja hasta media espinilla
+(function(){
+  const pose = function(k){ const t = fgLerp(78, 3, k), barY = fgLerp(66.5, 47, k), n0 = fgDir(t, FG_L.tronco);
+    return { p: [50, barY - 24.8 - n0[1]], t: t, cab: fgLerp(-30, 0, k), a: [55, 82.5], f: [62, 83.5], r: -1, recto: true,
+      w: function(P){ return [P.n[0], barY]; }, al: { en: function(P){ return P.n; }, x: 60 } }; };
+  // con la cadera más alta las piernas quedan casi rectas
+  FG['peso muerto piernas rigidas'] = { seq: [[pose(1), 0.5], [pose(0.5), 0.6], [pose(0), 0.6], [pose(0), 0.3], [pose(0.5), 0.6]], vuelta: 0.6,
+    fondo: FG_PISO + fgRotulo('piernas casi estiradas'), delante: fgEnManos('barra') };
+})();
+// barra hexagonal (nota: «parece una barra normal»): de frente; el marco hexagonal rodea las piernas (la mitad de atrás, detrás
+// del cuerpo), las asas a los lados y los discos en los extremos; el tronco más erguido que en el convencional
+(function(){
+  const pies = { aL: [53, 82], aR: [67, 82] };
+  const agarre = { wL: function(P){ return [P.sL[0] - 1, P.sL[1] + 24.6]; }, wR: function(P){ return [P.sR[0] + 1, P.sR[1] + 24.6]; }, cL: -1, cR: 1 };
+  const A = Object.assign({ vista: 'frente', p: [60, 66], escTronco: 0.82, cab: 0 }, pies, agarre), B = Object.assign({ vista: 'frente', p: [60, 49], escTronco: 1 }, pies, agarre);
+  const hexY = function(P){ return (P.wL[1] + P.wR[1]) / 2; };
+  FG['peso muerto con barra hexagonal'] = { vista: 'frente', seq: [[A, 0.6], [B, 1.1], [B, 0.3], [A, 1.1]], vuelta: 0.4,
+    fondo: FG_PISO + fgRotulo('barra hexagonal · asas'),
+    atras: function(P, ln){ const y = hexY(P); ln([36, y], [44, y - 4.5], 'il-barra'); ln([44, y - 4.5], [76, y - 4.5], 'il-barra'); ln([76, y - 4.5], [84, y], 'il-barra'); },
+    delante: function(P, ln){ const y = hexY(P); ln([36, y], [44, y + 4.5], 'il-barra'); ln([44, y + 4.5], [76, y + 4.5], 'il-barra'); ln([76, y + 4.5], [84, y], 'il-barra');
+      ln([P.wL[0], y - 4.5], [P.wL[0], y + 4.5], 'il-barra'); ln([P.wR[0], y - 4.5], [P.wR[0], y + 4.5], 'il-barra');
+      ln([26, y], [36, y], 'il-barra'); ln([84, y], [94, y], 'il-barra'); ln([29, y - 8], [29, y + 8], 'il-placa'); ln([91, y - 8], [91, y + 8], 'il-placa'); } };
+})();
+
+/* --- hiperextensiones (notas: «el movimiento del torso respecto a la pelvis no es natural», «el torso atraviesa el pad, no se
+   ven los brazos»): los tobillos bajo el rodillo y el pad bajo los muslos, acabando justo antes de la cadera; el tronco gira por
+   la cadera, desde colgar hasta quedar en línea con las piernas, con los brazos cruzados sobre el pecho --- */
+function fgHiper(o){
+  const a = o.tobillo, ang = o.angulo, u = [Math.cos(fgRad(ang)), -Math.sin(fgRad(ang))], p = [a[0] + u[0] * 36.8, a[1] + u[1] * 36.8];
+  const tPiernas = Math.atan2(u[0], -u[1]) * 180 / Math.PI;
+  const pose = function(t){ return { p: p, t: t, cab: 0, a: a, f: fgSum(a, fgDir(tPiernas + 90, -5)), r: 1,
+    e: function(P){ return fgSum(fgLerp(P.p, P.n, 0.55), fgDir(t + 90, 4.5)); }, w: function(P){ return fgSum(fgLerp(P.p, P.n, 0.88), fgDir(t + 90, 3)); } }; };
+  const nrm = fgDir(tPiernas + 90, 1), padA = fgSum(fgLerp(a, p, 0.5), [nrm[0] * 3.5, nrm[1] * 3.5]), padB = fgSum(fgLerp(a, p, 0.93), [nrm[0] * 3.5, nrm[1] * 3.5]);
+  const rod = fgSum(a, [nrm[0] * 3.5, nrm[1] * 3.5]);
+  const fondo = FG_PISO + '<line x1="' + fgNum(padA[0]) + '" y1="' + fgNum(padA[1]) + '" x2="' + fgNum(padB[0]) + '" y2="' + fgNum(padB[1]) + '" class="il-pad"/>'
+    + '<circle cx="' + fgNum(rod[0]) + '" cy="' + fgNum(rod[1]) + '" r="2.8" class="il-rodillo"/>'
+    + '<line x1="' + fgNum(padB[0] - 2) + '" y1="' + fgNum(padB[1] + 2) + '" x2="' + fgNum(padB[0] - 6) + '" y2="84" class="il-mueble il-sin"/><line x1="' + fgNum(rod[0]) + '" y1="' + fgNum(rod[1]) + '" x2="' + fgNum(rod[0]) + '" y2="84" class="il-mueble il-sin"/>';
+  return { seq: [[pose(o.colgado), 0.5], [pose((o.colgado + tPiernas) / 2), 0.5], [pose(tPiernas), 0.5], [pose(tPiernas), 0.4], [pose((o.colgado + tPiernas) / 2), 0.6]], vuelta: 0.6,
+    fondo: fondo + fgRotulo(o.rotulo) };
+}
+FG['hiperextensiones'] = fgHiper({ tobillo: [12, 42], angulo: 0, colgado: 178, rotulo: 'brazos cruzados sobre el pecho' });
+FG['hiperextension 45'] = fgHiper({ tobillo: [24, 76], angulo: 45, colgado: 175, rotulo: 'banco a 45° · brazos cruzados' });
+
+/* --- extensión de cuádriceps (nota: «la extensión de la rodilla supera la biomecánica natural»): sentado, el eje de la
+   máquina a la altura de la rodilla; la pierna va de 90° (colgando) a estirada en horizontal, sin pasarse --- */
+(function(){
+  const rod = [61, 55], cad = [42, 55];
+  const pose = function(g){ const a = fgSum(rod, fgDir(180 - g, FG_L.canilla)); return { p: cad, t: -8, cab: 0, a: a, f: fgSum(a, fgDir(90 - g, 6)), r: -1, k: rod,
+    brazo: [176, 168] }; };
+  FG['extension de cuadriceps'] = { seq: [[pose(0), 0.3], [pose(30), 0.3], [pose(60), 0.3], [pose(90), 0.3], [pose(90), 0.35], [pose(45), 0.6]], vuelta: 0.6,
+    fondo: FG_PISO + fgAsiento(30, 62, 58) + FG_PIVOTE(rod[0], rod[1]) + fgRotulo('hasta estirar, sin pasarse'),
+    delante: function(P, ln, ci){ const r = fgSum(P.a, fgDir(Math.atan2(P.a[0] - rod[0], rod[1] - P.a[1]) * 180 / Math.PI + 90, 3)); ln(rod, r, 'il-mueble il-sin'); ci(r, 2.8, 'il-rodillo'); } };
+})();
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
