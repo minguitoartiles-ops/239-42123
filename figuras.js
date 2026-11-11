@@ -1304,7 +1304,7 @@ function fgHiper(o){
     fondo: fondo + fgRotulo(o.rotulo) };
 }
 FG['hiperextensiones'] = fgHiper({ tobillo: [12, 42], angulo: 0, colgado: 178, rotulo: 'brazos cruzados sobre el pecho' });
-FG['hiperextension 45'] = fgHiper({ tobillo: [24, 76], angulo: 45, colgado: 175, rotulo: 'banco a 45° · brazos cruzados' });
+FG['hiperextension 45°'] = fgHiper({ tobillo: [24, 76], angulo: 45, colgado: 175, rotulo: 'banco a 45° · brazos cruzados' });
 
 /* --- extensión de cuádriceps (nota: «la extensión de la rodilla supera la biomecánica natural»): sentado, el eje de la
    máquina a la altura de la rodilla; la pierna va de 90° (colgando) a estirada en horizontal, sin pasarse --- */
