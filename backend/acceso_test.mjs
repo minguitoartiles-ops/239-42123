@@ -545,9 +545,10 @@ test('Pagos y bajas desde el servidor', async (t) => {
   const hasta = sumar(alta.acceso_hasta, 30);
 
   await t.test('El equipo registra un pago y el servidor amplía el acceso', async () => {
-    const p = await pD.registrar({ clienteId: alta.id, importe: '60', metodo: 'bizum', desde: alta.acceso_hasta, hasta });
+    const p = await pD.registrar({ clienteId: alta.id, importe: '60', metodo: 'bizum', desde: alta.acceso_hasta, hasta, nota: 'Nota interna' });
     assert.equal(Number(p.importe), 60);
     assert.equal(p.registrado_por, dom);
+    assert.equal(p.nota, 'Nota interna');
     const f = await crearClientes(sbC).miFicha();
     assert.equal(f.acceso_hasta, hasta);
     await pD.registrar({ clienteId: otra.id, importe: 40, metodo: 'efectivo' });
@@ -561,6 +562,10 @@ test('Pagos y bajas desde el servidor', async (t) => {
   await t.test('El cliente ve solo sus pagos; el equipo, todos', async () => {
     const suyos = await pC.lista();
     assert.deepEqual([...new Set(suyos.map((x) => x.cliente_id))], [alta.id]);
+    // 9/11 · lo interno del pago no le llega al cliente
+    assert.ok(suyos.length && suyos.every((x) => x.nota === null && x.registrado_por === null));
+    const { error } = await sbC.from('pagos').select('nota');
+    assert.ok(error, 'el cliente no puede pedir la nota interna');
     const todos = await pD.lista();
     assert.ok(todos.some((x) => x.cliente_id === otra.id));
   });

@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.92.0';
+const APP_VERSION = '0.94.1';
 /* 8/11 · la versión de la portada sale de aquí (antes estaba escrita a mano y se quedó en la 0.84) */
 (function(){
   const poner = function(){ const e = document.getElementById('appVersion'); if (e) e.textContent = 'Versión ' + APP_VERSION; };
@@ -14,6 +14,7 @@ const APP_VERSION = '0.92.0';
 const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
+const TEXTO_KEY = 'fsd_texto';   // 11/11 · tamaño del texto: n (normal) · g (grande) · mg (muy grande)
 const CONSENT_MESES = 24;               // renovación recomendada por la AEPD
 
 /* ---------- utilidades ---------- */
@@ -71,14 +72,14 @@ function cerrarDialogo(acepta){
 /* =========================================================
    APARIENCIA
    ========================================================= */
-let temaPref = 'claro';
+let temaPref = 'auto';
 const mqOscuro = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
 function aplicarTema(p){
   temaPref = p;
   const oscuro = p === 'oscuro' || (p === 'auto' && mqOscuro && mqOscuro.matches);
   document.getElementById('screenRoot').classList.toggle('light', !oscuro);
-  const bg = oscuro ? '#0E1013' : '#FFFFFF';
+  const bg = oscuro ? '#0b1730' : '#f8fafd';   // 11/11 · fondos de la web (navy y bg)
   document.body.style.background = bg;
   document.documentElement.style.background = bg;
   const m = document.querySelector('meta[name="theme-color"]');
@@ -92,9 +93,30 @@ function elegirTema(p){
   if (prefPermitidas()) { try { localStorage.setItem(TEMA_KEY, p); } catch(e){} }
 }
 function cargarTema(){
-  let p = 'claro';
-  if (prefPermitidas()) { try { p = localStorage.getItem(TEMA_KEY) || 'claro'; } catch(e){} }
+  let p = 'auto';   // 11/11 · sin elección guardada, sigue el modo del sistema (Apple, Material, web.dev)
+  if (prefPermitidas()) { try { p = localStorage.getItem(TEMA_KEY) || 'auto'; } catch(e){} }
   aplicarTema(p);
+}
+/* ---------- Tamaño del texto (WCAG 1.4.4 · Apple Dynamic Type · Android sp): multiplica los 8 escalones de letra ---------- */
+let textoPref = 'n';
+function aplicarTamTexto(v){
+  if (v !== 'g' && v !== 'mg') v = 'n';
+  textoPref = v;
+  if (v === 'n') document.documentElement.removeAttribute('data-ts'); else document.documentElement.setAttribute('data-ts', v);
+  Array.prototype.forEach.call(document.querySelectorAll('.seg-tam button'), function(b){
+    const on = b.getAttribute('data-tam') === v;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+}
+function elegirTamTexto(v){
+  aplicarTamTexto(v);
+  if (prefPermitidas()) { try { localStorage.setItem(TEXTO_KEY, textoPref); } catch(e){} }
+}
+function cargarTamTexto(){
+  let v = 'n';
+  if (prefPermitidas()) { try { v = localStorage.getItem(TEXTO_KEY) || 'n'; } catch(e){} }
+  aplicarTamTexto(v);
 }
 if (mqOscuro) {
   const alCambiar = function(){ if (temaPref === 'auto') aplicarTema('auto'); };
@@ -123,8 +145,8 @@ function prefPermitidas(){
 function guardarConsent(pref){
   consentMem = { v: POLICY_V, fecha: new Date().toISOString(), pref: !!pref };
   try { localStorage.setItem(CONSENT_KEY, JSON.stringify(consentMem)); } catch(e){}
-  if (pref) { try { localStorage.setItem(TEMA_KEY, temaPref); } catch(e){} }
-  else      { try { localStorage.removeItem(TEMA_KEY); } catch(e){} }
+  if (pref) { try { localStorage.setItem(TEMA_KEY, temaPref); localStorage.setItem(TEXTO_KEY, textoPref); } catch(e){} }
+  else      { try { localStorage.removeItem(TEMA_KEY); localStorage.removeItem(TEXTO_KEY); } catch(e){} }
   document.getElementById('cookieBanner').classList.remove('show');
   document.getElementById('cookieConfig').classList.remove('show');
   refrescarAjustes();
@@ -422,8 +444,14 @@ function htmlAjustes(rol){
         const lbl = t === 'claro' ? 'Claro' : (t === 'oscuro' ? 'Oscuro' : 'Automático');
         return '<button type="button" data-tema="' + t + '" class="' + (temaPref === t ? 'on' : '') + '" onclick="elegirTema(\'' + t + '\')">' + lbl + '</button>';
       }).join('')
-    + '</div><div class="ajx-hint">Automático sigue el modo claro u oscuro de tu teléfono.'
-    + (prefPermitidas() ? '' : ' Como no has aceptado las cookies de preferencias, la elección solo dura hasta que cierres la app.')
+    + '</div><div class="ajx-hint">Automático sigue el modo claro u oscuro de tu teléfono.</div>'
+    + '<div class="ajx-sub" id="ajxTamLbl">Tamaño del texto</div>'
+    + '<div class="seg seg-tam" role="radiogroup" aria-labelledby="ajxTamLbl">'
+    + [['n', 'Normal'], ['g', 'Grande'], ['mg', 'Muy grande']].map(function(t){
+        return '<button type="button" role="radio" aria-checked="' + (textoPref === t[0]) + '" data-tam="' + t[0] + '" class="seg-tam-' + t[0] + (textoPref === t[0] ? ' on' : '') + '" onclick="elegirTamTexto(\'' + t[0] + '\')">' + t[1] + '</button>';
+      }).join('')
+    + '</div><div class="ajx-hint">También puedes ampliar la pantalla con dos dedos.'
+    + (prefPermitidas() ? '' : ' Como no has aceptado las cookies de preferencias, tus elecciones solo duran hasta que cierres la app.')
     + '</div></div></div>';
 
   /* --- Notificaciones (cliente y profesional) --- */
@@ -612,6 +640,7 @@ const LEGAL_COOKIES =
 + '<tr><td>fsd_archivos</td><td>Técnica</td><td>Guardar en el dispositivo los PDF de protocolos que abres</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_sonidos</td><td>Preferencia</td><td>Recordar si quieres los sonidos de avisos y mensajes</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_tema</td><td>Preferencia</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
++ '<tr><td>fsd_texto</td><td>Preferencia</td><td>Recordar el tamaño del texto (normal, grande o muy grande)</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
 + '<tr><td>Otras fsd_…</td><td>Técnica</td><td>Recordar cómo dejas la pantalla (vistas, anchos de columnas, descansos, emojis recientes, plantillas)</td><td>Hasta que borres los datos</td></tr>'
 + '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
@@ -656,5 +685,6 @@ topScreens.push('view-coach-ajustes');
 
 /* ---------- arranque ---------- */
 cargarTema();
+cargarTamTexto();
 revisarBannerCookies();
 if (clienteActual && document.getElementById('app').style.display === 'flex') comprobarConsentSalud();

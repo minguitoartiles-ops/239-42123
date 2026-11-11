@@ -208,7 +208,7 @@ function abrirEmisor(volverA){
     + '<div class="field"><label for="prEmImp">Impuesto (los precios lo incluyen)</label><select id="prEmImp" class="mj-select">' + PR_IMPUESTOS.map(function(x){ return '<option value="' + x[0] + '"' + ((e.imp || 'igic7') === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></div>'
     + '<div class="field"><label for="prEmNota">Nota al pie (opcional)</label><input type="text" id="prEmNota" value="' + esc(e.nota || '') + '" placeholder="Ej.: motivo de exención o forma de pago"></div>'
     + '<p class="ajx-note">Revisa con tu gestoría qué impuesto y qué menciones te corresponden.</p>'
-    + '<button class="btn-primary" onclick="guardarEmisor(' + (volverA ? '\'' + esc(volverA) + '\'' : '') + ')">Guardar</button></div>';
+    + '<button class="btn-primary" onclick="guardarEmisor(' + (volverA ? '\'' + fsdEscJs(volverA) + '\'' : '') + ')">Guardar</button></div>';
   o.classList.add('show');
 }
 function guardarEmisor(volverA){

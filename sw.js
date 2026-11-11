@@ -1,19 +1,16 @@
 // Service worker: deja la app disponible sin conexión.
 // Al cambiar archivos, sube CACHE_VERSION para que los móviles reciban la nueva versión.
-const CACHE_VERSION = 'fsd-0.92.0';
+const CACHE_VERSION = 'fsd-0.94.1';
 const CACHE_NAME = CACHE_VERSION;
 const SHELL = [
   './',
   './index.html',
   './styles.css',
   './fonts.css',
-  './fonts/archivo-latin-400-normal.woff2',
-  './fonts/archivo-latin-500-normal.woff2',
-  './fonts/archivo-latin-600-normal.woff2',
-  './fonts/archivo-latin-700-normal.woff2',
-  './fonts/archivo-latin-800-normal.woff2',
-  './fonts/archivo-latin-900-normal.woff2',
-  './fonts/archivo-black-latin-400-normal.woff2',
+  './fonts/poppins-600.woff',
+  './fonts/poppins-700.woff',
+  './fonts/poppins-800.woff',
+  './fonts/inter-var.woff',
   './fonts/caveat-latin-600-normal.woff2',
   './fonts/ibm-plex-mono-latin-400-normal.woff2',
   './fonts/ibm-plex-mono-latin-500-normal.woff2',
@@ -91,6 +88,8 @@ const SHELL = [
   './servidor-cuenta.js',
   './servidor-plantillas.js',
   './sin-parpadeo.js',
+  './diagnostico.js',
+  './barra-pro.js',
   './assets/qr_app.png',
   './manifest.webmanifest',
   './manifest-pruebas.webmanifest',

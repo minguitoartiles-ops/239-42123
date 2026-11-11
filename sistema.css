@@ -77,7 +77,7 @@ html:not(.esc) :is(.ex-filtros,.pagos-filtros,.pu-chat-chips,.ent-filtros) > *{f
    Diseño · Fase 4: escritorio y movimiento
    ========================================================================== */
 /* Escala propia de escritorio: títulos de 28 px y texto base de 15 px */
-html.esc{--fs-2xl:28px;}
+html.esc{--fs-2xl:calc(28px*var(--ts,1));}
 /* El menú lateral ya dice quién eres: fuera el rótulo repetido sobre cada título */
 html.esc .eyebrow[id$="Who"]{display:none;}
 html.esc #view-coach-panel .h-title,html.esc .screen .alta-top .h-title{margin-top:0;}
@@ -116,13 +116,13 @@ html.esc #coachTabs .tbi{min-height:44px;height:44px;}
 .sp-b1{width:150px;height:150px;right:-50px;top:-40px;}
 .sp-b2{width:64px;height:64px;left:-18px;bottom:32%;}
 .sp-puntos{position:absolute;right:22px;bottom:22px;width:100px;height:80px;background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 80%, transparent) 2.2px, transparent 2.6px);background-size:20px 20px;}
-#view-splash .tagline .real{color:var(--accent);}
+#view-splash .tagline .real{color:var(--logo-blue);}
 /* tema claro */
 .screen.light #view-splash{background:radial-gradient(90% 60% at 50% 30%, #FFFFFF 0%, #F3F8FD 45%, #CFE3F7 100%);}
 .screen.light #view-splash .login-card{background:#fff;box-shadow:0 10px 30px -14px rgba(43,103,163,.35);border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);}
 .screen.light #view-splash .pro-btn{background:#fff;}
 /* tema oscuro: lo mismo, mucho más tenue */
-.screen:not(.light) #view-splash{background:radial-gradient(90% 60% at 50% 30%, #1A1F26 0%, #12161B 50%, #0E1013 100%);}
+.screen:not(.light) #view-splash{background:radial-gradient(90% 60% at 50% 30%, #16264a 0%, #0f1d3b 50%, #0b1730 100%);}
 .screen:not(.light) .sp-deco::before{opacity:.05;}
 .screen:not(.light) .sp-anillo{border-color:rgba(255,255,255,.08);}
 .screen:not(.light) .sp-burbuja{background:color-mix(in srgb, var(--accent) 10%, transparent);}
@@ -152,7 +152,7 @@ html.esc .screen:not(.light) #coachTabs::after{opacity:.05;}
 html.esc #coachTabs > *{position:relative;z-index:1;}
 html.esc.esc-mini #coachTabs::after{display:none;}
 html.esc .esc-logo b{font:400 var(--fs-m)/1.1 var(--f-display) !important;letter-spacing:.2px;}
-html.esc .esc-logo b i{font-style:normal;color:var(--accent);}
+html.esc .esc-logo b i{font-style:normal;color:var(--logo-blue);}
 html.esc .alta-top:has(> div > .eyebrow[id$="Who"]),html.esc .alta-top:has(.eyebrow[id$="Who"]){position:relative;}
 html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;pointer-events:none;right:72px;top:10px;width:84px;height:44px;
   background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent) 1.8px, transparent 2.2px);background-size:14px 14px;}
@@ -217,7 +217,7 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
 @media (hover:hover) and (pointer:fine){
   :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,#sendBtn):not(:disabled):hover{filter:brightness(.96);cursor:pointer;}
   .cliente-card:hover{box-shadow:0 4px 16px -8px rgba(0,0,0,.25);}
-  :is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn:hover{background-color:var(--wash-soft) !important;cursor:pointer;}
+  :is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn):hover{background-color:var(--wash-soft) !important;cursor:pointer;}
   :is(.cd-edit-nom,.list-row.danger,.cmp-ico):hover{filter:brightness(.95);}
 }
 
@@ -230,3 +230,75 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
   .fsd-cerrando{display:none !important;}
   :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,.cliente-card,#sendBtn,.cmp-main):active{transform:none;}
 }
+
+/* =========================================================
+   11/11 · Guías oficiales (Apple HIG · Material 3 · WCAG 2.2) y sistema de diseño de Design
+   1) Tamaño del texto: html[data-ts] cambia --ts, que multiplica los 8 escalones --fs-*.
+   2) Zonas táctiles de 44 px en el móvil (tap-target del sistema de diseño).
+   3) Campos a 16 px en pantallas táctiles: así el iPhone no amplía la pantalla al tocarlos.
+   ========================================================= */
+html[data-ts="g"]{--ts:1.15;}
+html[data-ts="mg"]{--ts:1.3;}
+/* la barra inferior no crece: cada pestaña mide un quinto de la pantalla y el nombre tiene que caber (la zona que se toca sí mide 58 px) */
+.tb .tbi,.coach-tb .tbi{font-size:11px;}
+.tb .tbi .tbi-emo,.coach-tb .tbi .tbi-emo{font-size:17px;}
+.ajx-sub{font:600 var(--fs-s) var(--f-body);color:var(--ink);margin:16px 0 8px;}
+.seg-tam button{white-space:nowrap;padding:0 4px;}
+.seg-tam .seg-tam-n{font-size:13px;}
+.seg-tam .seg-tam-g{font-size:calc(13px*1.15);}
+.seg-tam .seg-tam-mg{font-size:calc(13px*1.3);}
+
+/* Zonas táctiles: lo que se ve no cambia en el escritorio; en el móvil el control mide 44 px */
+html:not(.esc) :is(.sg-filtros .chip,.pu-chat-chips .chip,.pagos-filtros .chip,.gr-chips .chip,.ex-filtros button,.ent-filtros button,.mini-btn,.sg-ver.sg-ver-btn,.seg button){height:44px;min-height:44px;}
+html:not(.esc) :is(.chk-row,.team-chip){min-height:44px;}
+html:not(.esc) .chk-row{align-items:center;}
+html:not(.esc) .chat-cab-volver{width:44px;height:44px;}
+html:not(.esc) #chatInput{min-height:44px;}
+html:not(.esc) :is(#view-coach-panel,body) .esc-buscar{height:44px;}
+html:not(.esc) :is(.picker-search,.picker-select,.mj-select,.cq-tel-p){height:44px;}
+
+@media (pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):not([type=hidden]):not(.code-input),
+  :is(textarea,select):not(.code-input){font-size:max(16px,var(--fs-m));}
+  html:not(.esc) :is(#view-coach-panel,body) .esc-buscar{font-size:max(16px,var(--fs-m));}
+}
+/* controles de texto sueltos (Volver, editar nombre, cabecera de bloque plegable): la zona que se toca llega a 44 px sin mover nada */
+html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl){position:relative;}
+html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl)::before{content:'';position:absolute;left:0;right:0;top:50%;height:max(100%,44px);transform:translateY(-50%);}
+/* barra inferior: la zona que se toca llega hasta los bordes de la barra (≈58 px de alto, por encima de los 48 dp de Android) */
+.tb .tbi::before,.coach-tb .tbi::before{content:'';position:absolute;left:0;right:0;top:-6px;bottom:-8px;}
+
+/* 11/11 · barra del profesional en el móvil: Pagos es pestaña propia, «Más» desaparece y Ajustes va a la cabecera */
+html:not(.esc) #coachTabs #ctab-mas{display:none !important;}
+html:not(.esc) #coachTabs #ctab-pagos{display:flex !important;}
+html.esc .pro-cfg{display:none !important;}
+.pro-recetas{margin:0 0 16px;}
+.pro-recetas .list-row{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;min-height:44px;}
+html:not(.esc) #view-coach-ajustes .alta-top .back-btn{display:inline-flex;}
+
+/* =========================================================
+   11/11/2026 · Diseño de la web (sistema de diseño Fitnessindramas) en toda la app
+   Colores, tipografías y radios en styles.css (:root, .screen, .screen.light).
+   Se mantienen: mayúsculas y letra de máquina en pestañas, rótulos y cifras; los emojis.
+   ========================================================= */
+html,body{background:#f8fafd;}
+html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1730;}
+.screen{background:var(--bg);}
+/* titulares en Poppins con el espaciado de la web; títulos de tarjeta en Poppins 700 */
+.h-title{letter-spacing:-.025em;}
+.card-head b{font:700 var(--fs-l) var(--f-titulo);letter-spacing:-.015em;}
+/* tarjetas: blancas con borde de 1 px sobre el fondo gris azulado */
+.card{border:1px solid var(--line);}
+/* botones: azul con texto blanco, 48 px, radio 14 y sombra azul; secundario blanco con borde */
+.btn-primary{height:auto;min-height:48px;border-radius:var(--r-btn);box-shadow:var(--sombra-accion);font:700 var(--fs-m)/1.2 var(--f-body);}
+.btn-primary:disabled{box-shadow:none;}
+.btn-eq{min-height:48px;border-radius:var(--r-btn);background:var(--card);border:1px solid var(--line-strong);color:var(--ink);font:700 var(--fs-m)/1.2 var(--f-body);}
+.segui-aviso-cta{border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);min-height:44px;display:flex;align-items:center;padding:0 16px;box-shadow:var(--sombra-accion);}
+.week-dot.done{background:var(--accent);color:var(--on-accent);}
+/* foco visible como en la web: anillo azul de 3 px (azul claro sobre el fondo oscuro) */
+:is(button,a,[tabindex],.card[onclick]):focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+.screen:not(.light) :is(button,a,[tabindex],.card[onclick]):focus-visible{outline-color:#89b9e8;}
+/* 11/11 · la nota de Pagos se metía 8 px dentro de la última fila (margen negativo pensado para Ajustes) */
+#pagosPro > .ajx-note{margin:16px 4px 20px;}
+/* la etiqueta de estado del plan no se parte en dos líneas */
+.plan-est{white-space:nowrap;flex:none;}

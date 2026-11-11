@@ -444,7 +444,7 @@ function htmlSensCliente(area){
     h += '<button type="button" role="radio" aria-checked="' + (sel === i) + '" class="sens-animo' + (sel === i ? ' on' : '') + '" onclick="elegirAnimo(\'' + area + '\',' + i + ')">'
       + '<span>' + ANIMOS[i][0] + '</span><small>' + ANIMOS[i][1] + '</small></button>';
   }
-  h += '</div><textarea class="sg-text sens-txt" id="sensTxt-' + area + '" rows="2" placeholder="' + esc(A.ej) + '">' + esc(hoy && hoy.txt || '') + '</textarea>'
+  h += '</div><textarea class="sg-text sens-txt" id="sensTxt-' + area + '" rows="2" aria-label="Cuéntanos algo más (opcional)" placeholder="' + esc(A.ej) + '">' + esc(hoy && hoy.txt || '') + '</textarea>'
     + '<button class="btn-primary sens-enviar" onclick="enviarSens(\'' + area + '\')"' + (sel ? '' : ' disabled') + '>Enviar a ' + esc(pro ? pro.u : 'tu equipo') + '</button>';
   return h + '</div>';
 }
@@ -864,7 +864,8 @@ function htmlAlergiasPro(k, compacto){
   const ids = Object.keys(a.items).sort(function(x, y){ return orden[a.items[x]] - orden[a.items[y]]; });
   const chips = ids.map(function(id){
     const e = a.items[id];
-    return '<span class="alg-chip ' + (e || 'sin') + '">' + esc(nombreAlergia(id)) + '<small>' + (e === 'diag' ? 'diagnosticada' : (e === 'sosp' ? 'sospecha' : 'sin indicar')) + '</small></span>';
+    // 9/11 · la marca la escribe el cliente: solo valen las tres conocidas (antes se pintaba tal cual: se podía colar código)
+    return '<span class="alg-chip ' + (e === 'diag' || e === 'sosp' ? e : 'sin') + '">' + esc(nombreAlergia(id)) + '<small>' + (e === 'diag' ? 'diagnosticada' : (e === 'sosp' ? 'sospecha' : 'sin indicar')) + '</small></span>';
   }).join('');
   return '<div class="alg-chips">' + chips + '</div>' + (a.otras ? '<div class="alg-otras">«' + esc(a.otras) + '»</div>' : '')
     + (compacto ? '' : '<div class="alg-fecha">Actualizado el ' + fechaCorta(a.fecha) + '</div>');

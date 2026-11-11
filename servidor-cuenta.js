@@ -162,6 +162,55 @@ if (svActivo()) {
   try { CAMPANA_PRO.push('cuentas'); } catch(e){}
 }
 const SV_SA_DIAS_AVISO = 14;                  // en un aparato nuevo, solo se avisa de lo reciente
+/* 9/11 · auditoría de seguridad: lo que llega de la tabla salud lo escribe el cliente y alguien podría mandarlo
+   directamente al servidor, saltándose la app. Antes de usarlo se queda solo con la forma que guarda la app:
+   claves conocidas, tipos esperados, textos acotados y sin < > (así no puede colar código en la pantalla del
+   equipo ni romperla con datos raros). Lo que no encaja, se descarta. */
+const SV_SA_CLAVE = /^[a-z0-9_]{1,40}$/, SV_SA_ID = /^[a-z0-9_-]{1,40}$/i;
+function svSaTxt(v, max){ return typeof v === 'string' ? v.replace(/</g, '‹').replace(/>/g, '›').slice(0, max) : undefined; }
+function svSaFecha(v){ return typeof v === 'string' && v.length <= 40 && !isNaN(Date.parse(v)) ? v : undefined; }
+function svSaValor(v){
+  if (typeof v === 'number') return isFinite(v) ? v : undefined;
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'string') return svSaTxt(v, 2000);
+  if (Array.isArray(v)) return v.slice(0, 40).map(function(x){ return typeof x === 'number' && isFinite(x) ? x : (svSaTxt(x, 120) || ''); });
+  return undefined;
+}
+function svSaLimpiar(d){
+  const x = {};
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return x;
+  const c = d.cuestionario;
+  if (c && typeof c === 'object' && !Array.isArray(c) && svSaFecha(c.fecha)) {
+    const r = {};
+    if (c.r && typeof c.r === 'object' && !Array.isArray(c.r)) Object.keys(c.r).slice(0, 120).forEach(function(k){ if (!SV_SA_CLAVE.test(k)) return; const v = svSaValor(c.r[k]); if (v !== undefined) r[k] = v; });
+    x.cuestionario = { fecha: c.fecha, r: r };
+    const ver = svSaTxt(c.v, 10); if (ver) x.cuestionario.v = ver;
+  }
+  if (d.medIni && typeof d.medIni === 'object' && !Array.isArray(d.medIni)) {
+    const m = {};
+    Object.keys(d.medIni).slice(0, 20).forEach(function(k){ const v = d.medIni[k]; if (SV_SA_CLAVE.test(k) && typeof v === 'number' && isFinite(v) && v > 0 && v < 1000) m[k] = v; });
+    x.medIni = m;
+  }
+  const a = d.alergias;
+  if (a && typeof a === 'object' && !Array.isArray(a)) {
+    const al = { items: {} };
+    if (svSaFecha(a.fecha)) al.fecha = a.fecha;
+    if (a.ninguna === true) al.ninguna = true;
+    const ot = svSaTxt(a.otras, 800); if (ot) al.otras = ot;
+    if (a.items && typeof a.items === 'object' && !Array.isArray(a.items)) Object.keys(a.items).slice(0, 80).forEach(function(id){
+      const e = a.items[id]; if (SV_SA_ID.test(id) && (e === 'diag' || e === 'sosp' || e === '')) al.items[id] = e;
+    });
+    const g = a.gastro;
+    if (g && typeof g === 'object' && !Array.isArray(g)) al.gastro = {
+      items: Array.isArray(g.items) ? g.items.filter(function(i){ return typeof i === 'string' && SV_SA_ID.test(i); }).slice(0, 30) : [],
+      ninguna: g.ninguna === true, txt: svSaTxt(g.txt, 800) || '' };
+    x.alergias = al;
+  }
+  const dni = svSaTxt(d.dni, 20); if (dni && /^[A-Za-z0-9 .-]{1,20}$/.test(dni)) x.dni = dni;
+  const nf = svSaTxt(d.nombreFiscal, 120); if (nf) x.nombreFiscal = nf;
+  const df = svSaTxt(d.dirFiscal, 200); if (df) x.dirFiscal = df;
+  return x;
+}
 function svSaDatos(d){
   const x = {};
   ['cuestionario', 'medIni', 'alergias', 'dni', 'nombreFiscal', 'dirFiscal'].forEach(function(c){ if (d[c] != null) x[c] = d[c]; });
@@ -205,7 +254,7 @@ function svSaTraer(sids){
   sids = Array.isArray(sids) && sids.length ? sids : null;           // (los eventos pasan un Event: entonces, todos)
   if (svSaTrayendo) { svSaOtraVez = svSaOtraVez === null ? (sids || 'todos') : (svSaOtraVez === 'todos' || !sids ? 'todos' : svSaOtraVez.concat(sids)); return svSaTrayendo; }
   svSaTrayendo = svCargar().then(function(x){ return x.salud.lista(sids); }).then(function(filas){
-    const por = {}; filas.forEach(function(r){ por[String(r.cliente_id).toLowerCase()] = r.datos || {}; });
+    const por = {}; filas.forEach(function(r){ por[String(r.cliente_id).toLowerCase()] = svSaLimpiar(r.datos); });
     if (window.fsdSesionCliente && !coachActivo) {
       const k = clienteActual, d = clientesData[k]; if (!d || !d.sid) return;
       const s = por[String(d.sid).toLowerCase()] || {};
