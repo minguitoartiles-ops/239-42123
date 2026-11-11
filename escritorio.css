@@ -155,9 +155,9 @@ html.esc .esc-tabla th,html.esc .esc-tabla td{padding:8px 12px;}
 .esc-sm-err{min-height:16px;font:500 var(--fs-s) var(--f-body);color:var(--danger-text);text-align:center;}
 html.esc-cliente body{background:#E7ECF2 !important;align-items:center;}
 html.esc-cliente .phone{width:430px;max-width:100%;box-shadow:0 0 0 1px rgba(0,0,0,.08), 0 20px 60px rgba(0,0,0,.12);background:var(--bg);}
-.esc-cli-pill{position:fixed;top:14px;left:14px;z-index:calc(var(--z-flotante) + 40);display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;border-radius:var(--r-pill);background:#12151A;color:#fff;font:500 var(--fs-s) Archivo,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.esc-cli-pill{position:fixed;top:14px;left:14px;z-index:calc(var(--z-flotante) + 40);display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;border-radius:var(--r-pill);background:#12151A;color:#fff;font:500 var(--fs-s) var(--f-body);box-shadow:0 6px 20px rgba(0,0,0,.18);}
 .esc-cli-pill[hidden]{display:none;}
-.esc-cli-pill button{border:none;border-radius:var(--r-pill);padding:4px 12px;background:var(--accent);color:#0E1013;font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer;}
+.esc-cli-pill button{border:none;border-radius:var(--r-pill);padding:4px 12px;background:var(--accent);color:var(--on-accent);font:700 var(--fs-s) var(--f-body);cursor:pointer;}
 
 /* ---------- #154 App de escritorio sin barra de título con texto ----------
    La ventana instalada usa «window-controls-overlay»: desaparece el texto de la barra de título

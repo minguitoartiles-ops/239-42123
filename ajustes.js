@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.94.0';
+const APP_VERSION = '0.94.1';
 /* 8/11 · la versión de la portada sale de aquí (antes estaba escrita a mano y se quedó en la 0.84) */
 (function(){
   const poner = function(){ const e = document.getElementById('appVersion'); if (e) e.textContent = 'Versión ' + APP_VERSION; };
@@ -79,7 +79,7 @@ function aplicarTema(p){
   temaPref = p;
   const oscuro = p === 'oscuro' || (p === 'auto' && mqOscuro && mqOscuro.matches);
   document.getElementById('screenRoot').classList.toggle('light', !oscuro);
-  const bg = oscuro ? '#0E1013' : '#FFFFFF';
+  const bg = oscuro ? '#0b1730' : '#f8fafd';   // 11/11 · fondos de la web (navy y bg)
   document.body.style.background = bg;
   document.documentElement.style.background = bg;
   const m = document.querySelector('meta[name="theme-color"]');

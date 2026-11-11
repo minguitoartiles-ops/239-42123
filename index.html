@@ -6,14 +6,14 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script>/* seguridad: la app no se deja meter dentro de otra web (clickjacking) */ if (window.top !== window.self) { document.documentElement.style.display = 'none'; try { window.top.location = window.self.location.href; } catch (e) {} }</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#f8fafd">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Fitnessindramas">
 <title>Fitnessindramas</title>
-<link rel="preload" href="fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/archivo-black-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-var.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/poppins-800.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="escritorio.css">
@@ -708,8 +708,8 @@ if ('serviceWorker' in navigator) {
           <div class="profile-head"><div class="avatar lg"></div><div><b id="perfNombre">—</b><span id="perfMeta">Sin asesoría activa</span></div></div>
 
           <div class="card-accent" style="display:flex;justify-content:space-between;align-items:center;padding:17px;">
-            <div><div style="font:700 var(--fs-m) Archivo,sans-serif">Seguimiento semanal</div><div style="font:500 var(--fs-s) Archivo,sans-serif;opacity:.75;margin-top:3px">Peso, medidas y cómo te has sentido</div></div>
-            <div onclick="goTo('seguimiento')" style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer">Preparar</div>
+            <div><div style="font:700 var(--fs-m) var(--f-body)">Seguimiento semanal</div><div style="font:500 var(--fs-s) var(--f-body);opacity:.75;margin-top:3px">Peso, medidas y cómo te has sentido</div></div>
+            <div onclick="goTo('seguimiento')" style="background:var(--bg);color:var(--ink);border-radius:11px;padding:10px 14px;font:700 var(--fs-s) var(--f-body);cursor:pointer">Preparar</div>
           </div>
 
           <div class="section-lbl">Mi asesoría</div>
@@ -897,6 +897,5 @@ if ('serviceWorker' in navigator) {
 <script src="sin-parpadeo.js" defer></script>
 <script src="diagnostico.js" defer></script>
 <script src="barra-pro.js" defer></script>
-<script src="diseno-web.js" defer></script>
 </body>
 </html>
