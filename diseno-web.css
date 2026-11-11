@@ -65,17 +65,7 @@ html.dw .segui-aviso-cta{border-radius:var(--r-btn);background:var(--accent);col
 /* Semana: el día hecho en azul con marca blanca */
 html.dw .week-dot.done{background:var(--accent);color:#fff;}
 
-/* Iconos de línea en lugar de emojis (los pone diseno-web.js) */
-html.dw svg.ico-dw{width:20px;height:20px;display:block;flex:none;}
-html.dw .kcal-line .ki{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:var(--accent-wash);color:var(--accent-text);}
-html.dw .kcal-line .ki svg.ico-dw{width:18px;height:18px;}
-html.dw .ha-ico{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:rgba(227,166,89,.18);color:var(--warn-text);}
-html.dw .mr>span{color:var(--ink);}
-html.dw #mrP>span{color:var(--protein-text);} html.dw #mrC>span{color:var(--carb-text);} html.dw #mrF>span{color:var(--fat-text);}
-html.dw .mr>span svg.ico-dw{width:22px;height:22px;}
-html.dw .card-head b svg.ico-dw{display:inline-block;vertical-align:-3px;margin-right:6px;color:var(--accent-text);}
-html.dw .hp-rachas span{display:inline-flex;align-items:center;gap:6px;}
-html.dw .hp-rachas svg.ico-dw{width:16px;height:16px;color:var(--accent-text);}
+/* Iconografía: se mantienen los emojis de la app (decisión de Domingo, 11/11: más cercanos, menos corporativos) */
 
 /* Foco visible como en la web: anillo azul de 3 px */
 html.dw :is(button,a,[tabindex],.card[onclick]):focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
