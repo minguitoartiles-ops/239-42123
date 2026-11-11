@@ -180,8 +180,8 @@ html.esc #listaClientes .kcard .kc-pie{display:none;}
 .ex-logro.show .exl-ico{animation:exSalto .6s ease;}
 @keyframes exSalto{0%{transform:scale(.4) rotate(-12deg);}60%{transform:scale(1.25) rotate(6deg);}100%{transform:none;}}
 .exl-txt{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.exl-txt b{font:700 var(--fs-m)/1.3 Archivo,sans-serif;}
-.exl-txt span{font:500 var(--fs-s)/1.35 Archivo,sans-serif;color:rgba(255,255,255,.75);}
+.exl-txt b{font:700 var(--fs-m)/1.3 var(--f-body);}
+.exl-txt span{font:500 var(--fs-s)/1.35 var(--f-body);color:rgba(255,255,255,.75);}
 .exl-chispas i{position:absolute;top:50%;left:30px;width:6px;height:6px;border-radius:50%;background:var(--carb);opacity:0;}
 .ex-logro.show .exl-chispas i{animation:exChispa .9s ease-out forwards;}
 .exl-chispas i:nth-child(2){background:var(--fat);animation-delay:.05s !important;}

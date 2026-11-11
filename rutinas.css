@@ -5,9 +5,9 @@
 
 /* ---------- jerarquía: día > ejercicio ---------- */
 #view-entreno .sesion-num{font-size:var(--fs-xs);}
-#view-entreno .sesion-title{font:800 var(--fs-xl)/1.2 Archivo,sans-serif;letter-spacing:-.01em;margin-top:4px;}
+#view-entreno .sesion-title{font:800 var(--fs-xl)/1.2 var(--f-body);letter-spacing:-.01em;margin-top:4px;}
 #view-entreno .sesion-card.open > .sesion-head{padding-bottom:12px;}
-#app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 var(--fs-l)/1.25 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-name-cell{font:700 var(--fs-l)/1.25 var(--f-body);}
 #app:not(.coach-edit) #view-entreno .ex-item{padding-top:8px;}
 
 /* ---------- el profesional no marca sesiones como hechas ---------- */
@@ -17,13 +17,13 @@
 .ex-desc-restore,.ex-desc-tag{display:none !important;}
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc{display:block;}
 #app:not(.coach-edit) #view-entreno .ex-item .ex-desc:empty{display:none !important;}
-#app:not(.coach-edit) #view-entreno .ex-desc{margin:8px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:var(--r-ctl);background:var(--accent-wash);color:var(--ink);font:500 var(--fs-s)/1.45 Archivo,sans-serif;}
+#app:not(.coach-edit) #view-entreno .ex-desc{margin:8px 0 8px;padding:8px 12px;border-left:3px solid var(--accent);border-radius:var(--r-ctl);background:var(--accent-wash);color:var(--ink);font:500 var(--fs-s)/1.45 var(--f-body);}
 #app:not(.coach-edit) #view-entreno .ex-desc::before{content:"📝 Nota de tu entrenador · ";font:700 var(--fs-xs) var(--f-mono);color:var(--accent-text);letter-spacing:.02em;}
-.coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 var(--fs-s)/1.45 Archivo,sans-serif;color:var(--ink);margin:8px 0;}
+.coach-edit #view-entreno .ex-desc{max-height:none !important;white-space:normal !important;overflow:visible !important;min-height:38px;font:500 var(--fs-s)/1.45 var(--f-body);color:var(--ink);margin:8px 0;}
 .coach-edit #view-entreno .ex-desc:empty::before{content:attr(data-ph);color:var(--dim-45);font-style:italic;}
 
 /* ---------- vídeo de ejemplo ---------- */
-.ex-video{font:700 var(--fs-s) Archivo,sans-serif;padding:8px 12px;border-radius:var(--r-ctl);border:1px solid var(--accent-line);background:var(--accent-wash);}
+.ex-video{font:700 var(--fs-s) var(--f-body);padding:8px 12px;border-radius:var(--r-ctl);border:1px solid var(--accent-line);background:var(--accent-wash);}
 .coach-edit .ex-video{display:none !important;}
 .coach-edit .ex-link-btn{font-size:var(--fs-s);padding:8px 12px;min-height:36px;}
 .ru-video{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:0 0 12px;border-radius:var(--r-ctl);overflow:hidden;background:#000;}
@@ -37,7 +37,7 @@
 .coach-edit #view-entreno .ex-item{counter-increment:ej;margin:12px 0;padding:12px 12px 4px;border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);}
 .coach-edit #view-entreno .ex-item + .ex-item{border-top:1px solid var(--line-strong);}
 .coach-edit #view-entreno .ex-table-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 12px;padding:2px 0 4px;}
-.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 100%;order:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-l)/1.25 Archivo,sans-serif;color:var(--ink);text-align:left;border-bottom:none;}
+.coach-edit #view-entreno .ex-table-row > .ex-name-cell{flex:1 1 100%;order:0;display:flex;align-items:baseline;gap:8px;font:700 var(--fs-l)/1.25 var(--f-body);color:var(--ink);text-align:left;border-bottom:none;}
 .coach-edit #view-entreno .ex-table-row > .ex-name-cell::before{content:counter(ej, decimal-leading-zero);flex:none;font:700 var(--fs-s) var(--f-mono);color:var(--dim-45);}
 .coach-edit #view-entreno .ex-table-row > .ex-name-cell::after{font-size:var(--fs-s);}
 .coach-edit #view-entreno .ex-table-row > .ru-asa{order:-1;}
@@ -61,7 +61,7 @@
 .coach-edit #sesionesCont .ex-table-row,.coach-edit #sesionesCont .en-ej-acts{user-select:none;-webkit-user-select:none;}
 .ru-drag,.ru-drag *{cursor:grabbing !important;user-select:none !important;-webkit-user-select:none !important;}
 .ex-item.ru-arrastrando{opacity:.45;outline:2px dashed var(--accent);outline-offset:2px;background:var(--accent-wash) !important;}
-.ru-fantasma{position:fixed;left:0;top:0;z-index:calc(var(--z-superior) + 1);pointer-events:none;padding:8px 16px;border-radius:var(--r-ctl);background:var(--ink);color:var(--bg);font:700 var(--fs-m) Archivo,sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
+.ru-fantasma{position:fixed;left:0;top:0;z-index:calc(var(--z-superior) + 1);pointer-events:none;padding:8px 16px;border-radius:var(--r-ctl);background:var(--ink);color:var(--bg);font:700 var(--fs-m) var(--f-body);box-shadow:0 10px 26px rgba(0,0,0,.28);white-space:nowrap;max-width:70vw;overflow:hidden;text-overflow:ellipsis;}
 .ru-fantasma span{opacity:.6;margin-right:4px;}
 .sesion-head.ru-soltar{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-wash);border-radius:var(--r-ctl);}
 
@@ -133,7 +133,7 @@ html.esc #app.coach-edit #view-entreno .ex-table-row > .ru-asa{align-self:center
 .ru-ss-f input::placeholder{color:var(--dim-45);}
 .ru-ss-x{width:34px;height:34px;border-radius:var(--r-ctl);border:1px solid color-mix(in srgb, var(--danger) 30%, transparent);background:none;color:var(--danger-text);cursor:pointer;font-size:var(--fs-s);}
 .ru-ss-x:disabled{opacity:.25;cursor:default;}
-.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 16px;border-radius:var(--r-ctl);border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 var(--fs-s) Archivo,sans-serif;cursor:pointer;}
+.ru-ss-mas{margin-top:8px;min-height:36px;padding:0 16px;border-radius:var(--r-ctl);border:1px dashed var(--accent-line);background:none;color:var(--accent-text);font:700 var(--fs-s) var(--f-body);cursor:pointer;}
 @media (hover:hover){ .ru-ss-mas:hover{background:var(--accent-wash);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 .ru-ss-rir.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) 32px;gap:8px;} .ru-ss-n{font-size:var(--fs-s);} }
@@ -145,7 +145,7 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 .ses-del,.meal-del,.en-ej-btns .en-del,.ru-ss-x{
   align-items:center;justify-content:center;flex:none;width:38px;height:38px;padding:0 !important;border-radius:var(--r-ctl);
   border:1.5px solid var(--del-line) !important;background:var(--del-wash) !important;color:var(--del) !important;
-  font:800 var(--fs-l)/1 Archivo,sans-serif !important;cursor:pointer;transition:background var(--dur-r),color var(--dur-r),transform var(--dur-r);}
+  font:800 var(--fs-l)/1 var(--f-body) !important;cursor:pointer;transition:background var(--dur-r),color var(--dur-r),transform var(--dur-r);}
 .coach-edit .ses-del,.coach-edit .meal-del{display:inline-flex;}
 .en-ej-btns .en-del,.ru-ss-x{display:inline-flex;}
 @media (hover:hover){ .ses-del:hover,.meal-del:hover,.en-ej-btns .en-del:hover,.ru-ss-x:not(:disabled):hover{background:var(--del) !important;color:#fff !important;border-color:var(--del) !important;} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
@@ -155,7 +155,7 @@ html.esc #app.coach-edit .ru-ss{max-width:520px;}
 @media (max-width:400px){ .ru-ss-cab,.ru-ss-f{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) 36px;} .ru-ss-x,.en-ej-btns .en-del{width:36px;height:36px;} }
 /* la × de cada alimento en el editor de nutrición */
 .chip-x{width:22px;height:22px;margin-left:8px;border-radius:50%;background:var(--del);color:#fff;opacity:1;
-  font:800 var(--fs-m)/22px Archivo,sans-serif;text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
+  font:800 var(--fs-m)/22px var(--f-body);text-align:center;vertical-align:middle;cursor:pointer;position:relative;}
 .chip-x::after{content:"";position:absolute;inset:-9px;}         /* zona de toque más grande */
 @media (hover:hover){ .chip-x:hover{background:color-mix(in srgb, var(--danger) 80%, #000);} }   /* 8/11 · en el móvil, tras tocar, no se queda puesto */
 /* textos de borrar en rojo */

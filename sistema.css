@@ -116,13 +116,13 @@ html.esc #coachTabs .tbi{min-height:44px;height:44px;}
 .sp-b1{width:150px;height:150px;right:-50px;top:-40px;}
 .sp-b2{width:64px;height:64px;left:-18px;bottom:32%;}
 .sp-puntos{position:absolute;right:22px;bottom:22px;width:100px;height:80px;background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 80%, transparent) 2.2px, transparent 2.6px);background-size:20px 20px;}
-#view-splash .tagline .real{color:var(--accent);}
+#view-splash .tagline .real{color:var(--logo-blue);}
 /* tema claro */
 .screen.light #view-splash{background:radial-gradient(90% 60% at 50% 30%, #FFFFFF 0%, #F3F8FD 45%, #CFE3F7 100%);}
 .screen.light #view-splash .login-card{background:#fff;box-shadow:0 10px 30px -14px rgba(43,103,163,.35);border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);}
 .screen.light #view-splash .pro-btn{background:#fff;}
 /* tema oscuro: lo mismo, mucho más tenue */
-.screen:not(.light) #view-splash{background:radial-gradient(90% 60% at 50% 30%, #1A1F26 0%, #12161B 50%, #0E1013 100%);}
+.screen:not(.light) #view-splash{background:radial-gradient(90% 60% at 50% 30%, #16264a 0%, #0f1d3b 50%, #0b1730 100%);}
 .screen:not(.light) .sp-deco::before{opacity:.05;}
 .screen:not(.light) .sp-anillo{border-color:rgba(255,255,255,.08);}
 .screen:not(.light) .sp-burbuja{background:color-mix(in srgb, var(--accent) 10%, transparent);}
@@ -152,7 +152,7 @@ html.esc .screen:not(.light) #coachTabs::after{opacity:.05;}
 html.esc #coachTabs > *{position:relative;z-index:1;}
 html.esc.esc-mini #coachTabs::after{display:none;}
 html.esc .esc-logo b{font:400 var(--fs-m)/1.1 var(--f-display) !important;letter-spacing:.2px;}
-html.esc .esc-logo b i{font-style:normal;color:var(--accent);}
+html.esc .esc-logo b i{font-style:normal;color:var(--logo-blue);}
 html.esc .alta-top:has(> div > .eyebrow[id$="Who"]),html.esc .alta-top:has(.eyebrow[id$="Who"]){position:relative;}
 html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;pointer-events:none;right:72px;top:10px;width:84px;height:44px;
   background-image:radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent) 1.8px, transparent 2.2px);background-size:14px 14px;}
@@ -275,3 +275,30 @@ html.esc .pro-cfg{display:none !important;}
 .pro-recetas{margin:0 0 16px;}
 .pro-recetas .list-row{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;min-height:44px;}
 html:not(.esc) #view-coach-ajustes .alta-top .back-btn{display:inline-flex;}
+
+/* =========================================================
+   11/11/2026 · Diseño de la web (sistema de diseño Fitnessindramas) en toda la app
+   Colores, tipografías y radios en styles.css (:root, .screen, .screen.light).
+   Se mantienen: mayúsculas y letra de máquina en pestañas, rótulos y cifras; los emojis.
+   ========================================================= */
+html,body{background:#f8fafd;}
+html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1730;}
+.screen{background:var(--bg);}
+/* titulares en Poppins con el espaciado de la web; títulos de tarjeta en Poppins 700 */
+.h-title{letter-spacing:-.025em;}
+.card-head b{font:700 var(--fs-l) var(--f-titulo);letter-spacing:-.015em;}
+/* tarjetas: blancas con borde de 1 px sobre el fondo gris azulado */
+.card{border:1px solid var(--line);}
+/* botones: azul con texto blanco, 48 px, radio 14 y sombra azul; secundario blanco con borde */
+.btn-primary{height:auto;min-height:48px;border-radius:var(--r-btn);box-shadow:var(--sombra-accion);font:700 var(--fs-m)/1.2 var(--f-body);}
+.btn-primary:disabled{box-shadow:none;}
+.btn-eq{min-height:48px;border-radius:var(--r-btn);background:var(--card);border:1px solid var(--line-strong);color:var(--ink);font:700 var(--fs-m)/1.2 var(--f-body);}
+.segui-aviso-cta{border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);min-height:44px;display:flex;align-items:center;padding:0 16px;box-shadow:var(--sombra-accion);}
+.week-dot.done{background:var(--accent);color:var(--on-accent);}
+/* foco visible como en la web: anillo azul de 3 px (azul claro sobre el fondo oscuro) */
+:is(button,a,[tabindex],.card[onclick]):focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+.screen:not(.light) :is(button,a,[tabindex],.card[onclick]):focus-visible{outline-color:#89b9e8;}
+/* 11/11 · la nota de Pagos se metía 8 px dentro de la última fila (margen negativo pensado para Ajustes) */
+#pagosPro > .ajx-note{margin:16px 4px 20px;}
+/* la etiqueta de estado del plan no se parte en dos líneas */
+.plan-est{white-space:nowrap;flex:none;}
