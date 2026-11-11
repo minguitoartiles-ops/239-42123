@@ -92,15 +92,15 @@ export async function usuarioQueLlama(req: Request): Promise<{ id: string } | nu
 
 // 11/11/2026 · ¿Quien llama es del equipo ahora mismo? Lo responde la base de datos con su propia
 // sesión: tiene que estar activo y, si tiene la verificación en dos pasos, haberla superado.
-export async function equipoQueLlama(req: Request): Promise<{ id: string } | null> {
-  const quien = await usuarioQueLlama(req);
-  if (!quien) return null;
+export async function esEquipoActivo(req: Request): Promise<boolean> {
+  const auth = req.headers.get('Authorization') ?? '';
+  if (!auth.startsWith('Bearer ')) return false;
   const c = createClient(URL, ANON, {
-    global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } },
+    global: { headers: { Authorization: auth } },
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data, error: e } = await c.rpc('soy_equipo');
-  return !e && data === true ? quien : null;
+  return !e && data === true;
 }
 
 // ¿Llama la tarea programada con su llave propia? (no se usa la clave maestra del servidor

@@ -13,7 +13,7 @@
 // El código se enseña una sola vez: en la base de datos solo queda su huella.
 import {
   accesoHasta, clienteServidor, error, errorBD, huellaCodigo, leerJSON, mostrarCodigo, nuevoCodigo,
-  responder, TARIFAS, type Tarifa, equipoQueLlama, cabeceras,
+  responder, TARIFAS, type Tarifa, usuarioQueLlama, esEquipoActivo, cabeceras,
 } from '../_compartido/comun.ts';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -28,8 +28,9 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return error(req, 405, 'Método no permitido.');
 
   // 11/11/2026 · Solo el equipo activo (y con su segundo paso superado, si lo tiene)
-  const quien = await equipoQueLlama(req);
+  const quien = await usuarioQueLlama(req);
   if (!quien) return error(req, 401, 'Tu sesión ha caducado. Vuelve a entrar.');
+  if (!(await esEquipoActivo(req))) return error(req, 403, 'No tienes permiso para hacer esto.');
 
   const cuerpo = await leerJSON(req);
   if (!cuerpo) return error(req, 400, 'Petición no válida.');
