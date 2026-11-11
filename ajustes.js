@@ -5,13 +5,13 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.94.1';
+const APP_VERSION = '0.95.0';
 /* 8/11 · la versión de la portada sale de aquí (antes estaba escrita a mano y se quedó en la 0.84) */
 (function(){
   const poner = function(){ const e = document.getElementById('appVersion'); if (e) e.textContent = 'Versión ' + APP_VERSION; };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', poner); else poner();
 })();
-const POLICY_V = '2026-10-19-2';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
+const POLICY_V = '2026-11-11';          // cambia al modificar las políticas: se vuelve a pedir el consentimiento
 const CONSENT_KEY = 'fsd_consentimiento';
 const TEMA_KEY = 'fsd_tema';
 const TEXTO_KEY = 'fsd_texto';   // 11/11 · tamaño del texto: n (normal) · g (grande) · mg (muy grande)
@@ -560,7 +560,7 @@ function legalPrivacidad(){
    solo en el móvil del cliente. NIF y domicilio no van en el código (el repositorio es público). */
 const COTITULAR = { nombre: 'Fátima Toledo Suárez' };
 const LEGAL_PRIVACIDAD =
-  '<p class="legal-meta">Última actualización: 6 de noviembre de 2026</p>'
+  '<p class="legal-meta">Última actualización: 11 de noviembre de 2026</p>'
 + '<p class="legal-aviso">Texto provisional, pendiente de revisión por un asesor de protección de datos. Describe la app con servidor: tus datos se guardan en servidores de la Unión Europea (Irlanda), cifrados, y puedes verlos desde cualquiera de tus dispositivos.</p>'
 + '<h4>1. Responsables del tratamiento</h4>'
 + '<p>Tus datos los tratan conjuntamente, como <b>corresponsables</b> (art. 26 RGPD), los dos profesionales autónomos que prestan el servicio con el nombre comercial ' + TITULAR.marca + ':</p>'
@@ -576,7 +576,8 @@ const LEGAL_PRIVACIDAD =
 + '<li><b>Datos de dispositivos</b> (pasos, actividad, sueño, frecuencia cardiaca), solo si conectas uno y lo autorizas.</li>'
 + '<li><b>Compras de productos propios y merchandising:</b> nombre, dirección de envío, teléfono y datos del pedido.</li>'
 + '<li><b>Pago:</b> fecha, importe y tarifa de cada pago. Se paga por transferencia bancaria o, cuando esté disponible, con Stripe; no guardamos los datos de tu tarjeta.</li>'
-+ '<li><b>Datos técnicos:</b> dirección IP, fecha y hora de cada acceso y tipo de navegador, que el servidor registra por seguridad.</li></ul>'
++ '<li><b>Datos técnicos:</b> dirección IP, fecha y hora de cada acceso y tipo de navegador, que el servidor registra por seguridad.</li>'
++ '<li><b>Registro de actividad:</b> quién ha hecho cada cambio, cuándo y con qué permiso (por ejemplo, «Fátima cambió el plan de nutrición»). De los datos de salud solo se apunta qué apartado cambió, nunca su contenido.</li></ul>'
 + '<h4>3. Para qué los usamos</h4>'
 + '<ul><li>Prestarte el asesoramiento de entrenamiento y nutrición: planes, seguimiento y ajustes.</li>'
 + '<li>Guardar tus datos en nuestro servidor para que tú y tu equipo los veáis al momento en cualquier dispositivo.</li>'
@@ -602,7 +603,7 @@ const LEGAL_PRIVACIDAD =
 + '<li>En tu dispositivo queda una copia para que la app abra rápido y funcione sin conexión. Las fotos y notas de voz del chat solo se guardan en la memoria mientras la app está abierta.</li></ul>'
 + '<h4>6. Cuánto tiempo los guardamos</h4>'
 + '<p>Mientras tu asesoría esté activa. <b>Si no pagas</b>: tras el periodo de gracia de 7 días pierdes el acceso y guardamos tus datos 15 días más; si sigues sin pagar, borramos tu perfil (plan, seguimientos, conversación y fotos). <b>Si te das de baja</b>, dejas de tener acceso al momento y, si no vuelves en 15 días, borramos tu perfil (plan, seguimientos, conversación y fotos); puedes pedirnos que lo borremos antes. Al terminar, los conservamos bloqueados solo durante los plazos que exige la ley y después los suprimimos (art. 32 LOPDGDD). Entre otros: la documentación contable y las facturas durante 6 años (art. 30 del Código de Comercio) y la información fiscal durante 4 años (Ley General Tributaria). Los datos para comunicaciones comerciales, hasta que te des de baja. Las imágenes publicadas, hasta que retires tu permiso: entonces las quitamos de nuestras publicaciones (no podemos controlar copias que terceros hayan hecho antes).</p>'
-+ '<p>Las fotos y notas de voz que ya no se usan (por ejemplo, una foto de perfil que cambias) se borran del servidor automáticamente en pocos días. Los registros técnicos de acceso se conservan solo el tiempo necesario por seguridad. Cuando das, cambias o retiras un consentimiento (datos de salud o uso de imagen) guardamos la fecha, la versión de estos textos y el tipo de navegador, para poder demostrarlo; se borra con tu perfil.</p>'
++ '<p>Las fotos y notas de voz que ya no se usan (por ejemplo, una foto de perfil que cambias) se borran del servidor automáticamente en pocos días. El <b>registro de actividad</b> (inicios de sesión con su dirección IP y tipo de navegador, y qué cambios se hicieron, quién y cuándo) se guarda <b>2 años</b> y después se borra solo; nadie puede modificarlo ni borrarlo antes, para que sirva de prueba si algo va mal. Cuando das, cambias o retiras un consentimiento (datos de salud, uso de imagen o cookies de preferencias) guardamos la fecha, la versión de estos textos y el tipo de navegador, para poder demostrarlo; se borra con tu perfil.</p>'
 + '<h4>7. Con quién los compartimos</h4>'
 + '<p>No vendemos ni cedemos tus datos. Solo los comunicamos cuando lo exige la ley o a proveedores que trabajan por nuestra cuenta (encargados del tratamiento, art. 28 RGPD), que solo pueden usarlos para darnos su servicio:</p>'
 + '<ul><li><b>Supabase Pte. Ltd.</b> (Singapur), con el apoyo técnico de Supabase, Inc. (EE. UU.): servidor de la app (base de datos, cuentas y archivos), alojado en la UE con Amazon Web Services.</li>'
@@ -614,18 +615,18 @@ const LEGAL_PRIVACIDAD =
 + '<h4>8. Clientes fuera de España</h4>'
 + '<p>Prestamos el servicio en todo el mundo. Sea cual sea tu país, tratamos tus datos conforme al Reglamento General de Protección de Datos (Reglamento (UE) 2016/679) y a la normativa española (Ley Orgánica 3/2018).</p>'
 + '<h4>9. Tus derechos</h4>'
-+ '<p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad, y retirar tu consentimiento en cualquier momento. Escribe a <b>' + TITULAR.correo + '</b> indicando qué derecho ejerces; podremos pedirte que acredites tu identidad. Respondemos en el plazo de un mes (ampliable dos meses más en casos complejos, avisándote).</p>'
++ '<p>Puedes pedir acceso, rectificación, supresión, oposición, limitación y portabilidad, y retirar tu consentimiento en cualquier momento. Puedes pedirlo desde la propia app, en <b>Ajustes → Seguridad → Mis derechos sobre mis datos</b> (queda apuntada la fecha y verás en qué punto está), o escribiendo a <b>' + TITULAR.correo + '</b> indicando qué derecho ejerces; si escribes por correo, podremos pedirte que acredites tu identidad. Respondemos en el plazo de un mes (ampliable dos meses más en casos complejos, avisándote).</p>'
 + '<p>Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es, C/ Jorge Juan 6, 28001 Madrid).</p>'
 + '<h4>10. Solo personas adultas</h4>'
 + '<p>El servicio es exclusivamente para mayores de 18 años. Si detectamos datos de un menor, los eliminaremos.</p>'
 + '<h4>11. Seguridad</h4>'
-+ '<p>Aplicamos medidas técnicas y organizativas adecuadas al riesgo (art. 32 RGPD), teniendo en cuenta que tratamos datos de salud. Entre otras: cuentas personales con contraseña; conexiones y almacenamiento cifrados; permisos comprobados por el propio servidor en cada acceso, para que cada persona vea solo lo que le corresponde; archivos sin enlaces públicos; límites de intentos y de subidas; cierre automático de la sesión de los profesionales tras 30 minutos sin uso; y copias de seguridad protegidas con contraseña.</p>'
++ '<p>Aplicamos medidas técnicas y organizativas adecuadas al riesgo (art. 32 RGPD), teniendo en cuenta que tratamos datos de salud. Entre otras: cuentas personales con contraseña y, si la activas, verificación en dos pasos con una app de códigos; permisos por función (entrenador o dietista) que solo el administrador puede cambiar; un registro de actividad que nadie puede alterar; conexiones y almacenamiento cifrados; permisos comprobados por el propio servidor en cada acceso, para que cada persona vea solo lo que le corresponde; archivos sin enlaces públicos; límites de intentos y de subidas; cierre automático de la sesión de los profesionales tras 30 minutos sin uso; y copias de seguridad protegidas con contraseña.</p>'
 + '<p>Si se produjera una brecha de seguridad que afecte a tus datos, lo comunicaremos a la AEPD en 72 horas y, si supone un riesgo alto para ti, también a ti (arts. 33 y 34 RGPD).</p>'
 + '<h4>12. Cambios</h4>'
 + '<p>Si cambiamos esta política te avisaremos en la app y, cuando haga falta, te pediremos de nuevo el consentimiento.</p>';
 
 const LEGAL_COOKIES =
-  '<p class="legal-meta">Última actualización: 5 de noviembre de 2026 · Responsable: ' + TITULAR.nombre + ' (' + TITULAR.marca + '), ' + TITULAR.correo + '</p>'
+  '<p class="legal-meta">Última actualización: 11 de noviembre de 2026 · Responsable: ' + TITULAR.nombre + ' (' + TITULAR.marca + '), ' + TITULAR.correo + '</p>'
 + '<p class="legal-aviso">Texto provisional, pendiente de revisión por un asesor de protección de datos.</p>'
 + '<p>Las cookies y tecnologías similares (como el almacenamiento local del navegador) guardan información en tu dispositivo. Esta app no usa cookies: solo almacenamiento técnico y, si lo aceptas, de preferencias. No usa publicidad ni analítica.</p>'
 + '<h4>Qué guardamos</h4>'
@@ -642,7 +643,7 @@ const LEGAL_COOKIES =
 + '<tr><td>fsd_tema</td><td>Preferencia</td><td>Recordar el modo claro, oscuro o automático</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
 + '<tr><td>fsd_texto</td><td>Preferencia</td><td>Recordar el tamaño del texto (normal, grande o muy grande)</td><td>Hasta que lo cambies o retires el permiso</td></tr>'
 + '<tr><td>Otras fsd_…</td><td>Técnica</td><td>Recordar cómo dejas la pantalla (vistas, anchos de columnas, descansos, emojis recientes, plantillas)</td><td>Hasta que borres los datos</td></tr>'
-+ '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies</td><td>24 meses</td></tr>'
++ '<tr><td>fsd_consentimiento</td><td>Técnica</td><td>Recordar tu elección sobre cookies. Si has entrado con tu cuenta, tu elección (aceptar o rechazar), la fecha y la versión de esta política se guardan también en nuestro servidor, para poder demostrarla</td><td>24 meses</td></tr>'
 + '<tr><td>Caché fsd-' + APP_VERSION + '</td><td>Técnica</td><td>Que la app abra sin conexión</td><td>Hasta la siguiente versión</td></tr>'
 + '</tbody></table></div>'
 + '<p>Todas son propias. Las técnicas son necesarias para que la app funcione y no requieren consentimiento (art. 22.2 LSSI). Las de preferencias solo se guardan si las aceptas. Las fotos y notas de voz del chat no se guardan en el dispositivo: solo en la memoria mientras la app está abierta.</p>'

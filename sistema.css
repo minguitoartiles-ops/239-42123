@@ -302,3 +302,28 @@ html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1
 #pagosPro > .ajx-note{margin:16px 4px 20px;}
 /* la etiqueta de estado del plan no se parte en dos líneas */
 .plan-est{white-space:nowrap;flex:none;}
+/* 11/11 · Seguridad: dos pasos, roles y permisos, registro de actividad y derechos RGPD (seguridad-registro.js) */
+.sg-capa{z-index:calc(var(--z-hoja) + 5);}
+.sg-hoja .sg-tit{margin:0 0 10px;}
+.sg-txt{margin:0 0 12px;line-height:1.45;}
+.sg-peq{font-size:var(--fs-s, 13px);color:var(--dim-60, var(--dim-45));line-height:1.4;margin:2px 0;}
+.sg-sub{font:600 11px/1.2 var(--f-mono, monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--dim-45);margin:18px 0 8px;}
+.sg-ul{margin:0 0 12px;padding-left:18px;line-height:1.45;}
+.sg-ul li{margin:4px 0;}
+.sg-lista{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px;}
+.sg-item,.sg-reg{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card);}
+.sg-item-cab,.sg-reg-cab{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:space-between;margin-bottom:4px;}
+.sg-item-cab{justify-content:flex-start;}
+.sg-det{word-break:break-word;}
+.sg-ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:8px;}
+.sg-ctl label{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-s, 13px);}
+.sg-ctl select,.sg-filtros select,.sg-filtros input{min-height:40px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:var(--bg);color:var(--ink);font:inherit;}
+.sg-ctl textarea{flex:1 1 100%;min-height:56px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--ink);font:inherit;}
+.sg-filtros{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+.sg-filtros input{flex:1 1 160px;}
+.sg-qr{display:flex;justify-content:center;margin:8px 0;}
+.sg-qr img{background:#fff;border-radius:12px;padding:8px;}
+.sg-secreto{word-break:break-all;font-size:13px;padding:8px 10px;border:1px dashed var(--line);border-radius:10px;margin:4px 0 8px;user-select:all;}
+.sg-form{margin-top:12px;}
+.sg-form .btn-primary,.sg-hoja > .sg-cuerpo > .btn-primary,.sg-hoja > .sg-cuerpo > .btn-eq{width:100%;margin-top:8px;}
+.sg-pie{margin-top:14px;}

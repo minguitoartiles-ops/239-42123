@@ -28,6 +28,15 @@ minimum_password_length = 6
 password_requirements = ""
 enable_refresh_token_rotation = true
 
+# 11/11/2026 · Verificación en dos pasos con app de códigos (TOTP), opcional para cada cuenta.
+# En los proyectos reales viene activada de serie (Authentication → Multi-Factor).
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
 # Ojo: no poner [auth.email] enable_signup = false: desactiva el inicio de sesión con correo.
 # El registro ya queda cerrado con [auth] enable_signup = false.
 
