@@ -1261,17 +1261,23 @@ FG['peso muerto convencional'] = fgPesoMuerto({ tAbajo: 62, barAbajo: FG_SUELO -
 // déficit: de pie sobre una plataforma; los discos siguen en el suelo, así que la barra empieza más abajo respecto a los pies
 FG['peso muerto en deficit'] = fgPesoMuerto({ tAbajo: 68, barAbajo: FG_SUELO - 10, pie: [55, 76.5], fondo: '<rect x="42" y="78" width="30" height="6" rx="1.5" class="il-mueble"/>', rotulo: 'de pie sobre una plataforma' });
 // rack pull: la barra parte de los soportes del rack, a la altura de las rodillas
-// 11/11 (nota de Domingo): la barra apoyada en los soportes justo debajo de la rótula; bisagra de cadera con las rodillas
-// apenas flexionadas, los hombros sobre la barra
-FG['rack pull'] = fgPesoMuerto({ tAbajo: 65, barAbajo: 66.5, rotulo: 'barra bajo la rótula',
-  fondo: '<line x1="70" y1="6" x2="70" y2="84" class="il-mueble il-sin"/><line x1="78" y1="6" x2="78" y2="84" class="il-mueble il-sin"/><line x1="50" y1="68" x2="80" y2="68" class="il-mueble"/>' });
+// rack pull (referencia de Domingo, 11/11): la barra en los soportes justo debajo de la rodilla; abajo el tronco a unos 45°, la
+// cadera atrás y las espinillas casi verticales (rodilla sobre el tobillo); arriba, erguido con los hombros atrás
+(function(){
+  const pie = [55, 82.5], barX = 58;
+  const pose = function(k){ const t = fgLerp(48, -3, k), barY = fgLerp(66.5, 47, k), n0 = fgDir(t, FG_L.tronco);
+    return { p: [barX - n0[0], barY - 24.8 - n0[1]], t: t, cab: fgLerp(-30, -4, k), a: pie, f: fgSum(pie, [7, 1]), r: -1, recto: true,
+      w: function(P){ return [P.n[0], barY]; } }; };
+  FG['rack pull'] = { seq: [[pose(0), 0.5], [pose(0.5), 0.5], [pose(1), 0.5], [pose(1), 0.3], [pose(0.5), 0.6]], vuelta: 0.6,
+    fondo: FG_PISO + '<line x1="68" y1="6" x2="68" y2="84" class="il-mueble il-sin"/><line x1="78" y1="6" x2="78" y2="84" class="il-mueble il-sin"/><line x1="48" y1="68" x2="82" y2="68" class="il-mueble"/>' + fgRotulo('barra bajo la rodilla'),
+    delante: function(P, ln, ci){ ci(P.w, 10, 'il-disco'); ci(P.w, 1.6, 'il-peso'); } };
+})();
 // piernas rígidas: las rodillas casi estiradas todo el recorrido; la cadera va atrás y la barra baja hasta media espinilla
 (function(){
-  // 11/11: la cadera bien atrás y alta, las rodillas casi estiradas en todo el recorrido; la barra sobre el medio del pie
-  const pose = function(k){ const t = fgLerp(65, 3, k), barY = fgLerp(66.5, 47, k), n0 = fgDir(t, FG_L.tronco);
-    return { p: [50, barY - 24.8 - n0[1]], t: t, cab: fgLerp(-30, 0, k), a: [46, 82.5], f: [53, 83.5], r: -1, recto: true,
-      w: function(P){ return [P.n[0], barY]; }, al: { en: function(P){ return P.n; }, x: 52 } }; };
-  // con la cadera más alta las piernas quedan casi rectas
+  // referencia de Domingo (11/11): abajo el tronco casi horizontal, las piernas casi estiradas y la cadera por detrás de los
+  // talones; la barra cuelga de los hombros y baja pegada a las espinillas; arriba, de pie del todo
+  const pose = function(k){ const t = fgLerp(82, 2, k), p = fgLerp([36, 46.5], [46, 46.2], k), n = fgSum(p, fgDir(t, FG_L.tronco));
+    return { p: p, t: t, cab: fgLerp(-35, 0, k), a: [46, 82.5], f: [53, 83.5], r: -1, recto: true, w: [n[0], n[1] + 24.8] }; };
   FG['peso muerto piernas rigidas'] = { seq: [[pose(1), 0.5], [pose(0.5), 0.6], [pose(0), 0.6], [pose(0), 0.3], [pose(0.5), 0.6]], vuelta: 0.6,
     fondo: FG_PISO + fgRotulo('piernas casi estiradas'), delante: fgEnManos('barra') };
 })();
