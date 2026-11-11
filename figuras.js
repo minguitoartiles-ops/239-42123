@@ -94,6 +94,7 @@ function fgFrente(S){
   P.h = fgSum(P.n, fgDir((S.t || 0) + (S.cab || 0), FG_L.cuello));
   const perp = fgDir((S.t || 0) + 90, 1);
   P.sL = [P.n[0] - perp[0] * hs, P.n[1] - perp[1] * hs + 1.5]; P.sR = [P.n[0] + perp[0] * hs, P.n[1] + perp[1] * hs + 1.5];
+  if (S.enc) { P.sL[1] -= S.enc; P.sR[1] -= S.enc; }   // 11/11 · encogimientos: los hombros suben hacia las orejas
   P.pL = [P.p[0] - perp[0] * hc, P.p[1] - perp[1] * hc]; P.pR = [P.p[0] + perp[0] * hc, P.p[1] + perp[1] * hc];
   ['L', 'R'].forEach(function(s){
     const sig = s === 'L' ? -1 : 1;
@@ -1020,6 +1021,107 @@ FG['fondos negativos'] = fgFondos({ tronco: [12, 30], hombroAbajo: [64, 33], rot
   fondo: fgCaja(36, 70, 20, 14),
   seq: function(pose){ const caj = Object.assign({}, pose(0.15), {}); caj.a = [47, 69.5]; caj.f = [54, 70]; caj.r = -1; caj.p = [caj.p[0], caj.p[1] + 4];
     return [[caj, 0.5], [pose(0), 0.35], [pose(0), 0.3], [pose(0.5), 1.8], [pose(1), 1.8], [pose(1), 0.3]]; } });
+
+
+/* =========================================================
+   TANDA 6b (11/11/2026) · espalda
+   ========================================================= */
+/* cuerpo recto (plancha, remo invertido): de los tobillos a los hombros en línea; devuelve cadera e inclinación */
+function fgRecto(tobillo, hombro){
+  const d = [hombro[0] - tobillo[0], hombro[1] - tobillo[1]], L = Math.hypot(d[0], d[1]) || 1, u = [d[0] / L, d[1] / L];
+  const p = [tobillo[0] + u[0] * (FG_L.muslo + FG_L.canilla - 0.1), tobillo[1] + u[1] * (FG_L.muslo + FG_L.canilla - 0.1)];
+  return { p: p, t: Math.atan2(u[0], -u[1]) * 180 / Math.PI, a: tobillo };
+}
+/* codo por el lado que se pide (dir: vector hacia donde debe quedar) */
+function fgCodoHacia(n, w, dir){
+  const n0 = FG_RECORTES.length, a = fgIK(n, w, FG_L.brazo, FG_L.antebrazo, 1), b = fgIK(n, w, FG_L.brazo, FG_L.antebrazo, -1); FG_RECORTES.length = n0;
+  const sc = function(e){ return (e.j[0] - n[0]) * dir[0] + (e.j[1] - n[1]) * dir[1]; }; return (sc(a) >= sc(b) ? a : b).j;
+}
+
+/* --- remo Pendlay (nota de Domingo: «desde el suelo con la barra muerta»): tronco paralelo al suelo; la barra parte apoyada
+   en el suelo (los discos tocan el suelo), sube rápido hasta la parte baja del pecho y vuelve a parar en el suelo cada repetición --- */
+(function(){
+  const p = [40, 54.5], t = 86, n = fgSum(p, fgDir(t, FG_L.tronco));
+  const suelo = [n[0], FG_SUELO - 6.5], pecho = fgSum(fgLerp(p, n, 0.72), fgDir(t + 90, 3.5));
+  const pose = function(k){ const w = fgLerp(suelo, pecho, k); return { p: p, t: t, cab: -10, a: [47, 82.5], f: [54, 83.5], r: -1, w: w, e: fgCodoHacia(n, w, fgDir(t - 90, 1)) }; };
+  FG['remo pendlay'] = { seq: [[pose(0), 0.6], [pose(0.5), 0.15], [pose(1), 0.15], [pose(1), 0.15], [pose(0.5), 0.3], [pose(0), 0.3]], vuelta: 0.3,
+    fondo: FG_PISO + fgRotulo('desde el suelo · barra parada'), atras: function(P, ln, ci){ fgDisco(ci, P.w); } };
+})();
+
+/* --- pullover en polea (nota: «movimiento de los brazos antinatural»): de pie frente a la polea alta, el tronco algo
+   inclinado; los brazos casi rectos bajan en arco desde arriba y delante hasta los muslos (el hombro hace todo el trabajo) --- */
+(function(){
+  const polea = [106, 6];
+  const pose = function(g){ return { p: [46, 50], t: 22, cab: 4, a: [46, 82.5], f: [53, 83.5], r: -1, brazo: [g, g + 12] }; };
+  FG['pullover en polea'] = { seq: [[pose(38), 0.4], [pose(80), 0.4], [pose(125), 0.4], [pose(160), 0.4], [pose(160), 0.3], [pose(110), 0.5], [pose(70), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + '<rect x="108" y="2" width="7" height="82" rx="2" class="il-mueble"/><circle cx="' + polea[0] + '" cy="' + polea[1] + '" r="3" class="il-mueble"/>' + fgRotulo('brazos casi rectos · polea alta'),
+    atras: function(P, ln){ ln(polea, P.w, 'il-cable'); }, delante: function(P, ln){ ln([P.w[0] - 1.5, P.w[1] - 3], [P.w[0] + 1.5, P.w[1] + 3], 'il-barra'); } };
+})();
+
+/* --- pullover con mancuerna (nota: «brazos antinatural»): la parte alta de la espalda apoyada en el banco, cadera a la
+   altura del banco y pies en el suelo; la mancuerna, con los brazos casi rectos, va de encima del pecho a detrás de la
+   cabeza en arco y vuelve --- */
+(function(){
+  const pose = function(g){ return { p: [62, 59], t: -88, cab: 0, a: [76, 82.5], f: [83, 83.5], r: -1, brazo: [g, g - 10] }; };
+  FG['pullover con mancuerna'] = { seq: [[pose(-4), 0.4], [pose(-40), 0.45], [pose(-80), 0.45], [pose(-108), 0.45], [pose(-108), 0.3], [pose(-60), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + fgCaja(28, 62, 20, 22) + fgRotulo('espalda alta en el banco'), delante: function(P, ln, ci){ ci(P.w, 4.2, 'il-disco'); ci(P.w, 1.4, 'il-peso'); } };
+})();
+
+/* --- encogimientos con barra (nota: «no se ve que use una barra olímpica»): de frente, la barra larga con sus discos
+   delante de los muslos; los brazos estirados y solo suben los hombros hacia las orejas --- */
+(function(){
+  const pose = function(enc){ return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], enc: enc, brazoL: [181, 180], brazoR: [179, 180] }; };
+  FG['encogimientos con barra'] = { vista: 'frente', seq: [[pose(0), 0.5], [pose(4.5), 0.6], [pose(4.5), 0.5]], vuelta: 0.7,
+    fondo: FG_PISO + fgFlecha(98, 40, 26) + fgRotulo('barra olímpica · encoge'),
+    delante: function(P, ln){ const y = P.wL[1]; ln([14, y], [106, y], 'il-barra'); ln([20, y - 9], [20, y + 9], 'il-placa'); ln([25, y - 7], [25, y + 7], 'il-placa'); ln([100, y - 9], [100, y + 9], 'il-placa'); ln([95, y - 7], [95, y + 7], 'il-placa'); } };
+})();
+
+/* --- remo al mentón en polea (nota: «la polea, desde los pies hacia arriba»): de frente, la polea en el suelo entre los pies;
+   la barra sube pegada al cuerpo hasta debajo de la barbilla con los codos altos y abiertos, por encima de las manos --- */
+(function(){
+  const pose = function(k){ const wy = fgLerp(49, 25, k), wL = [55.5, wy], wR = [64.5, wy];
+    const eL = fgLerp([50.5, 36.5], [41, 19.5], k), eR = [120 - eL[0], eL[1]];
+    return { vista: 'frente', p: [60, 46.5], aL: [54, 82], aR: [66, 82], wL: wL, wR: wR, eL: eL, eR: eR }; };
+  FG['remo al menton en polea'] = { vista: 'frente', seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + '<rect x="54" y="80" width="12" height="4" rx="2" class="il-mueble"/>' + fgRotulo('polea baja · codos altos'),
+    atras: function(P, ln){ ln([60, 81], [60, P.wL[1]], 'il-cable'); },
+    delante: function(P, ln){ ln([P.wL[0] - 2, P.wL[1]], [P.wR[0] + 2, P.wR[1]], 'il-barra'); } };
+})();
+
+/* --- remo invertido (de lado): el cuerpo recto como una plancha boca arriba, los talones en el suelo, colgado de una barra
+   (vista de canto, un círculo); tira hasta llevar el pecho a la barra, con los codos hacia los pies --- */
+function fgRemoInvertido(o){
+  const barra = o.barra, tob = o.tobillo;
+  const pose = function(n){ const R = fgRecto(tob, n); return { p: R.p, t: R.t, cab: -6, a: tob, f: fgSum(tob, [1, -6.5]), r: 1, w: barra, e: fgCodoHacia(n, barra, [-0.6, 0.8]) }; };
+  return { seq: [[pose(o.abajo), 0.4], [pose(fgLerp(o.abajo, o.arriba, 0.5)), 0.45], [pose(o.arriba), 0.45], [pose(o.arriba), 0.3], [pose(fgLerp(o.abajo, o.arriba, 0.5)), 0.55]], vuelta: 0.55,
+    fondo: FG_PISO + '<line x1="' + barra[0] + '" y1="' + barra[1] + '" x2="' + barra[0] + '" y2="84" class="il-mueble il-sin"/><circle cx="' + barra[0] + '" cy="' + barra[1] + '" r="2.4" class="il-mueble"/>' + (o.fondo || '') + fgRotulo(o.rotulo) };
+}
+FG['remo invertido'] = fgRemoInvertido({ tobillo: [18, 82], barra: [78.5, 40], abajo: [78.5, 65], arriba: [72, 48.5], rotulo: 'cuerpo recto · pecho a la barra' });
+FG['remo invertido con pies elevados'] = fgRemoInvertido({ tobillo: [18, 63.5], barra: [79, 40], abajo: [79, 65], arriba: [77, 49], fondo: fgCaja(6, 66, 22, 18), rotulo: 'pies elevados en el banco' });
+
+/* --- remo Seal (nota: «parece al revés por los pies hacia arriba»): tumbado boca abajo en un banco alto, el cuerpo recto y
+   las piernas estiradas sobre el banco; la barra cuelga con los brazos estirados y sube hasta tocar la parte de abajo del banco --- */
+(function(){
+  const p = [50, 48.5], t = 90, n = fgSum(p, fgDir(t, FG_L.tronco));
+  const abajo = [n[0] + 0.5, n[1] + 24.5], arriba = [n[0] - 1, 61];
+  const pose = function(k){ const w = fgLerp(abajo, arriba, k); return { p: p, t: t, cab: 6, a: [13.15, 49], f: [12, 55], r: 1, w: w, e: fgCodoHacia(n, w, [0, -1]) }; };
+  FG['remo seal'] = { seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + '<rect x="10" y="51" width="68" height="4" rx="2" class="il-mueble"/><line x1="16" y1="55" x2="16" y2="84" class="il-fondo"/><line x1="72" y1="55" x2="72" y2="84" class="il-fondo"/>' + fgRotulo('boca abajo en el banco alto'),
+    atras: function(P, ln, ci){ fgDisco(ci, P.w); } };
+})();
+
+/* --- remo renegado (nota: «no se ve el remo + flexión»): en plancha alta sobre dos mancuernas; una flexión y después un remo
+   con cada brazo (el otro sostiene el cuerpo) --- */
+(function(){
+  const tob = [14, 82], manos = [70, 78];
+  const plancha = function(n){ const R = fgRecto(tob, n); return { p: R.p, t: R.t, cab: -4, a: tob, f: fgSum(tob, [-2, 1.5]), r: -1, segundo: true }; };
+  const arribaN = [70, 53.5], abajoN = [76, 66];
+  const pose = function(n, w, w2){ return Object.assign(plancha(n), { w: w || manos, w2: w2 || manos, e: fgCodoHacia(n, w || manos, [-0.5, -0.9]), e2: fgCodoHacia(n, w2 || manos, [-0.5, -0.9]) }); };
+  const rema = [62, 61];
+  FG['remo renegado'] = { segundo: true, seq: [[pose(arribaN), 0.4], [pose(abajoN), 0.6], [pose(arribaN), 0.5], [pose(arribaN), 0.2], [pose(arribaN, rema), 0.5], [pose(arribaN, rema), 0.2], [pose(arribaN), 0.4], [pose(arribaN, null, rema), 0.5], [pose(arribaN, null, rema), 0.2]], vuelta: 0.4,
+    fondo: FG_PISO + fgRotulo('flexión + remo con cada brazo'),
+    delante: function(P, ln, ci){ ci(P.w, 4, 'il-disco'); ci(P.w, 1.4, 'il-peso'); }, atras: function(P, ln, ci){ ci(P.w2, 4, 'il-disco il-lejos'); } };
+})();
 
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
