@@ -1,0 +1,82 @@
+/* =========================================================
+   11/11/2026 · MUESTRA «diseño de la web» (sistema de diseño Fitnessindramas)
+   Solo se carga con ?diseno=web (diseno-web.js). Nadie más lo ve.
+   Valores de project/tokens.json del sistema de diseño: azul de acción #2563eb,
+   Poppins en titulares, Inter en el texto, radios 14/20 px, sombras azules suaves.
+   Se mantienen (decisión de Domingo, 11/11): mayúsculas y letra de máquina en
+   pestañas, rótulos pequeños y cifras.
+   Tema oscuro: la web no tiene; se deriva de sus bloques oscuros (navy #0b1730).
+   ========================================================= */
+
+/* Tipografías: con la muestra activa, «Archivo» y «Archivo Black» pasan a ser Inter y Poppins
+   (así se cambian también los textos con la familia escrita a mano). Licencia OFL: fonts/OFL-*.txt */
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/inter-var.woff) format('woff');}
+@font-face{font-family:'Archivo Black';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/poppins-800.woff) format('woff');}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/poppins-600.woff) format('woff');}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/poppins-700.woff) format('woff');}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/poppins-800.woff) format('woff');}
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/inter-var.woff) format('woff');}
+
+html.dw{
+  --f-display:'Poppins','Inter',sans-serif;
+  --f-body:'Inter',system-ui,-apple-system,sans-serif;
+  --accent:#2563eb;            /* blue */
+  --on-accent:#ffffff;         /* 5,2:1 */
+  --r-btn:14px;                /* radius-btn */
+  --sombra-accion:0 10px 24px -12px rgba(37,99,235,.8);   /* shadow-primary */
+}
+/* claro: bg, paper, ink, muted, legal, line… */
+html.dw .screen.light{
+  --bg:#f8fafd; --card:#ffffff; --card-hi:#f1f6fe;
+  --ink:#0f172a;
+  --accent-text:#2563eb; --protein-text:#1d4ed8;
+  --dim-6:#475569; --dim-55:#475569; --dim-45:#64748b; --dim-40:#64748b; --dim-30:rgba(15,23,42,.3);
+  --line:#dce4f0; --line-strong:#c7d2e3;
+  --accent-wash:#f1f6fe; --accent-line:#d6e4fa;
+  --wash-soft:#eff4fb; --wash-med:#e6edf7; --wash-strong:#dce4f0;
+}
+/* oscuro: navy y sus textos (text-on-navy, muted-on-navy, link-on-navy) */
+html.dw .screen:not(.light){
+  --bg:#0b1730; --card:#13213f; --card-hi:#1a2a4c;
+  --ink:#f1f5fb;
+  --accent-text:#9cc3f2; --protein-text:#9cc3f2;
+  --dim-6:#b6c5df; --dim-55:#b6c5df; --dim-45:#94a3b8; --dim-40:#94a3b8; --dim-30:rgba(220,230,247,.3);
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --accent-wash:rgba(37,99,235,.16); --accent-line:rgba(156,195,242,.35);
+  --wash-soft:rgba(255,255,255,.05); --wash-med:rgba(255,255,255,.09); --wash-strong:rgba(255,255,255,.14);
+}
+html.dw body,html.dw{background:#f8fafd !important;}
+html.dw:has(.screen:not(.light)) body,html.dw:has(.screen:not(.light)){background:#0b1730 !important;}
+html.dw .screen{background:var(--bg);}
+
+/* Titulares: Poppins 800 con el espaciado de la web */
+html.dw .h-title{font-family:var(--f-display);font-weight:800;letter-spacing:-.025em;}
+html.dw .card-head b{font:700 var(--fs-l) var(--f-display);letter-spacing:-.015em;}
+
+/* Tarjetas: blancas con borde de 1 px sobre el fondo gris azulado (claro) */
+html.dw .screen.light .card{border:1px solid var(--line);}
+html.dw .screen:not(.light) .card{border:1px solid var(--line);}
+
+/* Botones: azul con texto blanco, 48 px, radio 14, sombra azul; secundario blanco con borde */
+html.dw .btn-primary{height:auto;min-height:48px;border-radius:var(--r-btn);background:var(--accent);color:#fff;box-shadow:var(--sombra-accion);font:700 var(--fs-m)/1.2 var(--f-body);}
+html.dw .btn-eq{min-height:48px;border-radius:var(--r-btn);background:var(--card);border:1px solid var(--line-strong);color:var(--ink);font:700 var(--fs-m)/1.2 var(--f-body);}
+html.dw .segui-aviso-cta{border-radius:var(--r-btn);background:var(--accent);color:#fff;min-height:44px;display:flex;align-items:center;padding:0 16px;box-shadow:var(--sombra-accion);}
+
+/* Semana: el día hecho en azul con marca blanca */
+html.dw .week-dot.done{background:var(--accent);color:#fff;}
+
+/* Iconos de línea en lugar de emojis (los pone diseno-web.js) */
+html.dw svg.ico-dw{width:20px;height:20px;display:block;flex:none;}
+html.dw .kcal-line .ki{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:var(--accent-wash);color:var(--accent-text);}
+html.dw .kcal-line .ki svg.ico-dw{width:18px;height:18px;}
+html.dw .ha-ico{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:rgba(227,166,89,.18);color:var(--warn-text);}
+html.dw .mr>span{color:var(--ink);}
+html.dw #mrP>span{color:var(--protein-text);} html.dw #mrC>span{color:var(--carb-text);} html.dw #mrF>span{color:var(--fat-text);}
+html.dw .mr>span svg.ico-dw{width:22px;height:22px;}
+html.dw .card-head b svg.ico-dw{display:inline-block;vertical-align:-3px;margin-right:6px;color:var(--accent-text);}
+html.dw .hp-rachas span{display:inline-flex;align-items:center;gap:6px;}
+html.dw .hp-rachas svg.ico-dw{width:16px;height:16px;color:var(--accent-text);}
+
+/* Foco visible como en la web: anillo azul de 3 px */
+html.dw :is(button,a,[tabindex],.card[onclick]):focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+html.dw .screen:not(.light) :is(button,a,[tabindex],.card[onclick]):focus-visible{outline-color:#89b9e8;}

@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.93 (actual)
-Cambios acumulados hacia la 0.94: **8 de 10**
+Cambios acumulados hacia la 0.94: **9 de 10**
 
 ### Hacia la 0.94
 1. 09/11/2026 · **La barra inferior ya no se recorta en Android** (avisado por Domingo: con la app a pantalla completa, las etiquetas quedaban detrás de los botones del sistema). Ahora deja siempre el hueco de la barra de navegación del sistema (y de la raya de inicio del iPhone); el chat del profesional en el móvil, también → **0.93.0-1 (caché)**
@@ -15,6 +15,7 @@ Cambios acumulados hacia la 0.94: **8 de 10**
 6. 11/11/2026 · **Tamaño del texto** (punto 1 de la auditoría): en Ajustes → Apariencia se elige Normal, Grande o Muy grande y escala todos los textos; se quita el bloqueo del pellizco para ampliar la pantalla. La elección solo se guarda si se aceptan las cookies de preferencias (como el tema). Las pestañas de abajo mantienen su tamaño para no solaparse → **0.93.3**
 7. 11/11/2026 · **«Pagos» pasa a ser pestaña propia** en la barra del profesional en el móvil (decidido por Domingo; Apple pide evitar la pestaña «Más»). Desaparece «Más»: **Ajustes** se abre con la rueda de la cabecera, junto a la campana, y su «‹ Volver» regresa a la pestaña desde la que se abrió. Las **recetas** de Fátima se abren desde su pestaña «Nutrición». En el ordenador no cambia nada → **0.93.3-1 (caché)**
 8. 11/11/2026 · **El tema sigue el modo del sistema** por defecto (decidido por Domingo; lo recomiendan Apple, Material y web.dev): quien no haya elegido claro u oscuro ve la app en «Automático». Quien ya eligió uno lo conserva. Revisado el modo oscuro en las pantallas del cliente y del equipo → **0.93.4**
+9. 11/11/2026 · **Muestra del diseño de la web en la pantalla Hoy** (pedido por Domingo: que la app se acerque a fitnessindramas.com). Solo se ve abriendo la app con `?diseno=web`; nadie más nota nada. Toma del sistema de diseño el azul de acción, Poppins en los titulares, Inter en el texto, tarjetas blancas con borde fino, botones azules con texto blanco e iconos de línea en vez de emojis; el modo oscuro pasa al azul marino de la web. Se mantienen las mayúsculas y la letra de máquina en rótulos y cifras. Fuentes Poppins e Inter con licencia OFL (`fonts/OFL-*.txt`) → **0.93.4-1 (caché)**
 
 ## Versión 0.92 → 0.93.0
 
