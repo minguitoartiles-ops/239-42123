@@ -105,7 +105,7 @@ confirmarPassPro = (function(orig){
     err.textContent = '';
     if (btn) { btn.disabled = true; btn.textContent = 'Entrando…'; }
     svCargar()
-      .then(function(d){ return d.auth.entrar(email, pass); })
+      .then(function(d){ return d.auth.entrar(email, pass, window.sgPedirCodigo); })
       .then(function(p){
         document.getElementById('proPassInput').value = '';
         cerrarPassPro();
@@ -502,12 +502,12 @@ function svEnviarCliente(){
   let canjeado = false;
   svCargar().then(function(d){
     // 6/11 · Entrada única: con «Entrar con mi cuenta» entran clientes y profesionales (lo decide el servidor)
-    if (!canje) return d.auth.entrarCualquiera(email, pass).then(function(r){
+    if (!canje) return d.auth.entrarCualquiera(email, pass, window.sgPedirCodigo).then(function(r){
       if (r.tipo === 'pro') return { pro: r };
       return d.clientes.miFicha();
     });
     return d.clientes.canjear(svCodigoCanje, email, pass).then(function(){ canjeado = true; })
-      .then(function(){ return d.auth.entrarCliente(email, pass); })
+      .then(function(){ return d.auth.entrarCliente(email, pass, window.sgPedirCodigo); })
       .then(function(){ return d.clientes.miFicha(); });
   }).then(function(f){
     if (f && f.pro) { svCerrarHojaCliente(); svEntrarPro(f.pro); return; }

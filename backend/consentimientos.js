@@ -1,9 +1,9 @@
-// Consentimientos (datos de salud y uso de imagen) guardados en Supabase. No conoce la pantalla.
+// Consentimientos (datos de salud, uso de imagen y cookies) guardados en Supabase. No conoce la pantalla.
 // Registro que solo crece: dar, cambiar o retirar añade una fila. Lo escribe el propio cliente
 // (el servidor pone su ficha, la fecha y el navegador); lo ven él y el equipo.
 import { ErrorServidor } from './clientes.js';
 
-const TIPOS = ['salud', 'imagen'];
+const TIPOS = ['salud', 'imagen', 'cookies'];   // 11/11 · cookies: «dado» acepta las de preferencias; «retirado», solo técnicas
 const VERSION = /^[0-9A-Za-z._-]{1,40}$/;
 
 function errorDe(e, generico) {

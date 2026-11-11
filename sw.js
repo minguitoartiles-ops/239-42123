@@ -89,6 +89,7 @@ const SHELL = [
   './servidor-plantillas.js',
   './sin-parpadeo.js',
   './diagnostico.js',
+  './seguridad-registro.js',
   './barra-pro.js',
   './assets/qr_app.png',
   './manifest.webmanifest',
