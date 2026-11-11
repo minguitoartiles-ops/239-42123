@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.93.3';
+const APP_VERSION = '0.93.4';
 /* 8/11 · la versión de la portada sale de aquí (antes estaba escrita a mano y se quedó en la 0.84) */
 (function(){
   const poner = function(){ const e = document.getElementById('appVersion'); if (e) e.textContent = 'Versión ' + APP_VERSION; };
@@ -72,7 +72,7 @@ function cerrarDialogo(acepta){
 /* =========================================================
    APARIENCIA
    ========================================================= */
-let temaPref = 'claro';
+let temaPref = 'auto';
 const mqOscuro = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
 function aplicarTema(p){
@@ -93,8 +93,8 @@ function elegirTema(p){
   if (prefPermitidas()) { try { localStorage.setItem(TEMA_KEY, p); } catch(e){} }
 }
 function cargarTema(){
-  let p = 'claro';
-  if (prefPermitidas()) { try { p = localStorage.getItem(TEMA_KEY) || 'claro'; } catch(e){} }
+  let p = 'auto';   // 11/11 · sin elección guardada, sigue el modo del sistema (Apple, Material, web.dev)
+  if (prefPermitidas()) { try { p = localStorage.getItem(TEMA_KEY) || 'auto'; } catch(e){} }
   aplicarTema(p);
 }
 /* ---------- Tamaño del texto (WCAG 1.4.4 · Apple Dynamic Type · Android sp): multiplica los 8 escalones de letra ---------- */

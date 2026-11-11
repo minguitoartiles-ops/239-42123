@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.93 (actual)
-Cambios acumulados hacia la 0.94: **6 de 10**
+Cambios acumulados hacia la 0.94: **8 de 10**
 
 ### Hacia la 0.94
 1. 09/11/2026 · **La barra inferior ya no se recorta en Android** (avisado por Domingo: con la app a pantalla completa, las etiquetas quedaban detrás de los botones del sistema). Ahora deja siempre el hueco de la barra de navegación del sistema (y de la raya de inicio del iPhone); el chat del profesional en el móvil, también → **0.93.0-1 (caché)**
@@ -13,6 +13,8 @@ Cambios acumulados hacia la 0.94: **6 de 10**
 4. 09/11/2026 · **«Mis facturas» dentro de «Suscripción»** en los Ajustes del cliente (antes era una sección suelta al final). Si el cliente no tiene suscripción a la vista, la sección se crea solo con las facturas → **0.93.2**
 5. 11/11/2026 · **Tanda rápida de la auditoría con las guías oficiales** (ver claude/auditoria-guias-oficiales-2026-11-09.md, puntos 3, 8, 11 y 12): filtros, buscadores, casillas, «‹» y caja del chat del profesional con zona táctil de 44 px; campos a 16 px en el móvil (el iPhone ya no amplía la pantalla al tocarlos); «Código de acceso» y la caja de sensaciones con su rótulo unido al campo; la pantalla principal marcada como zona principal y un título por pantalla para lectores de pantalla. Arreglado de paso un paréntesis sin cerrar en `sistema.css` que, desde la 0.84.0-1, impedía aplicar parte de los estilos (el efecto al pasar el ratón, la animación de mensajes nuevos y las reglas de movimiento reducido vuelven a funcionar) → **0.93.2-1 (caché)**
 6. 11/11/2026 · **Tamaño del texto** (punto 1 de la auditoría): en Ajustes → Apariencia se elige Normal, Grande o Muy grande y escala todos los textos; se quita el bloqueo del pellizco para ampliar la pantalla. La elección solo se guarda si se aceptan las cookies de preferencias (como el tema). Las pestañas de abajo mantienen su tamaño para no solaparse → **0.93.3**
+7. 11/11/2026 · **«Pagos» pasa a ser pestaña propia** en la barra del profesional en el móvil (decidido por Domingo; Apple pide evitar la pestaña «Más»). Desaparece «Más»: **Ajustes** se abre con la rueda de la cabecera, junto a la campana, y su «‹ Volver» regresa a la pestaña desde la que se abrió. Las **recetas** de Fátima se abren desde su pestaña «Nutrición». En el ordenador no cambia nada → **0.93.3-1 (caché)**
+8. 11/11/2026 · **El tema sigue el modo del sistema** por defecto (decidido por Domingo; lo recomiendan Apple, Material y web.dev): quien no haya elegido claro u oscuro ve la app en «Automático». Quien ya eligió uno lo conserva. Revisado el modo oscuro en las pantallas del cliente y del equipo → **0.93.4**
 
 ## Versión 0.92 → 0.93.0
 

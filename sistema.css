@@ -267,3 +267,11 @@ html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl){position:relative;}
 html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl)::before{content:'';position:absolute;left:0;right:0;top:50%;height:max(100%,44px);transform:translateY(-50%);}
 /* barra inferior: la zona que se toca llega hasta los bordes de la barra (≈58 px de alto, por encima de los 48 dp de Android) */
 .tb .tbi::before,.coach-tb .tbi::before{content:'';position:absolute;left:0;right:0;top:-6px;bottom:-8px;}
+
+/* 11/11 · barra del profesional en el móvil: Pagos es pestaña propia, «Más» desaparece y Ajustes va a la cabecera */
+html:not(.esc) #coachTabs #ctab-mas{display:none !important;}
+html:not(.esc) #coachTabs #ctab-pagos{display:flex !important;}
+html.esc .pro-cfg{display:none !important;}
+.pro-recetas{margin:0 0 16px;}
+.pro-recetas .list-row{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;min-height:44px;}
+html:not(.esc) #view-coach-ajustes .alta-top .back-btn{display:inline-flex;}
