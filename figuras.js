@@ -1657,16 +1657,17 @@ function fgCinta(pend){
    pies, saltar atrás a plancha, pecho al suelo, volver a plancha, saltar con los pies hacia las manos, subir y saltar con los
    brazos estirados arriba --- */
 (function(){
-  const manos = [68, 83.5];
+  const manos = [69, 83.5];
   const plancha = function(nY){ const n = [manos[0], nY], L = FG_L.muslo + FG_L.canilla + FG_L.tronco - 0.4, dy = 79 - nY, dx = Math.sqrt(L * L - dy * dy), a = [n[0] - dx, 79];
     const k = (FG_L.muslo + FG_L.canilla - 0.2) / L, p = [a[0] + dx * k, a[1] - dy * k], t = Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI;
-    return { p: p, t: t, cab: 4, a: a, f: [a[0] + 3, 83.5], r: -1, w: manos, c: nY > 70 ? -1 : 1 }; };
+    return { p: p, t: t, cab: 4, a: a, f: [a[0] + 3, 83.5], r: -1, w: manos, c: 1 }; };
   const dePie = { p: [53, 46.5], t: 2, cab: 0, r: -1, a: [55, 82.5], f: [62, 83.5], brazo: [178, 176] };
-  const agachado = { p: [54, 74], t: 55, cab: -30, r: -1, a: [58, 82.5], f: [65, 83.5], w: manos, c: 1 };
-  const arriba = plancha(59), abajo = plancha(77);
-  const sube = { p: [53, 52], t: 12, cab: 0, r: -1, a: [55, 82.5], f: [62, 83.5], brazo: [60, 40] };
-  const salto = { p: [53, 40], t: 0, cab: 0, r: -1, a: [55, 76], f: [60, 80.5], brazo: [4, 2] };
-  FG['burpees'] = { seq: [[dePie, 0.3], [agachado, 0.35], [arriba, 0.22], [abajo, 0.35], [arriba, 0.35], [agachado, 0.22], [sube, 0.2], [salto, 0.2], [dePie, 0.25]], vuelta: 0.3,
+  // 11/11 (imagen de referencia): agachado del todo, las rodillas al pecho, los talones algo levantados y las manos justo delante de los pies
+  const agachado = { p: [44, 69], t: 65, cab: -30, r: -1, a: [60, 80.5], f: [65, 83.5], w: manos, c: 1 };
+  const arriba = plancha(59), abajo = plancha(74);
+  const sube = { p: [52, 58], t: 35, cab: -15, r: -1, a: [55, 82.5], f: [62, 83.5], brazo: [165, 150] };   // a medio subir, las manos cerca de las rodillas
+  const salto = { p: [53, 40], t: 0, cab: 0, r: -1, a: [54, 76.5], f: [56.5, 82], brazo: [2, 0] };   // en el aire, los brazos estirados arriba y las puntas de los pies hacia abajo
+  FG['burpees'] = { zoom: 0.85, seq: [[dePie, 0.3], [agachado, 0.35], [arriba, 0.22], [abajo, 0.35], [arriba, 0.3], [agachado, 0.22], [sube, 0.25], [salto, 0.2], [salto, 0.1], [dePie, 0.25]], vuelta: 0.35,
     fondo: FG_PISO + fgRotulo('suelo, plancha, pecho y salto') };
 })();
 /* --- battle ropes (nota: «no se ven las cuerdas ni el movimiento real»): media sentadilla con el tronco firme; cada mano sube
