@@ -1,14 +1,16 @@
   :root{
     /* ===== Sistema base (diseño · fase 2) =====
        Tamaños de letra: 8 escalones, cada uno con su papel. */
-    --fs-xs:11px;   /* etiqueta */
-    --fs-s:13px;    /* texto secundario */
-    --fs-m:15px;    /* texto base */
-    --fs-l:17px;    /* destacado */
-    --fs-xl:20px;   /* título de tarjeta */
-    --fs-2xl:24px;  /* título de pantalla (móvil) */
-    --fs-3xl:28px;  /* título de escritorio */
-    --fs-4xl:40px;  /* cifra protagonista */
+    /* 11/11 · «Tamaño del texto» (Ajustes → Apariencia): --ts vale 1, 1,15 o 1,3 y escala todos los escalones */
+    --ts:1;
+    --fs-xs:calc(11px*var(--ts,1));   /* etiqueta */
+    --fs-s:calc(13px*var(--ts,1));    /* texto secundario */
+    --fs-m:calc(15px*var(--ts,1));    /* texto base */
+    --fs-l:calc(17px*var(--ts,1));    /* destacado */
+    --fs-xl:calc(20px*var(--ts,1));   /* título de tarjeta */
+    --fs-2xl:calc(24px*var(--ts,1));  /* título de pantalla (móvil) */
+    --fs-3xl:calc(28px*var(--ts,1));  /* título de escritorio */
+    --fs-4xl:calc(40px*var(--ts,1));  /* cifra protagonista */
     /* Espacios: escala de base 4 */
     --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
     /* Radios: controles, tarjetas y píldoras */
@@ -658,7 +660,7 @@
   /* 9/11 · la barra no se esconde detrás de la barra de navegación del sistema (Android con la app a pantalla completa,
      iPhone con la raya de inicio). Antes esta regla pisaba la del móvil, que ya sumaba ese hueco, y en Android las
      etiquetas quedaban recortadas (avisado por Domingo) */
-  .tb{padding-bottom:max(16px, calc(8px + env(safe-area-inset-bottom, 0px)));}
+  .tb{padding-bottom:max(16px, calc(8px + env(safe-area-inset-bottom, 0px)), calc(8px + env(safe-area-max-inset-bottom, 0px)));}
   html.chat-pro-movil .chat-input{margin-bottom:calc(20px + env(safe-area-inset-bottom, 0px));}
   .tbi{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;min-width:0;font:600 var(--fs-xs) var(--f-mono);letter-spacing:0;color:var(--dim-40);background:none;border:none;cursor:pointer;}
   .tbi.active{color:var(--accent-text);}
@@ -1273,6 +1275,13 @@
   @media (max-width: 400px){ .tl-largo{display:none;} .tl-corto{display:inline;} }
   /* D13 · letras de la barra inferior y etiquetas más legibles */
   .tbi{font-size:var(--fs-xs);}
+  /* 9/11 · barra inferior más compacta (pedido por Domingo: más espacio para la pantalla), la del cliente y la del
+     profesional. De 83 a ~60 px: menos relleno, icono algo más pequeño y la etiqueta pegada a él. Cada botón sigue
+     teniendo al menos 44 px de alto para pulsarlo bien. Abajo deja el hueco de la barra del sistema (el actual o el
+     máximo que anuncie Chrome) sin sumar relleno extra encima */
+  .tb,.coach-tb{padding-top:6px;padding-bottom:max(8px, env(safe-area-inset-bottom, 0px), env(safe-area-max-inset-bottom, 0px));}
+  .tbi{gap:2px;min-height:44px;justify-content:center;}
+  .tbi-emo{width:40px;height:26px;font-size:var(--fs-l);}
   .kc-l{font-size:var(--fs-xs);}
   .segui-lbl{font-size:var(--fs-xs);}
   /* B9 · barra «Editando: nombre» del profesional sin aplastarse */
@@ -1503,14 +1512,14 @@
 .fe-dia > b{display:block;font:700 var(--fs-s) var(--f-body);margin-bottom:4px;}
 .fe-sem-fila{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;}
 .fe-sem-b{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card, #fff);font:700 var(--fs-s) var(--f-body);cursor:pointer;}
-.fe-sem-b small{font-weight:500;font-size:11px;color:var(--muted, #6b7280);}
+.fe-sem-b small{font-weight:500;font-size:var(--fs-xs);color:var(--muted, #6b7280);}
 .fe-sem-b.sel{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
 .fe-sem-b.sel small{color:var(--on-accent);}
 .fe-ej2{padding:4px 0;}
 .fe-ej2-t{display:flex;justify-content:space-between;align-items:center;gap:8px;font:var(--fs-s) var(--f-body);}
 .fe-ej2-t small{color:var(--muted, #6b7280);margin-left:4px;}
 .fe-ej2-d{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:3px;}
-.fe-ej2-d small{color:var(--muted, #6b7280);font-size:12px;}
+.fe-ej2-d small{color:var(--muted, #6b7280);font-size:calc(12px*var(--ts,1));}
 .fe-s{font:600 12px var(--f-body);padding:2px 7px;border-radius:8px;background:var(--line, #e5e7eb);white-space:nowrap;}
 .fe-dia > .fe-ton{display:block;font:600 var(--fs-xs, 12px) var(--f-body);color:var(--muted, #6b7280);margin:-2px 0 4px;}
 .fe-ej{display:flex;align-items:center;gap:8px;font:500 var(--fs-s) var(--f-body);color:var(--dim-6);padding:2px 0;}

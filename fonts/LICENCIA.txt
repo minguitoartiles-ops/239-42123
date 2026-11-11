@@ -1,3 +1,6 @@
 Archivo, Archivo Black, Caveat e IBM Plex Mono se distribuyen bajo la
 SIL Open Font License 1.1 (https://openfontlicense.org).
 Archivos woff2 (subconjunto latino) obtenidos de Fontsource.
+
+Poppins e Inter (muestra del diseño de la web, 11/11/2026) se distribuyen bajo la misma licencia;
+sus textos completos están en OFL-Poppins.txt y OFL-Inter.txt. Archivos woff copiados del sistema de diseño de Fitnessindramas.

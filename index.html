@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://i.ytimg.com; media-src 'self' data: blob:; connect-src 'self' https://www.youtube.com https://nviqtrslagidrojvowdn.supabase.co wss://nviqtrslagidrojvowdn.supabase.co; frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com https://drive.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script>/* seguridad: la app no se deja meter dentro de otra web (clickjacking) */ if (window.top !== window.self) { document.documentElement.style.display = 'none'; try { window.top.location = window.self.location.href; } catch (e) {} }</script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -61,7 +61,7 @@ if ('serviceWorker' in navigator) {
     <div class="fsd-overlay ck-layer" id="cookieBanner" role="dialog" aria-modal="true" aria-labelledby="ckTitulo">
       <div class="fsd-sheet">
         <h3 id="ckTitulo">Tu privacidad</h3>
-        <p>Fitnessindramas guarda información en tu dispositivo. La técnica es necesaria para que la app funcione. Con tu permiso, guardamos también tu preferencia de apariencia. No usamos cookies de publicidad ni de analítica.</p>
+        <p>Fitnessindramas guarda información en tu dispositivo. La técnica es necesaria para que la app funcione. Con tu permiso, guardamos también tus preferencias de apariencia (modo y tamaño del texto). No usamos cookies de publicidad ni de analítica.</p>
         <p><a class="lnk" href="#" onclick="abrirLegal('cookies');return false;">Política de cookies</a> · <a class="lnk" href="#" onclick="abrirLegal('privacidad');return false;">Política de privacidad</a></p>
         <div class="btn-row">
           <button class="btn-eq" onclick="cookiesRechazar()">Rechazar</button>
@@ -81,7 +81,7 @@ if ('serviceWorker' in navigator) {
         </div>
         <div class="ck-cat">
           <label class="ck-cat-top" for="ckPref"><b>Preferencias</b><input type="checkbox" id="ckPref" class="ck-switch"></label>
-          <p>Recuerdan si prefieres el modo claro, oscuro o automático.</p>
+          <p>Recuerdan si prefieres el modo claro, oscuro o automático y el tamaño del texto.</p>
         </div>
         <div class="ck-cat">
           <div class="ck-cat-top"><b>Analíticas y publicidad</b><span class="pill">No se usan</span></div>
@@ -180,7 +180,7 @@ if ('serviceWorker' in navigator) {
       <div class="instalar-card" id="instalarCard" hidden></div>
 
       <div class="login-card">
-        <div class="field"><label>Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
+        <div class="field"><label for="accessCode">Código de acceso del cliente</label><input type="text" id="accessCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9" autocapitalize="characters" oninput="formatCode(this)"></div>
         <button class="btn-primary" onclick="enterApp()">Entrar</button>
         <div class="picker-new-error" id="loginError" style="text-align:center"></div>
         <p class="login-hint">Tu equipo te ha dado de alta y te ha enviado un código de acceso personal. Introdúcelo aquí para entrar a tu plan.</p>
@@ -199,7 +199,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Nueva ficha</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Alta de cliente</div></div>
+        <div><div class="eyebrow">Nueva ficha</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Alta de cliente</div></div>
       </div>
 
       <div class="alta-body">
@@ -268,7 +268,7 @@ if ('serviceWorker' in navigator) {
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
           <span class="bell-badge hide" id="coachBellBadge">0</span>
         </button>
-        <div style="flex:1"><div class="eyebrow" id="panelWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Clientes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="panelWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Clientes</div></div>
       </div>
 
       <div class="alta-body">
@@ -295,7 +295,7 @@ if ('serviceWorker' in navigator) {
     <!-- SEGUIMIENTOS (pestaña del profesional) -->
     <div id="view-coach-segs" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="segsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Seguimientos</div></div>
+        <div style="flex:1"><div class="eyebrow" id="segsWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Seguimientos</div></div>
       </div>
       <div class="alta-body"><div id="segsResumen"></div></div>
     </div>
@@ -303,7 +303,7 @@ if ('serviceWorker' in navigator) {
     <!-- CHATS (pestaña del profesional) -->
     <div id="view-coach-chats" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="chatsWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Chats</div></div>
+        <div style="flex:1"><div class="eyebrow" id="chatsWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Chats</div></div>
       </div>
       <div class="alta-body"><div id="chatsPro"></div></div>
     </div>
@@ -311,7 +311,7 @@ if ('serviceWorker' in navigator) {
     <!-- PAGOS CLIENTES (pestaña del profesional) -->
     <div id="view-coach-pagos" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="pagosWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Pagos clientes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="pagosWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Pagos clientes</div></div>
       </div>
       <div class="alta-body"><div id="pagosPro"></div></div>
     </div>
@@ -319,7 +319,7 @@ if ('serviceWorker' in navigator) {
     <!-- PLANES (pestaña Entrenos / Nutrición del profesional) -->
     <div id="view-coach-planes" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="planesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)" id="planesTit">Planes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="planesWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)" id="planesTit">Planes</div></div>
       </div>
       <div class="alta-body"><div id="planesPro"></div></div>
     </div>
@@ -327,7 +327,7 @@ if ('serviceWorker' in navigator) {
     <!-- MÁS (pestaña del profesional) -->
     <div id="view-coach-mas" style="display:none">
       <div class="alta-top">
-        <div style="flex:1"><div class="eyebrow" id="masWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Más</div></div>
+        <div style="flex:1"><div class="eyebrow" id="masWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Más</div></div>
       </div>
       <div class="alta-body"><div id="masPro"></div></div>
     </div>
@@ -336,7 +336,7 @@ if ('serviceWorker' in navigator) {
     <div id="view-coach-ajustes" style="display:none">
       <div class="alta-top">
         <button class="back-btn" onclick="backToPanel()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div style="flex:1"><div class="eyebrow" id="ajustesWho">Fitnessindramas</div><div class="h-title" style="margin-top:2px;font-size:var(--fs-2xl)">Ajustes</div></div>
+        <div style="flex:1"><div class="eyebrow" id="ajustesWho">Fitnessindramas</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Ajustes</div></div>
       </div>
       <div class="alta-body"><div id="ajustesCoach"></div></div>
     </div>
@@ -346,7 +346,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="fichaVolver()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" id="cd-nombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
+        <div><div class="eyebrow">Ficha de cliente</div><div class="h-title" role="heading" aria-level="1" id="cd-nombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
       </div>
 
       <div class="alta-body">
@@ -381,7 +381,7 @@ if ('serviceWorker' in navigator) {
       <div class="sb"><span>9:41</span><div class="sbi"><div style="width:17px;height:10px;border-radius:2px;background:var(--ink)"></div><div style="width:22px;height:11px;border-radius:3px;border:1.5px solid var(--dim-6)"></div></div></div>
       <div class="alta-top">
         <button class="back-btn" onclick="backToCliente()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>
-        <div><div class="eyebrow">Seguimientos</div><div class="h-title" id="seguiNombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
+        <div><div class="eyebrow">Seguimientos</div><div class="h-title" role="heading" aria-level="1" id="seguiNombre" style="margin-top:2px;font-size:var(--fs-2xl)">—</div></div>
       </div>
       <div class="alta-body" id="seguiList"></div>
         </div>
@@ -395,12 +395,12 @@ if ('serviceWorker' in navigator) {
         <button onclick="editarPlan()" id="editarBtn">Editar</button>
       </div>
 
-      <div class="sc" id="content">
+      <div class="sc" id="content" role="main">
 
         <!-- HOY -->
         <section class="view active" id="view-hoy">
           <div class="topline">
-            <div><div class="eyebrow" id="hoyFecha">—</div><div class="h-title" id="hoySaludo">Hola</div></div>
+            <div><div class="eyebrow" id="hoyFecha">—</div><div class="h-title" role="heading" aria-level="1" id="hoySaludo">Hola</div></div>
             <div class="topline-acts">
               <button class="bell" onclick="abrirNotis()" aria-label="Notificaciones">
                 <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -432,7 +432,7 @@ if ('serviceWorker' in navigator) {
               </div>
               <div class="kcal-side">
                 <div class="kcal-line"><span class="ki">✅</span><div><b id="entOk">2</b><span>completadas</span></div></div>
-                <div class="kcal-line"><span class="ki">📅</span><div><b id="entFalta">2</b><span>pendientes</span></div></div>
+                <div class="kcal-line"><span class="ki">⏳</span><div><b id="entFalta">2</b><span>pendientes</span></div></div>
                 <div class="kcal-line"><span class="ki">🏋️</span><div><b id="entTon">0 kg</b><span>tonelaje</span></div></div>
               </div>
             </div>
@@ -483,7 +483,7 @@ if ('serviceWorker' in navigator) {
         <section class="view" id="view-seguimiento">
           <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 6px">
             <div class="eyebrow">Rellenar cada domingo o lunes</div>
-            <div class="h-title" style="font-size:var(--fs-3xl)">Seguimiento semanal</div>
+            <div class="h-title" role="heading" aria-level="1" style="font-size:var(--fs-3xl)">Seguimiento semanal</div>
             <div class="sub" style="margin-top:8px">Con esto Fátima y Domingo ajustan tu plan. Sé sincero: no hay respuestas malas.</div></div>
           </div>
 
@@ -547,7 +547,7 @@ if ('serviceWorker' in navigator) {
         <section class="view" id="view-entreno">
           <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px">
             <div class="eyebrow" id="entSemana">Tu plan</div>
-            <div class="h-title" style="font-size:var(--fs-3xl)">Tus sesiones</div>
+            <div class="h-title" role="heading" aria-level="1" style="font-size:var(--fs-3xl)">Tus sesiones</div>
             <div class="sub" id="entSub" style="margin-top:8px">—</div></div>
           </div>
 
@@ -585,7 +585,7 @@ if ('serviceWorker' in navigator) {
 
         <!-- PLAN -->
         <section class="view" id="view-plan">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 16px"><div class="h-title" style="margin-top:0">Plan nutricional</div><div class="sub">Elige una opción de cada fila (o combina hasta 3): las cantidades ya cuadran con tus calorías. Todo se pesa en crudo.</div></div></div>
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 16px"><div class="h-title" role="heading" aria-level="1" style="margin-top:0">Plan nutricional</div><div class="sub">Elige una opción de cada fila (o combina hasta 3): las cantidades ya cuadran con tus calorías. Todo se pesa en crudo.</div></div></div>
           <div class="day-row">
             <div class="day-pill">L</div><div class="day-pill">M</div><div class="day-pill active">X</div>
             <div class="day-pill">J</div><div class="day-pill">V</div><div class="day-pill">S</div><div class="day-pill">D</div>
@@ -628,7 +628,7 @@ if ('serviceWorker' in navigator) {
 
         <!-- PROGRESO -->
         <section class="view" id="view-progreso">
-          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px"><div class="h-title" style="margin-top:0">Tu progreso</div><div class="sub">Tu evolución, semana a semana.</div></div></div>
+          <div class="view-top"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1;padding:0 0 18px"><div class="h-title" role="heading" aria-level="1" style="margin-top:0">Tu progreso</div><div class="sub">Tu evolución, semana a semana.</div></div></div>
           <div class="ring-card">
             <div class="ring" id="pgRing"><div class="ring-inner"><div class="n" id="pgSemNum">—</div><div class="l" id="pgSemTot">SEMANAS</div></div></div>
             <div class="ring-text"><b id="pgRingTit">Tu asesoría</b><p id="pgRingTxt">Aquí tienes lo que llevas esta semana, en directo.</p></div>
@@ -666,7 +666,7 @@ if ('serviceWorker' in navigator) {
 
         <!-- CHAT -->
         <section class="view" id="view-chat" style="padding:0 22px;">
-          <div class="view-top" style="flex:none;padding-bottom:0"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1"><div class="h-title" id="chatTitle" style="margin-top:0">Tu equipo</div><div class="sub" id="chatSub" style="margin-top:2px">Fátima y Domingo, en la misma conversación</div></div></div>
+          <div class="view-top" style="flex:none;padding-bottom:0"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button><div style="flex:1"><div class="h-title" role="heading" aria-level="1" id="chatTitle" style="margin-top:0">Tu equipo</div><div class="sub" id="chatSub" style="margin-top:2px">Fátima y Domingo, en la misma conversación</div></div></div>
           <div class="team-row" style="flex:none">
             <div class="team-chip"><span class="dot"></span>Fátima · dietista</div>
             <div class="team-chip"><span class="dot"></span>Domingo · entrenador</div>
@@ -726,7 +726,7 @@ if ('serviceWorker' in navigator) {
 
         <section class="view" id="view-ajustes">
           <div class="view-top" style="padding-bottom:2px"><button class="view-back" onclick="volverAtras()"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button></div>
-          <div class="h-title ajx-title">Ajustes</div>
+          <div class="h-title ajx-title" role="heading" aria-level="1">Ajustes</div>
           <div id="ajustesCliente"></div>
         </section>
 
@@ -895,5 +895,8 @@ if ('serviceWorker' in navigator) {
 <script src="servidor-cuenta.js" defer></script>
 <script src="servidor-plantillas.js" defer></script>
 <script src="sin-parpadeo.js" defer></script>
+<script src="diagnostico.js" defer></script>
+<script src="barra-pro.js" defer></script>
+<script src="diseno-web.js" defer></script>
 </body>
 </html>

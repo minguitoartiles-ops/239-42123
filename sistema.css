@@ -77,7 +77,7 @@ html:not(.esc) :is(.ex-filtros,.pagos-filtros,.pu-chat-chips,.ent-filtros) > *{f
    Diseño · Fase 4: escritorio y movimiento
    ========================================================================== */
 /* Escala propia de escritorio: títulos de 28 px y texto base de 15 px */
-html.esc{--fs-2xl:28px;}
+html.esc{--fs-2xl:calc(28px*var(--ts,1));}
 /* El menú lateral ya dice quién eres: fuera el rótulo repetido sobre cada título */
 html.esc .eyebrow[id$="Who"]{display:none;}
 html.esc #view-coach-panel .h-title,html.esc .screen .alta-top .h-title{margin-top:0;}
@@ -217,7 +217,7 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
 @media (hover:hover) and (pointer:fine){
   :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,#sendBtn):not(:disabled):hover{filter:brightness(.96);cursor:pointer;}
   .cliente-card:hover{box-shadow:0 4px 16px -8px rgba(0,0,0,.25);}
-  :is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn:hover{background-color:var(--wash-soft) !important;cursor:pointer;}
+  :is(.aj-sec-h,.chat-cab-info,.chat-cab-volver,.chat-cab-panel,.menu-row,.list-row[onclick],.cd-edit-nom,.ha-x,.bell,.recursos-plegable > summary,[role="tab"]:not([aria-selected="true"]),.back-btn,.view-back,.cmp-ico,.esc-pie-btn,.mt-vista button:not(.on),.mt-grande,.mt-cab-txt[data-ficha],.avatar[onclick],.picker-close,.x-btn):hover{background-color:var(--wash-soft) !important;cursor:pointer;}
   :is(.cd-edit-nom,.list-row.danger,.cmp-ico):hover{filter:brightness(.95);}
 }
 
@@ -230,3 +230,48 @@ html.esc .alta-top:has(.eyebrow[id$="Who"])::after{content:'';position:absolute;
   .fsd-cerrando{display:none !important;}
   :is(.btn-primary,.btn-eq,.mini-btn,.sens-animo,.sel,.chip,.acc-btn,.pro-btn,.hoy-aviso,.segui-aviso,.chat-hero,.cliente-card,#sendBtn,.cmp-main):active{transform:none;}
 }
+
+/* =========================================================
+   11/11 · Guías oficiales (Apple HIG · Material 3 · WCAG 2.2) y sistema de diseño de Design
+   1) Tamaño del texto: html[data-ts] cambia --ts, que multiplica los 8 escalones --fs-*.
+   2) Zonas táctiles de 44 px en el móvil (tap-target del sistema de diseño).
+   3) Campos a 16 px en pantallas táctiles: así el iPhone no amplía la pantalla al tocarlos.
+   ========================================================= */
+html[data-ts="g"]{--ts:1.15;}
+html[data-ts="mg"]{--ts:1.3;}
+/* la barra inferior no crece: cada pestaña mide un quinto de la pantalla y el nombre tiene que caber (la zona que se toca sí mide 58 px) */
+.tb .tbi,.coach-tb .tbi{font-size:11px;}
+.tb .tbi .tbi-emo,.coach-tb .tbi .tbi-emo{font-size:17px;}
+.ajx-sub{font:600 var(--fs-s) var(--f-body);color:var(--ink);margin:16px 0 8px;}
+.seg-tam button{white-space:nowrap;padding:0 4px;}
+.seg-tam .seg-tam-n{font-size:13px;}
+.seg-tam .seg-tam-g{font-size:calc(13px*1.15);}
+.seg-tam .seg-tam-mg{font-size:calc(13px*1.3);}
+
+/* Zonas táctiles: lo que se ve no cambia en el escritorio; en el móvil el control mide 44 px */
+html:not(.esc) :is(.sg-filtros .chip,.pu-chat-chips .chip,.pagos-filtros .chip,.gr-chips .chip,.ex-filtros button,.ent-filtros button,.mini-btn,.sg-ver.sg-ver-btn,.seg button){height:44px;min-height:44px;}
+html:not(.esc) :is(.chk-row,.team-chip){min-height:44px;}
+html:not(.esc) .chk-row{align-items:center;}
+html:not(.esc) .chat-cab-volver{width:44px;height:44px;}
+html:not(.esc) #chatInput{min-height:44px;}
+html:not(.esc) :is(#view-coach-panel,body) .esc-buscar{height:44px;}
+html:not(.esc) :is(.picker-search,.picker-select,.mj-select,.cq-tel-p){height:44px;}
+
+@media (pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):not([type=hidden]):not(.code-input),
+  :is(textarea,select):not(.code-input){font-size:max(16px,var(--fs-m));}
+  html:not(.esc) :is(#view-coach-panel,body) .esc-buscar{font-size:max(16px,var(--fs-m));}
+}
+/* controles de texto sueltos (Volver, editar nombre, cabecera de bloque plegable): la zona que se toca llega a 44 px sin mover nada */
+html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl){position:relative;}
+html:not(.esc) :is(.back-btn,#cdEditNom,.alta-label.fp-lbl)::before{content:'';position:absolute;left:0;right:0;top:50%;height:max(100%,44px);transform:translateY(-50%);}
+/* barra inferior: la zona que se toca llega hasta los bordes de la barra (≈58 px de alto, por encima de los 48 dp de Android) */
+.tb .tbi::before,.coach-tb .tbi::before{content:'';position:absolute;left:0;right:0;top:-6px;bottom:-8px;}
+
+/* 11/11 · barra del profesional en el móvil: Pagos es pestaña propia, «Más» desaparece y Ajustes va a la cabecera */
+html:not(.esc) #coachTabs #ctab-mas{display:none !important;}
+html:not(.esc) #coachTabs #ctab-pagos{display:flex !important;}
+html.esc .pro-cfg{display:none !important;}
+.pro-recetas{margin:0 0 16px;}
+.pro-recetas .list-row{width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left;min-height:44px;}
+html:not(.esc) #view-coach-ajustes .alta-top .back-btn{display:inline-flex;}

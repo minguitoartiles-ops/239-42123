@@ -255,7 +255,12 @@ if (svActivo()) {
       const n = SV_FC.facturas.filter(function(f){ return f.tipo === 'cliente'; }).length;
       const fila = '<div class="list-row" onclick="svFcVerMias()"><span>Mis facturas</span><span class="ajx-acts"><span class="ajx-val">' + n + '</span><span class="chev">›</span></span></div>';
       const m = '<div class="section-lbl">Apariencia</div>';
-      const bloque = '<div class="section-lbl">Facturas</div><div class="list-group">' + fila + '</div>';
+      // 9/11 · «Mis facturas» va dentro de «Suscripción» (pedido por Domingo), como última fila. Si el cliente no tiene
+      // tarifa (no hay bloque «Suscripción»), se crea con solo esa fila
+      const sus = '<div class="section-lbl">Suscripción</div><div class="list-group">';
+      const i = h.indexOf(sus), j = h.indexOf('</div>' + m, i);
+      if (i > -1 && j > -1 && h.slice(i + sus.length, j).indexOf('section-lbl') < 0) return h.slice(0, j) + fila + h.slice(j);
+      const bloque = sus + fila + '</div>';
       return h.indexOf(m) > -1 ? h.replace(m, bloque + m) : h + bloque;
     };
   })(htmlAjustes);
