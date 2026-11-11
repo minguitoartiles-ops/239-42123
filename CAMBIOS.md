@@ -4,11 +4,12 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.94 (actual)
-Cambios acumulados hacia la 0.95: **2 de 10**
+Cambios acumulados hacia la 0.95: **3 de 10**
 
 ### Hacia la 0.95
 1. 11/11/2026 · **La app adopta el diseño de la web** (fitnessindramas.com; aprobado por Domingo con la muestra de Hoy). En toda la app, cliente y equipo, móvil y ordenador: azul de acción de la web (#2563eb) con texto blanco en botones, Poppins en los titulares e Inter en el texto, tarjetas blancas con borde fino sobre fondo gris azulado, botones de 48 px con esquinas de 14 px y sombra azul suave, anillo de foco azul. El modo oscuro pasa al azul marino de la web. El azul claro del logotipo queda solo en el logotipo. Se mantienen, por decisión de Domingo, las mayúsculas y la letra de máquina en rótulos y cifras y todos los emojis. Fuera las fuentes Archivo; Poppins e Inter con licencia OFL. Desaparece la muestra `?diseno=web` → **0.94.0-1 (caché)**
 2. 11/11/2026 · **Pagos**: la nota «Los pagos se registran a mano…» ya no se monta sobre la última fila de clientes. **Entrenos/Nutrición**: la etiqueta «SIN PLAN» ya no se parte en dos líneas → **0.94.1**
+3. 11/11/2026 · **Vuelven las figuras animadas de los ejercicios** al entreno del cliente (se quitaron el 6/11 mientras se rehacían). Domingo ha revisado y aprobado las 227 del catálogo: 146 rehechas con un dibujo nuevo (`figuras.js`: medidas fijas del cuerpo, varias posturas seguidas, vista de lado o de frente según el ejercicio, el material en su sitio y guía de agarre prono/supino/neutro donde hace falta) y 81 antiguas que ya valían. Fuera «Flexiones hindúes» del catálogo de variantes. En el recuadro pequeño el rótulo de la figura se oculta (no se leía) y sale al ampliarla; con «reducir movimiento» las figuras se ven quietas → **0.94.1-1 (caché)**
 
 ## Versión 0.93 → 0.94.0
 
