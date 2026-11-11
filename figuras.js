@@ -1052,8 +1052,9 @@ function fgCodoHacia(n, w, dir){
    inclinado; los brazos casi rectos bajan en arco desde arriba y delante hasta los muslos (el hombro hace todo el trabajo) --- */
 (function(){
   const polea = [106, 6];
-  const pose = function(g){ return { p: [46, 50], t: 22, cab: 4, a: [46, 82.5], f: [53, 83.5], r: -1, brazo: [g, g + 12] }; };
-  FG['pullover en polea'] = { seq: [[pose(38), 0.4], [pose(80), 0.4], [pose(125), 0.4], [pose(160), 0.4], [pose(160), 0.3], [pose(110), 0.5], [pose(70), 0.5]], vuelta: 0.5,
+  // 11/11 (nota de Domingo): el tronco, bastante más inclinado hacia delante
+  const pose = function(g){ return { p: [42, 48.5], t: 45, cab: 8, a: [49, 82.5], f: [53, 83.5], r: -1, brazo: [g, g + 10] }; };
+  FG['pullover en polea'] = { seq: [[pose(52), 0.4], [pose(90), 0.4], [pose(132), 0.4], [pose(168), 0.4], [pose(168), 0.3], [pose(118), 0.5], [pose(80), 0.5]], vuelta: 0.5,
     fondo: FG_PISO + '<rect x="108" y="2" width="7" height="82" rx="2" class="il-mueble"/><circle cx="' + polea[0] + '" cy="' + polea[1] + '" r="3" class="il-mueble"/>' + fgRotulo('brazos casi rectos · polea alta'),
     atras: function(P, ln){ ln(polea, P.w, 'il-cable'); }, delante: function(P, ln){ ln([P.w[0] - 1.5, P.w[1] - 3], [P.w[0] + 1.5, P.w[1] + 3], 'il-barra'); } };
 })();
@@ -1072,7 +1073,7 @@ function fgCodoHacia(n, w, dir){
 (function(){
   const pose = function(enc){ return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], enc: enc, brazoL: [181, 180], brazoR: [179, 180] }; };
   FG['encogimientos con barra'] = { vista: 'frente', seq: [[pose(0), 0.5], [pose(4.5), 0.6], [pose(4.5), 0.5]], vuelta: 0.7,
-    fondo: FG_PISO + fgFlecha(98, 40, 26) + fgRotulo('barra olímpica · encoge'),
+    fondo: FG_PISO + fgFlecha(100, 22, 8) + fgRotulo('barra olímpica · encoge'),
     delante: function(P, ln){ const y = P.wL[1]; ln([14, y], [106, y], 'il-barra'); ln([20, y - 9], [20, y + 9], 'il-placa'); ln([25, y - 7], [25, y + 7], 'il-placa'); ln([100, y - 9], [100, y + 9], 'il-placa'); ln([95, y - 7], [95, y + 7], 'il-placa'); } };
 })();
 
@@ -1091,20 +1092,31 @@ function fgCodoHacia(n, w, dir){
 /* --- remo invertido (de lado): el cuerpo recto como una plancha boca arriba, los talones en el suelo, colgado de una barra
    (vista de canto, un círculo); tira hasta llevar el pecho a la barra, con los codos hacia los pies --- */
 function fgRemoInvertido(o){
-  const barra = o.barra, tob = o.tobillo;
-  const pose = function(n){ const R = fgRecto(tob, n); return { p: R.p, t: R.t, cab: -6, a: tob, f: fgSum(tob, [1, -6.5]), r: 1, w: barra, e: fgCodoHacia(n, barra, [-0.6, 0.8]) }; };
-  return { seq: [[pose(o.abajo), 0.4], [pose(fgLerp(o.abajo, o.arriba, 0.5)), 0.45], [pose(o.arriba), 0.45], [pose(o.arriba), 0.3], [pose(fgLerp(o.abajo, o.arriba, 0.5)), 0.55]], vuelta: 0.55,
-    fondo: FG_PISO + '<line x1="' + barra[0] + '" y1="' + barra[1] + '" x2="' + barra[0] + '" y2="84" class="il-mueble il-sin"/><circle cx="' + barra[0] + '" cy="' + barra[1] + '" r="2.4" class="il-mueble"/>' + (o.fondo || '') + fgRotulo(o.rotulo) };
+  // 11/11 (notas de Domingo: «gesto errático», «parece un curl»): talón y barra fijos; el cuerpo recto gira alrededor del talón.
+  // Arriba la barra toca el pecho y el codo queda hacia los pies y por debajo del cuerpo (extensión de hombro, unos 90°);
+  // abajo los brazos estirados. En todo el recorrido el codo va por el mismo lado, sin cambios bruscos
+  const tob = o.tobillo, L = FG_L.muslo + FG_L.canilla - 0.1 + FG_L.tronco, atras = [-0.75, 0.66];
+  const nA = o.arriba, eA = fgSum(nA, [atras[0] * FG_L.brazo, atras[1] * FG_L.brazo]), barra = fgSum(eA, [0.45 * FG_L.antebrazo, -0.89 * FG_L.antebrazo]);
+  // abajo: a 61 del talón y a 25 de la barra (corte de dos círculos, el más bajo)
+  const dx = barra[0] - tob[0], dy = barra[1] - tob[1], d = Math.hypot(dx, dy), r2 = FG_L.brazo + FG_L.antebrazo - 0.2;
+  const a = (L * L - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, L * L - a * a)), m = [tob[0] + a * dx / d, tob[1] + a * dy / d];
+  const c1 = [m[0] + h * dy / d, m[1] - h * dx / d], c2 = [m[0] - h * dy / d, m[1] + h * dx / d], nB = c1[1] > c2[1] ? c1 : c2;
+  const pose = function(n){ const R = fgRecto(tob, n); return { p: R.p, t: R.t, cab: -6, a: tob, f: fgSum(tob, [1, -6.5]), r: 1, w: barra, e: fgCodoHacia(fgSum(R.p, fgDir(R.t, FG_L.tronco)), barra, atras) }; };
+  const k = function(x){ return fgLerp(nB, nA, x); };
+  return { seq: [[pose(nB), 0.4], [pose(k(0.33)), 0.3], [pose(k(0.66)), 0.3], [pose(nA), 0.3], [pose(nA), 0.3], [pose(k(0.5)), 0.55]], vuelta: 0.55,
+    fondo: FG_PISO + '<line x1="' + fgNum(barra[0]) + '" y1="' + fgNum(barra[1]) + '" x2="' + fgNum(barra[0]) + '" y2="84" class="il-mueble il-sin"/><circle cx="' + fgNum(barra[0]) + '" cy="' + fgNum(barra[1]) + '" r="2.4" class="il-mueble"/>' + (o.fondo || '') + fgRotulo(o.rotulo) };
 }
-FG['remo invertido'] = fgRemoInvertido({ tobillo: [18, 82], barra: [78.5, 40], abajo: [78.5, 65], arriba: [72, 48.5], rotulo: 'cuerpo recto · pecho a la barra' });
-FG['remo invertido con pies elevados'] = fgRemoInvertido({ tobillo: [18, 63.5], barra: [79, 40], abajo: [79, 65], arriba: [77, 49], fondo: fgCaja(6, 66, 22, 18), rotulo: 'pies elevados en el banco' });
+FG['remo invertido'] = fgRemoInvertido({ tobillo: [18, 82], arriba: [72, 50], rotulo: 'cuerpo recto · pecho a la barra' });
+FG['remo invertido con pies elevados'] = fgRemoInvertido({ tobillo: [18, 63.5], arriba: [77, 53], fondo: fgCaja(6, 66, 22, 18), rotulo: 'pies elevados en el banco' });
 
 /* --- remo Seal (nota: «parece al revés por los pies hacia arriba»): tumbado boca abajo en un banco alto, el cuerpo recto y
    las piernas estiradas sobre el banco; la barra cuelga con los brazos estirados y sube hasta tocar la parte de abajo del banco --- */
 (function(){
   const p = [50, 48.5], t = 90, n = fgSum(p, fgDir(t, FG_L.tronco));
-  const abajo = [n[0] + 0.5, n[1] + 24.5], arriba = [n[0] - 1, 61];
-  const pose = function(k){ const w = fgLerp(abajo, arriba, k); return { p: p, t: t, cab: 6, a: [13.15, 49], f: [12, 55], r: 1, w: w, e: fgCodoHacia(n, w, [0, -1]) }; };
+  // 11/11 (nota de Domingo: «la dirección no corresponde a la extensión de hombro; flexiona mucho el codo»): el codo sube hacia
+  // atrás, hacia la cadera y por encima del cuerpo, y el antebrazo queda casi vertical; la barra llega bajo el banco
+  const abajo = [n[0] + 0.5, n[1] + 24.5], arriba = [n[0] - 8, 62];
+  const pose = function(k){ const w = fgLerp(abajo, arriba, k); return { p: p, t: t, cab: 6, a: [13.15, 49], f: [12, 55], r: 1, w: w, e: fgCodoHacia(n, w, [-0.75, -0.66]) }; };
   FG['remo seal'] = { seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
     fondo: FG_PISO + '<rect x="10" y="51" width="68" height="4" rx="2" class="il-mueble"/><line x1="16" y1="55" x2="16" y2="84" class="il-fondo"/><line x1="72" y1="55" x2="72" y2="84" class="il-fondo"/>' + fgRotulo('boca abajo en el banco alto'),
     atras: function(P, ln, ci){ fgDisco(ci, P.w); } };
