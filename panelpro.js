@@ -444,7 +444,7 @@ function htmlSensCliente(area){
     h += '<button type="button" role="radio" aria-checked="' + (sel === i) + '" class="sens-animo' + (sel === i ? ' on' : '') + '" onclick="elegirAnimo(\'' + area + '\',' + i + ')">'
       + '<span>' + ANIMOS[i][0] + '</span><small>' + ANIMOS[i][1] + '</small></button>';
   }
-  h += '</div><textarea class="sg-text sens-txt" id="sensTxt-' + area + '" rows="2" placeholder="' + esc(A.ej) + '">' + esc(hoy && hoy.txt || '') + '</textarea>'
+  h += '</div><textarea class="sg-text sens-txt" id="sensTxt-' + area + '" rows="2" aria-label="Cuéntanos algo más (opcional)" placeholder="' + esc(A.ej) + '">' + esc(hoy && hoy.txt || '') + '</textarea>'
     + '<button class="btn-primary sens-enviar" onclick="enviarSens(\'' + area + '\')"' + (sel ? '' : ' disabled') + '>Enviar a ' + esc(pro ? pro.u : 'tu equipo') + '</button>';
   return h + '</div>';
 }
