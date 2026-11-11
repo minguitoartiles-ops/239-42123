@@ -10,7 +10,6 @@ const EX_VARIANTES = [
   ['Flexiones', 'Flexiones declinadas', 'pecho', 'corporal', 'Pies elevados en un banco: más carga y más trabajo del pectoral superior y el hombro.'],
   ['Flexiones', 'Flexiones abiertas', 'pecho', 'corporal', 'Manos más separadas que los hombros: más pectoral y menos tríceps. Sin abrir los codos en cruz.'],
   ['Flexiones', 'Flexiones diamante', 'triceps', 'corporal', 'Manos juntas formando un rombo bajo el esternón y codos pegados al cuerpo.'],
-  ['Flexiones', 'Flexiones hindúes', 'hombro', 'corporal', 'Desde «perro boca abajo», baja en arco rozando el suelo con el pecho y termina arriba en «cobra».'],
   ['Flexiones', 'Flexiones pike', 'hombro', 'corporal', 'Cadera alta en forma de V. Baja la cabeza entre las manos: preparan el pino.'],
   ['Flexiones', 'Flexiones arquero', 'pecho', 'corporal', 'Manos muy abiertas; baja hacia un lado mientras el otro brazo queda casi recto.'],
   ['Flexiones', 'Flexiones con palmada', 'pecho', 'corporal', 'Empuje explosivo para despegar las manos y aterrizaje suave con codos flexionados.'],
@@ -50,10 +49,7 @@ const EX_VARIANTES = [
   ['Sentadilla', 'Sentadilla pistol', 'cuadriceps', 'corporal', 'A una pierna con la otra estirada al frente. Empieza agarrado o a un cajón.'],
   ['Sentadilla', 'Sentadilla cosaca', 'cuadriceps', 'corporal', 'Pies muy abiertos; baja hacia un lado con la otra pierna estirada.'],
   ['Zancadas', 'Zancadas con mancuernas', 'cuadriceps', 'mancuerna', 'Paso largo, rodilla de atrás casi al suelo y torso erguido.'],
-  ['Zancadas', 'Zancada lateral', 'cuadriceps', 'corporal', 'Paso amplio al lado, cadera atrás y la otra pierna estirada.'],
-  ['Zancadas', 'Zancada cruzada', 'gluteo', 'corporal', 'Pierna de atrás cruzada en diagonal: más glúteo medio.'],
   ['Zancadas', 'Zancada en déficit', 'gluteo', 'mancuerna', 'Pie delantero sobre un disco o escalón: más recorrido y más glúteo.'],
-  ['Zancadas', 'Zancada con salto', 'cuadriceps', 'corporal', 'Cambia de pierna en el aire y aterriza suave.'],
   ['Peso muerto convencional', 'Peso muerto con barra hexagonal', 'cuadriceps', 'barra', 'Con la barra trap: más cómodo de espalda y más cuádriceps.'],
   ['Peso muerto convencional', 'Peso muerto en déficit', 'isquios', 'barra', 'De pie sobre un disco: más recorrido desde el suelo.'],
   ['Peso muerto convencional', 'Rack pull', 'espalda', 'barra', 'Desde los soportes a la altura de la rodilla: más carga para la espalda alta.'],
@@ -111,7 +107,7 @@ const EX_FAMILIAS = {
   'Peso muerto convencional': ['Peso muerto sumo', 'Peso muerto con kettlebell'],
   'Hip thrust': ['Hip thrust en máquina', 'Hip thrust en multipower'],
   'Patada de glúteo en polea': ['Patada de glúteo en máquina'],
-  'Elevación de gemelos': ['Elevación de gemelos sentado', 'Elevación de gemelos en prensa', 'Elevación de gemelos en multipower', 'Elevación de gemelos con mancuernas', 'Elevación de gemelos a una pierna'],
+  'Elevación de gemelos': ['Elevación de gemelos sentado', 'Elevación de gemelos en prensa', 'Elevación de gemelos con mancuernas', 'Elevación de gemelos a una pierna'],
   'Elevación de piernas': ['Elevación de rodillas colgado']
 };
 (function(){
