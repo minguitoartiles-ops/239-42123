@@ -1504,6 +1504,86 @@ function fgPlancha(alta){
     fondo: FG_PISO + fgRotulo('de frente · sube la cadera') };
 })();
 
+/* =========================================================
+   TANDA 9a (11/11/2026) · marcha y carrera (notas: «hay que afinar la animación de correr / de la marcha»)
+   Un ciclo de 8 momentos para la pierna de este lado; la del otro lado hace lo mismo medio ciclo después, y cada brazo va
+   con la pierna contraria. Se anda o se corre en el sitio (en la cinta, o como si la cámara acompañara)
+   ========================================================= */
+// [desplazamiento del tobillo respecto a la cadera, altura del tobillo sobre el suelo (negativa), punta del pie x, y]
+const FG_ANDAR = [[11, -2.5, 6.5, -2.5], [5, -1.5, 7, 1], [-1, -1.5, 7, 1], [-8, -3.5, 6, 3], [-12, -6, 4.5, 4.5], [-6, -8.5, 6, 3], [3, -6.5, 7, 1], [9, -4, 6.8, -1]];
+const FG_CORRER = [[7, -2, 7, 0.5], [0, -1.5, 7, 1], [-10, -4.5, 5, 4], [-15, -14, 3, 5], [-8, -20, 4, 5.5], [3, -16, 6, 3], [10, -10, 7, 0], [10, -4, 7, -0.5]];
+const FG_SKIP = [[0, -1.5, 7, 1], [-1, -3, 6, 3], [13, -18, 5, 4.5], [6, -9, 6, 3]];
+function fgMarcha(o){
+  const tabla = o.tabla, N = tabla.length, K = N / 2, hx = o.x || 55, suelo = o.suelo || function(){ return FG_SUELO; };
+  const pie = function(i, esc){ const r = tabla[i % N], ax = hx + r[0] * (esc || 1), ay = suelo(ax) + r[1] * (r[1] < -3 ? (o.alto || 1) : 1); return { a: [ax, ay], f: [ax + r[2], ay + r[3]] }; };
+  const seq = [];
+  for (let i = 0; i < N; i++) {
+    const c = Math.cos(2 * Math.PI * i / N), A = o.brazos || 20, cerca = pie(i, o.esc), lejos = pie(i + K, o.esc);
+    const b1 = 180 + A * c, b2 = 180 - A * c, codo = o.codo != null ? o.codo : 15;
+    seq.push([{ p: [hx, o.cadera[i % o.cadera.length] + (suelo(hx) - FG_SUELO)], t: o.t || 2, cab: -(o.t || 2) + 2, r: -1,
+      a: cerca.a, f: cerca.f, a2: lejos.a, f2: lejos.f, brazo: [b1, b1 - codo], brazo2: [b2, b2 - codo] }, o.paso]);
+  }
+  return { segundo: true, seq: seq, vuelta: o.paso, zoom: o.zoom, fondo: (o.fondo || FG_PISO) + fgRotulo(o.rotulo), atras: o.atras, delante: o.delante };
+}
+const FG_CAD_ANDAR = [47.3, 46.8, 46.2, 46.8], FG_CAD_CORRER = [48.5, 49.5, 47.5, 45.5];
+/* cinta: la banda (con los rodillos), el poste delantero con la consola y la barra; inclinada, la parte de delante más alta */
+function fgCinta(pend){
+  const y = function(x){ return 80 - (x - 16) * pend; };   // superficie de la banda
+  const L = function(a, b, c){ return '<line x1="' + fgNum(a[0]) + '" y1="' + fgNum(a[1]) + '" x2="' + fgNum(b[0]) + '" y2="' + fgNum(b[1]) + '" class="' + c + '"/>'; };
+  const fondo = FG_PISO + L([16, y(16) + 1.5], [92, y(92) + 1.5], 'il-mueble') + '<circle cx="16" cy="' + fgNum(y(16) + 1.5) + '" r="2" class="il-mueble"/><circle cx="92" cy="' + fgNum(y(92) + 1.5) + '" r="2" class="il-mueble"/>'
+    + L([22, y(22) + 3], [22, 84], 'il-fondo') + L([86, y(86) + 3], [86, 84], 'il-fondo')
+    + L([92, y(92)], [98, 36], 'il-mueble il-sin') + L([92, 35], [106, 33], 'il-mueble il-sin') + L([96, 50], [82, 50], 'il-mueble il-sin');
+  return { suelo: y, fondo: fondo };
+}
+(function(){
+  const c0 = fgCinta(0), c1 = fgCinta(0.1);
+  FG['cinta de correr'] = fgMarcha({ tabla: FG_CORRER, cadera: FG_CAD_CORRER, t: 8, brazos: 35, codo: 95, paso: 0.09, x: 52, suelo: c0.suelo, fondo: c0.fondo, rotulo: 'pisa con la mitad del pie' });
+  FG['caminar en cinta inclinada'] = fgMarcha({ tabla: FG_ANDAR, cadera: FG_CAD_ANDAR, t: 7, brazos: 20, paso: 0.14, x: 52, suelo: c1.suelo, fondo: c1.fondo, rotulo: 'sin agarrarte a la barra' });
+  FG['caminar'] = fgMarcha({ tabla: FG_ANDAR, cadera: FG_CAD_ANDAR, t: 2, brazos: 20, paso: 0.14, rotulo: 'paso ligero' });
+  FG['correr'] = fgMarcha({ tabla: FG_CORRER, cadera: FG_CAD_CORRER, t: 8, brazos: 35, codo: 95, paso: 0.09, rotulo: 'zancada corta y ligera' });
+  FG['sprints'] = fgMarcha({ tabla: FG_CORRER, cadera: [48, 49, 46.5, 44.5], t: 15, brazos: 55, codo: 95, paso: 0.065, esc: 1.3, alto: 1.25, rotulo: 'esfuerzo máximo' });
+  FG['skipping'] = fgMarcha({ tabla: FG_SKIP, cadera: [46.5, 45.5], t: 0, brazos: 40, codo: 95, paso: 0.12, rotulo: 'rodillas altas, braceo activo' });
+  // senderismo: cuesta arriba, el tronco algo inclinado, pasos cortos y una mochila a la espalda
+  const cuesta = function(x){ return 81 - (x - 55) * 0.14; };
+  FG['senderismo'] = fgMarcha({ tabla: FG_ANDAR, cadera: FG_CAD_ANDAR, t: 10, brazos: 18, paso: 0.16, esc: 0.8, suelo: cuesta,
+    fondo: '<line x1="22" y1="' + fgNum(cuesta(22) + 0.5) + '" x2="116" y2="' + fgNum(cuesta(116) + 0.5) + '" class="il-mueble il-sin"/>', rotulo: 'en subida, acorta el paso',
+    atras: function(P, ln){ const t = Math.atan2(P.n[0] - P.p[0], P.p[1] - P.n[1]) * 180 / Math.PI; ln(fgSum(fgLerp(P.p, P.n, 0.45), fgDir(t - 90, 4)), fgSum(fgLerp(P.p, P.n, 0.92), fgDir(t - 90, 4)), 'il-pad'); } });
+})();
+/* --- subir escaleras: la figura sube de verdad dos peldaños por ciclo (uno con cada pierna) y, al volver a empezar, la escalera
+   es igual dos peldaños más abajo, así que no se nota el salto. Tronco erguido --- */
+(function(){
+  const h = 4.5, T = function(k){ return FG_SUELO - h * k - 1.5; };   // altura del tobillo apoyado en el peldaño k
+  let esc = '<polyline points="4,84';
+  for (let k = 1; k <= 9; k++) esc += ' ' + (12 * k + 4) + ',' + (84 - h * (k - 1)) + ' ' + (12 * k + 4) + ',' + (84 - h * k);
+  esc += '" class="il-mueble il-sin" fill="none"/>';
+  const brz = function(s){ return [180 + 18 * s, 180 + 18 * s - 15]; };
+  const pose = function(o){ return { p: o.p, t: 4, cab: -2, r: -1, a: o.a, f: fgSum(o.a, [6.5, 1]), a2: o.a2, f2: fgSum(o.a2, o.a2Arriba ? [6, 2.5] : [6.5, 1]), brazo: brz(o.s), brazo2: brz(-o.s) }; };
+  const seq = [
+    [pose({ p: [27, 43.5], a: [33, T(2)], a2: [20, T(1)], s: -1 }), 0.35],
+    [pose({ p: [32, 38], a: [33, T(2)], a2: [31, T(3) - 4], a2Arriba: 1, s: 0 }), 0.3],
+    [pose({ p: [39, 39], a: [32, T(2)], a2: [45, T(3)], s: 1 }), 0.3],
+    [pose({ p: [44, 33.5], a: [42, T(4) - 4], a2: [45, T(3)], s: 0 }), 0.35],
+    [pose({ p: [51, 34.5], a: [57, T(4)], a2: [44, T(3)], s: -1 }), 0.3]];
+  FG['subir escaleras'] = { segundo: true, zoom: 0.85, seq: seq, vuelta: 0.001, fondo: esc + fgRotulo('peldaño a peldaño, erguido') };
+})();
+/* --- escaladora (escalones que bajan sin parar): se pisa el escalón de arriba y se baja con él mientras la otra pierna sube
+   al siguiente; los escalones se mueven en diagonal hacia atrás y abajo y reaparecen dentro de la carcasa. Las manos, sueltas --- */
+(function(){
+  const T = function(u){ return [46 + 10 * u, 72 - 7 * u]; };   // tobillo apoyado en el escalón u (0 abajo, 1 arriba)
+  const sube = function(u){ const q = T(u); return [q[0] - 2, q[1] - 6]; };
+  const pose = function(e, cerca, lejos, s){ return { p: [50, 38 + Math.abs(s) * 0.6], t: 6, cab: -4, r: -1, a: cerca, f: fgSum(cerca, [7, 1]), a2: lejos, f2: fgSum(lejos, [7, 1]),
+    brazo: [180 + 12 * s, 180 + 12 * s - 40], brazo2: [180 - 12 * s, 180 - 12 * s - 40], esc: e }; };
+  // los escalones bajan dos posiciones por ciclo y al volver a empezar la escalera es igual, así que el salto no se ve
+  const seq = [[pose(0, T(1), T(0), 1), 0.3], [pose(0.5, T(0.5), sube(0.5), 0), 0.3], [pose(1, T(0), T(1), -1), 0.3], [pose(1.5, sube(0.5), T(0.5), 0), 0.3], [pose(2, T(1), T(0), 1), 0.3]];
+  const atras = function(P, ln, ci, F){
+    for (let j = 0; j < 6; j++) { const u = j - F.esc, k = Math.max(0, Math.min(1, (u + 0.5) / 0.5)), q = T(u);
+      ln([q[0] - 5 * k, q[1] + 1.5], [q[0] + 5 * k, q[1] + 1.5], 'il-mueble'); ln([q[0] - 5 * k, q[1] + 1.5], [q[0] - 5 * k, q[1] + 1.5 + 7 * k], 'il-fondo'); }
+    for (let y = 34; y <= 84; y += 4) ln([79, y], [100, y], 'il-pad');   // carcasa: los escalones entran por arriba
+    ln([20, 79], [79, 79], 'il-pad'); ln([20, 83], [79, 83], 'il-pad');   // base: tapa los que salen por abajo
+  };
+  FG['escaladora'] = { segundo: true, zoom: 0.92, seq: seq, vuelta: 0.001, fondo: FG_PISO + '<line x1="79" y1="42" x2="62" y2="46" class="il-mueble il-sin"/>' + fgRotulo('sin apoyar los brazos'), atras: atras };
+})();
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
