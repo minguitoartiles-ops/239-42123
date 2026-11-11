@@ -1613,28 +1613,30 @@ function fgCinta(pend){
     atras: function(P, ln){ ln([P.p[0] - 5, 73.5], [P.p[0] + 5, 73.5], 'il-pad'); ln([100, 62], P.w, 'il-cable'); },
     delante: function(P, ln){ ln([P.w[0], P.w[1] - 2.5], [P.w[0], P.w[1] + 2.5], 'il-barra'); } };
 })();
-/* --- assault bike: sentado, las piernas pedalean y los brazos empujan y tiran de las palancas a la vez (cada brazo con la
-   pierna contraria); el ventilador delante --- */
+/* --- assault bike (11/11, con foto de referencia): sentado alto, el tronco algo inclinado; las piernas pedalean bajo el
+   asiento y cada mano empuja o tira de su palanca (larga, desde abajo delante) a la vez que la pierna contraria; el ventilador
+   delante. Lo del otro lado, más claro --- */
 (function(){
-  const C = [56, 72], seq = [];
+  const C = [52, 72], piv = [62, 77], seq = [];
   for (let i = 0; i < 8; i++) { const q = 2 * Math.PI * i / 8, pc = fgSum(C, [7 * Math.sin(q), -7 * Math.cos(q)]), pl = fgSum(C, [-7 * Math.sin(q), 7 * Math.cos(q)]);
     const a = fgSum(pc, [-2, -1.5]), a2 = fgSum(pl, [-2, -1.5]);
-    seq.push([{ p: [42, 46], t: 15, cab: -10, r: -1, a: a, f: fgSum(a, [7, 1]), a2: a2, f2: fgSum(a2, [7, 1]), w: [64 - 7 * Math.sin(q), 40], w2: [64 + 7 * Math.sin(q), 40], c: 1, pc: pc, pl: pl }, 0.11]); }
-  const piv = [62, 76];
+    seq.push([{ p: [40, 46], t: 15, cab: -8, r: -1, a: a, f: fgSum(a, [7, 1]), a2: a2, f2: fgSum(a2, [7, 1]), w: [58 - 6 * Math.sin(q), 40], w2: [58 + 6 * Math.sin(q), 40], c: 1, pc: pc, pl: pl }, 0.11]); }
   FG['assault bike'] = { segundo: true, seq: seq, vuelta: 0.11,
-    fondo: FG_PISO + '<circle cx="88" cy="62" r="13" class="il-mueble"/><line x1="56" y1="72" x2="80" y2="66" class="il-mueble il-sin"/><line x1="44" y1="50" x2="52" y2="80" class="il-mueble il-sin"/><line x1="34" y1="49" x2="48" y2="49" class="il-pad"/>' + fgRotulo('brazos y piernas a la vez'),
-    atras: function(P, ln, ci, F){ ln(C, F.pl, 'il-mueble il-sin il-lejos'); ln(piv, [P.w2[0] + 1, P.w2[1] - 4], 'il-mueble il-sin il-lejos'); },
-    delante: function(P, ln, ci, F){ ln(C, F.pc, 'il-mueble il-sin'); ln(piv, [P.w[0] + 1, P.w[1] - 4], 'il-mueble il-sin'); } };
+    fondo: FG_PISO + '<circle cx="90" cy="64" r="15" class="il-mueble il-sin"/><circle cx="90" cy="64" r="3" class="il-mueble"/><line x1="52" y1="72" x2="90" y2="64" class="il-mueble il-sin"/><line x1="90" y1="79" x2="90" y2="84" class="il-mueble il-sin"/>'
+      + '<line x1="40" y1="50" x2="46" y2="82" class="il-mueble il-sin"/><line x1="33" y1="49" x2="45" y2="49" class="il-pad"/><line x1="34" y1="84" x2="100" y2="84" class="il-mueble"/>' + fgRotulo('brazos y piernas a la vez'),
+    atras: function(P, ln, ci, F){ ln(C, F.pl, 'il-mueble il-sin il-lejos'); ln(piv, [P.w2[0] + 2, P.w2[1] - 2], 'il-mueble il-sin il-lejos'); },
+    delante: function(P, ln, ci, F){ ln(C, F.pc, 'il-mueble il-sin'); ln(piv, [P.w[0] + 2, P.w[1] - 2], 'il-mueble il-sin'); } };
 })();
-/* --- SkiErg: de pie frente a la máquina; las manos salen de arriba y tiran hacia abajo con brazos y tronco, flexionando cadera
-   y rodillas, hasta pasar las manos junto a los muslos; luego se vuelve a estirar arriba --- */
+/* --- SkiErg (11/11, con fotos de referencia): de pie, cerca de la máquina, los brazos estirados arriba; se tira hacia abajo con
+   los brazos casi estirados mientras la cadera se dobla y las rodillas se flexionan, hasta pasar las manos junto a los muslos;
+   luego se vuelve a subir --- */
 (function(){
-  const a = [57, 82.5];
-  const pose = function(px, py, t, brazo){ return { p: [px, py], t: t, cab: -t * 0.3, r: -1, a: a, f: fgSum(a, [7, 1]), brazo: brazo, brazo2: brazo }; };
-  const arriba = pose(56, 46.5, 0, [28, 22]), medio = pose(53, 49, 22, [100, 95]), abajo = pose(50, 53, 45, [185, 182]);
-  FG['skierg'] = { segundo: true, seq: [[arriba, 0.4], [medio, 0.22], [abajo, 0.22], [abajo, 0.15], [medio, 0.4]], vuelta: 0.4,
-    fondo: FG_PISO + '<rect x="90" y="4" width="7" height="80" rx="2" class="il-mueble"/><circle cx="88" cy="8" r="3" class="il-mueble"/>' + fgRotulo('tira con brazos y tronco'),
-    atras: function(P, ln){ ln([88, 8], P.w, 'il-cable'); },
+  const a = [56, 82.5];
+  const pose = function(px, py, t, brazo){ return { p: [px, py], t: t, cab: -t * 0.35, r: -1, a: a, f: fgSum(a, [7, 1]), brazo: brazo, brazo2: brazo }; };
+  const arriba = pose(56, 46.5, -3, [14, 10]), medio = pose(53, 50, 40, [78, 72]), abajo = pose(49, 55, 55, [192, 190]), sube = pose(53, 50, 35, [120, 115]);
+  FG['skierg'] = { segundo: true, zoom: 0.85, seq: [[arriba, 0.4], [medio, 0.25], [abajo, 0.22], [abajo, 0.15], [sube, 0.35], [arriba, 0.35]], vuelta: 0.2,
+    fondo: FG_PISO + '<rect x="84" y="-6" width="7" height="90" rx="2" class="il-mueble"/><circle cx="82" cy="-2" r="3" class="il-mueble"/>' + fgRotulo('tira con brazos y tronco'),
+    atras: function(P, ln){ ln([82, -2], P.w, 'il-cable'); },
     delante: function(P, ln){ ln([P.w[0] - 1, P.w[1] - 3], [P.w[0] + 1, P.w[1] + 3], 'il-barra'); } };
 })();
 /* --- natación (crol): el cuerpo en horizontal en la superficie; cada brazo da la vuelta completa (tira por debajo del agua y
@@ -1651,19 +1653,20 @@ function fgCinta(pend){
   FG['natacion'] = { segundo: true, seq: seq.slice(0, 8).concat([[seq[8][0], 0.2]]), vuelta: 0.001,
     fondo: '<path d="' + ola + '" class="il-cable" fill="none"/>' + fgRotulo('respira cada 2-3 brazadas') };
 })();
-/* --- burpees (nota: «falta todo el movimiento de suelo»): de pie, agacharse con las manos en el suelo, saltar atrás a
-   plancha, pecho al suelo, volver a plancha, saltar con los pies hacia las manos y saltar arriba con los brazos estirados --- */
+/* --- burpees (nota: «falta todo el movimiento de suelo»): de pie, agacharse con las manos en el suelo justo delante de los
+   pies, saltar atrás a plancha, pecho al suelo, volver a plancha, saltar con los pies hacia las manos, subir y saltar con los
+   brazos estirados arriba --- */
 (function(){
-  const manos = [76, 83.5];
-  const plancha = function(nY){ const a = [20, 79], n = [manos[0], nY], L = FG_L.muslo + FG_L.canilla + FG_L.tronco - 0.4;
-    const d = Math.hypot(n[0] - a[0], n[1] - a[1]), k = (FG_L.muslo + FG_L.canilla - 0.2) / L, p = [a[0] + (n[0] - a[0]) * k * L / d, a[1] + (n[1] - a[1]) * k * L / d];
-    const t = Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI;
-    return { p: p, t: t, cab: 4, a: [a[0] + (n[0] - a[0]) * (1 - L / d), a[1] + (n[1] - a[1]) * (1 - L / d)], f: [a[0] + 3, 83.5], r: -1, w: manos, c: nY > 70 ? -1 : 1 }; };
+  const manos = [68, 83.5];
+  const plancha = function(nY){ const n = [manos[0], nY], L = FG_L.muslo + FG_L.canilla + FG_L.tronco - 0.4, dy = 79 - nY, dx = Math.sqrt(L * L - dy * dy), a = [n[0] - dx, 79];
+    const k = (FG_L.muslo + FG_L.canilla - 0.2) / L, p = [a[0] + dx * k, a[1] - dy * k], t = Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI;
+    return { p: p, t: t, cab: 4, a: a, f: [a[0] + 3, 83.5], r: -1, w: manos, c: nY > 70 ? -1 : 1 }; };
   const dePie = { p: [53, 46.5], t: 2, cab: 0, r: -1, a: [55, 82.5], f: [62, 83.5], brazo: [178, 176] };
-  const agachado = { p: [54, 70], t: 62, cab: -30, r: -1, a: [57, 82.5], f: [64, 83.5], w: manos, c: 1 };
+  const agachado = { p: [54, 74], t: 55, cab: -30, r: -1, a: [58, 82.5], f: [65, 83.5], w: manos, c: 1 };
   const arriba = plancha(59), abajo = plancha(77);
-  const salto = { p: [53, 40], t: 0, cab: 0, r: -1, a: [55, 77], f: [60, 81], brazo: [8, 4] };
-  FG['burpees'] = { seq: [[dePie, 0.3], [agachado, 0.35], [arriba, 0.22], [abajo, 0.35], [arriba, 0.35], [agachado, 0.22], [salto, 0.3], [dePie, 0.25]], vuelta: 0.3,
+  const sube = { p: [53, 52], t: 12, cab: 0, r: -1, a: [55, 82.5], f: [62, 83.5], brazo: [60, 40] };
+  const salto = { p: [53, 40], t: 0, cab: 0, r: -1, a: [55, 76], f: [60, 80.5], brazo: [4, 2] };
+  FG['burpees'] = { seq: [[dePie, 0.3], [agachado, 0.35], [arriba, 0.22], [abajo, 0.35], [arriba, 0.35], [agachado, 0.22], [sube, 0.2], [salto, 0.2], [dePie, 0.25]], vuelta: 0.3,
     fondo: FG_PISO + fgRotulo('suelo, plancha, pecho y salto') };
 })();
 /* --- battle ropes (nota: «no se ven las cuerdas ni el movimiento real»): media sentadilla con el tronco firme; cada mano sube
@@ -1681,19 +1684,19 @@ function fgCinta(pend){
     atras: function(P, ln, ci, F){ cuerda(ln, P.w2, F.fase + 0.5, 'il-palma il-lejos'); },
     delante: function(P, ln, ci, F){ cuerda(ln, P.w, F.fase, 'il-palma'); } };
 })();
-/* --- wall balls (nota: «parece más un thruster con barra»): un balón grande a la altura del pecho; sentadilla, al subir se
-   lanza a la diana de la pared, se recibe con los brazos arriba y se baja directo a la siguiente sentadilla --- */
+/* --- wall balls (11/11, con imagen de referencia): sentadilla profunda con el balón delante de la cara, las manos por debajo
+   y los codos abajo; al subir se extienden piernas y brazos y el balón sale hacia la diana, alta en un poste; vuelve, se
+   recibe con los brazos arriba y se baja directo a la siguiente sentadilla --- */
 (function(){
   const a = [57, 82.5];
-  const pose = function(p, t, w, b){ return { p: p, t: t, cab: -t * 0.4, r: -1, a: a, f: fgSum(a, [7, 1]), w: w, w2: w, c: -1, b: b }; };
-  const n = function(p, t){ return fgSum(p, fgDir(t, FG_L.tronco)); };
-  const sent = (function(){ const p = [51, 69], t = 36, q = n(p, t), b = [q[0] + 6, q[1] + 4]; return pose(p, t, [b[0] - 1, b[1] + 2], b); })();
-  const lanza = (function(){ const p = [56, 47], t = 4, q = n(p, t), b = [q[0] + 7, q[1] - 21]; return pose(p, t, [b[0] - 1, b[1] + 4], b); })();
-  const vuela = Object.assign({}, lanza, { b: [97, 14] });
-  const baja = Object.assign({}, lanza, { b: [lanza.b[0] + 4, lanza.b[1] - 6] });
-  FG['wall balls'] = { segundo: true, lejos: ['k2', 'a2', 'f2'], seq: [[sent, 0.35], [lanza, 0.3], [vuela, 0.3], [vuela, 0.08], [baja, 0.35], [lanza, 0.12]], vuelta: 0.4,
-    fondo: FG_PISO + '<line x1="106" y1="2" x2="106" y2="84" class="il-mueble"/><circle cx="101" cy="14" r="4.5" class="il-mueble il-sin"/>' + fgRotulo('lanza a la diana y recibe'),
-    delante: function(P, ln, ci, F){ ci(F.b, 5.5, 'il-peso'); } };
+  const pose = function(p, t, w, e, b){ return { p: p, t: t, cab: -t * 0.5, r: -1, a: a, f: fgSum(a, [7, 1]), w: w, w2: w, e: e, e2: e, b: b }; };
+  const sent = pose([50, 70], 30, [66.5, 50], [64, 60], [69.5, 45]);
+  const medio = pose([53, 58], 14, [64.5, 36], [61, 46], [67.5, 31]);
+  const lanza = (function(){ const p = [56, 47], n = fgSum(p, fgDir(0, FG_L.tronco)), e = fgSum(n, fgDir(20, 13)), w = fgSum(e, fgDir(20, 12)); return pose(p, 0, w, e, fgSum(w, [2, -5])); })();
+  const vuela = Object.assign({}, lanza, { b: [96, 2] }), vuelve = Object.assign({}, lanza, { b: [lanza.b[0] + 6, lanza.b[1] - 4] });
+  FG['wall balls'] = { segundo: true, lejos: ['k2', 'a2', 'f2'], zoom: 0.85, seq: [[sent, 0.35], [medio, 0.2], [lanza, 0.15], [vuela, 0.3], [vuela, 0.08], [vuelve, 0.3], [lanza, 0.1], [medio, 0.25]], vuelta: 0.25,
+    fondo: FG_PISO + '<line x1="104" y1="-4" x2="104" y2="84" class="il-mueble il-sin"/><line x1="104" y1="2" x2="101" y2="2" class="il-mueble il-sin"/><line x1="101" y1="-6" x2="101" y2="10" class="il-mueble"/>' + fgRotulo('lanza a la diana y recibe'),
+    delante: function(P, ln, ci, F){ ci(F.b, 6.5, 'il-peso'); } };
 })();
 /* --- elevación de gemelos en escalón: la parte delantera del pie en el borde del escalón y el talón en el aire; baja el talón
    hasta estirar y sube del todo sobre la punta. Una mano en un apoyo para el equilibrio --- */
