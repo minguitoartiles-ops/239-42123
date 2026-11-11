@@ -1184,29 +1184,19 @@ function fgMancuernaLado(ln, ci, w){ ln([w[0] - 4.5, w[1]], [w[0] + 4.5, w[1]], 
     delante: function(P, ln, ci){ ci(P.wL, 3.4, 'il-disco'); ci(P.wL, 1.2, 'il-peso'); ci(P.wR, 3.4, 'il-disco'); ci(P.wR, 1.2, 'il-peso'); } };
 })();
 
-/* --- flexiones hindúes: de la V invertida (cadera arriba) baja el pecho rozando el suelo entre las manos y sube a «perro
-   boca arriba» (cadera abajo, pecho arriba, brazos estirados); vuelve empujando la cadera atrás. Manos y pies no se mueven --- */
-(function(){
-  const pie = [20, 82.5], mano = [80, 83];
-  const p1 = (function(){ const x = (37 * 37 - 49 * 49 + 60 * 60) / 120; return [pie[0] + x, pie[1] - Math.sqrt(37 * 37 - x * x)]; })();
-  const n1 = fgLerp(p1, mano, 24 / 49);
-  const p3 = [56.4, 76], n3 = fgCorte(p3, 24, mano, 24.9, 1);
-  const p2 = [48, 66], n2 = fgSum(p2, fgDir(117, 24));
-  const t = function(p, n){ return Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI; };
-  const pose = function(p, n, cab){ return { p: p, t: t(p, n), cab: cab, a: pie, f: [25, 83.5], r: 1, w: mano, e: fgCodoHacia(n, mano, [-0.4, -0.9]) }; };
-  FG['flexiones hindues'] = { seq: [[pose(p1, n1, 20), 0.5], [pose(p2, n2, -10), 0.6], [pose(p3, n3, -25), 0.6], [pose(p3, n3, -25), 0.35]], vuelta: 0.8,
-    fondo: FG_PISO + fgRotulo('V invertida → pecho abajo → arriba') };
-})();
+// flexiones hindúes: fuera del catálogo (decisión de Domingo, 11/11)
 
-/* --- flexiones pike (en V invertida): la cadera arriba, casi sobre los pies; los codos se doblan y la cabeza baja hacia el
-   suelo entre las manos, en vertical (como un press de hombro boca abajo) --- */
+/* --- flexiones pike (nota de Domingo, 11/11: «los pies se apoyan en una caja y se hace un press de hombros alejando la
+   cabeza del suelo»): los pies en un cajón y la cadera arriba, casi sobre las manos; parte con la cabeza cerca del suelo y
+   empuja hasta estirar los brazos (la cabeza se aleja del suelo); baja despacio --- */
 (function(){
-  const pie = [30, 82.5], mano = [70, 83];
-  const pA = (function(){ const x = (37 * 37 - 49 * 49 + 40 * 40) / 80; return [pie[0] + x, pie[1] - Math.sqrt(37 * 37 - x * x)]; })();
-  const nA = fgLerp(pA, mano, 24 / 49), pB = [pA[0] + 2, pA[1] + 3], nB = fgSum(pB, fgDir(142, 24));
+  const pie = [28, 57], mano = [70, 83];
+  const pA = [58, 36], nA = fgLerp(pA, mano, 24 / 49);
+  const pB = [60, 40], nB = fgSum(pB, fgDir(168, 24));
   const t = function(p, n){ return Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI; };
-  const pose = function(p, n){ return { p: p, t: t(p, n), cab: 12, a: pie, f: [36, 83.5], r: 1, w: mano, e: fgCodoHacia(n, mano, [-0.6, -0.8]) }; };
-  FG['flexiones pike'] = { seq: [[pose(pA, nA), 0.4], [pose(pB, nB), 1], [pose(pB, nB), 0.25]], vuelta: 1, fondo: FG_PISO + fgRotulo('cadera arriba · cabeza al suelo') };
+  const pose = function(p, n){ return { p: p, t: t(p, n), cab: 8, a: pie, f: [33, 57.5], r: 1, w: mano, e: fgCodoHacia(n, mano, [-0.9, -0.3]) }; };
+  FG['flexiones pike'] = { seq: [[pose(pB, nB), 0.4], [pose(pA, nA), 0.9], [pose(pA, nA), 0.3]], vuelta: 1.3,
+    fondo: FG_PISO + fgCaja(14, 59, 24, 25) + fgFlecha(100, 62, 40) + fgRotulo('pies en cajón · empuja arriba') };
 })();
 
 /* --- push press (nota: «falta el impulso con las rodillas»): de lado, la barra apoyada delante en los hombros; flexiona un
@@ -1225,7 +1215,12 @@ function fgMancuernaLado(ln, ci, w){ ln([w[0] - 4.5, w[1]], [w[0] + 4.5, w[1]], 
 (function(){
   const ancla = [112, 83];
   const pose = function(k){ return { p: [46, 47], t: 10, cab: 0, a: [44, 82.5], f: [51, 83.5], r: -1, segundo: true, a2: [56, 82.5], f2: [63, 83.5],
-    w: function(P){ const ini = fgSum(P.n, [4, 3]), R = Math.hypot(ancla[0] - ini[0], ancla[1] - ini[1]), fin = fgCorte(P.n, 24.6, ancla, R, 1); return fgLerp(ini, fin, k); }, c: -1 }; };
+    // 11/11 (nota de Domingo): empieza con el codo pegado al cuerpo y apuntando hacia delante, la mano junto al hombro;
+    // la mano recorre el arco del extremo de la barra alrededor del anclaje y el codo se estira en la línea del empuje
+    w: function(P){ return manoLm(P, k); }, e: function(P){ const w = manoLm(P, k), ini = fgSum(P.n, [2.5, 11.5]), fin = fgLerp(P.n, w, 0.52); return fgLerp(ini, fin, k); } }; };
+  const manoLm = function(P, k){ const ini = fgSum(P.n, [8.5, 1]), R = Math.hypot(ancla[0] - ini[0], ancla[1] - ini[1]), fin = fgCorte(P.n, 24.6, ancla, R, 1);
+    const a0 = Math.atan2(ini[1] - ancla[1], ini[0] - ancla[0]), a1 = Math.atan2(fin[1] - ancla[1], fin[0] - ancla[0]), a = a0 + (a1 - a0) * k;
+    return [ancla[0] + R * Math.cos(a), ancla[1] + R * Math.sin(a)]; };
   FG['press landmine'] = { seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
     fondo: FG_PISO + '<circle cx="' + ancla[0] + '" cy="' + ancla[1] + '" r="2.6" class="il-mueble"/>' + fgRotulo('barra anclada · en diagonal'),
     atras: function(P, ln, ci){ const d = [ancla[0] - P.w[0], ancla[1] - P.w[1]], L = Math.hypot(d[0], d[1]) || 1, u = [d[0] / L, d[1] / L];

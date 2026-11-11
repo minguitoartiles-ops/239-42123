@@ -10,7 +10,6 @@ const EX_VARIANTES = [
   ['Flexiones', 'Flexiones declinadas', 'pecho', 'corporal', 'Pies elevados en un banco: más carga y más trabajo del pectoral superior y el hombro.'],
   ['Flexiones', 'Flexiones abiertas', 'pecho', 'corporal', 'Manos más separadas que los hombros: más pectoral y menos tríceps. Sin abrir los codos en cruz.'],
   ['Flexiones', 'Flexiones diamante', 'triceps', 'corporal', 'Manos juntas formando un rombo bajo el esternón y codos pegados al cuerpo.'],
-  ['Flexiones', 'Flexiones hindúes', 'hombro', 'corporal', 'Desde «perro boca abajo», baja en arco rozando el suelo con el pecho y termina arriba en «cobra».'],
   ['Flexiones', 'Flexiones pike', 'hombro', 'corporal', 'Cadera alta en forma de V. Baja la cabeza entre las manos: preparan el pino.'],
   ['Flexiones', 'Flexiones arquero', 'pecho', 'corporal', 'Manos muy abiertas; baja hacia un lado mientras el otro brazo queda casi recto.'],
   ['Flexiones', 'Flexiones con palmada', 'pecho', 'corporal', 'Empuje explosivo para despegar las manos y aterrizaje suave con codos flexionados.'],
