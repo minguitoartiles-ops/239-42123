@@ -1135,6 +1135,112 @@ FG['remo invertido con pies elevados'] = fgRemoInvertido({ tobillo: [18, 63.5], 
     delante: function(P, ln, ci){ ci(P.w, 4, 'il-disco'); ci(P.w, 1.4, 'il-peso'); }, atras: function(P, ln, ci){ ci(P.w2, 4, 'il-disco il-lejos'); } };
 })();
 
+
+/* =========================================================
+   TANDA 6c (11/11/2026) · hombro
+   ========================================================= */
+/* corte de dos círculos (centro, radio); lado: 1 / -1 */
+function fgCorte(c1, r1, c2, r2, lado){
+  const dx = c2[0] - c1[0], dy = c2[1] - c1[1], d = Math.hypot(dx, dy) || 1;
+  const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, r1 * r1 - a * a)), m = [c1[0] + a * dx / d, c1[1] + a * dy / d];
+  return [m[0] + (lado || 1) * h * dy / d, m[1] - (lado || 1) * h * dx / d];
+}
+function fgMancuernaLado(ln, ci, w){ ln([w[0] - 4.5, w[1]], [w[0] + 4.5, w[1]], 'il-barra'); ci([w[0] - 4.5, w[1]], 2.4, 'il-peso'); ci([w[0] + 4.5, w[1]], 2.4, 'il-peso'); }
+
+/* --- elevaciones laterales en el plano escapular (nota: «enfatizar el plano escapular»): de frente, las mancuernas suben hasta
+   la altura de los hombros con el codo apenas flexionado y los brazos unos 30° por delante del cuerpo (por eso se ven algo
+   más cortos). El recuadro, visto desde arriba, enseña el ángulo --- */
+(function(){
+  const pose = function(g){ return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], brazoL: [180 + g, 180 + g + 8 * g / 90, 0.9, 0.9], brazoR: [180 - g, 180 - g - 8 * g / 90, 0.9, 0.9] }; };
+  // recuadro visto desde arriba: hombros, cabeza y los brazos 30° por delante de la línea de los hombros
+  const arriba = '<circle cx="101" cy="62" r="3" class="il-cabeza"/><line x1="94" y1="62" x2="108" y2="62" class="il-cuerpo"/>'
+    + '<line x1="94" y1="62" x2="84.5" y2="67.7" class="il-cuerpo"/><line x1="108" y1="62" x2="117.5" y2="67.7" class="il-cuerpo"/>'
+    + '<line x1="84" y1="62" x2="118" y2="62" class="il-fondo" stroke-dasharray="1.5 2"/><text x="97" y="77" text-anchor="middle" class="il-rotulo">desde arriba</text>';
+  FG['elevaciones laterales'] = { vista: 'frente', seq: [[pose(4), 0.3], [pose(45), 0.4], [pose(88), 0.45], [pose(88), 0.3], [pose(45), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + arriba + fgRotulo('plano escapular · 30° delante'),
+    delante: function(P, ln, ci){ ci(P.wL, 3.4, 'il-disco'); ci(P.wL, 1.2, 'il-peso'); ci(P.wR, 3.4, 'il-disco'); ci(P.wR, 1.2, 'il-peso'); } };
+})();
+
+/* --- elevación lateral en polea (nota: «son unilaterales; el plano es bueno»): de frente, la polea baja al otro lado; el cable
+   cruza por delante del cuerpo y el brazo sube por su lado hasta la altura del hombro. La otra mano, en la cadera --- */
+(function(){
+  const polea = [14, 80];
+  const pose = function(g){ return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], eL: [44, 34], wL: [53, 45],
+    brazoR: [172 - g, 172 - g - 6 * g / 82, 1, 1] }; };
+  FG['elevaciones laterales en polea'] = { vista: 'frente', seq: [[pose(0), 0.3], [pose(40), 0.4], [pose(82), 0.45], [pose(82), 0.3], [pose(40), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + '<rect x="4" y="2" width="7" height="82" rx="2" class="il-mueble"/><circle cx="' + polea[0] + '" cy="' + polea[1] + '" r="3" class="il-mueble"/>' + fgRotulo('a una mano · polea baja'),
+    delante: function(P, ln, ci){ ln(polea, P.wR, 'il-cable'); ci(P.wR, 2.4, 'il-peso'); } };
+})();
+
+/* --- pájaros con mancuernas (nota: «no lo representa»): de frente con el tronco inclinado hacia delante casi en horizontal
+   (se ve corto); los brazos cuelgan y suben abiertos a los lados hasta la altura de la espalda, con el codo algo flexionado --- */
+(function(){
+  const pose = function(g){ return { vista: 'frente', p: [60, 54], escTronco: 0.42, cab: 0, aL: [55, 82], aR: [65, 82], kL: [53, 68], kR: [67, 68],
+    brazoL: [180 + g, 180 + g + 14 * g / 85, 1, 1], brazoR: [180 - g, 180 - g - 14 * g / 85, 1, 1] }; };
+  FG['pajaros con mancuernas'] = { vista: 'frente', seq: [[pose(2), 0.3], [pose(42), 0.4], [pose(85), 0.45], [pose(85), 0.3], [pose(42), 0.5]], vuelta: 0.5,
+    // recuadro de lado: el tronco casi horizontal y las rodillas algo dobladas
+    fondo: FG_PISO + '<circle cx="111" cy="10" r="2.6" class="il-cabeza"/><line x1="91" y1="12" x2="108" y2="11" class="il-cuerpo"/><line x1="91" y1="12" x2="95" y2="20" class="il-cuerpo"/><line x1="95" y1="20" x2="92" y2="27" class="il-cuerpo"/>'
+      + '<text x="101" y="33" text-anchor="middle" class="il-rotulo">de lado</text>' + fgRotulo('tronco inclinado · de frente'),
+    delante: function(P, ln, ci){ ci(P.wL, 3.4, 'il-disco'); ci(P.wL, 1.2, 'il-peso'); ci(P.wR, 3.4, 'il-disco'); ci(P.wR, 1.2, 'il-peso'); } };
+})();
+
+/* --- flexiones hindúes: de la V invertida (cadera arriba) baja el pecho rozando el suelo entre las manos y sube a «perro
+   boca arriba» (cadera abajo, pecho arriba, brazos estirados); vuelve empujando la cadera atrás. Manos y pies no se mueven --- */
+(function(){
+  const pie = [20, 82.5], mano = [80, 83];
+  const p1 = (function(){ const x = (37 * 37 - 49 * 49 + 60 * 60) / 120; return [pie[0] + x, pie[1] - Math.sqrt(37 * 37 - x * x)]; })();
+  const n1 = fgLerp(p1, mano, 24 / 49);
+  const p3 = [56.4, 76], n3 = fgCorte(p3, 24, mano, 24.9, 1);
+  const p2 = [48, 66], n2 = fgSum(p2, fgDir(117, 24));
+  const t = function(p, n){ return Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI; };
+  const pose = function(p, n, cab){ return { p: p, t: t(p, n), cab: cab, a: pie, f: [25, 83.5], r: 1, w: mano, e: fgCodoHacia(n, mano, [-0.4, -0.9]) }; };
+  FG['flexiones hindues'] = { seq: [[pose(p1, n1, 20), 0.5], [pose(p2, n2, -10), 0.6], [pose(p3, n3, -25), 0.6], [pose(p3, n3, -25), 0.35]], vuelta: 0.8,
+    fondo: FG_PISO + fgRotulo('V invertida → pecho abajo → arriba') };
+})();
+
+/* --- flexiones pike (en V invertida): la cadera arriba, casi sobre los pies; los codos se doblan y la cabeza baja hacia el
+   suelo entre las manos, en vertical (como un press de hombro boca abajo) --- */
+(function(){
+  const pie = [30, 82.5], mano = [70, 83];
+  const pA = (function(){ const x = (37 * 37 - 49 * 49 + 40 * 40) / 80; return [pie[0] + x, pie[1] - Math.sqrt(37 * 37 - x * x)]; })();
+  const nA = fgLerp(pA, mano, 24 / 49), pB = [pA[0] + 2, pA[1] + 3], nB = fgSum(pB, fgDir(142, 24));
+  const t = function(p, n){ return Math.atan2(n[0] - p[0], p[1] - n[1]) * 180 / Math.PI; };
+  const pose = function(p, n){ return { p: p, t: t(p, n), cab: 12, a: pie, f: [36, 83.5], r: 1, w: mano, e: fgCodoHacia(n, mano, [-0.6, -0.8]) }; };
+  FG['flexiones pike'] = { seq: [[pose(pA, nA), 0.4], [pose(pB, nB), 1], [pose(pB, nB), 0.25]], vuelta: 1, fondo: FG_PISO + fgRotulo('cadera arriba · cabeza al suelo') };
+})();
+
+/* --- push press (nota: «falta el impulso con las rodillas»): de lado, la barra apoyada delante en los hombros; flexiona un
+   poco las rodillas, empuja con las piernas (los talones se levantan un poco) y aprovecha el impulso para llevar la barra
+   arriba con los brazos estirados; baja la barra a los hombros --- */
+(function(){
+  const pose = function(py, brazo, talon){ return { p: [52, py], t: 0, cab: 0, a: [53, 82.5 - talon], f: [60, 83.5], r: -1,
+    w: function(P){ return brazo ? fgSum(P.n, [1.5, -24.6]) : fgSum(P.n, [5, 1.5]); }, c: 1 }; };
+  const rack = pose(46.5, false, 0), flex = pose(51, false, 0), empuje = pose(45.5, false, 3), arriba = pose(46.5, true, 0);
+  FG['push press'] = { seq: [[rack, 0.4], [flex, 0.35], [empuje, 0.2], [arriba, 0.3], [arriba, 0.35], [rack, 0.6]], vuelta: 0.3,
+    fondo: FG_PISO + fgRotulo('impulso con las rodillas'), delante: fgEnManos('barra') };
+})();
+
+/* --- press landmine (nota de Claude: «la barra va anclada al suelo y se empuja en diagonal»): de lado, la barra sale de un
+   anclaje en el suelo delante de la persona; su extremo va de la altura del hombro hacia arriba y adelante en diagonal --- */
+(function(){
+  const ancla = [112, 83];
+  const pose = function(k){ return { p: [46, 47], t: 10, cab: 0, a: [44, 82.5], f: [51, 83.5], r: -1, segundo: true, a2: [56, 82.5], f2: [63, 83.5],
+    w: function(P){ const ini = fgSum(P.n, [4, 3]), R = Math.hypot(ancla[0] - ini[0], ancla[1] - ini[1]), fin = fgCorte(P.n, 24.6, ancla, R, 1); return fgLerp(ini, fin, k); }, c: -1 }; };
+  FG['press landmine'] = { seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
+    fondo: FG_PISO + '<circle cx="' + ancla[0] + '" cy="' + ancla[1] + '" r="2.6" class="il-mueble"/>' + fgRotulo('barra anclada · en diagonal'),
+    atras: function(P, ln, ci){ const d = [ancla[0] - P.w[0], ancla[1] - P.w[1]], L = Math.hypot(d[0], d[1]) || 1, u = [d[0] / L, d[1] / L];
+      ln(fgSum(P.w, [-u[0] * 4, -u[1] * 4]), ancla, 'il-barra'); const c = fgSum(P.w, [-u[0] * 2, -u[1] * 2]); ci(c, 5.5, 'il-disco'); ci(c, 1.4, 'il-peso'); } };
+})();
+
+/* --- press militar a una mano (nota: «no se ve que sea a una mano»): de frente; una mancuerna sube desde el hombro hasta arriba
+   con el brazo estirado; la otra mano, en la cadera --- */
+(function(){
+  const pose = function(k){ return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], eL: [44, 34], wL: [53, 45],
+    eR: fgLerp([76, 31], [70, 9.5], k), wR: fgLerp([71, 21], [70.5, -1.5], k) }; };
+  FG['press militar a una mano'] = { vista: 'frente', seq: [[pose(0), 0.4], [pose(0.5), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.5), 0.5]], vuelta: 0.5,
+    zoom: 0.92, fondo: FG_PISO + fgRotulo('a una mano'), delante: function(P, ln, ci){ fgMancuernaLado(ln, ci, P.wR); } };
+})();
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
