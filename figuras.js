@@ -935,6 +935,92 @@ function fgManosSuelo(F, ln){ ln([F.wL[0] - 2.5, F.wL[1] + 0.5], [F.wL[0] + 2.5,
       ln([P.wL[0], P.wL[1] - 2.5], [P.wL[0], P.wL[1] + 2.5], 'il-barra'); ln([P.wR[0], P.wR[1] - 2.5], [P.wR[0], P.wR[1] + 2.5], 'il-barra'); } };
 })();
 
+
+/* =========================================================
+   TANDA 6a (11/11/2026) · pecho y fondos
+   ========================================================= */
+/* --- aperturas visto desde la cabeza (nota de Domingo: «el plano es perfecto, afinar el recorrido de las mancuernas»):
+   tumbado en el banco, los brazos casi rectos (codo apenas flexionado) dibujan un arco: de arriba, con las mancuernas
+   juntas sobre el pecho, a abrirse a los lados hasta la altura del banco. De frente se ve el disco de cada mancuerna --- */
+function fgAperturas(o){
+  const sL = [50, 57], sR = [70, 57];
+  const dibujo = function(F, ln, ci){
+    ln([60, 57], [52, 47], 'il-cuerpo il-lejos'); ln([60, 57], [68, 47], 'il-cuerpo il-lejos');
+    ln([52, 47], [44, 83], 'il-cuerpo il-lejos'); ln([68, 47], [76, 83], 'il-cuerpo il-lejos');
+    ln(sL, sR);
+    [[sL, 1], [sR, -1]].forEach(function(x){
+      const g = F.g * x[1], e = fgSum(x[0], fgDir(g, FG_L.brazo)), w = fgSum(e, fgDir(g + 22 * x[1], FG_L.antebrazo));   // el antebrazo se curva hacia dentro (codo blando)
+      ln(x[0], e); ln(e, w); ci(w, 4, 'il-disco'); ci(w, 1.4, 'il-peso');
+    });
+    ci([60, 58], 5.6, 'il-cabeza');
+  };
+  const A = { g: -2 }, M1 = { g: -35 }, M2 = { g: -70 }, B = { g: -100 };   // ángulo del brazo izquierdo (el derecho, en espejo)
+  return { seq: [[A, 0.4], [M1, 0.45], [M2, 0.45], [B, 0.5], [B, 0.25], [M2, 0.4], [M1, 0.4]], vuelta: 0.4, dibujo: dibujo,
+    fondo: FG_PISO + '<rect x="48" y="60" width="24" height="5" rx="2" class="il-mueble"/><line x1="53" y1="65" x2="53" y2="84" class="il-fondo"/><line x1="67" y1="65" x2="67" y2="84" class="il-fondo"/>'
+      + (o.inclinado ? '<line x1="90" y1="78" x2="110" y2="64" class="il-mueble"/><line x1="96" y1="78" x2="106" y2="78" class="il-mueble"/>' : '') + fgRotulo(o.rotulo) };
+}
+FG['aperturas con mancuernas'] = fgAperturas({ rotulo: 'desde la cabeza · banco plano' });
+// inclinadas: mismo plano; el banco inclinado se ve aparte (dibujo pequeño a la derecha) y el arco acaba algo más arriba
+FG['aperturas inclinadas con mancuernas'] = (function(){ const S = fgAperturas({ inclinado: true, rotulo: 'desde la cabeza · inclinado' }); S.seq = S.seq.map(function(x){ return [{ g: Math.max(x[0].g, -88) }, x[1]]; }); return S; })();
+
+/* --- cruce de poleas a media altura (nota de Domingo: «bajar las dos poleas y ponerlas en medio; aducción a 90 grados»):
+   de frente, las poleas a la altura de los hombros; los brazos casi rectos, a la altura de los hombros, se cierran por delante
+   del pecho hasta juntar las manos (al ir hacia quien mira, se ven más cortos) --- */
+(function(){
+  const sL = [52, 24], sR = [68, 24], y = 25;
+  const pose = function(k){ const g = fgRad(k * 90), r = 24;
+    const wL = [sL[0] - r * Math.cos(g) + 7.6 * Math.sin(g), y + 2 * Math.sin(g)], wR = [120 - wL[0], wL[1]];
+    const eL = fgSum(fgLerp(sL, wL, 0.52), [0, 1.2]), eR = [120 - eL[0], eL[1]];
+    return { vista: 'frente', p: [60, 46.5], aL: [55, 82], aR: [65, 82], wL: wL, wR: wR, eL: eL, eR: eR }; };
+  const polea = [14, 24], poleaR = [106, 24];
+  FG['cruce de poleas alto'] = { vista: 'frente', seq: [[pose(0), 0.4], [pose(0.35), 0.4], [pose(0.7), 0.4], [pose(1), 0.4], [pose(1), 0.3], [pose(0.6), 0.45], [pose(0.25), 0.45]], vuelta: 0.45,
+    fondo: FG_PISO + '<rect x="4" y="2" width="7" height="82" rx="2" class="il-mueble"/><rect x="109" y="2" width="7" height="82" rx="2" class="il-mueble"/>'
+      + '<circle cx="' + polea[0] + '" cy="' + polea[1] + '" r="3.2" class="il-mueble"/><circle cx="' + poleaR[0] + '" cy="' + poleaR[1] + '" r="3.2" class="il-mueble"/>' + fgRotulo('poleas a media altura'),
+    atras: function(P, ln){ ln(polea, P.wL, 'il-cable'); ln(poleaR, P.wR, 'il-cable'); },
+    delante: function(P, ln, ci){ ci(P.wL, 2.4, 'il-peso'); ci(P.wR, 2.4, 'il-peso'); } };
+})();
+
+/* --- press de suelo con barra (de lado): tumbado en el suelo con las rodillas dobladas; la barra baja hasta que los codos
+   (abiertos, por eso el brazo se ve corto) tocan el suelo, y sube con los brazos estirados sobre el pecho --- */
+(function(){
+  const pose = function(arriba){ return { p: [60, 79], t: -90, cab: 4, a: [76, 82.5], f: [83, 83.5], r: -1,
+    w: arriba ? [37, 54] : [37, 68], e: arriba ? [36.5, 66.5] : [37, 81] }; };
+  FG['press de suelo con barra'] = { seq: [[pose(true), 0.4], [pose(false), 1.2], [pose(false), 0.35]], vuelta: 1, fondo: FG_PISO + fgRotulo('los codos tocan el suelo'),
+    delante: fgEnManos('barra') };
+})();
+
+/* --- fondos en paralelas (de lado; nota de Domingo: «los codos, antinatural y muy recto; el torso ligeramente inclinado
+   hacia delante»): las manos fijas en las barras junto a la cadera; al bajar, los hombros van hacia delante y abajo, el
+   tronco se inclina y los codos se doblan hacia atrás hasta unos 90°; rodillas dobladas con los pies hacia atrás --- */
+function fgFondos(o){
+  const barY = 44, w = [60, barY];
+  const tAr = o.tronco[0], tAb = o.tronco[1];
+  const pose = function(k){
+    const n = fgLerp([59, barY - 24.6], [o.hombroAbajo[0], o.hombroAbajo[1]], k), t = fgLerp(tAr, tAb, k);
+    const p = fgSum(n, fgDir(t + 180, FG_L.tronco));
+    const ik = function(P){ const a = fgIK(P.n, w, FG_L.brazo, FG_L.antebrazo, 1), b = fgIK(P.n, w, FG_L.brazo, FG_L.antebrazo, -1); return (a.j[0] < b.j[0] ? a : b).j; };   // el codo, hacia atrás
+    const pie = o.rodillas ? { a: fgSum(p, [-9, 17]), f: fgSum(p, [-15, 17.5]), r: -1 } : { a: fgSum(p, [-8, 27]), f: fgSum(p, [-10, 33]), r: -1 };   // rodillas delante, pies atrás
+    return Object.assign({ p: p, t: t, cab: -4, w: w, e: ik }, pie, o.extra ? o.extra(p) : {});
+  };
+  const seq = o.seq ? o.seq(pose) : [[pose(0), 0.4], [pose(0.5), 0.5], [pose(1), 0.5], [pose(1), 0.25], [pose(0.5), 0.45]];
+  return { seq: seq, vuelta: o.vuelta || 0.45,
+    fondo: FG_PISO + '<line x1="38" y1="' + barY + '" x2="84" y2="' + barY + '" class="il-mueble"/><line x1="42" y1="' + barY + '" x2="42" y2="84" class="il-mueble il-sin"/><line x1="80" y1="' + barY + '" x2="80" y2="84" class="il-mueble il-sin"/>' + (o.fondo || '') + fgRotulo(o.rotulo),
+    atras: o.atras, delante: o.delante };
+}
+FG['fondos en paralelas'] = fgFondos({ tronco: [12, 30], hombroAbajo: [64, 33], rotulo: 'torso algo hacia delante' });
+FG['fondos en paralelas para triceps'] = fgFondos({ tronco: [4, 10], hombroAbajo: [61.5, 33], rotulo: 'torso erguido · codos atrás' });
+// lastrados: cinturón con cadena y el disco colgando entre las piernas
+FG['fondos lastrados'] = fgFondos({ tronco: [12, 30], hombroAbajo: [64, 33], rotulo: 'con lastre en el cinturón',
+  delante: function(P, ln, ci){ const d = fgSum(P.p, [2, 13]); ln(P.p, d, 'il-cable'); ci(d, 5, 'il-disco'); ci(d, 1.4, 'il-peso'); } });
+// asistida: de rodillas en el pad, que empuja hacia arriba (contrapeso)
+FG['fondos en maquina asistida'] = fgFondos({ tronco: [12, 28], hombroAbajo: [64, 33], rodillas: true, rotulo: 'rodillas en el pad · asistida',
+  atras: function(P, ln){ const k = P.k; ln([k[0] - 9, k[1] + 3], [k[0] + 4, k[1] + 3], 'il-pad'); ln([k[0] - 2, k[1] + 5], [k[0] - 2, 84], 'il-mueble il-sin'); } });
+// negativos: sube con un salto (o desde un cajón) arriba con los brazos estirados y baja MUY despacio (3-5 s); vuelve al cajón
+FG['fondos negativos'] = fgFondos({ tronco: [12, 30], hombroAbajo: [64, 33], rotulo: 'baja despacio · 3-5 s', vuelta: 0.6,
+  fondo: fgCaja(36, 70, 20, 14),
+  seq: function(pose){ const caj = Object.assign({}, pose(0.15), {}); caj.a = [47, 69.5]; caj.f = [54, 70]; caj.r = -1; caj.p = [caj.p[0], caj.p[1] + 4];
+    return [[caj, 0.5], [pose(0), 0.35], [pose(0), 0.3], [pose(0.5), 1.8], [pose(1), 1.8], [pose(1), 0.3]]; } });
+
 /* ---------- enganche con la app ---------- */
 function fgClave(nombre){ return norm(nombre || '').toLowerCase().replace(/[áàä]/g, 'a').replace(/[éèë]/g, 'e').replace(/[íìï]/g, 'i').replace(/[óòö]/g, 'o').replace(/[úùü]/g, 'u').replace(/\s+/g, ' ').trim(); }
 if (typeof ilPatron === 'function') ilPatron = (function(orig){
