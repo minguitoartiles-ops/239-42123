@@ -4,10 +4,12 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.95 (actual)
-Cambios acumulados hacia la 0.96: **1 de 10**
+Cambios acumulados hacia la 0.96: **3 de 10**
 
 ### Hacia la 0.96
 1. 11/11/2026 · **Las descargas de datos quedan apuntadas** en el registro («Descargar mis datos» del cliente y la copia completa del equipo) y **49 pruebas nuevas del servidor** (registro intocable, sesiones, roles y suspensión, dos pasos, cookies y derechos); otras 17 de pantalla en el banco de pruebas → **0.95.0-1 (caché)**
+2. 12/11/2026 · **El código de dos pasos se llama «Fitnessindramas»** en Google Authenticator y similares (antes salía «localhost:3000», el valor de fábrica de Supabase) → **0.95.1**
+3. 12/11/2026 · **Botón «Añadir a mi app de códigos»** en la ventana de dos pasos: abre la app de códigos del mismo móvil sin escanear nada. Si no, queda copiar la clave, y el QR solo para leerlo desde otro aparato (la cámara normal del móvil no sirve) → **0.95.1-1 (caché)**
 
 ## Versión 0.94 → 0.95.0
 
