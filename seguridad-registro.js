@@ -158,16 +158,20 @@
       enHoja(o, '[data-sg-empezar]').addEventListener('click', function(){
         const b = this; b.disabled = true; b.textContent = 'Preparando…';
         d.auth.dosPasos.empezar().then(function(n){
-          cuerpo.innerHTML = '<p class="sg-txt"><b>1.</b> En la app de tu móvil, añade una cuenta y escanea este código:</p>'
-            + '<div class="sg-qr"><img alt="Código QR para la app de códigos" width="180" height="180"></div>'
-            + '<p class="sg-txt sg-peq">Si lo estás leyendo en el mismo móvil, copia esta clave en la app:</p>'
+          const uriOk = typeof n.uri === 'string' && /^otpauth:\/\/totp\/[^\s]{1,600}$/.test(n.uri);
+          cuerpo.innerHTML = '<p class="sg-txt"><b>1.</b> Si estás en el móvil donde tienes la app de códigos, pulsa este botón:</p>'
+            + (uriOk ? '<a class="btn-primary sg-enlace" data-sg-uri>Añadir a mi app de códigos</a>' : '')
+            + '<p class="sg-txt sg-peq">Si no se abre, copia la clave y en la app elige «+» → «Introducir una clave de configuración»:</p>'
             + '<div class="sg-secreto mono"></div><button type="button" class="mini-btn" data-sg-copiar>Copiar clave</button>'
+            + '<p class="sg-txt sg-peq">Si lees esto en otro aparato (ordenador, tablet), en la app elige «+» → «Escanear un código QR» (la cámara normal del móvil no sirve):</p>'
+            + '<div class="sg-qr"><img alt="Código QR para la app de códigos" width="180" height="180"></div>'
             + '<form class="sg-form" data-sg-form><p class="sg-txt"><b>2.</b> Escribe el código que te da la app:</p>'
             + '<div class="field"><label for="sgCodigoNuevo">Código</label><input id="sgCodigoNuevo" inputmode="numeric" autocomplete="one-time-code" maxlength="7"></div>'
             + '<div class="picker-new-error" role="alert"></div>'
             + '<button type="submit" class="btn-primary">Confirmar y activar</button></form>';
           if (/^data:image\/svg\+xml/i.test(n.qr)) enHoja(o, '.sg-qr img').src = n.qr;
           enHoja(o, '.sg-secreto').textContent = n.secreto;
+          if (uriOk) enHoja(o, '[data-sg-uri]').setAttribute('href', n.uri);
           enHoja(o, '[data-sg-copiar]').addEventListener('click', function(){
             try { navigator.clipboard.writeText(n.secreto).then(function(){ toast('Clave copiada'); }); } catch(e){}
           });

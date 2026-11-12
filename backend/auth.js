@@ -133,9 +133,9 @@ export function crearAuth(sb) {
         for (const f of (lista?.all || [])) {
           if (f.status !== 'verified') await sb.auth.mfa.unenroll({ factorId: f.id });   // intentos a medias
         }
-        const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Móvil ' + new Date().toISOString().slice(0, 16) });
+        const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', issuer: 'Fitnessindramas', friendlyName: 'Móvil ' + new Date().toISOString().slice(0, 16) });
         if (error || !data?.totp) throw new ErrorAcceso('No se ha podido empezar a activarla. Inténtalo de nuevo.');
-        return { factorId: data.id, qr: data.totp.qr_code, secreto: data.totp.secret };
+        return { factorId: data.id, qr: data.totp.qr_code, secreto: data.totp.secret, uri: data.totp.uri };
       },
       // La termina con el primer código que da la app
       async confirmar(factorId, codigo) {
