@@ -360,3 +360,10 @@ html.esc #coachTabs #ctab-tareas.nt-on{display:flex !important;}
 @keyframes ntFoco{0%{box-shadow:0 0 0 0 var(--accent-line);}30%{box-shadow:0 0 0 6px var(--accent-line);}100%{box-shadow:0 0 0 0 transparent;}}
 .nt-card.nt-foco{animation:ntFoco 1.2s ease-out;}
 @media (prefers-reduced-motion: reduce){.nt-card.nt-foco{animation:none;outline:2px solid var(--accent-line);}}
+/* 23/11/2026 · «Mis tareas» con pantalla propia: botón en las cabeceras del móvil y «Volver» solo en el móvil */
+.pro-tareas[hidden]{display:none !important;}
+html.esc .pro-tareas{display:none !important;}
+html.esc .nt-volver{display:none !important;}
+#view-coach-tareas .nt-card{margin:0;}
+#view-coach-tareas{flex:1 1 auto;flex-direction:column;min-height:0;}
+html.esc #view-coach-tareas .alta-body{max-width:760px;}

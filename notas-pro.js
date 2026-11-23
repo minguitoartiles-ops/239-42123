@@ -1,5 +1,8 @@
 /* =========================================================
-   23/11/2026 · «Mis notas»: agenda personal de cada profesional en el Inicio (pedido por Domingo)
+   23/11/2026 · «Mis tareas»: agenda personal de cada profesional (pedido por Domingo)
+   · Pantalla propia en el móvil y en el ordenador (decisión de Domingo, 23/11): en el ordenador,
+     «Tareas» en el menú lateral, debajo de «Pagos»; en el móvil, el botón de la lista en la cabecera
+     de cada pestaña, junto a la campana (la barra de abajo ya tiene 5 pestañas).
    · Texto libre (competiciones, cambios de plan, recordatorios…) con fecha opcional.
    · Personal: solo la ve quien la escribe (lo decide el servidor). Se ve igual en todos sus aparatos.
    · Orden: primero las que tienen fecha (las de hoy o ya pasadas, resaltadas), después las demás.
@@ -34,14 +37,13 @@
   function tarjeta(){
     let c = document.getElementById('ntCard');
     if (c) return c;
-    const panel = document.querySelector('#view-coach-panel .alta-body');
-    const stats = panel && panel.querySelector('.panel-stats');
+    const panel = document.querySelector('#view-coach-tareas .alta-body');
     if (!panel) return null;
     c = document.createElement('section');
     c.id = 'ntCard'; c.className = 'nt-card'; c.setAttribute('aria-labelledby', 'ntTit');
-    c.innerHTML = '<div class="nt-cab"><h2 class="nt-tit" id="ntTit">Mis tareas</h2><span class="nt-hoy" id="ntHoy" hidden></span></div>'
+    c.innerHTML = '<div class="nt-cab"><h2 class="nt-tit" id="ntTit">Pendientes</h2><span class="nt-hoy" id="ntHoy" hidden></span></div>'
       + '<form class="nt-nueva" id="ntForm" autocomplete="off">'
-      + '<label class="sr-only" for="ntTexto">Nueva nota</label>'
+      + '<label class="sr-only" for="ntTexto">Nueva tarea</label>'
       + '<input id="ntTexto" type="text" maxlength="500" placeholder="Competición, cambio de plan, recordatorio…">'
       + '<div class="nt-fila"><label class="nt-fecha"><span>Fecha</span><input id="ntFecha" type="date" aria-label="Fecha (opcional)"></label>'
       + '<button type="submit" class="nt-add">Añadir</button></div>'
@@ -49,7 +51,7 @@
       + '<ul class="nt-lista" id="ntLista" aria-live="polite"></ul>'
       + '<div class="nt-pie" id="ntPie"></div>'
       + '<p class="nt-priv">Solo las ves tú.</p>';
-    if (stats && stats.nextSibling) panel.insertBefore(c, stats.nextSibling); else panel.insertBefore(c, panel.firstChild);
+    panel.appendChild(c);
     c.querySelector('#ntForm').addEventListener('submit', function(ev){ ev.preventDefault(); nueva(); });
     c.addEventListener('click', clic);
     c.addEventListener('change', function(ev){
@@ -73,7 +75,7 @@
     const t = tarjeta(); if (!t) return;
     t.hidden = false;
     const L = t.querySelector('#ntLista'), P = t.querySelector('#ntPie'), H = t.querySelector('#ntHoy');
-    if (est.notas === null) { L.innerHTML = '<li class="nt-vacio">' + (est.cargando ? 'Cargando tus notas…' : 'No se han podido cargar tus notas.') + '</li>'; P.innerHTML = ''; H.hidden = true; return; }
+    if (est.notas === null) { avisos(0); L.innerHTML = '<li class="nt-vacio">' + (est.cargando ? 'Cargando tus notas…' : 'No se han podido cargar tus notas.') + '</li>'; P.innerHTML = ''; H.hidden = true; return; }
     const pend = est.notas.filter(function(n){ return !n.hecha; }).sort(ordenar);
     const hechas = est.notas.filter(function(n){ return n.hecha; }).sort(function(a, b){ return a.creada < b.creada ? 1 : -1; });
     L.innerHTML = pend.length ? pend.map(fila).join('') : '<li class="nt-vacio">Nada pendiente. Apunta aquí lo que no quieras olvidar.</li>';
@@ -81,6 +83,11 @@
     P.innerHTML = hechas.length ? '<button type="button" class="nt-ver" data-nt="ver">' + (est.verHechas ? 'Ocultar hechas' : 'Ver hechas (' + hechas.length + ')') + '</button>' : '';
     const n = pend.filter(function(x){ return x.fecha && x.fecha <= hoy(); }).length;
     H.hidden = !n; H.textContent = n === 1 ? '1 para hoy' : n + ' para hoy';
+    avisos(n);
+  }
+  function avisos(n){
+    const m = document.getElementById('ctabTareasN'); if (m) { m.hidden = !n; m.textContent = n; }
+    Array.prototype.forEach.call(document.querySelectorAll('.pro-tareas .bell-badge'), function(x){ x.classList.toggle('hide', !n); x.textContent = n; });
   }
 
   /* ---------- servidor ---------- */
@@ -133,40 +140,74 @@
     else if (a === 'borrar') borrar(b.closest('[data-id]').getAttribute('data-id'));
   }
 
-  /* ---------- ordenador: «Tareas» en el menú lateral, debajo de «Pagos» (pedido por Domingo) ---------- */
+  /* ---------- la pantalla «Tareas» ---------- */
   const ICO_TAREAS = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>';
+  let origen = 'clientes';                       // pestaña desde la que se abrió (para «Volver» en el móvil)
+  topScreens.push('view-coach-tareas');
+  PANTALLAS_CON_TABS.push('view-coach-tareas');
+  (function(){
+    const root = document.getElementById('screenRoot');
+    const v = document.createElement('div'); v.id = 'view-coach-tareas'; v.style.display = 'none';
+    v.innerHTML = '<div class="alta-top"><button type="button" class="back-btn nt-volver" data-nt="volver"><span class="vb-chev" aria-hidden="true">‹</span>Volver</button>'
+      + '<div style="flex:1"><div class="eyebrow">Solo las ves tú</div><div class="h-title" role="heading" aria-level="1" style="margin-top:2px;font-size:var(--fs-2xl)">Mis tareas</div></div></div>'
+      + '<div class="alta-body"></div>';
+    v.querySelector('[data-nt="volver"]').addEventListener('click', function(){ abrirTabPro(origen); });
+    const ref = document.getElementById('view-coach-pagos');
+    root.insertBefore(v, ref ? ref.nextSibling : null);
+  })();
+  /* ordenador: «Tareas» en el menú lateral, debajo de «Pagos» */
   function botonMenu(){
     const nav = document.getElementById('coachTabs'); if (!nav) return;
     let b = document.getElementById('ctab-tareas');
     if (!b) {
       b = document.createElement('button');
       b.type = 'button'; b.className = 'tbi'; b.id = 'ctab-tareas'; b.setAttribute('aria-label', 'Tareas');
-      b.innerHTML = '<span class="tbi-emo" aria-hidden="true">' + ICO_TAREAS + '</span>TAREAS';
-      b.addEventListener('click', irATareas);
+      b.innerHTML = '<span class="tbi-emo" aria-hidden="true">' + ICO_TAREAS + '</span>TAREAS<span class="tab-badge rojo" id="ctabTareasN" hidden>0</span>';
+      b.addEventListener('click', function(){ abrirTabPro('tareas'); });
     }
     const pagos = document.getElementById('ctab-pagos');
     if (pagos && pagos.parentNode === nav) { if (pagos.nextSibling !== b) nav.insertBefore(b, pagos.nextSibling); }
     else if (!b.parentNode) nav.appendChild(b);
     b.classList.toggle('nt-on', activo());
+    b.classList.toggle('active', tabProActual === 'tareas');
   }
-  function irATareas(){
-    abrirTabPro('clientes');
-    setTimeout(function(){
-      const c = document.getElementById('ntCard'); if (!c) return;
-      c.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      c.classList.remove('nt-foco'); void c.offsetWidth; c.classList.add('nt-foco');
-      const t = document.getElementById('ntTexto'); if (t) { try { t.focus({ preventScroll: true }); } catch(_){ t.focus(); } }
-    }, 60);
+  /* móvil: botón con la lista en la cabecera de cada pestaña, a la izquierda de la rueda de Ajustes */
+  ['view-coach-panel', 'view-coach-segs', 'view-coach-chats', 'view-coach-planes', 'view-coach-pagos'].forEach(function(id){
+    const top = document.querySelector('#' + id + ' .alta-top');
+    if (!top || top.querySelector('.pro-tareas')) return;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bell pro-tareas'; b.setAttribute('aria-label', 'Mis tareas'); b.hidden = true;
+    b.style.order = '2';
+    b.innerHTML = ICO_TAREAS.replace('width="20" height="20"', 'width="19" height="19"') + '<span class="bell-badge hide">0</span>';
+    b.addEventListener('click', function(){ abrirTabPro('tareas'); });
+    top.appendChild(b);
+  });
+  function botonesCabecera(){
+    Array.prototype.forEach.call(document.querySelectorAll('.pro-tareas'), function(b){ b.hidden = !activo(); });
   }
+  abrirTabPro = (function(orig){
+    return function(t){
+      if (t !== 'tareas') return orig.apply(this, arguments);
+      if (tabProActual !== 'tareas' && tabProActual !== 'ajustes') origen = tabProActual || 'clientes';
+      tabProActual = 'tareas'; navDir = 'tab';
+      try { pintar(); showScreen('view-coach-tareas'); } finally { navDir = null; }
+      pintarTabsPro();
+      const bd = document.querySelector('#view-coach-tareas .alta-body'); if (bd) bd.scrollTop = 0;
+      if (activo()) cargar();
+    };
+  })(abrirTabPro);
+  atrasPorNiveles = (function(orig){
+    return function(){ if (coachActivo && pantallaVisible() === 'view-coach-tareas') { abrirTabPro(origen); return; } return orig.apply(this, arguments); };
+  })(atrasPorNiveles);
   pintarTabsPro = (function(orig){
-    return function(){ const r = orig.apply(this, arguments); try { botonMenu(); } catch(e){} return r; };
+    return function(){ const r = orig.apply(this, arguments); try { botonMenu(); botonesCabecera(); } catch(e){} return r; };
   })(pintarTabsPro);
 
   /* ---------- cuándo ---------- */
   actualizarPanel = (function(orig){
     return function(){ orig.apply(this, arguments); try { pintar(); if (activo() && est.notas === null) cargar(); } catch(e){} };
   })(actualizarPanel);
-  window.addEventListener('fsd:pro-dentro', function(){ est.notas = null; cargar(); botonMenu(); });
+  window.addEventListener('fsd:pro-dentro', function(){ est.notas = null; cargar(); botonMenu(); botonesCabecera(); });
   window.addEventListener('fsd:al-volver', function(){ if (activo()) cargar(); });
-  window.addEventListener('fsd:sesion-fuera', function(){ est.notas = null; est.verHechas = false; const c = document.getElementById('ntCard'); if (c) c.remove(); const b = document.getElementById('ctab-tareas'); if (b) b.classList.remove('nt-on'); });
+  window.addEventListener('fsd:sesion-fuera', function(){ est.notas = null; est.verHechas = false; const c = document.getElementById('ntCard'); if (c) c.remove(); const b = document.getElementById('ctab-tareas'); if (b) b.classList.remove('nt-on'); botonesCabecera(); avisos(0); });
 })();
