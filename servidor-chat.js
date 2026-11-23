@@ -136,7 +136,7 @@ function svChLista(k){
     if (vistos[p.id]) return;
     vistos[p.id] = 1;
     ms.push({ id: p.id, lado: lado, autor: yo, tipo: p.tipo || 'texto', texto: p.texto, archivo_ruta: p.ruta || null, duracion: p.dur || null,
-              cita_de: p.citaDe || null, eliminado: false, fecha: p.ts, reenviado: !!p.reenviado, etiqueta: p.etiqueta || null, pendiente: true });
+              cita_de: p.citaDe || null, eliminado: false, fecha: p.ts, reenviado: !!p.reenviado, etiqueta: p.etiqueta || null, pendiente: !p.enviado });   // 23/11 · enviado = ya confirmado por el servidor
   });
   (svChSubiendo[k] || []).forEach(function(u){
     if (vistos[u.id]) return;
@@ -468,6 +468,7 @@ function svChEnviar(){
   cola.sort(function(a, b){ return a[1].ts < b[1].ts ? -1 : 1; });
   if (!cola.length) return Promise.resolve();
   svChEnviando = true;
+  const enviados = {};
   return svCargar().then(function(x){
     let i = 0;
     const siguiente = function(){
@@ -476,7 +477,12 @@ function svChEnviar(){
       if (!d || !d.sid) return siguiente();
       return x.chat.enviar({ id: p.id, clienteId: d.sid, lado: lado, texto: p.texto, citaDe: p.citaDe, reenviado: p.reenviado, etiqueta: p.etiqueta,
                              tipo: p.tipo, archivoRuta: p.ruta, duracion: p.dur })
-        .then(function(){ p.enviado = true; svChAvisado = false; return siguiente(); }, function(e){
+        .then(function(){
+          // 23/11/2026 · en cuanto el servidor lo confirma, deja de verse como «enviando» (antes esperaba
+          // a la siguiente puesta al día, y podía tardar un rato)
+          p.enviado = true; svChAvisado = false; enviados[k] = 1;
+          return siguiente();
+        }, function(e){
           if (x.sinConexion(e)) {
             if (!svChAvisado) { svChAvisado = true; try { toast('Sin conexión: tus mensajes se enviarán al volver internet'); } catch(_){} }
             return null;                                           // se reintenta más tarde, en orden
@@ -493,6 +499,7 @@ function svChEnviar(){
   }).catch(function(){}).finally(function(){
     svChEnviando = false;
     guardarTodo();
+    Object.keys(enviados).forEach(function(k){ try { svChPintar(k); } catch(e){} svChTraer(k); });
   });
 }
 /* al recuperar internet: lo hace «fsd:al-volver» (servidor.js lo lanza una sola vez para todas las partes) */
