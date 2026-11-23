@@ -40,6 +40,11 @@ function cmGuardar(){ try { guardarChat(); } catch(e){} try { guardarTodo(); } c
 function cmFlash(b){ if (!b) return; b.scrollIntoView({ block: 'center', behavior: 'smooth' }); b.classList.add('cm-flash'); setTimeout(function(){ b.classList.remove('cm-flash'); }, 1800); }
 
 /* ---------- el menú ---------- */
+/* reacciones: sin servidor no hay (servidor-chat.js las activa) */
+const CM_RX = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+function cmRxActiva(b){ return false; }
+function cmRxMia(b){ return null; }
+function cmReaccionar(b, e){}
 function cmCerrar(){
   const m = document.getElementById('cmMenu'); if (m) m.remove();
   Array.prototype.forEach.call(document.querySelectorAll('#chatList .bubble.cm-on'), function(x){ x.classList.remove('cm-on'); });
@@ -57,12 +62,21 @@ function cmAbrir(b, x, y){
   it.push(['seleccionar', 'Seleccionar']);
   const m = document.createElement('div'); m.id = 'cmMenu'; m.className = 'cm-menu'; m.setAttribute('role', 'menu');
   m.innerHTML = it.map(function(i){ return '<button type="button" role="menuitem" data-cm="' + i[0] + '"' + (i[0] === 'eliminar' ? ' class="peligro"' : '') + '>' + CM_ICO[i[0]] + '<span>' + i[1] + '</span></button>'; }).join('');
+  // 23/11/2026 · reacciones (solo con el servidor): fila de emoticonos encima de las opciones
+  if (cmRxActiva(b)) {
+    const mia = cmRxMia(b);
+    m.insertAdjacentHTML('afterbegin', '<div class="cm-rx" role="group" aria-label="Reaccionar">' + CM_RX.map(function(e){
+      return '<button type="button" data-rx="' + e + '" aria-label="Reaccionar con ' + e + '"' + (e === mia ? ' class="mia" aria-pressed="true"' : '') + '>' + e + '</button>';
+    }).join('') + '</div>');
+  }
   cmRaiz().appendChild(m);
   const w = m.offsetWidth, h = m.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
   m.style.left = Math.max(8, Math.min(x, vw - w - 8)) + 'px';
   m.style.top = Math.max(8, Math.min(y, vh - h - 8)) + 'px';
   b.classList.add('cm-on');
   m.addEventListener('click', function(e){
+    const rx = e.target.closest('button[data-rx]');
+    if (rx) { e.stopPropagation(); cmCerrar(); cmReaccionar(b, rx.getAttribute('data-rx')); return; }
     const bt = e.target.closest('button[data-cm]'); if (!bt) return;
     e.stopPropagation(); cmCerrar(); cmAccion(bt.dataset.cm, b);
   });

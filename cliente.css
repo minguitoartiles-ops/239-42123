@@ -569,6 +569,17 @@ html.esc #emojiPanel:not([hidden]){display:block !important;max-height:260px;pad
 .cm-menu button:hover,.cm-menu button:focus-visible{background:var(--wash-soft);outline:none;}
 .cm-menu button svg{flex:none;color:var(--dim-6);}
 .cm-menu button.peligro,.cm-menu button.peligro svg{color:var(--danger-text);}
+/* 23/11/2026 · reacciones del chat */
+.cm-menu .cm-rx{display:flex;gap:4px;padding:0 0 8px;margin-bottom:8px;border-bottom:1px solid var(--line);}
+.cm-menu .cm-rx button{flex:1;justify-content:center;height:44px;min-width:36px;padding:0;gap:0;font-size:22px;line-height:1;}
+.cm-menu .cm-rx button.mia{background:var(--wash-soft);box-shadow:inset 0 0 0 1px var(--accent-line);}
+#chatList .rx-fila{display:flex;flex-wrap:wrap;gap:4px;margin-top:-6px;max-width:80%;}
+#chatList .rx-fila.in{align-self:flex-start;padding-left:12px;}
+#chatList .rx-fila.out{align-self:flex-end;padding-right:12px;}
+.coach-view #view-chat #chatList .rx-fila.out{align-self:flex-start;padding-left:12px;padding-right:0;}
+.coach-view #view-chat #chatList .rx-fila.in{align-self:flex-end;padding-right:12px;padding-left:0;}
+#chatList .rx-chip{display:inline-flex;align-items:center;gap:2px;min-height:28px;padding:2px 8px;border-radius:999px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);font:500 var(--fs-xs) var(--f-body);cursor:pointer;}
+#chatList .rx-chip.mia{border-color:var(--accent-line);background:var(--wash-soft);}
 #chatList .bubble.cm-on{outline:2px solid var(--accent);outline-offset:2px;}
 #chatList .bubble.cm-flash{animation:ddFlash 1.2s ease-in-out 2;}
 .rp-q{margin:0 0 8px;padding:4px 8px;border-left:3px solid var(--accent);border-radius:var(--r-ctl);background:rgba(18,21,26,.07);cursor:pointer;display:flex;flex-direction:column;gap:1px;max-width:100%;}

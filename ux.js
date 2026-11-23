@@ -894,7 +894,7 @@ guardarChat = function(){
   const l = document.getElementById('chatList');
   if (!l) return;
   const copia = l.cloneNode(true);
-  Array.prototype.forEach.call(copia.querySelectorAll('.msg-av'), function(x){ x.remove(); });
+  Array.prototype.forEach.call(copia.querySelectorAll('.msg-av, .rx-fila'), function(x){ x.remove(); });
   PLANES[clienteActual] = PLANES[clienteActual] || { ent: '', nut: '' };
   PLANES[clienteActual].chat = copia.innerHTML;
 };

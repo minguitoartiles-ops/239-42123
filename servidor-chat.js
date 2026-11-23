@@ -234,6 +234,7 @@ function svChPintar(k){
     svChVistos[k] = {}; ids.forEach(function(i){ svChVistos[k][i] = 1; });
     if (nuevos && trasNuevos) { const b = L.querySelector('.bubble[data-fid="' + trasNuevos.replace(/["\\]/g, '') + '"]'); if (b) b.parentNode.insertBefore(nuevos, b); }
     svArchRellenar(L);
+    try { svChRxPintar(L, k); } catch(e){}
     try { decorarChat(); } catch(e){}
     try { puChatFechas(); } catch(e){}
     try { cmPintarFijo(true); } catch(e){}
@@ -269,7 +270,7 @@ function svChTraer(k){
   const vacio = !SV_CH[k] && k === clienteActual && document.getElementById('chatVacio');
   if (vacio) vacio.textContent = 'Cargando la conversación…';
   svChTrayendo[k] = svChPreparar().then(function(x){ return x.chat.traer(d.sid); }).then(function(r){
-    SV_CH[k] = { mensajes: r.mensajes.map(svChFila), fijado: r.fijado, dudas: r.dudas.map(svChFila), cargado: true };
+    SV_CH[k] = { mensajes: r.mensajes.map(svChFila), fijado: r.fijado, dudas: r.dudas.map(svChFila), reacciones: r.reacciones || [], cargado: true };
     svChLimpiarPend(k);
     svChPintar(k);
     guardarTodo();
@@ -384,6 +385,8 @@ function svChCambio(tabla, fila, evento){
     try { pintarChatsPro(); } catch(e){}
   } else if (tabla === 'chat_lecturas') {
     svChResumenLuego();
+  } else if (tabla === 'reacciones') {
+    if (S) { svChRxMeter(S, fila); svChPintar(k); }
   }
 }
 let svChDejar = null;
@@ -821,5 +824,71 @@ if (svActivo()) {
     if (!svChSesion()) return;
     svChEnviar().then(svChPonerAlDia);
     if (coachActivo) svChPreparar().then(svChDudasPend).catch(function(){});   // 8/11 · las dudas que llegaron mientras tanto
+  });
+}
+
+/* =========================================================
+   REACCIONES (23/11/2026): como en WhatsApp, una por persona y mensaje.
+   Se ponen desde el menú del mensaje (mantener pulsado) y salen debajo de la burbuja.
+   Al tocarlas se ve quién ha puesto cada una. No avisan ni cuentan como «sin leer».
+   ========================================================= */
+const SV_RX = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+function svChRxMeter(S, fila){
+  S.reacciones = (S.reacciones || []).filter(function(r){ return !(r.mensaje_id === fila.mensaje_id && r.autor === fila.autor); });
+  if (fila.emoji && SV_RX.indexOf(fila.emoji) > -1) S.reacciones.push({ mensaje_id: fila.mensaje_id, autor: fila.autor, emoji: fila.emoji });
+}
+function svChRxQuien(autor, k){
+  if (autor && autor === svChYo) return 'Tú';
+  return svChNombre(autor) || ((clientesData[k] || {}).nombre || 'Cliente').split(' ')[0];
+}
+function svChRxPintar(L, k){
+  Array.prototype.forEach.call(L.querySelectorAll('.rx-fila'), function(x){ x.remove(); });
+  const S = SV_CH[k]; if (!S || !(S.reacciones || []).length) return;
+  const por = {};
+  S.reacciones.forEach(function(r){ (por[r.mensaje_id] = por[r.mensaje_id] || []).push(r); });
+  Array.prototype.forEach.call(L.querySelectorAll('.bubble[data-fid]'), function(b){
+    const rs = por[b.getAttribute('data-fid')];
+    if (!rs || b.classList.contains('msg-del')) return;
+    const f = document.createElement('div');
+    f.className = 'rx-fila ' + (b.classList.contains('in') ? 'in' : 'out');
+    f.setAttribute('data-rx-de', b.getAttribute('data-fid'));
+    SV_RX.forEach(function(e){
+      const de = rs.filter(function(r){ return r.emoji === e; }); if (!de.length) return;
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'rx-chip';
+      if (de.some(function(r){ return r.autor === svChYo; })) c.classList.add('mia');
+      c.setAttribute('aria-label', e + ' · ' + de.map(function(r){ return svChRxQuien(r.autor, k); }).join(', '));
+      c.textContent = e + (de.length > 1 ? ' ' + de.length : '');
+      f.appendChild(c);
+    });
+    b.parentNode.insertBefore(f, b.nextSibling);
+  });
+}
+if (svActivo()) {
+  cmRxActiva = function(b){
+    return svChSesion() && !!SV_CH[clienteActual] && !!(b && b.getAttribute('data-fid'))
+      && !b.classList.contains('sv-pend') && !b.classList.contains('msg-del');
+  };
+  cmRxMia = function(b){
+    const S = SV_CH[clienteActual], id = b && b.getAttribute('data-fid');
+    const r = S && (S.reacciones || []).filter(function(x){ return x.mensaje_id === id && x.autor === svChYo; })[0];
+    return r ? r.emoji : null;
+  };
+  cmReaccionar = function(b, e){
+    const k = clienteActual, S = SV_CH[k], id = b && b.getAttribute('data-fid');
+    if (!S || !id || !svChYo || SV_RX.indexOf(e) < 0) return;
+    const antes = cmRxMia(b), nuevo = antes === e ? null : e;
+    svChRxMeter(S, { mensaje_id: id, autor: svChYo, emoji: nuevo });
+    svChPintar(k);
+    svCargar().then(function(x){ return x.chat.reaccionar(id, nuevo); }).catch(function(err){
+      svChRxMeter(S, { mensaje_id: id, autor: svChYo, emoji: antes });
+      svChPintar(k);
+      try { toast(svMensaje(err, 'No se ha podido guardar la reacción')); } catch(_){}
+    });
+  };
+  // tocar una reacción: quién la ha puesto
+  document.addEventListener('click', function(ev){
+    const c = ev.target.closest && ev.target.closest('#chatList .rx-chip'); if (!c) return;
+    ev.stopPropagation();
+    try { toast(c.getAttribute('aria-label')); } catch(_){}
   });
 }

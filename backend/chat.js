@@ -7,6 +7,8 @@ import { rutaValida } from './archivos.js';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const COLUMNAS = 'id, cliente_id, autor, lado, tipo, texto, archivo_ruta, duracion, cita_de, eliminado, fecha, reenviado, etiqueta';
 const MAX_MENSAJES = 500;              // los últimos de cada chat
+// 23/11/2026 · reacciones: las mismas que acepta el servidor (como en WhatsApp)
+export const EMOJIS_REACCION = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 function id(x, que) {
   if (!UUID.test(String(x || ''))) throw new ErrorServidor(que + ' no válido.');
@@ -49,19 +51,21 @@ export function crearChat(sb) {
     // Un chat entero: { mensajes, fijado, dudas, leidoHasta }
     async traer(clienteId) {
       id(clienteId, 'Chat');
-      const [m, f, d, l] = await Promise.all([
+      const [m, f, d, l, r] = await Promise.all([
         sb.from('mensajes').select(COLUMNAS).eq('cliente_id', clienteId).order('fecha', { ascending: false }).order('id').limit(MAX_MENSAJES),
         sb.from('chat_fijado').select('mensaje_id, por, fecha').eq('cliente_id', clienteId).maybeSingle(),
         sb.from('dudas').select('id, mensaje_id, de, para, estado, creada, cerrada_por, cerrada_en').eq('cliente_id', clienteId),
         sb.from('chat_lecturas').select('hasta').eq('cliente_id', clienteId).maybeSingle(),
+        sb.from('reacciones').select('mensaje_id, autor, emoji').eq('cliente_id', clienteId).not('emoji', 'is', null),
       ]);
-      const fallo = [m, f, d, l].find((x) => x.error);
+      const fallo = [m, f, d, l, r].find((x) => x.error);
       if (fallo) throw errorDe(fallo.error, 'No se ha podido cargar el chat.');
       return {
         mensajes: (m.data || []).reverse(),
         fijado: f.data && f.data.mensaje_id ? f.data : null,
         dudas: d.data || [],                // el cliente recibe siempre una lista vacía
         leidoHasta: l.data ? l.data.hasta : null,
+        reacciones: r.data || [],
       };
     },
 
@@ -94,6 +98,14 @@ export function crearChat(sb) {
       if (etiqueta) fila.etiqueta = etiqueta;
       const { error } = await sb.from('mensajes').insert(fila);
       if (error && error.code !== '23505') throw errorDe(error, 'No se ha podido enviar el mensaje.');
+    },
+
+    // Reaccionar a un mensaje (una por persona; emoji = null la quita). El autor y el chat los pone el servidor.
+    async reaccionar(mid, emoji) {
+      id(mid, 'Mensaje');
+      if (emoji !== null && !EMOJIS_REACCION.includes(emoji)) throw new ErrorServidor('Reacción no válida.');
+      const { error } = await sb.from('reacciones').upsert({ mensaje_id: mid, emoji }, { onConflict: 'mensaje_id,autor' });
+      if (error) throw errorDe(error, 'No se ha podido guardar la reacción.');
     },
 
     // «Mensaje eliminado»: solo el autor
@@ -164,7 +176,7 @@ export function crearChat(sb) {
     // Avisa de cualquier cambio en lo que se puede ver: alCambiar(tabla, fila nueva o vieja)
     escuchar(alCambiar, alEstado) {
       let canal = sb.channel('chat');
-      for (const t of ['mensajes', 'chat_fijado', 'dudas', 'chat_lecturas']) {
+      for (const t of ['mensajes', 'chat_fijado', 'dudas', 'chat_lecturas', 'reacciones']) {
         canal = canal.on('postgres_changes', { event: '*', schema: 'public', table: t },
           (p) => alCambiar(t, p.new && Object.keys(p.new).length ? p.new : p.old, p.eventType));
       }
