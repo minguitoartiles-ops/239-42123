@@ -39,7 +39,7 @@
     if (!panel) return null;
     c = document.createElement('section');
     c.id = 'ntCard'; c.className = 'nt-card'; c.setAttribute('aria-labelledby', 'ntTit');
-    c.innerHTML = '<div class="nt-cab"><h2 class="nt-tit" id="ntTit">Mis notas</h2><span class="nt-hoy" id="ntHoy" hidden></span></div>'
+    c.innerHTML = '<div class="nt-cab"><h2 class="nt-tit" id="ntTit">Mis tareas</h2><span class="nt-hoy" id="ntHoy" hidden></span></div>'
       + '<form class="nt-nueva" id="ntForm" autocomplete="off">'
       + '<label class="sr-only" for="ntTexto">Nueva nota</label>'
       + '<input id="ntTexto" type="text" maxlength="500" placeholder="Competición, cambio de plan, recordatorio…">'
@@ -133,11 +133,40 @@
     else if (a === 'borrar') borrar(b.closest('[data-id]').getAttribute('data-id'));
   }
 
+  /* ---------- ordenador: «Tareas» en el menú lateral, debajo de «Pagos» (pedido por Domingo) ---------- */
+  const ICO_TAREAS = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>';
+  function botonMenu(){
+    const nav = document.getElementById('coachTabs'); if (!nav) return;
+    let b = document.getElementById('ctab-tareas');
+    if (!b) {
+      b = document.createElement('button');
+      b.type = 'button'; b.className = 'tbi'; b.id = 'ctab-tareas'; b.setAttribute('aria-label', 'Tareas');
+      b.innerHTML = '<span class="tbi-emo" aria-hidden="true">' + ICO_TAREAS + '</span>TAREAS';
+      b.addEventListener('click', irATareas);
+    }
+    const pagos = document.getElementById('ctab-pagos');
+    if (pagos && pagos.parentNode === nav) { if (pagos.nextSibling !== b) nav.insertBefore(b, pagos.nextSibling); }
+    else if (!b.parentNode) nav.appendChild(b);
+    b.classList.toggle('nt-on', activo());
+  }
+  function irATareas(){
+    abrirTabPro('clientes');
+    setTimeout(function(){
+      const c = document.getElementById('ntCard'); if (!c) return;
+      c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      c.classList.remove('nt-foco'); void c.offsetWidth; c.classList.add('nt-foco');
+      const t = document.getElementById('ntTexto'); if (t) { try { t.focus({ preventScroll: true }); } catch(_){ t.focus(); } }
+    }, 60);
+  }
+  pintarTabsPro = (function(orig){
+    return function(){ const r = orig.apply(this, arguments); try { botonMenu(); } catch(e){} return r; };
+  })(pintarTabsPro);
+
   /* ---------- cuándo ---------- */
   actualizarPanel = (function(orig){
     return function(){ orig.apply(this, arguments); try { pintar(); if (activo() && est.notas === null) cargar(); } catch(e){} };
   })(actualizarPanel);
-  window.addEventListener('fsd:pro-dentro', function(){ est.notas = null; cargar(); });
+  window.addEventListener('fsd:pro-dentro', function(){ est.notas = null; cargar(); botonMenu(); });
   window.addEventListener('fsd:al-volver', function(){ if (activo()) cargar(); });
-  window.addEventListener('fsd:sesion-fuera', function(){ est.notas = null; est.verHechas = false; const c = document.getElementById('ntCard'); if (c) c.remove(); });
+  window.addEventListener('fsd:sesion-fuera', function(){ est.notas = null; est.verHechas = false; const c = document.getElementById('ntCard'); if (c) c.remove(); const b = document.getElementById('ctab-tareas'); if (b) b.classList.remove('nt-on'); });
 })();

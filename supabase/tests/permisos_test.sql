@@ -72,9 +72,9 @@ select ok(not has_function_privilege('anon', 'privado.es_equipo()', 'execute'),
 select is_empty(
   $$ select table_name from information_schema.role_table_grants
      where grantee = 'authenticated' and table_schema = 'public'
-       and privilege_type in ('DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER')
-       and table_name <> 'catalogo' $$,
-  'Nadie con sesión puede borrar datos (salvo el catálogo propio del equipo)');
+       and (privilege_type in ('TRUNCATE', 'REFERENCES', 'TRIGGER')
+            or (privilege_type = 'DELETE' and table_name not in ('catalogo', 'notas_equipo'))) $$,
+  'Nadie con sesión puede borrar datos (salvo el catálogo y las notas propias del equipo)');
 
 -- ---------------------------------------------------------------------
 -- 2 · Visitante sin sesión
