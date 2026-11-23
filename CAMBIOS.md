@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.95 (actual)
-Cambios acumulados hacia la 0.96: **6 de 10**
+Cambios acumulados hacia la 0.96: **7 de 10**
 
 ### Hacia la 0.96
 1. 11/11/2026 · **Las descargas de datos quedan apuntadas** en el registro («Descargar mis datos» del cliente y la copia completa del equipo) y **49 pruebas nuevas del servidor** (registro intocable, sesiones, roles y suspensión, dos pasos, cookies y derechos); otras 17 de pantalla en el banco de pruebas → **0.95.0-1 (caché)**
@@ -13,6 +13,7 @@ Cambios acumulados hacia la 0.96: **6 de 10**
 4. 23/11/2026 · **Arreglado: al empezar la semana, el entreno del cliente seguía marcado como hecho.** Si el cliente abría la app en frío en una semana nueva, el cambio de semana se hacía antes de que cargara toda la app: se vaciaban los pesos y las sesiones, pero las series seguían marcadas (con sus repeticiones, el RIR real y el cardio) y no se guardaba el historial de pesos de esa semana. Ahora el cambio espera a que la app esté cargada y se hace completo. El plan nutricional no tenía el fallo (las comidas tomadas se desmarcan cada día por otro camino) → **0.95.2**
 5. 23/11/2026 · **Chat: los mensajes dejan de verse como «enviando» en cuanto el servidor los confirma.** Antes llegaban al momento, pero en la pantalla de quien escribe seguían con el reloj hasta la siguiente puesta al día, y parecía que no se habían enviado → **0.95.2-1 (caché)**
 6. 23/11/2026 · Supabase · **Reacciones en el chat**, como en WhatsApp (pedido por Domingo): al mantener pulsado un mensaje sale una fila con 👍 ❤️ 😂 😮 😢 🙏. Cada persona pone una por mensaje (tocar otra la cambia; la misma, la quita) y salen debajo de la burbuja con su número; al tocarlas se ve quién las ha puesto. Se ven al momento en todos los aparatos, no avisan ni cuentan como «sin leer» (decisión de Domingo) y se quitan si se elimina el mensaje. En el servidor: tabla `reacciones` con RLS (cada uno solo pone la suya y solo en los chats que puede ver), límite de escrituras y 16 pruebas nuevas. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.95.3**
+7. 23/11/2026 · Supabase · **«Mis notas» en el Inicio de los profesionales** (pedido por Domingo): una agenda personal para apuntar lo que no se puede olvidar (competiciones, cambios de plan, recordatorios), con fecha opcional. Las que tienen fecha van primero y las de hoy o ya pasadas se resaltan, con «N para hoy» en la cabecera; se marcan como hechas (quedan plegadas en «Ver hechas») y se borran con doble toque. Personal (decisión de Domingo): cada nota solo la ve quien la escribe, ni el compañero ni los clientes; un miembro suspendido deja de verlas. En el servidor: tabla `notas_equipo` con RLS, como mucho 500 notas de 500 caracteres por persona, y 14 pruebas nuevas. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.95.3-1 (caché)**
 
 ## Versión 0.94 → 0.95.0
 
