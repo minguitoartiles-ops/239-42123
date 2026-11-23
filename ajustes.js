@@ -5,7 +5,7 @@
    coachActivo, guardarTodo, cerrarSesionCliente, coachLogout…).
    ========================================================= */
 
-const APP_VERSION = '0.95.1';
+const APP_VERSION = '0.95.2';
 /* 8/11 · la versión de la portada sale de aquí (antes estaba escrita a mano y se quedó en la 0.84) */
 (function(){
   const poner = function(){ const e = document.getElementById('appVersion'); if (e) e.textContent = 'Versión ' + APP_VERSION; };

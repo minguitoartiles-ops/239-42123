@@ -133,6 +133,7 @@ recalcProgreso = (function(orig){
    cambio de semana (los pesos pasan a «semana anterior») y cambio de día
    ========================================================= */
 function mjRegistro(k){ const d = clientesData[k]; if (!d) return null; d.registro = d.registro || { ses: [], com: {}, ton: [] }; return d.registro; }
+let mjTodoCargado = false;            // ver «Arranque» al final de este archivo
 function mjCambioDeSemana(k){
   const d = clientesData[k];
   if (!d) return false;
@@ -144,6 +145,10 @@ function mjCambioDeSemana(k){
   });
   if (!d.semanaRef) { d.semanaRef = lunes; return true; }
   if (d.semanaRef >= lunes) return cambio;
+  // 20/11/2026 · Al abrir la app, el plan del cliente se pinta antes de que carguen todos los archivos. Si la
+  // semana cambiaba en ese momento, solo se vaciaba una parte (pesos y sesiones) y las series seguían
+  // marcadas como hechas. Ahora se espera a que esté todo cargado (ver «Arranque», más abajo).
+  if (!mjTodoCargado) return cambio;
   // nueva semana: guardar el tonelaje, pasar los pesos a «semana anterior» y desmarcar sesiones
   const reg = mjRegistro(k);
   const ton = tonelajeDe(contEnt());
@@ -1216,6 +1221,12 @@ atrasDentroApp = (function(orig){
 /* =========================================================
    Arranque: la sesión del cliente se restauró antes de cargar este archivo
    ========================================================= */
+document.addEventListener('DOMContentLoaded', function(){
+  mjTodoCargado = true;
+  // si al abrir la app empezó una semana nueva, se hace ahora el cambio completo (con todo lo que añaden los demás archivos)
+  const d = clienteActual && clientesData[clienteActual];
+  if (d && d.semanaRef && d.semanaRef < mjISO(mjLunes())) { try { cargarPlan(clienteActual); } catch(e){} }
+});
 (function(){
   mjRefrescarSemanas();
   if (window.fsdSesionCliente && clienteActual && clientesData[clienteActual]) {
