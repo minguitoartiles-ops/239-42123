@@ -366,4 +366,4 @@ html.esc .pro-tareas{display:none !important;}
 html.esc .nt-volver{display:none !important;}
 #view-coach-tareas .nt-card{margin:0;}
 #view-coach-tareas{flex:1 1 auto;flex-direction:column;min-height:0;}
-html.esc #view-coach-tareas .alta-body{max-width:760px;}
+html.esc #view-coach-tareas .nt-card{max-width:760px;}   /* el ancho, solo en la tarjeta: en pantallas grandes los márgenes del contenido ya son anchos */

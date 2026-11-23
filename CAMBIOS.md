@@ -4,7 +4,7 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.95 (actual)
-Cambios acumulados hacia la 0.96: **8 de 10**
+Cambios acumulados hacia la 0.96: **9 de 10**
 
 ### Hacia la 0.96
 1. 11/11/2026 · **Las descargas de datos quedan apuntadas** en el registro («Descargar mis datos» del cliente y la copia completa del equipo) y **49 pruebas nuevas del servidor** (registro intocable, sesiones, roles y suspensión, dos pasos, cookies y derechos); otras 17 de pantalla en el banco de pruebas → **0.95.0-1 (caché)**
@@ -15,6 +15,7 @@ Cambios acumulados hacia la 0.96: **8 de 10**
 6. 23/11/2026 · Supabase · **Reacciones en el chat**, como en WhatsApp (pedido por Domingo): al mantener pulsado un mensaje sale una fila con 👍 ❤️ 😂 😮 😢 🙏. Cada persona pone una por mensaje (tocar otra la cambia; la misma, la quita) y salen debajo de la burbuja con su número; al tocarlas se ve quién las ha puesto. Se ven al momento en todos los aparatos, no avisan ni cuentan como «sin leer» (decisión de Domingo) y se quitan si se elimina el mensaje. En el servidor: tabla `reacciones` con RLS (cada uno solo pone la suya y solo en los chats que puede ver), límite de escrituras y 16 pruebas nuevas. **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.95.3**
 7. 23/11/2026 · Supabase · **«Mis tareas» en el Inicio de los profesionales** (pedido por Domingo): una agenda personal para apuntar lo que no se puede olvidar (competiciones, cambios de plan, recordatorios), con fecha opcional. Las que tienen fecha van primero y las de hoy o ya pasadas se resaltan, con «N para hoy» en la cabecera; se marcan como hechas (quedan plegadas en «Ver hechas») y se borran con doble toque. Personal (decisión de Domingo): cada nota solo la ve quien la escribe, ni el compañero ni los clientes; un miembro suspendido deja de verlas. En el servidor: tabla `notas_equipo` con RLS, como mucho 500 notas de 500 caracteres por persona, y 14 pruebas nuevas. En la app de escritorio, acceso directo «Tareas» en el menú lateral, debajo de «Pagos» (lleva a la tarjeta y deja el cursor listo para escribir). **Lleva migración: hay que pulsar «Desplegar en Supabase»** → **0.95.3-1 (caché)**
 8. 23/11/2026 · **«Mis tareas» con pantalla propia, en el móvil y en el ordenador** (decisión de Domingo): ya no está dentro de «Clientes», así que no salen «+ Nuevo cliente» ni la lista de clientes. En el ordenador se abre desde «Tareas» en el menú lateral, debajo de «Pagos», con el número de las de hoy; en el móvil, desde el botón de la lista en la cabecera de cada pestaña (junto a la rueda de Ajustes y la campana), también con el número, y «Volver» lleva a la pestaña de donde se vino → **0.95.4**
+9. 23/11/2026 · **Arreglado: «Mis tareas» se veía aplastada en pantallas de ordenador anchas** (el texto salía letra a letra en vertical). El ancho máximo se aplicaba a toda la zona de contenido y en pantallas grandes sus márgenes se comían el espacio; ahora solo se limita la tarjeta. Comprobado a 1280, 1600 y 2560 píxeles de ancho → **0.95.4-1 (caché)**
 
 ## Versión 0.94 → 0.95.0
 
