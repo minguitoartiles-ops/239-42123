@@ -697,7 +697,8 @@ function mjAvisoCopia(){
   if (!panel) return;
   let c = document.getElementById('avisoCopia');
   const n = Object.keys(clientesData).length, dias = mjDiasSinCopia();
-  const toca = coachActivo && n > 0 && (dias == null || dias >= 7);
+  const enServidor = typeof svActivo === 'function' && svActivo();   /* con el servidor los datos ya están a salvo: el aviso solo vale para el modo local */
+  const toca = coachActivo && !enServidor && n > 0 && (dias == null || dias >= 7);
   if (!toca) { if (c) c.remove(); return; }
   if (!c) {
     c = document.createElement('button');

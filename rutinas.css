@@ -78,10 +78,13 @@ html.esc #app.coach-edit #view-entreno .en-ej-acts{flex-direction:row;justify-co
 /* ---------- RIR: un tono por cada valor ---------- */
 .rir-0{--rc:#7A1712;} .rir-1{--rc:#B3261E;} .rir-2{--rc:#E2665A;}
 .rir-3{--rc:#D06A12;} .rir-4{--rc:#F2A65A;} .rir-5{--rc:#4FA86A;}
-.sr-badge.rir-n,.sr-rir.rir-n,.rx-field.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 75%, #000) !important;}
+.sr-badge.rir-n,.sr-rir.rir-n,.rx-field.rir-n{border-color:var(--rc) !important;background:color-mix(in srgb, var(--rc) 18%, transparent) !important;color:color-mix(in srgb, var(--rc) 50%, #000) !important;}
 .rir-0.sr-badge,.rir-0.rx-field,.rir-1.sr-badge,.rir-1.rx-field,.rir-3.sr-badge,.rir-3.rx-field{background:color-mix(in srgb, var(--rc) 24%, transparent) !important;}
-.srf-cab b.rir-n{color:color-mix(in srgb, var(--rc) 85%, #000);border-color:var(--rc);}
-.srf-rir > button.rir-n{color:color-mix(in srgb, var(--rc) 85%, #000);}
+.srf-cab b.rir-n{color:color-mix(in srgb, var(--rc) 50%, #000);border-color:var(--rc);}
+.srf-rir > button.rir-n{color:color-mix(in srgb, var(--rc) 50%, #000);}
+/* modo oscuro: el texto de los tonos RIR se aclara hacia blanco (antes se oscurecía hacia negro y casi no se leía) */
+.screen:not(.light) :is(.sr-badge.rir-n,.sr-rir.rir-n,.rx-field.rir-n){color:color-mix(in srgb, var(--rc) 45%, #fff) !important;}
+.screen:not(.light) :is(.srf-cab b.rir-n,.srf-rir > button.rir-n){color:color-mix(in srgb, var(--rc) 45%, #fff);}
 .srf-rir > button.sel.rir-n{background:var(--rc);color:#fff;}
 .srf-rir > button.sel.rir-2,.srf-rir > button.sel.rir-4{color:#1b0f05;}
 #view-entreno .srf-rirb.rir-n{background:color-mix(in srgb, var(--rc) 20%, transparent);color:color-mix(in srgb, var(--rc) 80%, #000);}
