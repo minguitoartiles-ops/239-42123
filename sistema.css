@@ -328,3 +328,35 @@ html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1
 .sg-form{margin-top:12px;}
 .sg-form .btn-primary,.sg-hoja > .sg-cuerpo > .btn-primary,.sg-hoja > .sg-cuerpo > .btn-eq{width:100%;margin-top:8px;}
 .sg-pie{margin-top:14px;}
+
+/* 23/11/2026 · «Mis notas» del profesional, en el Inicio */
+.nt-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px;margin:0 0 16px;}
+.nt-card[hidden]{display:none;}
+.nt-cab{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
+.nt-tit{margin:0;font:700 var(--fs-m) var(--f-body);color:var(--ink);}
+.nt-hoy{font:600 var(--fs-xs) var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--danger-text);background:var(--wash-soft);border-radius:999px;padding:4px 10px;}
+.nt-nueva{display:flex;flex-direction:column;gap:8px;}
+.nt-nueva input[type=text]{width:100%;box-sizing:border-box;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);color:var(--ink);font:400 var(--fs-s) var(--f-body);}
+.nt-fila{display:flex;align-items:center;gap:8px;}
+.nt-fecha{flex:1;display:flex;align-items:center;gap:8px;font:500 var(--fs-xs) var(--f-body);color:var(--dim-6);}
+.nt-fecha input{flex:1;min-width:0;min-height:44px;padding:0 8px;border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--bg);color:var(--ink);font:400 var(--fs-s) var(--f-body);}
+.nt-add{min-height:44px;padding:0 18px;border:none;border-radius:var(--r-ctl);background:var(--accent);color:var(--on-accent);font:600 var(--fs-s) var(--f-body);cursor:pointer;}
+.nt-lista{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;}
+.nt-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--line);}
+.nt-item input[type=checkbox]{flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);cursor:pointer;}
+.nt-txt{flex:1;min-width:0;font:400 var(--fs-s)/1.45 var(--f-body);color:var(--ink);overflow-wrap:anywhere;}
+.nt-dia{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--wash-soft);font:600 var(--fs-xs) var(--f-mono);color:var(--dim-6);vertical-align:1px;}
+.nt-item.vence .nt-dia{color:var(--danger-text);}
+.nt-item.hecha .nt-txt{color:var(--dim-6);text-decoration:line-through;}
+.nt-x{flex:none;min-width:36px;min-height:36px;margin:-6px -6px -6px 0;border:none;background:none;border-radius:var(--r-ctl);color:var(--dim-6);font:500 var(--fs-s) var(--f-body);cursor:pointer;}
+.nt-x.seguro{color:var(--danger-text);background:var(--wash-soft);padding:0 10px;}
+.nt-vacio{padding:12px 0 4px;color:var(--dim-6);font:400 var(--fs-s) var(--f-body);border-top:1px solid var(--line);}
+.nt-ver{margin-top:8px;padding:6px 0;border:none;background:none;color:var(--accent-text);font:600 var(--fs-s) var(--f-body);cursor:pointer;}
+.nt-priv{margin:8px 0 0;font:400 var(--fs-xs) var(--f-body);color:var(--dim-6);}
+#ntCard .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+/* «Tareas» en el menú lateral del ordenador (en el móvil la tarjeta ya está en el Inicio) */
+#ctab-tareas{display:none !important;}
+html.esc #coachTabs #ctab-tareas.nt-on{display:flex !important;}
+@keyframes ntFoco{0%{box-shadow:0 0 0 0 var(--accent-line);}30%{box-shadow:0 0 0 6px var(--accent-line);}100%{box-shadow:0 0 0 0 transparent;}}
+.nt-card.nt-foco{animation:ntFoco 1.2s ease-out;}
+@media (prefers-reduced-motion: reduce){.nt-card.nt-foco{animation:none;outline:2px solid var(--accent-line);}}
