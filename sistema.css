@@ -294,6 +294,8 @@ html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1
 .btn-primary:disabled{box-shadow:none;}
 .btn-eq{min-height:48px;border-radius:var(--r-btn);background:var(--card);border:1px solid var(--line-strong);color:var(--ink);font:700 var(--fs-m)/1.2 var(--f-body);}
 .segui-aviso-cta{border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);min-height:44px;display:flex;align-items:center;padding:0 16px;box-shadow:var(--sombra-accion);}
+/* con la tarjeta ya en azul (hoy toca rellenar), el botón se invierte: fondo claro y texto azul. Antes quedaba blanco sobre blanco en modo claro */
+.segui-aviso.hoy .segui-aviso-cta{background:var(--on-accent);color:var(--accent);box-shadow:none;}
 .week-dot.done{background:var(--accent);color:var(--on-accent);}
 /* foco visible como en la web: anillo azul de 3 px (azul claro sobre el fondo oscuro) */
 :is(button,a,[tabindex],.card[onclick]):focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
@@ -306,7 +308,7 @@ html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1
 .sg-capa{z-index:calc(var(--z-hoja) + 5);}
 .sg-hoja .sg-tit{margin:0 0 10px;}
 .sg-txt{margin:0 0 12px;line-height:1.45;}
-.sg-peq{font-size:var(--fs-s, 13px);color:var(--dim-60, var(--dim-45));line-height:1.4;margin:2px 0;}
+.sg-peq{font-size:var(--fs-s, 13px);color:var(--dim-6);line-height:1.4;margin:2px 0;}
 .sg-sub{font:600 11px/1.2 var(--f-mono, monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--dim-45);margin:18px 0 8px;}
 .sg-ul{margin:0 0 12px;padding-left:18px;line-height:1.45;}
 .sg-ul li{margin:4px 0;}
@@ -343,7 +345,7 @@ html:has(.screen:not(.light)),html:has(.screen:not(.light)) body{background:#0b1
 .nt-add{min-height:44px;padding:0 18px;border:none;border-radius:var(--r-ctl);background:var(--accent);color:var(--on-accent);font:600 var(--fs-s) var(--f-body);cursor:pointer;}
 .nt-lista{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;}
 .nt-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--line);}
-.nt-item input[type=checkbox]{flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);cursor:pointer;}
+.nt-item input[type=checkbox]{flex:none;width:24px;height:24px;margin:0;accent-color:var(--accent);cursor:pointer;}   /* 24 px: el mínimo de las guías de accesibilidad (antes 22) */
 .nt-txt{flex:1;min-width:0;font:400 var(--fs-s)/1.45 var(--f-body);color:var(--ink);overflow-wrap:anywhere;}
 .nt-dia{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--wash-soft);font:600 var(--fs-xs) var(--f-mono);color:var(--dim-6);vertical-align:1px;}
 .nt-item.vence .nt-dia{color:var(--danger-text);}

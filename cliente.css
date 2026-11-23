@@ -12,7 +12,7 @@
 .alta-label.fp-lbl::after{display:none;}
 .fp-lbl .fp-t{flex:none;}
 .fp-lbl .fp-res{flex:1;min-width:0;font:500 var(--fs-s) var(--f-body, inherit);letter-spacing:0;text-transform:none;color:var(--dim-45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
-.fp-lbl .fp-chev{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--chip, rgba(0,0,0,.05));font:600 var(--fs-l)/1 var(--f-body, inherit);transition:transform var(--dur-m);transform:rotate(90deg);}
+.fp-lbl .fp-chev{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--wash-soft);font:600 var(--fs-l)/1 var(--f-body, inherit);transition:transform var(--dur-m);transform:rotate(90deg);}
 .fp-lbl.fp-abierto .fp-chev{transform:rotate(-90deg);}
 .fp-lbl:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:var(--r-ctl);}
 .fp-oculto{display:none !important;}
@@ -122,7 +122,7 @@ html.esc .segui-note{font-size:var(--fs-m);line-height:1.55;margin-top:8px;}
 
 /* #125 Pagos: Clientes | Últimos movimientos y columnas más legibles */
 .pg-seg{display:flex;gap:4px;padding:4px;margin:12px 0 16px;border-radius:var(--r-ctl);background:var(--wash-soft, rgba(0,0,0,.05));}
-.pg-seg button{flex:1;min-height:40px;border:none;border-radius:var(--r-ctl);background:none;color:var(--dim-6);font:700 var(--fs-s) var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
+.pg-seg button{flex:1 1 auto;white-space:nowrap;padding:0 8px;min-height:40px;border:none;border-radius:var(--r-ctl);background:none;color:var(--dim-6);font:700 var(--fs-s) var(--f-body);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 .pg-seg button.on{background:var(--card, #fff);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
 #pgMovsCaja[hidden],.pagos-lista[hidden],.pagos-filtros[hidden]{display:none !important;}
 /* filas: franja de color a la izquierda en vez de marco grueso, texto más grande */
@@ -244,7 +244,7 @@ html.ar-dietista #fichaEntrenoRes .fe-registro,html.ar-dietista #fichaRegistro,h
 .pl-prev-movil{margin:-4px 0 12px;padding:12px;border:1px solid var(--accent-line, var(--line));border-top:none;border-radius:0 0 var(--r-card) var(--r-card);background:var(--card);}
 .pl-prev-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .pl-prev-h b{display:block;font:700 var(--fs-l) var(--f-body);color:var(--ink);}
-.pl-prev-h span{font:500 var(--fs-s) var(--f-body);color:var(--dim-6);}
+.pl-prev-h span:not(.pl-av){font:500 var(--fs-s) var(--f-body);color:var(--dim-6);}
 .pl-nu{cursor:default;margin-bottom:12px;}
 .pl-abrir{width:100%;}
 .pl-prev-vacio{display:flex;flex-direction:column;align-items:center;gap:8px;padding:60px 20px;text-align:center;color:var(--dim-6);font:500 var(--fs-s) var(--f-body);}

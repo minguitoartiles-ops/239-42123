@@ -42,7 +42,7 @@
     return function(){
       const r = orig.apply(this, arguments);
       if (esEsc()) return r;
-      const t = PESTANAS[tabProActual] ? tabProActual : origenAjustes;
+      const t = tabProActual === 'tareas' ? null : (PESTANAS[tabProActual] ? tabProActual : origenAjustes);   /* «Mis tareas» no es una pestaña de la barra: no se marca ninguna */
       Object.keys(PESTANAS).forEach(function(k){
         const b = document.getElementById(PESTANAS[k]); if (b) b.classList.toggle('active', k === t);
       });
