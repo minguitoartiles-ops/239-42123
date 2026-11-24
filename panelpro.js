@@ -92,7 +92,7 @@ function pintarSegsResumen(){
   function tarjeta(x){
     const r = x.ult;
     const estado = x.pendiente
-      ? '<span class="kc-estado pend">' + (r ? 'Sin rellenar · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
+      ? '<span class="kc-estado pend">' + (r ? 'Seguimiento sin rellenar' : 'Sin seguimientos') + '</span>'
       : (r ? '<span class="kc-estado ok">Al día</span>' : '<span class="kc-estado nuevo">Nuevo</span>');
     let cuerpo;
     if (r) {
@@ -112,7 +112,7 @@ function pintarSegsResumen(){
     }
     return '<div class="cliente-card kcard" onclick="abrirSegsCliente(\'' + x.k + '\',' + (r ? 'true' : 'false') + ')">'
       + '<div class="kc-top"><div class="avatar' + (x.d.foto ? ' con-foto' : '') + '"' + (x.d.foto ? ' style="background-image:url(&quot;' + x.d.foto + '&quot;)"' : '') + '></div>'
-      + '<div class="cliente-info"><div class="cliente-name">' + esc(x.d.nombre) + '</div><div class="cliente-sub">Semana ' + esc(x.d.semana || '—') + ' · ' + esc(x.d.objetivo || 'Sin objetivo') + '</div></div>'
+      + '<div class="cliente-info"><div class="cliente-name">' + esc(x.d.nombre) + '</div><div class="cliente-sub">Semana ' + esc(x.d.semana || '—') + ' · ' + esc(x.d.objetivo || 'Sin objetivo') + (x.pendiente && r ? ' · último hace ' + x.dias + ' días' : '') + '</div></div>'
       + '<div class="cliente-flags">' + estado + '</div></div>'
       + cuerpo + '</div>';
   }
@@ -338,12 +338,12 @@ pintarSegsResumen = function(){
     + '<div class="segui-leyenda"><span>Deficiente</span><span class="leyenda-barra"></span><span>Excelente</span></div>';
   h += datos.map(function(x){
     const estado = x.pendiente
-      ? '<span class="kc-estado pend">' + (x.segs.length ? 'Sin rellenar · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
+      ? '<span class="kc-estado pend">' + (x.segs.length ? 'Seguimiento sin rellenar' : 'Sin seguimientos') + '</span>'
       : (x.segs.length ? '<span class="kc-estado ok">Al día</span>' : '<span class="kc-estado nuevo">Nuevo</span>');
     const glob = x.p != null ? '<span class="sg-glob v' + nivelPuntuacion(x.p) + '" title="Puntuación global">' + x.p + '</span>' : '';
     const cab = '<div class="sg-cab" onclick="abrirSegsCliente(\'' + x.k + '\',' + (x.segs.length ? 'true' : 'false') + ')">'
       + '<div class="avatar' + (x.d.foto ? ' con-foto' : '') + '"' + (x.d.foto ? ' style="background-image:url(&quot;' + x.d.foto + '&quot;)"' : '') + '></div>'
-      + '<div class="cliente-info"><div class="cliente-name">' + esc(x.d.nombre) + '</div><div class="cliente-sub">' + esc(x.d.objetivo || 'Sin objetivo') + '</div></div>'
+      + '<div class="cliente-info"><div class="cliente-name">' + esc(x.d.nombre) + '</div><div class="cliente-sub">' + esc(x.d.objetivo || 'Sin objetivo') + (x.pendiente && x.segs.length ? ' · último hace ' + x.dias + ' días' : '') + '</div></div>'
       + '<div class="sg-cab-der">' + glob + estado + '</div></div>';
     const cuerpo = x.segs.length
       ? tarjetaSeguimiento(x.segs[0], 0, x.segs)
