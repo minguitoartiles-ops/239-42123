@@ -4,10 +4,11 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.96 (actual)
-Cambios acumulados hacia la 0.97: **1 de 10**
+Cambios acumulados hacia la 0.97: **2 de 10**
 
 ### Hacia la 0.97
 1. 24/11/2026 · **Texto: «Pendiente» pasa a «Seguimiento sin rellenar»** en las tarjetas de Seguimientos y de la lista de Clientes (los días pasan a «último hace N días» bajo el nombre); contador, rótulo y filtro dicen «Sin rellenar». Solo cambia el texto; sigue contando 7 días o más. → 0.96.0-1 (caché)
+2. 24/11/2026 · **Barra de botones de Android en azul oscuro.** En la app instalada, Chrome pinta esa barra con el color fijo del manifiesto (era el blanco del modo claro), así que en modo oscuro salía una franja blanca abajo. Ahora es el azul oscuro de la marca en los dos modos (decisión de Domingo). Puede tardar hasta un día en verse: Chrome actualiza la app instalada por su cuenta. → **0.96.1**
 
 ## Versión 0.95 → 0.96.0
 
