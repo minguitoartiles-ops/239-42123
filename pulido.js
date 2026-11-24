@@ -1089,7 +1089,7 @@ function puTarjetasSimples(){
     const sub = card.querySelector('.cliente-sub');
     if (sub && sub.textContent.indexOf(' · ') > -1) { sub.title = sub.textContent; sub.textContent = sub.textContent.split(' · ')[0]; }
     const est = card.querySelector('.kc-estado.pend');
-    if (est && est.textContent.trim() !== 'Pendiente') { est.title = 'Seguimiento pendiente'; est.textContent = 'Pendiente'; }
+    if (est && est.textContent.trim() !== 'Sin rellenar') { est.title = 'Seguimiento sin rellenar'; est.textContent = 'Sin rellenar'; }
     const p = card.querySelector('.kc-pago');
     if (p && !p.dataset.corto) {
       const t = p.textContent; let m, c = null;

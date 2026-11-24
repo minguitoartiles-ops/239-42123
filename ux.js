@@ -673,7 +673,7 @@ pintarListaClientes = function(){
     const dAlta = d.fechaAlta ? diasDesde(d.fechaAlta) : null;
     let estado, cls;
     if (!segs.length && (dAlta == null || dAlta < 7)) { estado = 'Nuevo'; cls = 'nuevo'; }
-    else if (!segs.length || dUlt > 7) { estado = 'Seguimiento pendiente'; cls = 'pend'; }
+    else if (!segs.length || dUlt > 7) { estado = 'Seguimiento sin rellenar'; cls = 'pend'; }
     else { estado = 'Al día'; cls = 'ok'; }
     const peso = datoCliente(segs, 'peso'), cint = datoCliente(segs, 'cintura');
     const ent = ult ? ult.e : null, nut = ult ? ult.n : null;

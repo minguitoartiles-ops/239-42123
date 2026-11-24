@@ -4,10 +4,10 @@ La versión sube cada 10 cambios o mejoras (norma desde la 0.47) y la tercera ci
 (norma desde el 19/10/2026 23:14): 0.48 → 0.48.1 → 0.48.2 → … → 0.49.
 
 ## Versión 0.96 (actual)
-Cambios acumulados hacia la 0.97: **0 de 10**
+Cambios acumulados hacia la 0.97: **1 de 10**
 
 ### Hacia la 0.97
-(ninguno todavía)
+1. 24/11/2026 · **Texto: «Pendiente» pasa a «Sin rellenar»** en los seguimientos (etiqueta de cada cliente, lista de Clientes, contador, rótulo de la lista y filtro), para que se entienda que lo que falta es que el cliente rellene el seguimiento. Solo cambia el texto; sigue contando 7 días o más. → 0.96.0-1 (caché)
 
 ## Versión 0.95 → 0.96.0
 

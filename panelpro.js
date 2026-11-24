@@ -86,13 +86,13 @@ function pintarSegsResumen(){
   }, 0);
   let h = '<div class="panel-stats">'
     + '<div class="panel-stat"><div class="val">' + (datos.length - pend.length) + '</div><div class="lbl">Al día</div></div>'
-    + '<div class="panel-stat"><div class="val' + (pend.length ? ' warn' : '') + '">' + pend.length + '</div><div class="lbl">Pendientes</div></div>'
+    + '<div class="panel-stat"><div class="val' + (pend.length ? ' warn' : '') + '">' + pend.length + '</div><div class="lbl">Sin rellenar</div></div>'
     + '<div class="panel-stat"><div class="val">' + semana + '</div><div class="lbl">Recibidos esta semana</div></div>'
     + '</div>';
   function tarjeta(x){
     const r = x.ult;
     const estado = x.pendiente
-      ? '<span class="kc-estado pend">' + (r ? 'Pendiente · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
+      ? '<span class="kc-estado pend">' + (r ? 'Sin rellenar · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
       : (r ? '<span class="kc-estado ok">Al día</span>' : '<span class="kc-estado nuevo">Nuevo</span>');
     let cuerpo;
     if (r) {
@@ -116,7 +116,7 @@ function pintarSegsResumen(){
       + '<div class="cliente-flags">' + estado + '</div></div>'
       + cuerpo + '</div>';
   }
-  if (pend.length) h += '<div class="alta-label">Pendientes</div>' + pend.map(tarjeta).join('');
+  if (pend.length) h += '<div class="alta-label">Sin rellenar</div>' + pend.map(tarjeta).join('');
   if (resto.length) h += '<div class="alta-label">Recientes</div>' + resto.map(tarjeta).join('');
   cont.innerHTML = h;
 }
@@ -332,13 +332,13 @@ pintarSegsResumen = function(){
   }, 0);
   let h = '<div class="panel-stats">'
     + '<div class="panel-stat"><div class="val">' + (datos.length - pend) + '</div><div class="lbl">Al día</div></div>'
-    + '<div class="panel-stat"><div class="val' + (pend ? ' warn' : '') + '">' + pend + '</div><div class="lbl">Pendientes</div></div>'
+    + '<div class="panel-stat"><div class="val' + (pend ? ' warn' : '') + '">' + pend + '</div><div class="lbl">Sin rellenar</div></div>'
     + '<div class="panel-stat"><div class="val">' + semana + '</div><div class="lbl">Recibidos esta semana</div></div>'
     + '</div>'
     + '<div class="segui-leyenda"><span>Deficiente</span><span class="leyenda-barra"></span><span>Excelente</span></div>';
   h += datos.map(function(x){
     const estado = x.pendiente
-      ? '<span class="kc-estado pend">' + (x.segs.length ? 'Pendiente · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
+      ? '<span class="kc-estado pend">' + (x.segs.length ? 'Sin rellenar · ' + x.dias + ' días' : 'Sin seguimientos') + '</span>'
       : (x.segs.length ? '<span class="kc-estado ok">Al día</span>' : '<span class="kc-estado nuevo">Nuevo</span>');
     const glob = x.p != null ? '<span class="sg-glob v' + nivelPuntuacion(x.p) + '" title="Puntuación global">' + x.p + '</span>' : '';
     const cab = '<div class="sg-cab" onclick="abrirSegsCliente(\'' + x.k + '\',' + (x.segs.length ? 'true' : 'false') + ')">'
