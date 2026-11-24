@@ -313,10 +313,10 @@ mjAbrirFichaPago = (function(orig){
 
 /* =========================================================
    #118 Pestaña Seguimientos (profesionales): nota más grande, «Ver resumen» como botón
-   y filtros Todos · Al día · Pendientes de rellenar · Mejor puntuación · Peor puntuación
+   y filtros Todos · Al día · Sin rellenar · Mejor puntuación · Peor puntuación
    ========================================================= */
 let sgFiltro = 'todos';
-const SG_FILTROS = [['todos', 'Todos'], ['aldia', 'Al día'], ['pend', 'Pendientes de rellenar'], ['mejor', 'Mejor puntuación'], ['peor', 'Peor puntuación']];
+const SG_FILTROS = [['todos', 'Todos'], ['aldia', 'Al día'], ['pend', 'Sin rellenar'], ['mejor', 'Mejor puntuación'], ['peor', 'Peor puntuación']];
 function sgFiltrar(f){ sgFiltro = f; pintarSegsResumen(); }
 pintarSegsResumen = (function(orig){
   return function(){
@@ -359,7 +359,7 @@ pintarSegsResumen = (function(orig){
       cont.insertBefore(fil, ley || bloques[0]);
     }
     const n = { todos: datos.length, aldia: datos.filter(function(x){ return !x.pend; }).length, pend: datos.filter(function(x){ return x.pend; }).length };
-    /* 27/10 · limpieza: «Al día» / «Pendientes» con 0 no se muestran */
+    /* 27/10 · limpieza: «Al día» / «Sin rellenar» con 0 no se muestran */
     const sgOp = SG_FILTROS.filter(function(f){ return f[0] === 'todos' || n[f[0]] == null || n[f[0]] > 0; });
     if (!sgOp.some(function(f){ return f[0] === sgFiltro; })) sgFiltro = 'todos';
     fil.innerHTML = sgOp.map(function(f){
